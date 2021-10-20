@@ -1,0 +1,10 @@
+{
+  "devDependencies": {
+    "@types/node": "^16.11.1",
+    "main": "./compiled/main.js",
+    "typescript": "^4.4.4"
+  },
+  "dependencies": {
+    "discord.js": "^13.2.0"
+  }
+}
