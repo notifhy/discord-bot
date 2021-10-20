@@ -3,3 +3,12 @@
 
 # ignore files with secrets
 **config.json
+
+# ignore compiled js
+**.js
+
+# ignore node modukes
+**/node_modules
+
+# ignore .vscode
+/.vscode
