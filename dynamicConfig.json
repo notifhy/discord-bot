@@ -1,0 +1,6 @@
+{
+  "api":true,
+  "userLimit":"29",
+  "blockedUsers":[],
+  "devMode":true
+}
