@@ -9,6 +9,8 @@ export interface ClientEvents {
 
 export interface SlashCommand {
   name: string;
+  description: string;
+  usage: string;
   cooldown: number;
   noDM: boolean;
   ownerOnly: boolean;
@@ -16,6 +18,12 @@ export interface SlashCommand {
   execute(interaction: CommandInteraction): Promise<void>;
 }
 
+declare module 'discord.js' {
+  interface Client {
+    commands: Collection<string, SlashCommand>;
+    cooldowns: Collection<string, Collection<string, number>>;
+  }
+}
 
 export interface HTTPError extends Error {
   name: string;
@@ -28,9 +36,9 @@ export interface HTTPError extends Error {
   json?: object | null;
 }
 
-declare module 'discord.js' {
-  interface Client {
-    commands: Collection<string, SlashCommand>;
-    cooldowns: Collection<string, Collection<string, number>>;
-  }
+export interface Config {
+  api: boolean;
+  blockedUsers: string[];
+  devMode: boolean;
+  userLimit: number;
 }

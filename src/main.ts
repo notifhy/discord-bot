@@ -13,6 +13,7 @@ const client = new Client({
     status: 'dnd',
     activities: [{ type: 'WATCHING', name: 'HELLO' }],
   },
+  ws: { properties: { $browser: 'Discord iOS' } },
 });
 
 client.commands = new Collection();

@@ -1,31 +1,49 @@
 import { CommandInteraction } from 'discord.js';
-import { commandEmbed, isInstanceOfError } from '../utility';
+import { commandEmbed } from '../utility';
+import type { Config } from '../@types/index';
 import * as fs from 'fs/promises';
 
 export const name = 'config';
+export const description = 'Configure the bot';
+export const usage = '/config [block/userlimit/devmode/api]';
 export const cooldown = 5000;
 export const noDM = false;
 export const ownerOnly = true;
 
+//JSON database moment.
 export const execute = async (interaction: CommandInteraction) => {
-  const readFile: any = await fs.readFile('../../ownerSettings.json');
+  const responseEmbed = commandEmbed({ color: '#7289DA', interaction: interaction });
+  const path = '../dynamicConfig.json';
+  const test: any = await fs.readFile(path);
+  const readFile: Config = JSON.parse(test);
 
-  if (interaction.options.getSubcommandGroup() === 'strings') {
-    if (interaction.options.getSubcommand() === 'block') {
-      const user = interaction.options.getString('string');
-      if (readFile.blockedUsers.includes(user)) {
-        readFile.blockedUsers.push(user);
-      } else {
-        const blockedUserIndex = readFile.blockedUsers.indexOf(user);
-        readFile.blockedUsers.splice(blockedUserIndex, 1);
-      }
-    } else if (interaction.options.getSubcommand() === 'userlimit') {
-      readFile.userlimit = interaction.options.getInteger('limit');
+  if (interaction.options.getSubcommand() === 'block') {
+    const user = interaction.options.getString('user') as string;
+    const blockedUserIndex = readFile.blockedUsers.indexOf(user);
+    if (blockedUserIndex === -1) {
+      readFile.blockedUsers.push(user);
+      responseEmbed.setTitle(`User Added!`);
+      responseEmbed.setDescription(`${user} was added to the blacklist!`);
+    } else {
+      readFile.blockedUsers.splice(blockedUserIndex, 1);
+      responseEmbed.setTitle(`User Removed!`);
+      responseEmbed.setDescription(`${user} was removed from the blacklist!`);
     }
-  } else {
-    const toggle = interaction.options.getString('booleans') as string;
-    readFile[toggle] = !readFile[toggle];
+  } else if (interaction.options.getSubcommand() === 'userlimit') {
+    readFile.userLimit = interaction.options.getInteger('limit') as number;
+    responseEmbed.setTitle('User Limit Updated!');
+    responseEmbed.setDescription(`User Limit is now ${readFile.userLimit}!`);
+  } else if (interaction.options.getSubcommand() === 'devMode') {
+    readFile.devMode = !readFile.devMode;
+    responseEmbed.setTitle(`Developer Mode Updated!`);
+    responseEmbed.setDescription(`Developer Mode is now ${readFile.devMode === true ? 'on' : 'off'}!`);
+  } else if (interaction.options.getSubcommand() === 'api') {
+    readFile.api = !readFile.api;
+    responseEmbed.setTitle(`API State Updated!`);
+    responseEmbed.setDescription(`API commands and functions are now ${readFile.api === true ? 'on' : 'off'}!`);
   }
+  await fs.writeFile(path, JSON.stringify(readFile));
+  await interaction.editReply({ embeds: [responseEmbed] });
 };
 
 export const structure = {
@@ -55,19 +73,14 @@ export const structure = {
       }],
     },
     {
-      name: 'booleans',
-      type: '3',
-      description: 'The setting to toggle',
-      choices: [
-        {
-          name: 'Developer Mode',
-          value: 'devMode',
-        },
-        {
-          name: 'API Toggle',
-          value: 'api',
-        },
-      ],
+      name: 'devmode',
+      type: '1',
+      description: 'Toggla Developer Mode',
+    },
+    {
+      name: 'api',
+      type: '1',
+      description: 'Toggla API commands and functions',
     },
   ],
 };

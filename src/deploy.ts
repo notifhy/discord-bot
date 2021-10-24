@@ -1,13 +1,10 @@
 import { REST } from '@discordjs/rest';
 import { Routes } from 'discord-api-types/v9';
-import { discordAPIkey as token } from '../config.json';
+import { discordAPIkey as token, clientID, testGuild } from '../config.json';
 import fs from 'fs';
 
-const commands = [];
+const commands: any = [];
 const commandFiles = fs.readdirSync('./commands').filter(file => file.endsWith('.ts'));
-const clientId = '900196476951601153';
-
-const rest = new REST({ version: '9' }).setToken(token);
 
 (async () => {
 	try {
@@ -19,8 +16,8 @@ const rest = new REST({ version: '9' }).setToken(token);
 
 		console.log('Started refreshing application (/) commands.');
 
-		await rest.put(
-			Routes.applicationCommands(clientId),
+		await new REST({ version: '9' }).setToken(token).put(
+			Routes.applicationGuildCommands(clientID, testGuild),
 			{ body: commands },
 		);
 

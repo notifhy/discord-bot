@@ -4,6 +4,8 @@ import type { SlashCommand } from '../@types';
 import * as fs from 'fs';
 
 export const name = 'reload';
+export const description = 'Reloads all or a command';
+export const usage = '/config [all/single] <command>';
 export const cooldown = null;
 export const noDM = false;
 export const ownerOnly = true;
@@ -20,7 +22,7 @@ export const execute = async (interaction: CommandInteraction) => {
       interaction.client.commands.set(newCommand.name, newCommand);
     }
 
-    const reloadedEmbed = commandEmbed('#7289DA', 'Slash Command', `/${interaction.commandName}`)
+    const reloadedEmbed = commandEmbed({ color: '#7289DA', interaction: interaction })
       .setTitle(`Reloaded All Commands!`)
       .setDescription(`All commands have been reloaded! This action took ${Date.now() - now} milliseconds.`);
 
@@ -30,7 +32,7 @@ export const execute = async (interaction: CommandInteraction) => {
     const command = interaction.client.commands.get(input) as SlashCommand;
 
     if (!command) {
-      const noCMDReloadEmbed = commandEmbed('#FF5555', 'Slash Command', `/${interaction.commandName}`)
+      const noCMDReloadEmbed = commandEmbed({ color: '#FF5555', interaction: interaction })
         .setColor(`#FF5555`)
         .setTitle(`Unknown Command!`)
         .setDescription(`There is no command with the name \`${input}\`!`);
@@ -45,7 +47,7 @@ export const execute = async (interaction: CommandInteraction) => {
     const newCommand: SlashCommand = require(`./${command.name}.ts`);
     interaction.client.commands.set(newCommand.name, newCommand);
 
-    const reloadedEmbed = commandEmbed('#7289DA', 'Slash Command', `/${interaction.commandName}`)
+    const reloadedEmbed = commandEmbed({ color: '#7289DA', interaction: interaction })
       .setTitle(`/${input} Reloaded!`)
       .setDescription(`/${input} was successfully reloaded!`);
 

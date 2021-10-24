@@ -1,5 +1,6 @@
 import { Collection, CommandInteraction } from 'discord.js';
 import { replyToError, timeout, commandEmbed, isInstanceOfError } from '../utility';
+import { blockedUsers, userLimit, api, devMode } from '../../dynamicConfig.json';
 import { ownerID } from '../../config.json';
 import type { SlashCommand } from '../@types/index';
 
@@ -7,13 +8,14 @@ export const name = 'interactionCreate';
 export const once = false;
 export const hasParameter = true;
 
-export const execute = async (interaction: CommandInteraction) => {
+export const execute = async (interaction: CommandInteraction): Promise<void> => {
   try {
     if (interaction.isCommand()) {
       const command: SlashCommand | undefined = interaction.client.commands.get(interaction.commandName);
       if (command === undefined) return;
 
       await interaction.deferReply({ ephemeral: true });
+      await devConstraint(interaction);
       await ownerConstraint(interaction, command);
       await dmConstraint(interaction, command);
       await cooldownConstraint(interaction, command);
@@ -26,9 +28,19 @@ export const execute = async (interaction: CommandInteraction) => {
   }
 };
 
+async function devConstraint(interaction: CommandInteraction) {
+  if (devMode === true && !ownerID.includes(interaction.user.id)) {
+    const devModeEmbed = commandEmbed({ color: '#AA0000', interaction: interaction })
+			.setTitle('Developer Mode!')
+			.setDescription('This bot is in developer only mode, likely due to a major issue or an upgrade that is taking place. Please check back later!');
+		await interaction.editReply({ embeds: [devModeEmbed] });
+    throw constraintError();
+  }
+}
+
 async function ownerConstraint(interaction: CommandInteraction, command: SlashCommand) {
   if (command.ownerOnly === true && !ownerID.includes(interaction.user.id)) {
-    const ownerEmbed = commandEmbed('#AA0000', 'Slash Command', `/${interaction.commandName}`)
+    const ownerEmbed = commandEmbed({ color: '#AA0000', interaction: interaction })
       .setTitle(`Insufficient Permissions!`)
      .setDescription('You cannot execute this command witout being an owner!');
    await interaction.editReply({ embeds: [ownerEmbed] });
@@ -38,7 +50,7 @@ async function ownerConstraint(interaction: CommandInteraction, command: SlashCo
 
 async function dmConstraint(interaction: CommandInteraction, command: SlashCommand) {
   if (command.noDM === true && Boolean(!interaction.guild)) {
-     const dmEmbed = commandEmbed('#AA0000', 'Slash Command', `/${interaction.commandName}`)
+     const dmEmbed = commandEmbed({ color: '#AA0000', interaction: interaction })
       .setTitle(`DM Channel!`)
       .setDescription('You cannot execute this command in the DM channel! Please switch to a server channel!');
     await interaction.editReply({ embeds: [dmEmbed] });
@@ -57,14 +69,14 @@ async function cooldownConstraint(interaction: CommandInteraction, command: Slas
 
   if (expirationTime && Date.now() < expirationTime) {
     const timeLeft = (expirationTime - Date.now()) / 1000;
-    const cooldownEmbed = commandEmbed('#AA0000', 'Slash Command', `/${interaction.commandName}`)
+    const cooldownEmbed = commandEmbed({ color: '#AA0000', interaction: interaction })
       .setTitle(`Cooldown!`)
       .setDescription(`You are executing commands too fast! This cooldown of this command is ${command.cooldown / 1000}. This message will turn green in ${timeLeft} after the cooldown expires.`);
 
     await interaction.editReply({ embeds: [cooldownEmbed] });
     await timeout(timeLeft);
 
-    const cooldownOverEmbed = commandEmbed('#00AA00', 'Slash Command', `/${interaction.commandName}`)
+    const cooldownOverEmbed = commandEmbed({ color: '#AA0000', interaction: interaction })
       .setTitle('Cooldown Over!')
       .setDescription(`The cooldown has expired! You can now execute the command ${interaction.commandName}!`);
 
