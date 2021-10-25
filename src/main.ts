@@ -25,7 +25,7 @@ client.cooldowns = new Collection();
 
   for (const file of eventsFolder) {
     // eslint-disable-next-line no-await-in-loop
-    const { name, once, hasParameter, execute }: ClientEvents = await import(`./events/${file}`);
+    const { properties: { name, once, hasParameter }, execute }: ClientEvents = await import(`./events/${file}`);
     const callExecute = (parameters: any) => hasParameter === true ? execute(parameters) : execute(client);
     if (once === false) client.on(name, parameters => callExecute(parameters));
     else client.once(name, parameters => callExecute(parameters));
@@ -34,7 +34,7 @@ client.cooldowns = new Collection();
   for (const file of commandsFolder) {
     // eslint-disable-next-line no-await-in-loop
     const command: SlashCommand = await import(`./commands/${file}`);
-    client.commands.set(command.name, command);
+    client.commands.set(command.properties.name, command);
   }
 })();
 

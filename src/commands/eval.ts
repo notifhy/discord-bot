@@ -1,12 +1,25 @@
+import type { CommandProperties } from '../@types/index';
 import { CommandInteraction } from 'discord.js';
 import { commandEmbed } from '../util/utility';
 
-export const name = 'eval';
-export const description = 'Evaluates a string';
-export const usage = '/eval [string]';
-export const cooldown = 5000;
-export const noDM = false;
-export const ownerOnly = true;
+export const properties: CommandProperties = {
+  name: 'eval',
+  description: 'Evaluates a string',
+  usage: '/eval [string]',
+  cooldown: 5000,
+  noDM: false,
+  ownerOnly: true,
+  structure: {
+    name: 'eval',
+    description: 'Eval',
+    options: [{
+      name: 'string',
+      type: 3,
+      description: 'Code',
+      required: true,
+    }],
+  },
+};
 
 export const execute = async (interaction: CommandInteraction) => {
   const input = interaction.options.getString('string') as string;
@@ -37,15 +50,4 @@ export const execute = async (interaction: CommandInteraction) => {
 
     await interaction.editReply({ embeds: [evalEmbed] });
   }
-};
-
-export const structure = {
-  name: 'eval',
-  description: 'Eval',
-  options: [{
-    name: 'string',
-    type: 3,
-    description: 'Code',
-    required: true,
-  }],
 };

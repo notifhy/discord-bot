@@ -1,14 +1,36 @@
-import type { SlashCommand } from '../@types';
+import type { CommandProperties, SlashCommand } from '../@types';
 import { CommandInteraction } from 'discord.js';
 import { commandEmbed } from '../util/utility';
 import * as fs from 'fs';
 
-export const name = 'reload';
-export const description = 'Reloads all or a command';
-export const usage = '/config [all/single] <command>';
-export const cooldown = null;
-export const noDM = false;
-export const ownerOnly = true;
+export const properties: CommandProperties = {
+  name: 'reload',
+  description: 'Reloads all or a command',
+  usage: '/config [all/single] <command>',
+  cooldown: 1000,
+  noDM: false,
+  ownerOnly: true,
+  structure: {
+    name: 'reload',
+    description: 'Reload',
+    options: [{
+      name: 'all',
+      type: 1,
+      description: 'Refresh all commands',
+    },
+    {
+      name: 'single',
+      type: 1,
+      description: 'Refresh a single command',
+      options: [{
+        name: 'command',
+        type: 3,
+        description: 'THe command to refresh',
+        required: true,
+      }],
+    }],
+  },
+};
 
 export const execute = async (interaction: CommandInteraction) => {
   if (interaction.options.getSubcommand() === 'all') {
@@ -19,7 +41,7 @@ export const execute = async (interaction: CommandInteraction) => {
       delete require.cache[require.resolve(`./${file}`)];
       // eslint-disable-next-line no-await-in-loop
       const newCommand: SlashCommand = require(`./${file}`);
-      interaction.client.commands.set(newCommand.name, newCommand);
+      interaction.client.commands.set(newCommand.properties.name, newCommand);
     }
 
     const reloadedEmbed = commandEmbed({ color: '#7289DA', interaction: interaction })
@@ -42,10 +64,10 @@ export const execute = async (interaction: CommandInteraction) => {
     }
 
     //Import doesn't have a way to clear the cache..
-    delete require.cache[require.resolve(`./${command.name}.ts`)];
+    delete require.cache[require.resolve(`./${command.properties.name}.ts`)];
 
-    const newCommand: SlashCommand = require(`./${command.name}.ts`);
-    interaction.client.commands.set(newCommand.name, newCommand);
+    const newCommand: SlashCommand = require(`./${command.properties.name}.ts`);
+    interaction.client.commands.set(newCommand.properties.name, newCommand);
 
     const reloadedEmbed = commandEmbed({ color: '#7289DA', interaction: interaction })
       .setTitle(`/${input} Reloaded!`)
@@ -53,25 +75,4 @@ export const execute = async (interaction: CommandInteraction) => {
 
     await interaction.editReply({ embeds: [reloadedEmbed] });
   }
-};
-
-export const structure = {
-  name: 'reload',
-  description: 'Reload',
-  options: [{
-    name: 'all',
-    type: 1,
-    description: 'Refresh all commands',
-  },
-  {
-    name: 'single',
-    type: 1,
-    description: 'Refresh a single command',
-    options: [{
-      name: 'command',
-      type: 3,
-      description: 'THe command to refresh',
-      required: true,
-    }],
-  }],
 };

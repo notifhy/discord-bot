@@ -1,30 +1,5 @@
 import type { Collection, CommandInteraction, Client as DiscordClient } from 'discord.js';
 
-export interface ClientEvents {
-  name: string;
-  once: boolean;
-  hasParameter: boolean;
-  execute(client?: DiscordClient, ...hasParameter: unknown[]): Promise<void> | void;
-}
-
-export interface SlashCommand {
-  name: string;
-  description: string;
-  usage: string;
-  cooldown: number;
-  noDM: boolean;
-  ownerOnly: boolean;
-  structure: object;
-  execute(interaction: CommandInteraction): Promise<void>;
-}
-
-declare module 'discord.js' {
-  interface Client {
-    commands: Collection<string, SlashCommand>;
-    cooldowns: Collection<string, Collection<string, number>>;
-  }
-}
-
 export interface WebHookConfig {
   id: string;
   token: string;
@@ -46,4 +21,37 @@ export interface Config {
   blockedUsers: string[];
   devMode: boolean;
   userLimit: number;
+}
+
+export interface EventProperties {
+  name: string;
+  once: boolean;
+  hasParameter: boolean;
+}
+
+export interface ClientEvents {
+  properties: EventProperties;
+  execute(client?: DiscordClient, ...hasParameter: unknown[]): Promise<void> | void;
+}
+
+export interface CommandProperties {
+  name: string;
+  description: string;
+  usage: string;
+  cooldown: number;
+  noDM: boolean;
+  ownerOnly: boolean;
+  structure: object;
+}
+
+export interface SlashCommand {
+  properties: CommandProperties;
+  execute(interaction: CommandInteraction): Promise<void>;
+}
+
+declare module 'discord.js' {
+  interface Client {
+    commands: Collection<string, SlashCommand>;
+    cooldowns: Collection<string, Collection<string, number>>;
+  }
 }

@@ -1,13 +1,20 @@
+import type { CommandProperties } from '../@types/index';
 import { queryGet, queryGetAll, queryRun } from '../database';
 import { CommandInteraction } from 'discord.js';
 import { commandEmbed } from '../util/utility';
 
-export const name = 'test';
-export const description = 'Does stuff';
-export const usage = '/test';
-export const cooldown = null;
-export const noDM = false;
-export const ownerOnly = true;
+export const properties: CommandProperties = {
+  name: 'test',
+  description: 'Does stuff',
+  usage: '/test',
+  cooldown: 0,
+  noDM: false,
+  ownerOnly: true,
+  structure: {
+    name: 'test',
+    description: 'does stuff',
+  },
+};
 
 export const execute = async (interaction: CommandInteraction) => {
   try {
@@ -20,9 +27,4 @@ export const execute = async (interaction: CommandInteraction) => {
   } catch (err) {
     console.log(err);
   }
-};
-
-export const structure = {
-  name: 'test',
-  description: 'does stuff',
 };

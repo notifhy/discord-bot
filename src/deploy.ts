@@ -1,3 +1,4 @@
+import type { SlashCommand } from './@types/index';
 import { clientID, testGuild, discordAPIkey as token } from '../config.json';
 import { Routes } from 'discord-api-types/v9';
 import { REST } from '@discordjs/rest';
@@ -10,8 +11,8 @@ const commandFiles = fs.readdirSync('./commands').filter(file => file.endsWith('
 	try {
     for (const file of commandFiles) {
       // eslint-disable-next-line no-await-in-loop
-      const command = await import(`./commands/${file}`);
-      commands.push(command.structure);
+      const { properties: { structure } }: SlashCommand = await import(`./commands/${file}`);
+      commands.push(structure);
     }
 
 		console.log('Started refreshing application (/) commands.');

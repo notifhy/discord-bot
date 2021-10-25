@@ -1,13 +1,37 @@
-import type { SlashCommand } from '../@types/index';
+import type { CommandProperties, SlashCommand } from '../@types/index';
 import { CommandInteraction } from 'discord.js';
 import { commandEmbed } from '../util/utility';
 
-export const name = 'help';
-export const description = 'Displays helpful information and available commands';
-export const usage = '/help [commands/information] <command>';
-export const cooldown = 5000;
-export const noDM = false;
-export const ownerOnly = false;
+export const properties: CommandProperties = {
+  name: 'help',
+  description: 'Displays helpful information and available commands',
+  usage: '/help [commands/information] <command>',
+  cooldown: 5000,
+  noDM: false,
+  ownerOnly: false,
+  structure: {
+    name: 'help',
+    description: 'Displays helpful information and available commands',
+    options: [
+      {
+        name: 'commands',
+        type: '1',
+        description: 'Displays information about commands',
+        options: [{
+          name: 'command',
+          type: '3',
+          description: 'A command to get info about. This parameter is compeltely optional',
+          required: false,
+        }],
+      },
+      {
+        name: 'information',
+        description: 'Returns information about this bot ',
+        type: '1',
+      },
+    ],
+  },
+};
 
 export const execute = async (interaction: CommandInteraction) => {
   if (interaction.options.getSubcommand() === 'information') information(interaction);
@@ -40,47 +64,24 @@ async function specificCommand(interaction: CommandInteraction) {
     return;
   }
 
-  commandSearchEmbed.setTitle(`/${command.name}`);
-  if (command.description) commandSearchEmbed.setDescription(`${command.description}`);
-  if (command.cooldown) commandSearchEmbed.addField('Command Cooldown', `${command.cooldown / 1000} second(s)`);
-  if (command.noDM === true) commandSearchEmbed.addField('Direct Messages', 'This command cannot be used in the DM channel');
-  if (command.ownerOnly === true) commandSearchEmbed.addField('Bot Owner', 'Being an owner is required to execute this command');
+  commandSearchEmbed.setTitle(`/${command.properties.name}`);
+  if (command.properties.description) commandSearchEmbed.setDescription(`${command.properties.description}`);
+  if (command.properties.cooldown) commandSearchEmbed.addField('Command Cooldown', `${command.properties.cooldown / 1000} second(s)`);
+  if (command.properties.noDM === true) commandSearchEmbed.addField('Direct Messages', 'This command cannot be used in the DM channel');
+  if (command.properties.ownerOnly === true) commandSearchEmbed.addField('Bot Owner', 'Being an owner is required to execute this command');
 
   await interaction.editReply({ embeds: [commandSearchEmbed] });
 }
 
 async function commands(interaction: CommandInteraction) {
-  const commandsCollection = interaction.client.commands.filter(command => command.ownerOnly === false);
+  const commandsCollection = interaction.client.commands.filter(command => command.properties.ownerOnly === false);
   const allCommandsEmbed = commandEmbed({ color: '#7289DA', interaction: interaction })
     .setTitle('Commands')
     .setDescription('Arguments in brackets are required. Arguments in arrows are sometimes required based on the previous argument. You can use the command /help [command] [a command] to see more about a specific command.');
 
   for (const command of commandsCollection.values()) {
-    allCommandsEmbed.addField(`**${command.usage}**`, command.description);
+    allCommandsEmbed.addField(`**${command.properties.usage}**`, command.properties.description);
   }
 
   await interaction.editReply({ embeds: [allCommandsEmbed] });
 }
-
-export const structure = {
-  name: 'help',
-  description: 'Displays helpful information and available commands',
-  options: [
-    {
-      name: 'commands',
-      type: '1',
-      description: 'Displays information about commands',
-      options: [{
-        name: 'command',
-        type: '3',
-        description: 'A command to get info about. This parameter is compeltely optional',
-        required: false,
-      }],
-    },
-    {
-      name: 'information',
-      description: 'Returns information about this bot ',
-      type: '1',
-    },
-  ],
-};

@@ -1,4 +1,4 @@
-import type { SlashCommand } from '../@types/index';
+import type { CommandProperties, SlashCommand } from '../@types/index';
 import { clientID, testGuild, discordAPIkey as token } from '../../config.json';
 import { CommandInteraction } from 'discord.js';
 import { commandEmbed } from '../util/utility';
@@ -6,12 +6,62 @@ import { Routes } from 'discord-api-types/v9';
 import { REST } from '@discordjs/rest';
 import fs from 'fs';
 
-export const name = 'deploy';
-export const description = 'Deploy commands';
-export const usage = '/deploy [global/local] [user/owner]';
-export const cooldown = 5000;
-export const noDM = false;
-export const ownerOnly = true;
+export const properties: CommandProperties = {
+  name: 'deploy',
+  description: 'Deploy commands',
+  usage: '/deploy [global/local] [user/owner]',
+  cooldown: 5000,
+  noDM: false,
+  ownerOnly: true,
+  structure: {
+    name: 'deploy',
+    description: 'Displays helpful information and available commands',
+    options: [
+      {
+        name: 'scope',
+        description: 'Global or Guild',
+        type: 3,
+        required: true,
+        choices: [
+          {
+            name: 'Global',
+            value: 'global',
+          },
+          {
+            name: 'Guild',
+            value: 'guild',
+          },
+        ],
+      },
+      {
+        name: 'type',
+        description: 'User or Owner commands',
+        type: 3,
+        required: true,
+        choices: [
+          {
+            name: 'User',
+            value: 'user',
+          },
+          {
+            name: 'Owner',
+            value: 'owner',
+          },
+          {
+            name: 'Both',
+            value: 'both',
+          },
+        ],
+      },
+      {
+        name: 'guild',
+        description: 'Guild ID',
+        type: 3,
+        required: false,
+      },
+    ],
+  },
+};
 
 export const execute = async (interaction: CommandInteraction) => {
   const commandFiles = fs.readdirSync(__dirname).filter(file => file.endsWith('.ts'));
@@ -20,9 +70,9 @@ export const execute = async (interaction: CommandInteraction) => {
 
   for (const file of commandFiles) {
     // eslint-disable-next-line no-await-in-loop
-    const command: SlashCommand = await import(`../commands/${file}`);
-    if (command.ownerOnly === false) userCommands.push(command.structure);
-    else if (command.ownerOnly === true) ownerCommands.push(command.structure);
+    const { properties: { ownerOnly, structure } }: SlashCommand = await import(`../commands/${file}`);
+    if (ownerOnly === false) userCommands.push(structure);
+    else if (ownerOnly === true) ownerCommands.push(structure);
   }
 
   const scope = interaction.options.getString('scope');
@@ -51,53 +101,4 @@ export const execute = async (interaction: CommandInteraction) => {
     .setDescription(JSON.stringify(commands).slice(0, 4096) ?? 'None');
 
   await interaction.editReply({ embeds: [successEmbed] });
-};
-
-export const structure = {
-  name: 'deploy',
-  description: 'Displays helpful information and available commands',
-  options: [
-    {
-      name: 'scope',
-      description: 'Global or Guild',
-      type: 3,
-      required: true,
-      choices: [
-        {
-          name: 'Global',
-          value: 'global',
-        },
-        {
-          name: 'Guild',
-          value: 'guild',
-        },
-      ],
-    },
-    {
-      name: 'type',
-      description: 'User or Owner commands',
-      type: 3,
-      required: true,
-      choices: [
-        {
-          name: 'User',
-          value: 'user',
-        },
-        {
-          name: 'Owner',
-          value: 'owner',
-        },
-        {
-          name: 'Both',
-          value: 'both',
-        },
-      ],
-    },
-    {
-      name: 'guild',
-      description: 'Guild ID',
-      type: 3,
-      required: false,
-    },
-  ],
 };

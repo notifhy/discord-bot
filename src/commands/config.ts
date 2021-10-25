@@ -1,14 +1,54 @@
+import type { CommandProperties, Config } from '../@types/index';
 import { CommandInteraction } from 'discord.js';
 import { commandEmbed } from '../util/utility';
-import type { Config } from '../@types/index';
 import * as fs from 'fs/promises';
 
-export const name = 'config';
-export const description = 'Configure the bot';
-export const usage = '/config [block/userlimit/devmode/api]';
-export const cooldown = 5000;
-export const noDM = false;
-export const ownerOnly = true;
+export const properties: CommandProperties = {
+  name: 'config',
+  description: 'Configure the bot',
+  usage: '/config [block/userlimit/devmode/api]',
+  cooldown: 5000,
+  noDM: false,
+  ownerOnly: true,
+  structure: {
+    name: 'config',
+    description: 'Toggles dynamic settings',
+    options: [
+      {
+        name: 'block',
+        description: 'Blacklists users from using this bot',
+        type: '1',
+        options: [{
+          name: 'user',
+          type: '3',
+          description: 'The user\'s ID',
+          required: true,
+        }],
+      },
+      {
+        name: 'userlimit',
+        description: 'Sets the max amount of users',
+        type: '1',
+        options: [{
+          name: 'limit',
+          type: '4',
+          description: 'The new user limit',
+          required: true,
+        }],
+      },
+      {
+        name: 'devmode',
+        type: '1',
+        description: 'Toggla Developer Mode',
+      },
+      {
+        name: 'api',
+        type: '1',
+        description: 'Toggla API commands and functions',
+      },
+    ],
+  },
+};
 
 //JSON database moment.
 export const execute = async (interaction: CommandInteraction) => {
@@ -44,43 +84,4 @@ export const execute = async (interaction: CommandInteraction) => {
   }
   await fs.writeFile(path, JSON.stringify(readFile));
   await interaction.editReply({ embeds: [responseEmbed] });
-};
-
-export const structure = {
-  name: 'config',
-  description: 'Toggles dynamic settings',
-  options: [
-    {
-      name: 'block',
-      description: 'Blacklists users from using this bot',
-      type: '1',
-      options: [{
-        name: 'user',
-        type: '3',
-        description: 'The user\'s ID',
-        required: true,
-      }],
-    },
-    {
-      name: 'userlimit',
-      description: 'Sets the max amount of users',
-      type: '1',
-      options: [{
-        name: 'limit',
-        type: '4',
-        description: 'The new user limit',
-        required: true,
-      }],
-    },
-    {
-      name: 'devmode',
-      type: '1',
-      description: 'Toggla Developer Mode',
-    },
-    {
-      name: 'api',
-      type: '1',
-      description: 'Toggla API commands and functions',
-    },
-  ],
 };
