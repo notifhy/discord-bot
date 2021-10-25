@@ -1,8 +1,9 @@
-import { Collection, CommandInteraction } from 'discord.js';
-import { replyToError, timeout, commandEmbed, isInstanceOfError } from '../utility';
-import { blockedUsers, userLimit, api, devMode } from '../../dynamicConfig.json';
-import { ownerID } from '../../config.json';
 import type { SlashCommand } from '../@types/index';
+import { commandEmbed, formattedNow, sendWebHook, timeout } from '../util/utility';
+import { constraintEmbedFactory, replyToError } from '../util/error';
+import { nonFatalWebHook, ownerID } from '../../config.json';
+import { Collection, CommandInteraction } from 'discord.js';
+import * as fs from 'fs/promises';
 
 export const name = 'interactionCreate';
 export const once = false;
@@ -14,27 +15,37 @@ export const execute = async (interaction: CommandInteraction): Promise<void> =>
       const command: SlashCommand | undefined = interaction.client.commands.get(interaction.commandName);
       if (command === undefined) return;
 
+      //Import's cache makes it not refresh uponexecuting this file ¯\_(ツ)_/¯
+      const file: Buffer = await fs.readFile('../dynamicConfig.json');
+      const { devMode }: { devMode: string } = JSON.parse(file.toString());
+
+      console.log(`${formattedNow({ date: true })} | Slash Command from ${interaction.user.tag} for the command ${interaction.commandName}`);
+
       await interaction.deferReply({ ephemeral: true });
-      await devConstraint(interaction);
+      await devConstraint(interaction, Boolean(devMode));
       await ownerConstraint(interaction, command);
       await dmConstraint(interaction, command);
       await cooldownConstraint(interaction, command);
       await command.execute(interaction);
     }
   } catch (err) {
-    if (!isInstanceOfError(err)) return; //=== false doesn't work for this. Very intuitive. ts(2571)
-    if (err.name === 'ConstraintError') return; //Add logging
+    if (!(err instanceof Error)) return; //=== false doesn't work for this. Very intuitive. ts(2571)
+    if (err.name === 'ConstraintError') {
+      console.log(`${formattedNow({ date: true })} | ${interaction.user.tag} failed the constraint ${err.message} in interaction ${interaction.id}`);
+      await sendWebHook({ embed: constraintEmbedFactory({ interaction: interaction, error: err }), webHook: nonFatalWebHook });
+      return;
+    }
     await replyToError({ error: err, interaction: interaction });
   }
 };
 
-async function devConstraint(interaction: CommandInteraction) {
+async function devConstraint(interaction: CommandInteraction, devMode: boolean) {
   if (devMode === true && !ownerID.includes(interaction.user.id)) {
     const devModeEmbed = commandEmbed({ color: '#AA0000', interaction: interaction })
 			.setTitle('Developer Mode!')
 			.setDescription('This bot is in developer only mode, likely due to a major issue or an upgrade that is taking place. Please check back later!');
 		await interaction.editReply({ embeds: [devModeEmbed] });
-    throw constraintError();
+    throw constraintError('Developer Mode');
   }
 }
 
@@ -44,7 +55,7 @@ async function ownerConstraint(interaction: CommandInteraction, command: SlashCo
       .setTitle(`Insufficient Permissions!`)
      .setDescription('You cannot execute this command witout being an owner!');
    await interaction.editReply({ embeds: [ownerEmbed] });
-   throw constraintError();
+   throw constraintError('Owner Requirement');
  }
 }
 
@@ -54,7 +65,7 @@ async function dmConstraint(interaction: CommandInteraction, command: SlashComma
       .setTitle(`DM Channel!`)
       .setDescription('You cannot execute this command in the DM channel! Please switch to a server channel!');
     await interaction.editReply({ embeds: [dmEmbed] });
-    throw constraintError();
+    throw constraintError('DM Channel');
   }
 }
 
@@ -81,7 +92,7 @@ async function cooldownConstraint(interaction: CommandInteraction, command: Slas
       .setDescription(`The cooldown has expired! You can now execute the command ${interaction.commandName}!`);
 
     await interaction.editReply({ embeds: [cooldownOverEmbed] });
-    throw constraintError();
+    throw constraintError('Cooldown');
   }
 
   timestamps!.set(interaction.user.id, Date.now());

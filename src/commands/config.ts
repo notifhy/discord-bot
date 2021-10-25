@@ -1,5 +1,5 @@
 import { CommandInteraction } from 'discord.js';
-import { commandEmbed } from '../utility';
+import { commandEmbed } from '../util/utility';
 import type { Config } from '../@types/index';
 import * as fs from 'fs/promises';
 
@@ -14,8 +14,8 @@ export const ownerOnly = true;
 export const execute = async (interaction: CommandInteraction) => {
   const responseEmbed = commandEmbed({ color: '#7289DA', interaction: interaction });
   const path = '../dynamicConfig.json';
-  const test: any = await fs.readFile(path);
-  const readFile: Config = JSON.parse(test);
+  const file: any = await fs.readFile(path);
+  const readFile: Config = JSON.parse(file);
 
   if (interaction.options.getSubcommand() === 'block') {
     const user = interaction.options.getString('user') as string;
@@ -33,7 +33,7 @@ export const execute = async (interaction: CommandInteraction) => {
     readFile.userLimit = interaction.options.getInteger('limit') as number;
     responseEmbed.setTitle('User Limit Updated!');
     responseEmbed.setDescription(`User Limit is now ${readFile.userLimit}!`);
-  } else if (interaction.options.getSubcommand() === 'devMode') {
+  } else if (interaction.options.getSubcommand() === 'devmode') {
     readFile.devMode = !readFile.devMode;
     responseEmbed.setTitle(`Developer Mode Updated!`);
     responseEmbed.setDescription(`Developer Mode is now ${readFile.devMode === true ? 'on' : 'off'}!`);

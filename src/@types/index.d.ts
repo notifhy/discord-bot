@@ -25,6 +25,11 @@ declare module 'discord.js' {
   }
 }
 
+export interface WebHookConfig {
+  id: string;
+  token: string;
+}
+
 export interface HTTPError extends Error {
   name: string;
   message: string;

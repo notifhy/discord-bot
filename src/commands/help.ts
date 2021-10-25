@@ -1,6 +1,6 @@
-import { CommandInteraction } from 'discord.js';
-import { commandEmbed } from '../utility';
 import type { SlashCommand } from '../@types/index';
+import { CommandInteraction } from 'discord.js';
+import { commandEmbed } from '../util/utility';
 
 export const name = 'help';
 export const description = 'Displays helpful information and available commands';
@@ -29,7 +29,7 @@ async function information(interaction: CommandInteraction) {
 async function specificCommand(interaction: CommandInteraction) {
   const commandArg = interaction.options.getString('command') as string;
   const command = interaction.client.commands.get(commandArg) as SlashCommand;
-  const commandSearchEmbed = commandEmbed({ color: '#7289DA', interaction: interaction })
+  const commandSearchEmbed = commandEmbed({ color: '#7289DA', interaction: interaction });
 
   if (!command) {
     commandSearchEmbed

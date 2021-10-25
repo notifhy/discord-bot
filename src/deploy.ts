@@ -1,6 +1,6 @@
-import { REST } from '@discordjs/rest';
+import { clientID, testGuild, discordAPIkey as token } from '../config.json';
 import { Routes } from 'discord-api-types/v9';
-import { discordAPIkey as token, clientID, testGuild } from '../config.json';
+import { REST } from '@discordjs/rest';
 import fs from 'fs';
 
 const commands: any = [];

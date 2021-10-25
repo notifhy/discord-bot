@@ -1,5 +1,5 @@
-import { formattedNow } from '../utility';
 import type { Guild } from 'discord.js';
+import { formattedNow } from '../util/utility';
 
 export const name = 'guildCreate';
 export const once = false;

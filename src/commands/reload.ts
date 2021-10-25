@@ -1,6 +1,6 @@
-import { CommandInteraction } from 'discord.js';
-import { commandEmbed } from '../utility';
 import type { SlashCommand } from '../@types';
+import { CommandInteraction } from 'discord.js';
+import { commandEmbed } from '../util/utility';
 import * as fs from 'fs';
 
 export const name = 'reload';

@@ -1,5 +1,5 @@
 import { CommandInteraction } from 'discord.js';
-import { commandEmbed, isInstanceOfError } from '../utility';
+import { commandEmbed } from '../util/utility';
 
 export const name = 'eval';
 export const description = 'Evaluates a string';
@@ -27,7 +27,7 @@ export const execute = async (interaction: CommandInteraction) => {
 
     await interaction.editReply({ embeds: [evalEmbed] });
   } catch (err) {
-    if (!isInstanceOfError(err)) return;
+    if (!(err instanceof Error)) return;
     const outputMaxLength = Boolean(err.message.length >= 1024);
     const evalEmbed = commandEmbed({ color: '#FF5555', interaction: interaction })
       .setTitle('Failed Eval!')

@@ -1,6 +1,6 @@
-import { Client, Intents, Collection } from 'discord.js';
-import { discordAPIkey as token } from '../config.json';
 import type { ClientEvents, SlashCommand } from './@types/index';
+import { Client, Collection, Intents } from 'discord.js';
+import { discordAPIkey as token } from '../config.json';
 import * as fs from 'fs';
 
 const client = new Client({
