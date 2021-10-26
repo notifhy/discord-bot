@@ -1,6 +1,7 @@
 import type { CommandInteraction, MessageEmbed } from 'discord.js';
 import { commandEmbed, formattedUnix, sendWebHook } from '../utility';
 import { errorWebhook } from '../../../config.json';
+import { ConstraintError } from './ConstraintError';
 
 export async function replyToError({
   error,
@@ -29,7 +30,7 @@ export function constraintEmbedFactory({
   error,
 }: {
   interaction: CommandInteraction,
-  error: Error,
+  error: ConstraintError,
 }) {
   const constraintEmbed = commandEmbed({ color: '#AA0000', interaction: interaction })
     .setTitle('User Failed Constraints')

@@ -32,8 +32,8 @@ export const execute = async (interaction: CommandInteraction): Promise<void> =>
       await command.execute(interaction);
     }
   } catch (err) {
-    if (!(err instanceof ConstraintError)) return; //=== false doesn't work for this. Very intuitive. ts(2571)
-    if (err.name === 'ConstraintError') {
+    if (!(err instanceof Error)) return; //=== false doesn't work for this. Very intuitive. ts(2571)
+    if (err instanceof ConstraintError) {
       console.log(`${formattedUnix({ date: true, utc: true })} | ${interaction.user.tag} failed the constraint ${err.message} in interaction ${interaction.id}`);
       await sendWebHook({ embed: constraintEmbedFactory({ interaction: interaction, error: err }), webHook: nonFatalWebHook });
       return;
