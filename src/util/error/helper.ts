@@ -1,6 +1,6 @@
 import type { CommandInteraction, MessageEmbed } from 'discord.js';
-import { commandEmbed, formattedNow, sendWebHook } from './utility';
-import { errorWebhook } from '../../config.json';
+import { commandEmbed, formattedUnix, sendWebHook } from '../utility';
+import { errorWebhook } from '../../../config.json';
 
 export async function replyToError({
   error,
@@ -13,17 +13,14 @@ export async function replyToError({
   const payLoad = { embeds: [userErrorEmbed], ephemeral: true };
 
   try {
+    console.error(`${formattedUnix({ date: true, utc: true })} | An error has occurred | ${error.stack ?? error.message}`);
     if (interaction.replied === true || interaction.deferred === true) await interaction.followUp(payLoad);
     else await interaction.reply(payLoad);
   } catch (err) {
     if (!(err instanceof Error)) return;
-    console.error(`${formattedNow({ date: true })} | An error has occured and also failed to notify the user | ${err.stack ?? err.message}`);
+    console.error(`${formattedUnix({ date: true, utc: true })} | An error has occurred and also failed to notify the user | ${err.stack ?? err.message}`);
     const failedNotify = ownerErrorEmbedFactory({ error: err, interaction: interaction });
     await sendWebHook({ embed: failedNotify, webHook: errorWebhook, suppressError: true });
-  } finally {
-    console.error(`${formattedNow({ date: true })} | An error has occured | ${error.stack ?? error.message}`);
-    const errorReportWebhook = ownerErrorEmbedFactory({ error: error, interaction: interaction });
-    await sendWebHook({ embed: errorReportWebhook, webHook: errorWebhook, suppressError: true });
   }
 }
 
@@ -43,7 +40,7 @@ export function constraintEmbedFactory({
   return constraintEmbed;
 }
 
-function ownerErrorEmbedFactory({
+export function ownerErrorEmbedFactory({
   error,
   interaction,
 }: {
@@ -57,13 +54,13 @@ function ownerErrorEmbedFactory({
     .addField('User', `Tag: ${interaction.user.tag}\nID: ${interaction.user.id}`)
     .addField('Interaction', interaction.id)
     .addField('Source', `Channel Type: ${interaction.channel?.type}\nGuild Name: ${interaction.guild?.name}\nGuild ID: ${interaction.guild?.id}\nOwner ID: ${interaction.guild?.ownerId ?? 'None'}\nGuild Member Count: ${interaction.guild?.memberCount}`)
-    .addField('Extra', `Ping: ${interaction.client.ws.ping}\nCreated At: ${formattedNow({ ms: interaction.createdTimestamp })}`);
+    .addField('Extra', `Websocket Ping: ${interaction.client.ws.ping}\nCreated At: ${formattedUnix({ ms: interaction.createdTimestamp, date: true, utc: true })}`);
 
   if (stack.length >= 4096 === true) ownerErrorEmbed.addField('Over Max Length', 'The stack is over 4096 characters long and was cut short');
   return ownerErrorEmbed;
 }
 
-function userErrorEmbedFactory({
+export function userErrorEmbedFactory({
   error,
   interaction,
 }: {
@@ -73,7 +70,7 @@ function userErrorEmbedFactory({
   const messageOverLimit = error.message.length >= 4096;
   const userErrorEmbed = commandEmbed({ color: '#AA0000', interaction: interaction })
     .setTitle(`Oops!`)
-    .setDescription(`An error occured while executing the ${interaction ? `command \`${interaction.commandName}\`` : `button`}! This error has been automatically forwarded for review. Sorry.`)
+    .setDescription(`An error occurred while executing the ${interaction ? `command \`${interaction.commandName}\`` : `button`}! This error has been automatically forwarded for review. Sorry.`)
     .addField(`${error.name}:`, error.message.replace(/(\r\n|\n|\r)/gm, '').slice(0, 1024) || '\u200B');
   if (messageOverLimit) userErrorEmbed.addField('Over Max Length', 'The message of this error is over 1024 characters long and was cut short');
   userErrorEmbed.addField(`Interaction`, interaction.id);

@@ -8,5 +8,5 @@ export const properties: EventProperties = {
 };
 
 export const execute = (client: Client) => {
-  console.log(`Logged in as ${client!.user?.tag}!`);
+  console.log(`Logged in as ${client!.user!.tag}!`);
 };

@@ -16,13 +16,13 @@ export const properties: CommandProperties = {
   },
 };
 
-export const execute = async (interaction: CommandInteraction) => {
+export const execute = async (interaction: CommandInteraction): Promise<void> => {
   try {
-    const string = '2';
     const tablename = 'barry';
-    const collumms = 'bay INTEGER, PLOY NOT NULL';
-    const two = await queryRun(`CREATE TABLE IF NOT EXISTS ${tablename}(${collumms})`);
-    console.log(two);
+    const columns = 'bay INTEGER, PLOY NOT NULL';
+    const now = Date.now();
+    const two = await queryGetAll(`SELECT * FROM test`);
+    console.log(two, Date.now() - now);
     await interaction.editReply({ content: `placeholder` });
   } catch (err) {
     console.log(err);

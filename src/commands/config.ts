@@ -39,23 +39,23 @@ export const properties: CommandProperties = {
       {
         name: 'devmode',
         type: '1',
-        description: 'Toggla Developer Mode',
+        description: 'Toggle Developer Mode',
       },
       {
         name: 'api',
         type: '1',
-        description: 'Toggla API commands and functions',
+        description: 'Toggle API commands and functions',
       },
     ],
   },
 };
 
 //JSON database moment.
-export const execute = async (interaction: CommandInteraction) => {
+export const execute = async (interaction: CommandInteraction): Promise<void> => {
   const responseEmbed = commandEmbed({ color: '#7289DA', interaction: interaction });
   const path = '../dynamicConfig.json';
-  const file: any = await fs.readFile(path);
-  const readFile: Config = JSON.parse(file);
+  const file: Buffer = await fs.readFile(path);
+  const readFile: Config = JSON.parse(file.toString());
 
   if (interaction.options.getSubcommand() === 'block') {
     const user = interaction.options.getString('user') as string;

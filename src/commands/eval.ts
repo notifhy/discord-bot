@@ -21,7 +21,7 @@ export const properties: CommandProperties = {
   },
 };
 
-export const execute = async (interaction: CommandInteraction) => {
+export const execute = async (interaction: CommandInteraction): Promise<void> => {
   const input = interaction.options.getString('string') as string;
 
   try {
@@ -35,7 +35,7 @@ export const execute = async (interaction: CommandInteraction) => {
       .addField(`Input`, `\`\`\`javascript\n${input}\n\`\`\``)
       .addField(`Output`, `\`\`\`javascript\n${output}\n\`\`\``)
       .addField('Type', `\`\`\`${typeof output}\`\`\``)
-      .addField('Time Taken', `\`\`\`${timeTaken} milisecond${timeTaken === 1 ? '' : 's'}\`\`\``);
+      .addField('Time Taken', `\`\`\`${timeTaken} millisecond${timeTaken === 1 ? '' : 's'}\`\`\``);
     if (outputMaxLength === true) evalEmbed.addField('Over Max Length', 'The output is over 4096 characters long');
 
     await interaction.editReply({ embeds: [evalEmbed] });

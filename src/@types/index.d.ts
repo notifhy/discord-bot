@@ -44,9 +44,13 @@ export interface CommandProperties {
   structure: object;
 }
 
+export interface CommandExecute {
+  (interaction: CommandInteraction): Promise<void>
+}
+
 export interface SlashCommand {
   properties: CommandProperties;
-  execute(interaction: CommandInteraction): Promise<void>;
+  execute: CommandExecute;
 }
 
 declare module 'discord.js' {

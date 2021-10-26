@@ -4,12 +4,13 @@ import { ColorResolvable, CommandInteraction, MessageEmbed, WebhookClient } from
 //Handles HTTP requests and deals with errors
 export function createHTTPRequest(url: string, { ...fetchOptions }, timesAborted = 0): Object { //Not ready, please fix before use
   const controller = new AbortController();
-  const timeout = setTimeout(() => controller.abort(), 250).unref();
+  const abortTimeout = setTimeout(() => controller.abort(), 1000).unref();
   return fetch(url, {
     signal: controller.signal,
     ...fetchOptions,
   })
   .then(async response => {
+    clearTimeout(abortTimeout);
     if (!response.ok) {
       const newError = new Error(`HTTP status ${response.status}`) as HTTPError,
       responseJson = await response.json().catch(err => {
@@ -49,20 +50,20 @@ export async function sendWebHook({
     await new WebhookClient({ id: webHook.id, token: webHook.token }).send({ embeds: [embed] });
   } catch (err) {
     if (!(err instanceof Error)) return;
-    console.error(`${formattedNow({ date: true })} | An error has occured while sending an WebHook | ${err.stack ?? err.message}`);
+    console.error(`${formattedUnix({ date: true, utc: true })} | An error has occurred while sending an WebHook | ${err.stack ?? err.message}`);
     if (suppressError === true) return;
     throw err;
   }
 }
 
-export function formattedNow({
+export function formattedUnix({
   ms = Date.now(),
   date = false,
   utc = true,
 }: {
   ms?: number | Date,
-  date?: boolean,
-  utc?: boolean,
+  date: boolean,
+  utc: boolean,
 }): string | null {
   const newDate = new Date(ms);
   if (!ms || ms < 0 || Object.prototype.toString.call(newDate) !== '[object Date]') return null;
@@ -78,7 +79,7 @@ export function commandEmbed({
 }): MessageEmbed {
   const embed = new MessageEmbed()
     .setColor(color)
-    .setFooter(`/${interaction.commandName}`, interaction.user.displayAvatarURL({ dynamic: true }))
+    .setFooter(`/${interaction.commandName} • ${Date.now() - interaction.createdTimestamp}ms`, interaction.user.displayAvatarURL({ dynamic: true }))
     .setTimestamp();
   return embed;
 }

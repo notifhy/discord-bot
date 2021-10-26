@@ -20,7 +20,7 @@ export const properties: CommandProperties = {
         options: [{
           name: 'command',
           type: '3',
-          description: 'A command to get info about. This parameter is compeltely optional',
+          description: 'A command to get info about. This parameter is completely optional',
           required: false,
         }],
       },
@@ -33,7 +33,7 @@ export const properties: CommandProperties = {
   },
 };
 
-export const execute = async (interaction: CommandInteraction) => {
+export const execute = async (interaction: CommandInteraction): Promise<void> => {
   if (interaction.options.getSubcommand() === 'information') information(interaction);
   else if (interaction.options.getString('command')) await specificCommand(interaction);
 	else await commands(interaction);
@@ -51,11 +51,11 @@ async function information(interaction: CommandInteraction) {
 }
 
 async function specificCommand(interaction: CommandInteraction) {
-  const commandArg = interaction.options.getString('command') as string;
-  const command = interaction.client.commands.get(commandArg) as SlashCommand;
+  const commandArg: string = interaction.options.getString('command') as string;
+  const command: SlashCommand | undefined = interaction.client.commands.get(commandArg);
   const commandSearchEmbed = commandEmbed({ color: '#7289DA', interaction: interaction });
 
-  if (!command) {
+  if (command === undefined) {
     commandSearchEmbed
       .setColor('#ff5555')
       .setTitle(`Invalid Command!`)

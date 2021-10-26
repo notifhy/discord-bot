@@ -15,7 +15,7 @@ export const properties: CommandProperties = {
   },
 };
 
-export const execute = async (interaction: CommandInteraction) => {
+export const execute = async (interaction: CommandInteraction): Promise<void> => {
   const initialPingEmbed = commandEmbed({ color: '#7289DA', interaction: interaction })
     .setTitle(`Pinging..`);
 
@@ -25,6 +25,6 @@ export const execute = async (interaction: CommandInteraction) => {
   const pingEmbed = commandEmbed({ color: embedColor, interaction: interaction })
 		.setColor(interaction.client.ws.ping < 80 && roundTripDelay < 160 ? '#00AA00' : interaction.client.ws.ping < 100 && roundTripDelay < 250 ? '#FFAA00' : '#FF5555')
 		.setTitle(`🏓 Ping!`)
-		.setDescription(`Websocket heartbeat is ${interaction.client.ws.ping}ms. This interaction took ${roundTripDelay}ms from registering the slash command to displaying a message.`);
+		.setDescription(`Websocket heartbeat is ${interaction.client.ws.ping}ms. This interaction took ${roundTripDelay}ms from registering the slash command to displaying the initial message.`);
 	await interaction.editReply({ embeds: [pingEmbed] });
 };

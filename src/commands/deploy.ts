@@ -51,6 +51,10 @@ export const properties: CommandProperties = {
             name: 'Both',
             value: 'both',
           },
+          {
+            name: 'None',
+            value: 'none',
+          },
         ],
       },
       {
@@ -63,7 +67,7 @@ export const properties: CommandProperties = {
   },
 };
 
-export const execute = async (interaction: CommandInteraction) => {
+export const execute = async (interaction: CommandInteraction): Promise<void> => {
   const commandFiles = fs.readdirSync(__dirname).filter(file => file.endsWith('.ts'));
   const userCommands: object[] = [];
   const ownerCommands: object[] = [];
@@ -78,9 +82,15 @@ export const execute = async (interaction: CommandInteraction) => {
   const scope = interaction.options.getString('scope');
   const type = interaction.options.getString('type');
   const guildID = interaction.options.getString('guild');
-  const commands = type === 'both' ? ownerCommands.concat(userCommands) : type === 'owner' ? ownerCommands : userCommands;
+  const commands = type === 'both' ? ownerCommands.concat(userCommands) : type === 'none' ? [] : type === 'owner' ? ownerCommands : userCommands;
 
-  if (scope === 'guild' && guildID === null) throw new Error('No Guild ID specified');
+  if (scope === 'guild' && guildID === null) {
+    const noGuild = commandEmbed({ color: '#ff5555', interaction: interaction })
+      .setTitle('No Guild ID!')
+      .setDescription('You need to specify a Guild ID.');
+    await interaction.editReply({ embeds: [noGuild] });
+    return;
+  }
 
   const rest = new REST({ version: '9' }).setToken(token);
 

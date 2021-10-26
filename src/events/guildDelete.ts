@@ -1,6 +1,6 @@
 import type { EventProperties } from '../@types/index';
 import type { Guild } from 'discord.js';
-import { formattedNow } from '../util/utility';
+import { formattedUnix } from '../util/utility';
 
 export const properties: EventProperties = {
   name: 'guildDelete',
@@ -9,5 +9,5 @@ export const properties: EventProperties = {
 };
 
 export const execute = (guild: Guild): void => {
-  console.log(`${formattedNow({ date: true })} | Bot has left a guild; joined ${formattedNow({ ms: guild.joinedTimestamp, date: true })}. Guild: ${guild.name} | ${guild.id} Guild Owner: ${guild.ownerId} Guild Member Count: ${guild.memberCount - 1} (new count)`);
+  console.log(`${formattedUnix({ date: true, utc: true })} | Bot has left a guild; joined ${formattedUnix({ ms: guild.joinedTimestamp, date: true, utc: true })}. Guild: ${guild.name} | ${guild.id} Guild Owner: ${guild.ownerId} Guild Member Count: ${guild.memberCount - 1} (new count)`);
 };

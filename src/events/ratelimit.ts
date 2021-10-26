@@ -1,6 +1,6 @@
 import type { EventProperties } from '../@types/index';
 import type { RateLimitData } from 'discord.js';
-import { formattedNow } from '../util/utility';
+import { formattedUnix } from '../util/utility';
 
 export const properties: EventProperties = {
   name: 'rateLimit',
@@ -9,5 +9,5 @@ export const properties: EventProperties = {
 };
 
 export const execute = (rateLimitInfo: RateLimitData): void => {
-  console.error(`${formattedNow({ date: true })} | Rate limit: ${JSON.stringify(rateLimitInfo)}`);
+  console.error(`${formattedUnix({ date: true, utc: true })} | Rate limit: ${JSON.stringify(rateLimitInfo)}`);
 };
