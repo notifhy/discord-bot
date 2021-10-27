@@ -41,7 +41,6 @@ export function queryGetAll(query: string): Promise<string[] | number[] | boolea
       const preparedQuery = db.prepare(query);
       const data: any = preparedQuery.all();
       db.close();
-      if (data === undefined) throw SQLiteError('Row is undefined');
       return resolve(data);
     } catch (err) {
       if (!(err instanceof Error)) throw err;

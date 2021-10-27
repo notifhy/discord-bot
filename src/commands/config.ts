@@ -52,7 +52,7 @@ export const properties: CommandProperties = {
 
 //JSON database moment.
 export const execute = async (interaction: CommandInteraction): Promise<void> => {
-  const responseEmbed = commandEmbed({ color: '#7289DA', interaction: interaction });
+  const responseEmbed = commandEmbed({ color: '#7289DA', footer: interaction });
   const path = '../dynamicConfig.json';
   const file: Buffer = await fs.readFile(path);
   const readFile: Config = JSON.parse(file.toString());

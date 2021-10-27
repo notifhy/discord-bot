@@ -72,15 +72,16 @@ export function formattedUnix({
 
 export function commandEmbed({
   color,
-  interaction,
+  footer,
 }: {
   color: ColorResolvable,
-  interaction: CommandInteraction,
+  footer: CommandInteraction | string,
 }): MessageEmbed {
   const embed = new MessageEmbed()
     .setColor(color)
-    .setFooter(`/${interaction.commandName} • ${Date.now() - interaction.createdTimestamp}ms`, interaction.user.displayAvatarURL({ dynamic: true }))
     .setTimestamp();
+  if (footer instanceof CommandInteraction) embed.setFooter(`/${footer.commandName} • ${Date.now() - footer.createdTimestamp}ms`, footer.user.displayAvatarURL({ dynamic: true }));
+  else embed.setFooter(footer, 'https://i.imgur.com/MTClkTu.png');
   return embed;
 }
 

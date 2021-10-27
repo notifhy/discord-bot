@@ -85,7 +85,7 @@ export const execute = async (interaction: CommandInteraction): Promise<void> =>
   const commands = type === 'both' ? ownerCommands.concat(userCommands) : type === 'none' ? [] : type === 'owner' ? ownerCommands : userCommands;
 
   if (scope === 'guild' && guildID === null) {
-    const noGuild = commandEmbed({ color: '#ff5555', interaction: interaction })
+    const noGuild = commandEmbed({ color: '#ff5555', footer: interaction })
       .setTitle('No Guild ID!')
       .setDescription('You need to specify a Guild ID.');
     await interaction.editReply({ embeds: [noGuild] });
@@ -106,7 +106,7 @@ export const execute = async (interaction: CommandInteraction): Promise<void> =>
     );
   }
 
-  const successEmbed = commandEmbed({ color: '#7289DA', interaction: interaction })
+  const successEmbed = commandEmbed({ color: '#7289DA', footer: interaction })
     .setTitle('Success!')
     .setDescription(JSON.stringify(commands).slice(0, 4096) ?? 'None');
 

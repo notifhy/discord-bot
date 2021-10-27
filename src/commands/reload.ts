@@ -49,7 +49,7 @@ async function reloadAllCommands(interaction: CommandInteraction): Promise<void>
     interaction.client.commands.set(newCommand.properties.name, newCommand);
   }
 
-  const reloadedEmbed = commandEmbed({ color: '#7289DA', interaction: interaction })
+  const reloadedEmbed = commandEmbed({ color: '#7289DA', footer: interaction })
     .setTitle(`Reloaded All Commands!`)
     .setDescription(`All commands have been reloaded! This action took ${Date.now() - now} milliseconds.`);
 
@@ -61,7 +61,7 @@ async function reloadCommand(interaction: CommandInteraction): Promise<void> {
   const command: SlashCommand | undefined = interaction.client.commands.get(input);
 
   if (command === undefined) {
-    const noCMDReloadEmbed = commandEmbed({ color: '#FF5555', interaction: interaction })
+    const noCMDReloadEmbed = commandEmbed({ color: '#FF5555', footer: interaction })
       .setColor(`#FF5555`)
       .setTitle(`Unknown Command!`)
       .setDescription(`There is no command with the name \`${input}\`!`);
@@ -76,7 +76,7 @@ async function reloadCommand(interaction: CommandInteraction): Promise<void> {
   const newCommand: SlashCommand = require(`./${command.properties.name}.ts`);
   interaction.client.commands.set(newCommand.properties.name, newCommand);
 
-  const reloadedEmbed = commandEmbed({ color: '#7289DA', interaction: interaction })
+  const reloadedEmbed = commandEmbed({ color: '#7289DA', footer: interaction })
     .setTitle(`/${input} Reloaded!`)
     .setDescription(`/${input} was successfully reloaded!`);
 

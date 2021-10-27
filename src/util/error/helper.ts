@@ -20,7 +20,7 @@ export async function replyToError({
   } catch (err) {
     if (!(err instanceof Error)) return;
     console.error(`${formattedUnix({ date: true, utc: true })} | An error has occurred and also failed to notify the user | ${err.stack ?? err.message}`);
-    const failedNotify = ownerErrorEmbedFactory({ error: err, interaction: interaction });
+    const failedNotify = commandErrorEmbedFactory({ error: err, interaction: interaction });
     await sendWebHook({ embed: failedNotify, webHook: errorWebhook, suppressError: true });
   }
 }
@@ -31,8 +31,8 @@ export function constraintEmbedFactory({
 }: {
   interaction: CommandInteraction,
   error: ConstraintError,
-}) {
-  const constraintEmbed = commandEmbed({ color: '#AA0000', interaction: interaction })
+}): MessageEmbed {
+  const constraintEmbed = commandEmbed({ color: '#AA0000', footer: interaction })
     .setTitle('User Failed Constraints')
     .addField('Constraint Type', error.message)
     .addField('User', `Tag: ${interaction.user.tag}\nID: ${interaction.user.id}`)
@@ -41,7 +41,7 @@ export function constraintEmbedFactory({
   return constraintEmbed;
 }
 
-export function ownerErrorEmbedFactory({
+export function commandErrorEmbedFactory({
   error,
   interaction,
 }: {
@@ -49,7 +49,7 @@ export function ownerErrorEmbedFactory({
   interaction: CommandInteraction,
 }): MessageEmbed {
   const stack = error.stack ?? (error.message || '\u200B');
-  const ownerErrorEmbed = commandEmbed({ color: '#AA0000', interaction: interaction })
+  const ownerErrorEmbed = commandEmbed({ color: '#AA0000', footer: interaction })
     .setTitle(`Error`)
     .setDescription(stack.slice(0, 4096))
     .addField('User', `Tag: ${interaction.user.tag}\nID: ${interaction.user.id}`)
@@ -69,7 +69,7 @@ export function userErrorEmbedFactory({
   interaction: CommandInteraction,
 }): MessageEmbed {
   const messageOverLimit = error.message.length >= 4096;
-  const userErrorEmbed = commandEmbed({ color: '#AA0000', interaction: interaction })
+  const userErrorEmbed = commandEmbed({ color: '#AA0000', footer: interaction })
     .setTitle(`Oops!`)
     .setDescription(`An error occurred while executing the ${interaction ? `command \`${interaction.commandName}\`` : `button`}! This error has been automatically forwarded for review. Sorry.`)
     .addField(`${error.name}:`, error.message.replace(/(\r\n|\n|\r)/gm, '').slice(0, 1024) || '\u200B');
