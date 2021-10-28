@@ -38,16 +38,18 @@ export function createHTTPRequest(url: string, { ...fetchOptions }, timesAborted
 }
 
 export async function sendWebHook({
+  content,
   embed,
   webHook,
   suppressError = true,
 }: {
+  content?: string,
   embed: MessageEmbed,
   webHook: WebHookConfig,
   suppressError?: boolean,
 }): Promise<void> {
   try {
-    await new WebhookClient({ id: webHook.id, token: webHook.token }).send({ embeds: [embed] });
+    await new WebhookClient({ id: webHook.id, token: webHook.token }).send({ content: content, embeds: [embed] });
   } catch (err) {
     if (!(err instanceof Error)) return;
     console.error(`${formattedUnix({ date: true, utc: true })} | An error has occurred while sending an WebHook | ${err.stack ?? err.message}`);
@@ -111,8 +113,8 @@ export function timeAgo(ms: number): number | null {
   return Date.now() - ms;
 }
 
-export function cleanLength(ms: number): string | null {
-  if (ms < 0 || ms === null || isNaN(ms)) return null;
+export function cleanLength(ms: number | null): string | null {
+  if (ms === null || ms < 0 || isNaN(ms)) return null;
   let seconds = Math.round(ms / 1000);
   const days = Math.floor(seconds / (24 * 60 * 60));
   seconds -= days * 24 * 60 * 60;

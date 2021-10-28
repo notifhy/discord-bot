@@ -8,14 +8,14 @@ import Database from 'better-sqlite3';
   const output = await queryGet(`SELECT tests FROM test WHERE tests = '${string}' `);
 */
 
-export function queryGet(query: string): Promise<any> {
-  return new Promise<any>(resolve => {
+export function queryGet(query: string): Promise<unknown> {
+  return new Promise<unknown>(resolve => {
     const db = new Database('../database.db');
     //'SELECT count(1) FROM users
 
     try {
       const preparedQuery = db.prepare(query);
-      const data: any = preparedQuery.get();
+      const data: unknown = preparedQuery.get();
       db.close();
       if (data === undefined) throw SQLiteError('Row is undefined');
       return resolve(data);
@@ -32,14 +32,14 @@ export function queryGet(query: string): Promise<any> {
   const output = await queryGetAll(`SELECT tests FROM test WHERE tests = '${string}' `);
 */
 
-export function queryGetAll(query: string): Promise<string[] | number[] | boolean[]> {
-  return new Promise<any>(resolve => {
+export function queryGetAll(query: string): Promise<unknown> {
+  return new Promise<unknown>(resolve => {
     const db = new Database('../database.db');
     //SELECT * FROM ${table}
 
     try {
       const preparedQuery = db.prepare(query);
-      const data: any = preparedQuery.all();
+      const data: unknown = preparedQuery.all();
       db.close();
       return resolve(data);
     } catch (err) {
@@ -52,7 +52,7 @@ export function queryGetAll(query: string): Promise<string[] | number[] | boolea
 
 /*
   const tablename = 'barry';
-  const collumms = 'bay INTEGER, PLOY NOT NULL';
+  const columns = 'bay INTEGER, PLOY NOT NULL';
   await queryRun(`CREATE TABLE IF NOT EXISTS ${tablename}(${collumms})`);
 */
 

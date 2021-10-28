@@ -1,4 +1,4 @@
-import type { CommandInteraction, MessageEmbed } from 'discord.js';
+import type { CommandInteraction, EmbedFieldData, MessageEmbed } from 'discord.js';
 import { commandEmbed, formattedUnix, sendWebHook } from '../utility';
 import { errorWebhook } from '../../../config.json';
 import { ConstraintError } from './ConstraintError';
@@ -76,4 +76,17 @@ export function userErrorEmbedFactory({
   if (messageOverLimit) userErrorEmbed.addField('Over Max Length', 'The message of this error is over 1024 characters long and was cut short');
   userErrorEmbed.addField(`Interaction`, interaction.id);
   return userErrorEmbed;
+}
+
+export function hypixelAPIerrorEmbedFactory({
+  incidentID,
+  automatic,
+}: {
+  incidentID: string,
+  automatic: boolean,
+}): MessageEmbed {
+  const hypixelAPIErrorEmbed = commandEmbed({ color: '#AA0000', footer: `Incident ${incidentID}` })
+    .setTitle('New Incident')
+    .addField('Type', automatic === true ? 'Manual' : 'Automatic');
+  return hypixelAPIErrorEmbed;
 }

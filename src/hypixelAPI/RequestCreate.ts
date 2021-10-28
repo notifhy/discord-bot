@@ -1,53 +1,84 @@
-import { hypixelAPIkey, hypixelAPIWebhook } from '../../config.json';
-import { commandEmbed, sendWebHook, timeout } from '../util/utility';
-import { AbortError, FetchError } from 'node-fetch';
+import type { User } from '../@types/database';
+import type { HypixelAPI } from '../@types/hypixel';
+import { hypixelAPIWebhook, keyLimit, ownerID } from '../../config.json';
+import { cleanLength, formattedUnix, sendWebHook, timeout } from '../util/utility';
+import { AbortError } from 'node-fetch';
 import { RequestHandler } from './RequestHandler';
 import { queryGetAll, queryRun } from '../database';
+import { RateLimitError } from './RateLimitError';
+import { hypixelAPIerrorEmbedFactory } from '../util/error/helper';
 
-class RequestCreate {
+export class RequestCreate {
   requestHandler: RequestHandler;
-  keyLimit: number;
 
   constructor() {
     this.requestHandler = new RequestHandler();
-    this.keyLimit = 120;
   }
 
-  async loopCreator(url: string) {
-    try {
-      const userTable = 'users';
-      const users = await queryGetAll(`SELECT * FROM ${userTable}`);
-      const keyOverhead = 90 / 100;
-      const keyOverheadValue = this.keyLimit * keyOverhead;
-      const intervalBetweenRequests = keyOverheadValue / users.length * 1000;
+  async loopMaker(urls: string[]) {
+    const userTable = 'users';
+    const users = await queryGetAll(`SELECT * FROM ${userTable}`) as User[];
+    const keyOverhead = this.requestHandler.instance.keyPercentage / 100;
+    const keyOverheadValue = keyLimit * keyOverhead;
+    const intervalBetweenRequests = keyOverheadValue / users.length * 1000;
 
-      for (const user of users) {
-        this.request(url).then(async (data) => {
-          await queryRun('');
-        });
-        // eslint-disable-next-line no-await-in-loop
-        await timeout(intervalBetweenRequests);
-      }
-    } catch (err) {
-
+    for (const user of users) {
+      this.call(urls, user);
+      // eslint-disable-next-line no-await-in-loop
+      await timeout(intervalBetweenRequests);
     }
   }
 
-  async request(url: string) {
+  async call(urls: string[], user: User) {
     try {
-      const response = await this.requestHandler.request(url, {
-        headers: {
-          'API-Key': hypixelAPIkey,
-        },
-      });
+      const errors = this.requestHandler.instance.errorsLastMinute < 2;
+      const abortErrors = this.requestHandler.instance.errorsLastMinute < 2;
+      const rateLimit = this.requestHandler.rateLimit.rateLimit === false;
+      const rateLimitExpired = Date.now() > (this.requestHandler.instance.resumeAfter ?? 0);
 
-      return this.requestHandler.cleanRequest(response as Response | AbortError | FetchError);
+      this.requestHandler.instance.sessionUses += 1;
+
+      if (rateLimit === false || rateLimitExpired === false || errors === false || abortErrors === false) return;
+
+      const promises: HypixelAPI[] = await Promise.all(urls.map(url =>
+        this.requestHandler.request(url, user.uuid),
+      ));
+
+      const { player: { firstLogin, lastLogin, lastLogout, version, language } } = promises[0];
+
+      await queryRun(`UPDATE table SET firstLogin = ${firstLogin}, lastLogin = ${lastLogin}, lastLogout = ${lastLogout}, version = ${version ?? user.version}, language = ${language ?? user.language} WHERE id = ${user.discordID}`);
     } catch (err) {
-      const unexpectedError = commandEmbed({ color: '#AA0000', footer: 'Unexpected Error' })
-        .setTitle('Error')
-        .setDescription(err instanceof Error ? err.stack?.slice(0, 4096) ?? err.message.slice(0, 4096) ?? '\u200B' : JSON.stringify(err));
-      await sendWebHook({ embed: unexpectedError, webHook: hypixelAPIWebhook, suppressError: true });
-      return null;
+      const incidentID = Math.random().toString(36).substring(2, 10);
+      const incidentEmbed = hypixelAPIerrorEmbedFactory({ incidentID: incidentID, automatic: true });
+      const instance = this.requestHandler.instance;
+      const isPriority = err instanceof RateLimitError || err instanceof Error;
+      console.error(`${formattedUnix({ date: true, utc: true })} | An error has occurred on incident ${incidentID} | ${err instanceof Error ? err.stack ?? err.message : JSON.stringify(err)}`);
+      if (err instanceof AbortError) {
+        incidentEmbed
+          .setTitle('AbortError')
+          .addField('Resuming In', cleanLength(instance.resumeAfter! - Date.now()) ?? 'Not applicable');
+      } else if (err instanceof RateLimitError) {
+        incidentEmbed
+          .setTitle('RateLimitError')
+          .addField('Resuming In', cleanLength(instance.resumeAfter! - Date.now()) ?? 'Not applicable')
+          .addField('Global', this.requestHandler.rateLimit.isGlobal.toString());
+      } else if (err instanceof Error) {
+        incidentEmbed
+          .setTitle(err.name.replace(/([A-Z]+)/g, ' $1').replace(/([A-Z][a-z])/g, ' $1')) //Taken from https://stackoverflow.com/a/7225474
+          .addField('Resuming In', cleanLength(instance.resumeAfter! - Date.now()) ?? 'Not applicable')
+          .addField('Cause', this.requestHandler.rateLimit.cause ?? 'Unknown')
+          .addField('Global', this.requestHandler.rateLimit.isGlobal.toString());
+      } else {
+        incidentEmbed
+          .setTitle('Unknown Incident')
+          .setDescription(JSON.stringify(err));
+      }
+
+      incidentEmbed
+        .addField('Last Minute Statistics', `Aborts: ${instance.abortsLastMinute}\nErrors: ${instance.errorsLastMinute}`)
+        .addField('API Key', `Percentage of API key used: ${instance.keyPercentage}`);
+
+      await sendWebHook({ content: isPriority === true ? `<@${ownerID[0]}>` : undefined, embed: incidentEmbed, webHook: hypixelAPIWebhook, suppressError: true });
     }
   }
 }

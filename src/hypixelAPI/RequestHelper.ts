@@ -1,32 +1,28 @@
 export class RateLimit {
   rateLimit: boolean;
   isGlobal: boolean;
-  restartAfter: number | null;
+  cause: string | null;
 
   constructor() {
     this.rateLimit = false;
     this.isGlobal = false;
-    this.restartAfter = null;
-  }
-
-  setRateLimit(rateLimit: boolean, isGlobal: boolean, restartAfter: number) {
-    this.rateLimit = rateLimit;
-    this.isGlobal = isGlobal;
-    this.restartAfter = restartAfter;
+    this.cause = null;
   }
 }
 
 export class Instance {
+  sessionUses: number;
   abortsLastMinute: number;
   errorsLastMinute: number;
-  sessionUses: number;
-  isOK: boolean;
+  resumeAfter: number | null;
+  keyPercentage: number;
 
   constructor() {
+    this.sessionUses = 0;
     this.abortsLastMinute = 0;
     this.errorsLastMinute = 0;
-    this.sessionUses = 0;
-    this.isOK = true;
+    this.resumeAfter = null;
+    this.keyPercentage = 25;
   }
 
   addAbort() {

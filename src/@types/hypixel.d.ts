@@ -10,8 +10,16 @@ interface HypixelKeyRecord {
   totalQueries: number;
 }
 
+interface HypixelPlayerData {
+  firstLogin: number;
+  lastLogin: number;
+  lastLogout: number;
+  version: string;
+  language: string;
+}
+
 export interface HypixelPlayer extends BaseHypixelAPI {
-  player: object | null;
+  player: HypixelPlayerData;
 }
 
 export interface HypixelKey extends BaseHypixelAPI {

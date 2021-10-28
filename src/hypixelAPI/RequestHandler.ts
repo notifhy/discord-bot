@@ -1,59 +1,63 @@
 import type { HypixelAPI } from '../@types/hypixel';
+import { hypixelAPIkey } from '../../config.json';
 import { AbortError, FetchError } from 'node-fetch';
+import { RateLimitError } from './RateLimitError';
 import { Instance, RateLimit } from './RequestHelper';
 
 export class RequestHandler {
-  rateLimit: RateLimit;
   instance: Instance;
+  rateLimit: RateLimit;
 
   constructor() {
-    this.rateLimit = new RateLimit();
     this.instance = new Instance();
+    this.rateLimit = new RateLimit();
   }
 
-  async request(url: string, options: object): Promise<object> {
-    this.instance.sessionUses += 1;
+  async request(url: string, uuid: string, options?: object): Promise<HypixelAPI> {
     const controller = new AbortController();
     const abortTimeout = setTimeout(() => controller.abort(), 1000).unref();
 
-    let response!: Response | AbortError | FetchError;
+    let response!: Response | AbortError | RateLimitError | FetchError;
 
     try {
-      response = await fetch(url, {
+      response = await fetch(url.replace(/%{}%/, uuid), {
         signal: controller.signal,
+        headers: { 'API-Key': hypixelAPIkey },
         ...options,
       });
     } catch (err) {
-      if (err instanceof AbortError || err instanceof FetchError) response = err;
-      else throw err;
+      if (err instanceof AbortError ||
+          err instanceof RateLimitError ||
+          err instanceof FetchError) response = err;
     } finally {
       clearTimeout(abortTimeout);
-      return response;
-    }
-  }
 
-  cleanRequest(input: Response | AbortError | FetchError) {
-    if (input instanceof Response) {
-      const json = tryParse(input) as HypixelAPI | null;
+      if (response instanceof Response) {
+        const json = tryParse(response) as HypixelAPI | null;
 
-      if (input.ok === true && json !== null) {
-        return json;
+        if (response.ok === true && json !== null) return json;
+
+        if (response.status === 429) {
+          const isGlobal = json?.global ?? false;
+          this.instance.keyPercentage -= 1;
+          this.instance.resumeAfter = isGlobal ? Date.now() + 150000 : Date.now() + 60000;
+          this.instance.addError();
+          this.rateLimit.rateLimit = true;
+          this.rateLimit.isGlobal = isGlobal;
+          this.rateLimit.cause = json?.cause ?? null;
+          throw new RateLimitError();
+        }
+
+        this.instance.addError();
+        throw response;
       }
 
-      if (input.status === 429) {
-        this.rateLimit.setRateLimit(true, json?.global ?? false, Date.now() + 60000);
-        this.instance.isOK = false;
-      }
+      if (response instanceof AbortError) {
+        this.instance.addAbort();
+        if (this.instance.abortsLastMinute > 1) this.instance.resumeAfter = Date.now() + 30000;
+      } else this.instance.addError();
 
-      this.instance.addError();
-      this.instance.isOK = false;
-      throw input;
-    } else if (input instanceof AbortError) {
-      this.instance.addAbort();
-      throw input;
-    } else {
-      this.instance.addError();
-      throw input;
+      throw response;
     }
 
     function tryParse(json: Response) {
