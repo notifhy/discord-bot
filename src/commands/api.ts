@@ -123,8 +123,8 @@ export const execute = async (interaction: CommandInteraction): Promise<void> =>
 };
 
 async function toggle(interaction: CommandInteraction) {
-  const originalValue = interaction.client.hypixelAPI.instance.enabled;
-  interaction.client.hypixelAPI.instance.enabled = originalValue === false;
+  const originalValue = interaction.client.hypixelAPI.requests.instance.enabled;
+  interaction.client.hypixelAPI.requests.instance.enabled = originalValue === false;
   const toggleEmbed = new BetterEmbed({ color: '#7289DA', footer: interaction })
     .setTitle('Updated Value!')
     .setDescription(`The RequestCreate system is now ${originalValue === false ? 'on' : 'off'}!`);
@@ -132,7 +132,7 @@ async function toggle(interaction: CommandInteraction) {
 }
 
 async function stats(interaction: CommandInteraction) {
-  const requestCreate = interaction.client.hypixelAPI;
+  const requestCreate = interaction.client.hypixelAPI.requests;
   const { unusualErrorsLastMinute, instanceUses, resumeAfter, keyPercentage } = requestCreate.instance.getInstance();
   const statsEMbed = new BetterEmbed({ color: '#7289DA', footer: interaction })
     .addField('Enabled', requestCreate.instance.enabled === true ? 'Yes' : 'No')
@@ -145,7 +145,7 @@ async function stats(interaction: CommandInteraction) {
 
 async function set(interaction: CommandInteraction, category: string, type: string, value: number) {
   if (type === 'keyPercentage' && value > 1) throw new Error('Too high, must be below 1');
-  interaction.client.hypixelAPI[category][type] = value;
+  interaction.client.hypixelAPI.requests[category][type] = value;
   const setEmbed = new BetterEmbed({ color: '#7289DA', footer: interaction })
     .setTitle('Updated Value!')
     .setDescription(`<RequestCreate>.${category}.${type} is now ${value}.`);
@@ -153,16 +153,17 @@ async function set(interaction: CommandInteraction, category: string, type: stri
 }
 
 async function add(interaction: CommandInteraction, type: string) {
+  const requestCreate = interaction.client.hypixelAPI.requests;
   let newValue: number;
   if (type === 'addAbort') {
-    interaction.client.hypixelAPI.abortError.addAbort();
-    newValue = interaction.client.hypixelAPI.abortError.abortsLastMinute;
+    requestCreate.abortError.addAbort();
+    newValue = requestCreate.abortError.abortsLastMinute;
   } else if (type === 'addTimeToTimeout') {
-    interaction.client.hypixelAPI.rateLimit.addTimeToTimeout();
-    newValue = interaction.client.hypixelAPI.rateLimit.rateLimitErrorsLastMinute;
+    requestCreate.rateLimit.addTimeToTimeout();
+    newValue = requestCreate.rateLimit.rateLimitErrorsLastMinute;
   } else if (type === 'addUnusualError') {
-    interaction.client.hypixelAPI.instance.addUnusualError();
-    newValue = interaction.client.hypixelAPI.instance.unusualErrorsLastMinute;
+    requestCreate.requests.instance.addUnusualError();
+    newValue = requestCreate.requests.instance.unusualErrorsLastMinute;
   }
   const addEmbed = new BetterEmbed({ color: '#7289DA', footer: interaction })
     .setTitle('Added Value!')

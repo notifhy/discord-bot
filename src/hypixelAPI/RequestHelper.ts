@@ -26,7 +26,7 @@ export class AbortError {
     this.timeoutLength += this.baseTimeout;
     setTimeout(() => {
       this.timeoutLength -= this.baseTimeout;
-    }, 60000);
+    }, this.timeoutLength - this.baseTimeout + 60000);
   }
 }
 
@@ -68,7 +68,7 @@ export class RateLimit {
     this.timeoutLength += this.baseTimeout;
     setTimeout(() => {
       this.timeoutLength -= this.baseTimeout;
-    }, 60000);
+    }, this.timeoutLength - this.baseTimeout + 60000);
   }
 }
 
@@ -117,6 +117,6 @@ export class Instance {
     this.timeoutLength += this.baseTimeout;
     setTimeout(() => {
       this.timeoutLength -= this.baseTimeout;
-    }, 60000);
+    }, this.timeoutLength - this.baseTimeout + 60000);
   }
 }

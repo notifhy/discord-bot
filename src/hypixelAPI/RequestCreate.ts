@@ -33,10 +33,10 @@ export class RequestCreate {
     const intervalBetweenRequests = minute / keyQueryLimit * secondsToMS;
 
     for (const user of users) {
-      const urls = user.urls.split(' ').map(url => baseURL.replace(/%{type}%/, url));
+      const urls = user.urls.split(' ').map(url => baseURL.replace(/%{type}%/, url).replace(/%{uuid}%/, user.uuid));
       if (this.instance.enabled === true) this.call(urls, user);
       // eslint-disable-next-line no-await-in-loop
-      await timeout(intervalBetweenRequests * (urls.length || 1));
+      await timeout(intervalBetweenRequests * (urls.length || 1)); //Not ideal, refactor suggested
     }
   }
 
@@ -45,13 +45,13 @@ export class RequestCreate {
       console.log(`${formattedUnix({ date: false, utc: true })}, ${this.instance.instanceUses}`);
       const unusualErrors = this.instance.unusualErrorsLastMinute < 2;
       const abortErrors = this.abortError.abortsLastMinute < 2;
-      const timeoutExpired = Date.now() > (this.instance.resumeAfter ?? 0);
+      const timeoutExpired = Date.now() > this.instance.resumeAfter;
       if (timeoutExpired === false || unusualErrors === false || abortErrors === false) return;
 
       this.instance.instanceUses += 1;
 
       const promises: HypixelAPI[] = await Promise.all(urls.map(url =>
-        this.request(url, user.uuid),
+        this.request(url),
       ));
 
       const { player: { firstLogin, lastLogin, lastLogout, version, language } } = promises[0];
@@ -75,8 +75,15 @@ export class RequestCreate {
         incidentID,
         automatic: true,
       })
-        .addField('Last Minute Statistics', `Abort Errors: ${this.abortError.abortsLastMinute}\nRate Limit Errors: ${this.rateLimit.rateLimitErrorsLastMinute}\nOther Errors: ${unusualErrorsLastMinute}`)
-        .addField('API Key', `Dedicated Queries: ${keyPercentage * keyLimit} or ${keyPercentage * 100}%\nInstance Queries: ${instanceUses}`);
+        .addField('Last Minute Statistics', `Abort Errors: ${this.abortError.abortsLastMinute}\n
+          Rate Limit Errors: ${this.rateLimit.rateLimitErrorsLastMinute}\n
+          Other Errors: ${unusualErrorsLastMinute}`)
+        .addField('Next Timeout Lengths', `May not be accurate\n
+          Abort Errors: ${this.abortError.timeoutLength}\n
+          Rate Limit Errors: ${this.rateLimit.timeoutLength}\n
+          Other Errors: ${this.instance.timeoutLength}`)
+        .addField('API Key', `Dedicated Queries: ${keyPercentage * keyLimit} or ${keyPercentage * 100}%\n
+          Instance Queries: ${instanceUses}`);
 
       console.error(`${formattedUnix({ date: true, utc: true })} | An error has occurred on incident ${incidentID} | ${JSON.stringify(err)}`);
       await sendWebHook({
@@ -87,12 +94,12 @@ export class RequestCreate {
     }
   }
 
-  async request(url: string, uuid: string, options?: object): Promise<HypixelAPI> {
+  async request(url: string, options?: object): Promise<HypixelAPI> {
     const controller = new AbortController();
     const abortTimeout = setTimeout(() => controller.abort(), 2500).unref();
 
     try {
-      const response = await fetch(url.replace(/%{uuid}%/, uuid), {
+      const response = await fetch(url, {
         signal: controller.signal,
         headers: { 'API-Key': hypixelAPIkey },
         ...options,
@@ -106,7 +113,6 @@ export class RequestCreate {
           status: response.status ?? 'Unknown',
           json: json,
           path: url,
-          uuid: uuid,
         });
       }
 
@@ -114,7 +120,6 @@ export class RequestCreate {
         message: json?.cause ?? undefined,
         status: response.status ?? 'Unknown',
         path: url,
-        uuid: uuid,
       });
     } catch (err) {
       const higherTimeout = Math.max(this.instance.resumeAfter, Date.now());

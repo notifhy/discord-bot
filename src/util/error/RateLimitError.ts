@@ -10,15 +10,13 @@ export class RateLimitError extends HTTPError {
     status,
     json,
     path,
-    uuid,
   }: {
     message?: string | undefined,
     status: number | string,
     json: HypixelAPI | null,
     path: string,
-    uuid: string,
   }) {
-    super({ message, status, path, uuid });
+    super({ message, status, path });
     this.name = 'RateLimitError';
     this.json = json;
 

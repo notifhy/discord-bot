@@ -65,8 +65,7 @@ export class HypixelAPIEmbed extends BetterEmbed {
     automatic: boolean,
   }) {
     super({ color: '#AA0000', footer: [`Incident ${incidentID}`, 'https://i.imgur.com/MTClkTu.png'] });
-    super.setTitle('Degraded Performance')
-      .setAuthor(error instanceof Error ? error.name : 'Unknown Incident')
+    super.setTitle(`Degraded Performance ${error instanceof Error ? error.name : 'Unknown Incident'}`)
       .addField('Type', automatic === true ? 'Automatic' : 'Manual');
 
     const { resumeAfter } = RequestInstance.instance.getInstance();
@@ -78,13 +77,13 @@ export class HypixelAPIEmbed extends BetterEmbed {
         .setDescription('The usable percentage of the key has been dropped by 5%. ')
         .addField('Resuming In', cleanLength(resumeAfter - Date.now()) ?? 'Not applicable')
         .addField('Listed Cause', error.message ?? 'Unknown')
-        .addField('Request', `Status: ${error.status}\nPath: ${error.path}\nUUID: ${error.uuid}`)
+        .addField('Request', `Status: ${error.status}\nPath: ${error.path}`)
         .addField('Global Rate Limit', RequestInstance.rateLimit.isGlobal === true ? 'Yes' : 'No');
     } else if (error instanceof HTTPError) {
       super
         .addField('Resuming In', cleanLength(resumeAfter - Date.now()) ?? 'Not applicable')
         .addField('Listed Cause', error.message ?? 'Unknown')
-        .addField('Request', `Status: ${error.status}\nPath: ${error.path}\nUUID: ${error.uuid}`);
+        .addField('Request', `Status: ${error.status}\nPath: ${error.path}`);
     } else if (error instanceof FetchError) {
       super
         .addField('Resuming In', cleanLength(resumeAfter - Date.now()) ?? 'Not applicable')

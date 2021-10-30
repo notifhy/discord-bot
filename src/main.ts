@@ -29,6 +29,8 @@ client.config = {
   blockedUsers: blockedUsers,
   devMode: devMode,
 };
+client.hypixelAPI.requests = new RequestCreate(client);
+client.hypixelAPI.data = new Collection;
 
 (async () => {
   const eventsFolder = (await fs.readdir('./events')).filter(file => file.endsWith('.ts'));
@@ -48,10 +50,9 @@ client.config = {
     client.commands.set(command.properties.name, command);
   }
 
-  client.hypixelAPI = new RequestCreate(client);
-  client.hypixelAPI.instance.enabled = client.config.api;
+  client.hypixelAPI.requests.instance.enabled = client.config.api;
 
-  if (client.config.api === true) await client.hypixelAPI.loopMaker();
+  if (client.config.api === true) await client.hypixelAPI.requests.loopMaker();
 
   await client.login(token);
 })();
