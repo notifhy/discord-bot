@@ -2,6 +2,7 @@ import type { ClientEvents, SlashCommand } from './@types/index';
 import { Client, Collection, Intents } from 'discord.js';
 import { discordAPIkey as token } from '../config.json';
 import * as fs from 'fs';
+import { RequestCreate } from './hypixelAPI/RequestCreate';
 
 const client = new Client({
   intents: [Intents.FLAGS.GUILDS],
@@ -36,6 +37,8 @@ client.cooldowns = new Collection();
     const command: SlashCommand = await import(`./commands/${file}`);
     client.commands.set(command.properties.name, command);
   }
+
+  client.hypixelAPI = new RequestCreate();
 })();
 
 client.login(token);

@@ -1,6 +1,6 @@
 import type { CommandProperties, Config } from '../@types/index';
 import { CommandInteraction } from 'discord.js';
-import { commandEmbed } from '../util/utility';
+import { BetterEmbed } from '../util/utility';
 import * as fs from 'fs/promises';
 
 export const properties: CommandProperties = {
@@ -26,17 +26,6 @@ export const properties: CommandProperties = {
         }],
       },
       {
-        name: 'userlimit',
-        description: 'Sets the max amount of users',
-        type: '1',
-        options: [{
-          name: 'limit',
-          type: '4',
-          description: 'The new user limit',
-          required: true,
-        }],
-      },
-      {
         name: 'devmode',
         type: '1',
         description: 'Toggle Developer Mode',
@@ -52,7 +41,7 @@ export const properties: CommandProperties = {
 
 //JSON database moment.
 export const execute = async (interaction: CommandInteraction): Promise<void> => {
-  const responseEmbed = commandEmbed({ color: '#7289DA', footer: interaction });
+  const responseEmbed = new BetterEmbed({ color: '#7289DA', footer: interaction });
   const path = '../dynamicConfig.json';
   const file: Buffer = await fs.readFile(path);
   const readFile: Config = JSON.parse(file.toString());
@@ -69,10 +58,6 @@ export const execute = async (interaction: CommandInteraction): Promise<void> =>
       responseEmbed.setTitle(`User Removed!`);
       responseEmbed.setDescription(`${user} was removed from the blacklist!`);
     }
-  } else if (interaction.options.getSubcommand() === 'userlimit') {
-    readFile.userLimit = interaction.options.getInteger('limit') as number;
-    responseEmbed.setTitle('User Limit Updated!');
-    responseEmbed.setDescription(`User Limit is now ${readFile.userLimit}!`);
   } else if (interaction.options.getSubcommand() === 'devmode') {
     readFile.devMode = !readFile.devMode;
     responseEmbed.setTitle(`Developer Mode Updated!`);

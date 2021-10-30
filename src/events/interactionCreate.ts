@@ -1,6 +1,6 @@
 import type { EventProperties, SlashCommand } from '../@types/index';
-import { commandEmbed, formattedUnix, sendWebHook, timeout } from '../util/utility';
-import { commandErrorEmbedFactory, constraintEmbedFactory, replyToError } from '../util/error/helper';
+import { BetterEmbed, formattedUnix, sendWebHook, timeout } from '../util/utility';
+import { CommandError, replyToError } from '../util/error/helper';
 import { errorWebhook, nonFatalWebHook, ownerID } from '../../config.json';
 import { Collection, CommandInteraction } from 'discord.js';
 import { ConstraintError } from '../util/error/ConstraintError';
@@ -35,17 +35,23 @@ export const execute = async (interaction: CommandInteraction): Promise<void> =>
     if (!(err instanceof Error)) return; //=== false doesn't work for this. Very intuitive. ts(2571)
     if (err instanceof ConstraintError) {
       console.log(`${formattedUnix({ date: true, utc: true })} | ${interaction.user.tag} failed the constraint ${err.message} in interaction ${interaction.id}`);
-      await sendWebHook({ embed: constraintEmbedFactory({ interaction: interaction, error: err }), webHook: nonFatalWebHook });
+      const constraintEmbed = new BetterEmbed({ color: '#AA0000', footer: interaction })
+        .setTitle('User Failed Constraints')
+        .addField('Constraint Type', err.message)
+        .addField('User', `Tag: ${interaction.user.tag}\nID: ${interaction.user.id}`)
+        .addField('Interaction', interaction.id)
+        .addField('Source', `Channel Type: ${interaction.channel?.type}\nGuild Name: ${interaction.guild?.name}\nGuild ID: ${interaction.guild?.id}\nOwner ID: ${interaction.guild?.ownerId ?? 'None'}\nGuild Member Count: ${interaction.guild?.memberCount}`);
+      await sendWebHook({ embed: constraintEmbed, webHook: nonFatalWebHook });
       return;
     }
     await replyToError({ error: err, interaction: interaction });
-    await sendWebHook({ embed: commandErrorEmbedFactory({ error: err, interaction: interaction }), webHook: errorWebhook, suppressError: true });
+    await sendWebHook({ embed: new CommandError({ error: err, interaction: interaction }), webHook: errorWebhook, suppressError: true });
   }
 };
 
 async function devConstraint(interaction: CommandInteraction, devMode: boolean) {
   if (devMode === true && ownerID.includes(interaction.user.id) === false) {
-    const devModeEmbed = commandEmbed({ color: '#AA0000', footer: interaction })
+    const devModeEmbed = new BetterEmbed({ color: '#AA0000', footer: interaction })
 			.setTitle('Developer Mode!')
 			.setDescription('This bot is in developer only mode, likely due to a major issue or an upgrade that is taking place. Please check back later!');
 		await interaction.editReply({ embeds: [devModeEmbed] });
@@ -55,7 +61,7 @@ async function devConstraint(interaction: CommandInteraction, devMode: boolean) 
 
 async function ownerConstraint(interaction: CommandInteraction, command: SlashCommand) {
   if (command.properties.ownerOnly === true && ownerID.includes(interaction.user.id) === false) {
-    const ownerEmbed = commandEmbed({ color: '#AA0000', footer: interaction })
+    const ownerEmbed = new BetterEmbed({ color: '#AA0000', footer: interaction })
       .setTitle(`Insufficient Permissions!`)
      .setDescription('You cannot execute this command without being an owner!');
    await interaction.editReply({ embeds: [ownerEmbed] });
@@ -65,7 +71,7 @@ async function ownerConstraint(interaction: CommandInteraction, command: SlashCo
 
 async function dmConstraint(interaction: CommandInteraction, command: SlashCommand) {
   if (command.properties.noDM === true && interaction.guild === null) {
-     const dmEmbed = commandEmbed({ color: '#AA0000', footer: interaction })
+     const dmEmbed = new BetterEmbed({ color: '#AA0000', footer: interaction })
       .setTitle(`DM Channel!`)
       .setDescription('You cannot execute this command in the DM channel! Please switch to a server channel!');
     await interaction.editReply({ embeds: [dmEmbed] });
@@ -86,14 +92,14 @@ async function cooldownConstraint(interaction: CommandInteraction, command: Slas
   //Adding 1000 milliseconds forces a minimum cooldown time of 1 second
   if (expirationTime && Date.now() + 1000 < expirationTime) {
     const timeLeft = (expirationTime - Date.now()) / 1000;
-    const cooldownEmbed = commandEmbed({ color: '#AA0000', footer: interaction })
+    const cooldownEmbed = new BetterEmbed({ color: '#AA0000', footer: interaction })
       .setTitle(`Cooldown!`)
       .setDescription(`You are executing commands too fast! This cooldown of this command is ${command.properties.cooldown / 1000}. This message will turn green in ${timeLeft} after the cooldown expires.`);
 
     await interaction.editReply({ embeds: [cooldownEmbed] });
     await timeout(timeLeft);
 
-    const cooldownOverEmbed = commandEmbed({ color: '#00AA00', footer: interaction })
+    const cooldownOverEmbed = new BetterEmbed({ color: '#00AA00', footer: interaction })
       .setTitle('Cooldown Over!')
       .setDescription(`The cooldown has expired! You can now execute the command ${interaction.commandName}!`);
 

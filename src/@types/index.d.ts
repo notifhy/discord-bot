@@ -1,19 +1,9 @@
 import type { Collection, CommandInteraction, Client as DiscordClient } from 'discord.js';
+import { RequestCreate } from '../hypixelAPI/RequestCreate';
 
 export interface WebHookConfig {
   id: string;
   token: string;
-}
-
-export interface HTTPError extends Error {
-  name: string;
-  message: string;
-  stack?: string;
-  method?: string;
-  headers?: string;
-  url?: string | null;
-  status?: number | null;
-  json?: object | null;
 }
 
 export interface Config {
@@ -57,5 +47,6 @@ declare module 'discord.js' {
   interface Client {
     commands: Collection<string, SlashCommand>;
     cooldowns: Collection<string, Collection<string, number>>;
+    hypixelAPI: RequestCreate;
   }
 }

@@ -1,7 +1,7 @@
 import type { CommandProperties, SlashCommand } from '../@types/index';
 import { clientID, testGuild, discordAPIkey as token } from '../../config.json';
 import { CommandInteraction } from 'discord.js';
-import { commandEmbed } from '../util/utility';
+import { BetterEmbed } from '../util/utility';
 import { Routes } from 'discord-api-types/v9';
 import { REST } from '@discordjs/rest';
 import fs from 'fs';
@@ -85,7 +85,7 @@ export const execute = async (interaction: CommandInteraction): Promise<void> =>
   const commands = type === 'both' ? ownerCommands.concat(userCommands) : type === 'none' ? [] : type === 'owner' ? ownerCommands : userCommands;
 
   if (scope === 'guild' && guildID === null) {
-    const noGuild = commandEmbed({ color: '#ff5555', footer: interaction })
+    const noGuild = new BetterEmbed({ color: '#ff5555', footer: interaction })
       .setTitle('No Guild ID!')
       .setDescription('You need to specify a Guild ID.');
     await interaction.editReply({ embeds: [noGuild] });
@@ -106,7 +106,7 @@ export const execute = async (interaction: CommandInteraction): Promise<void> =>
     );
   }
 
-  const successEmbed = commandEmbed({ color: '#7289DA', footer: interaction })
+  const successEmbed = new BetterEmbed({ color: '#7289DA', footer: interaction })
     .setTitle('Success!')
     .setDescription(JSON.stringify(commands).slice(0, 4096) ?? 'None');
 

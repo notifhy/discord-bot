@@ -1,41 +1,5 @@
-import type { HTTPError, WebHookConfig } from '../@types/index';
+import type { WebHookConfig } from '../@types/index';
 import { ColorResolvable, CommandInteraction, MessageEmbed, WebhookClient } from 'discord.js';
-
-//Handles HTTP requests and deals with errors
-export function createHTTPRequest(url: string, { ...fetchOptions }, timesAborted = 0): Object { //Not ready, please fix before use
-  const controller = new AbortController();
-  const abortTimeout = setTimeout(() => controller.abort(), 1000).unref();
-  return fetch(url, {
-    signal: controller.signal,
-    ...fetchOptions,
-  })
-  .then(async response => {
-    clearTimeout(abortTimeout);
-    if (!response.ok) {
-      const newError = new Error(`HTTP status ${response.status}`) as HTTPError,
-      responseJson = await response.json().catch(err => {
-        console.error(`${new Date().toLocaleTimeString('en-IN', { hour12: true })} | ${err.stack}`);
-      }) as Object;
-      newError.name = 'HTTPError';
-      newError.status = response.status;
-      newError.json = responseJson ?? null;
-      throw newError;
-    }
-    return response.json() as Object;
-  })
-  .catch(err => {
-    if (err.name === 'AbortError' && timesAborted < (fetchOptions.maxAborts ?? 1)) return createHTTPRequest(url, { ...fetchOptions }, timesAborted + 1);
-    //Aborting throws a read-only error
-    const newError = new Error(err.message) as HTTPError;
-      newError.name = err.name;
-      newError.method = fetchOptions?.method ?? 'GET';
-      newError.headers = JSON.stringify(fetchOptions?.headers ?? {});
-      newError.url = url ?? null;
-      newError.status = err.status ?? null;
-      newError.json = err.json ?? null;
-    throw newError;
-  });
-}
 
 export async function sendWebHook({
   content,
@@ -72,19 +36,23 @@ export function formattedUnix({
   return `${utc === true ? `UTC${createOffset()} ` : ''}${newDate.toLocaleTimeString('en-IN', { hour12: true })}${date === true ? `, ${cleanDate(ms)}` : ''}`;
 }
 
-export function commandEmbed({
-  color,
-  footer,
-}: {
-  color: ColorResolvable,
-  footer: CommandInteraction | string,
-}): MessageEmbed {
-  const embed = new MessageEmbed()
-    .setColor(color)
-    .setTimestamp();
-  if (footer instanceof CommandInteraction) embed.setFooter(`/${footer.commandName} • ${Date.now() - footer.createdTimestamp}ms`, footer.user.displayAvatarURL({ dynamic: true }));
-  else embed.setFooter(footer, 'https://i.imgur.com/MTClkTu.png');
-  return embed;
+export class BetterEmbed extends MessageEmbed {
+  constructor({
+    color,
+    footer,
+  }: {
+    color: ColorResolvable,
+    footer: CommandInteraction | string,
+  }) {
+    super();
+    super.setColor(color);
+    super.setTimestamp();
+
+    if (footer instanceof CommandInteraction) {
+      const avatar = footer.user.displayAvatarURL({ dynamic: true });
+      super.setFooter(`/${footer.commandName} • ${Date.now() - footer.createdTimestamp}ms`, avatar);
+    } else super.setFooter(footer, 'https://i.imgur.com/MTClkTu.png');
+  }
 }
 
 export function cleanDate(ms: number | Date): string | null {

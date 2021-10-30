@@ -1,28 +1,8 @@
-export class RateLimit {
-  rateLimit: boolean;
-  isGlobal: boolean;
-  cause: string | null;
-
-  constructor() {
-    this.rateLimit = false;
-    this.isGlobal = false;
-    this.cause = null;
-  }
-}
-
-export class Instance {
-  sessionUses: number;
+export class AbortError {
   abortsLastMinute: number;
-  errorsLastMinute: number;
-  resumeAfter: number | null;
-  keyPercentage: number;
 
   constructor() {
-    this.sessionUses = 0;
     this.abortsLastMinute = 0;
-    this.errorsLastMinute = 0;
-    this.resumeAfter = null;
-    this.keyPercentage = 25;
   }
 
   addAbort() {
@@ -31,8 +11,41 @@ export class Instance {
       this.abortsLastMinute -= 1;
     }, 60000);
   }
+}
 
-  addError() {
+export class RateLimit {
+  cause: string | null;
+  rateLimitErrorsLastMinute: number;
+  isGlobal: boolean;
+
+  constructor() {
+    this.cause = null;
+    this.rateLimitErrorsLastMinute = 0;
+    this.isGlobal = false;
+  }
+
+  addRateLimitError() {
+    this.rateLimitErrorsLastMinute += 1;
+    setTimeout(() => {
+      this.rateLimitErrorsLastMinute -= 1;
+    }, 60000);
+  }
+}
+
+export class Instance {
+  errorsLastMinute: number;
+  instanceUses: number;
+  resumeAfter: number;
+  keyPercentage: number;
+
+  constructor() {
+    this.errorsLastMinute = 0;
+    this.instanceUses = 0;
+    this.resumeAfter = 0;
+    this.keyPercentage = 0.25;
+  }
+
+  addUnusualError() {
     this.errorsLastMinute += 1;
     setTimeout(() => {
       this.errorsLastMinute -= 1;

@@ -12,17 +12,11 @@ export const properties: EventProperties = {
 export const execute = async (client: Client) => {
   console.log(`Logged in as ${client!.user!.tag}!`);
 
-  const requestInstance = new RequestCreate();
   const urls: string[] = ['https://api.hypixel.net/player?uuid=%{}%'];
 
-  await recursive();
-
-  let times = 0;
-
-  async function recursive() {
-    console.log(formattedUnix({ date: false, utc: true }));
-    if (times < 10) await requestInstance.loopMaker(urls);
-    times++;
-    recursive();
+  while (true) {
+    console.log(`${formattedUnix({ date: false, utc: true })}, ${client.hypixelAPI.instance.instanceUses}`);
+    // eslint-disable-next-line no-await-in-loop
+    await client.hypixelAPI.loopMaker(urls);
   }
 };

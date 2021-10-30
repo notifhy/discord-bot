@@ -11,11 +11,11 @@ interface HypixelKeyRecord {
 }
 
 interface HypixelPlayerData {
-  firstLogin: number;
-  lastLogin: number;
-  lastLogout: number;
-  version: string;
-  language: string;
+  firstLogin: number | null | undefined;
+  lastLogin: number | null | undefined;
+  lastLogout: number | null | undefined;
+  version: string | null | undefined;
+  language: string | null | undefined;
 }
 
 export interface HypixelPlayer extends BaseHypixelAPI {
