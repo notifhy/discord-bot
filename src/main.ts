@@ -1,8 +1,13 @@
 import type { ClientEvents, SlashCommand } from './@types/index';
 import { Client, Collection, Intents } from 'discord.js';
 import { discordAPIkey as token } from '../config.json';
-import * as fs from 'fs';
+import * as fs from 'fs/promises';
 import { RequestCreate } from './hypixelAPI/RequestCreate';
+import { api, blockedUsers, devMode } from '../dynamicConfig.json';
+
+process.on('unhandledRejection', error => {
+  console.log('unhandled', error);
+});
 
 const client = new Client({
   intents: [Intents.FLAGS.GUILDS],
@@ -19,10 +24,15 @@ const client = new Client({
 
 client.commands = new Collection();
 client.cooldowns = new Collection();
+client.config = {
+  api: api,
+  blockedUsers: blockedUsers,
+  devMode: devMode,
+};
 
 (async () => {
-  const eventsFolder = fs.readdirSync('./events').filter(file => file.endsWith('.ts'));
-  const commandsFolder = fs.readdirSync('./commands').filter(file => file.endsWith('.ts'));
+  const eventsFolder = (await fs.readdir('./events')).filter(file => file.endsWith('.ts'));
+  const commandsFolder = (await fs.readdir('./commands')).filter(file => file.endsWith('.ts'));
 
   for (const file of eventsFolder) {
     // eslint-disable-next-line no-await-in-loop
@@ -38,7 +48,10 @@ client.cooldowns = new Collection();
     client.commands.set(command.properties.name, command);
   }
 
-  client.hypixelAPI = new RequestCreate();
-})();
+  client.hypixelAPI = new RequestCreate(client);
+  client.hypixelAPI.instance.enabled = client.config.api;
 
-client.login(token);
+  if (client.config.api === true) await client.hypixelAPI.loopMaker();
+
+  await client.login(token);
+})();

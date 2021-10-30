@@ -44,8 +44,11 @@ export const execute = async (interaction: CommandInteraction): Promise<void> =>
       await sendWebHook({ embed: constraintEmbed, webHook: nonFatalWebHook });
       return;
     }
-    await replyToError({ error: err, interaction: interaction });
-    await sendWebHook({ embed: new CommandError({ error: err, interaction: interaction }), webHook: errorWebhook, suppressError: true });
+
+    const incidentID = Math.random().toString(36).substring(2, 10).toUpperCase();
+    const commandError = new CommandError({ error: err, interaction: interaction, incidentID: incidentID });
+    await replyToError({ error: err, interaction: interaction, incidentID: incidentID });
+    await sendWebHook({ embed: commandError, webHook: errorWebhook, suppressError: true });
   }
 };
 

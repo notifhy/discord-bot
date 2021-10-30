@@ -81,16 +81,8 @@ export const execute = async (interaction: CommandInteraction): Promise<void> =>
 
   const scope = interaction.options.getString('scope');
   const type = interaction.options.getString('type');
-  const guildID = interaction.options.getString('guild');
+  const guildID = interaction.options.getString('guild') ?? interaction.guildId;
   const commands = type === 'both' ? ownerCommands.concat(userCommands) : type === 'none' ? [] : type === 'owner' ? ownerCommands : userCommands;
-
-  if (scope === 'guild' && guildID === null) {
-    const noGuild = new BetterEmbed({ color: '#ff5555', footer: interaction })
-      .setTitle('No Guild ID!')
-      .setDescription('You need to specify a Guild ID.');
-    await interaction.editReply({ embeds: [noGuild] });
-    return;
-  }
 
   const rest = new REST({ version: '9' }).setToken(token);
 

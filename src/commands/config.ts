@@ -63,6 +63,7 @@ export const execute = async (interaction: CommandInteraction): Promise<void> =>
     responseEmbed.setTitle(`Developer Mode Updated!`);
     responseEmbed.setDescription(`Developer Mode is now ${readFile.devMode === true ? 'on' : 'off'}!`);
   } else if (interaction.options.getSubcommand() === 'api') {
+    interaction.client.hypixelAPI.instance.enabled = !readFile.api;
     readFile.api = !readFile.api;
     responseEmbed.setTitle(`API State Updated!`);
     responseEmbed.setDescription(`API commands and functions are now ${readFile.api === true ? 'on' : 'off'}!`);

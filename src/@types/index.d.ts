@@ -1,6 +1,10 @@
 import type { Collection, CommandInteraction, Client as DiscordClient } from 'discord.js';
 import { RequestCreate } from '../hypixelAPI/RequestCreate';
 
+export interface indexSugnature {
+  [envVar: string]: string | undefined;
+}
+
 export interface WebHookConfig {
   id: string;
   token: string;
@@ -10,7 +14,6 @@ export interface Config {
   api: boolean;
   blockedUsers: string[];
   devMode: boolean;
-  userLimit: number;
 }
 
 export interface EventProperties {
@@ -47,6 +50,7 @@ declare module 'discord.js' {
   interface Client {
     commands: Collection<string, SlashCommand>;
     cooldowns: Collection<string, Collection<string, number>>;
+    config: Config,
     hypixelAPI: RequestCreate;
   }
 }

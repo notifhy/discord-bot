@@ -49,7 +49,7 @@
           }
       }],
       "one-var": "off",
-      "object-shorthand": ["error", "never"],
+      "object-shorthand": ["error", "consistent"],
       "sort-vars": "off",
       "no-use-before-define": ["error", {
         "functions": false,

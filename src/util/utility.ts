@@ -42,7 +42,7 @@ export class BetterEmbed extends MessageEmbed {
     footer,
   }: {
     color: ColorResolvable,
-    footer: CommandInteraction | string,
+    footer?: CommandInteraction | string[],
   }) {
     super();
     super.setColor(color);
@@ -50,8 +50,8 @@ export class BetterEmbed extends MessageEmbed {
 
     if (footer instanceof CommandInteraction) {
       const avatar = footer.user.displayAvatarURL({ dynamic: true });
-      super.setFooter(`/${footer.commandName} • ${Date.now() - footer.createdTimestamp}ms`, avatar);
-    } else super.setFooter(footer, 'https://i.imgur.com/MTClkTu.png');
+      super.setFooter(`/${footer.commandName}`, avatar);
+    } else if (Array.isArray(footer)) super.setFooter(footer[0], footer[1]);
   }
 }
 
