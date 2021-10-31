@@ -81,7 +81,7 @@ export const execute = async (interaction: CommandInteraction): Promise<void> =>
 
   const scope = interaction.options.getString('scope');
   const type = interaction.options.getString('type');
-  const guildID = interaction.options.getString('guild') ?? interaction.guildId;
+  const guildID = interaction.options.getString('guild') ?? interaction.guildId!;
   const commands = type === 'both' ? ownerCommands.concat(userCommands) : type === 'none' ? [] : type === 'owner' ? ownerCommands : userCommands;
 
   const rest = new REST({ version: '9' }).setToken(token);
@@ -93,7 +93,7 @@ export const execute = async (interaction: CommandInteraction): Promise<void> =>
     );
   } else {
     await rest.put(
-      Routes.applicationGuildCommands(clientID, testGuild),
+      Routes.applicationGuildCommands(clientID, guildID),
       { body: commands },
     );
   }

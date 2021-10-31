@@ -1,7 +1,7 @@
 import type { User } from '../@types/database';
 import type { HypixelAPI } from '../@types/hypixel';
 import { hypixelAPIkey, hypixelAPIWebhook, keyLimit, ownerID } from '../../config.json';
-import { formattedUnix, sendWebHook, timeout } from '../util/utility';
+import { cleanLength, formattedUnix, sendWebHook, timeout } from '../util/utility';
 import { queryGetAll, queryRun } from '../database';
 import { HypixelAPIEmbed, isAbortError } from '../util/error/helper';
 import { AbortError, Instance, RateLimit } from './RequestHelper';
@@ -75,14 +75,14 @@ export class RequestCreate {
         incidentID,
         automatic: true,
       })
-        .addField('Last Minute Statistics', `Abort Errors: ${this.abortError.abortsLastMinute}\n
-          Rate Limit Errors: ${this.rateLimit.rateLimitErrorsLastMinute}\n
+        .addField('Last Minute Statistics', `Abort Errors: ${this.abortError.abortsLastMinute}
+          Rate Limit Errors: ${this.rateLimit.rateLimitErrorsLastMinute}
           Other Errors: ${unusualErrorsLastMinute}`)
-        .addField('Next Timeout Lengths', `May not be accurate\n
-          Abort Errors: ${this.abortError.timeoutLength}\n
-          Rate Limit Errors: ${this.rateLimit.timeoutLength}\n
-          Other Errors: ${this.instance.timeoutLength}`)
-        .addField('API Key', `Dedicated Queries: ${keyPercentage * keyLimit} or ${keyPercentage * 100}%\n
+        .addField('Next Timeout Lengths', `May not be accurate
+          Abort Errors: ${cleanLength(this.abortError.timeoutLength)}
+          Rate Limit Errors: ${cleanLength(this.rateLimit.timeoutLength)}
+          Other Errors: ${cleanLength(this.instance.timeoutLength)}`)
+        .addField('API Key', `Dedicated Queries: ${keyPercentage * keyLimit} or ${keyPercentage * 100}%
           Instance Queries: ${instanceUses}`);
 
       console.error(`${formattedUnix({ date: true, utc: true })} | An error has occurred on incident ${incidentID} | ${JSON.stringify(err)}`);

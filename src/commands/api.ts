@@ -138,8 +138,15 @@ async function stats(interaction: CommandInteraction) {
     .addField('Enabled', requestCreate.instance.enabled === true ? 'Yes' : 'No')
     .addField('Resuming In', cleanLength(resumeAfter - Date.now()) ?? 'Not applicable')
     .addField('Global Rate Limit', requestCreate.rateLimit.isGlobal === true ? 'Yes' : 'No')
-    .addField('Last Minute Statistics', `Aborts: ${requestCreate.abortError.abortsLastMinute}\nRate Limits Hit: ${requestCreate.rateLimit.rateLimitErrorsLastMinute}\nOther Errors: ${unusualErrorsLastMinute}`)
-    .addField('API Key', `Dedicated Queries: ${keyPercentage * keyLimit} or ${keyPercentage * 100}%\nInstance Queries: ${instanceUses}`);
+    .addField('Last Minute Statistics', `Aborts: ${requestCreate.abortError.abortsLastMinute}
+      Rate Limits Hit: ${requestCreate.rateLimit.rateLimitErrorsLastMinute}
+      Other Errors: ${unusualErrorsLastMinute}`)
+    .addField('Next Timeout Lengths', `May not be accurate
+        Abort Errors: ${requestCreate.abortError.timeoutLength}
+        Rate Limit Errors: ${requestCreate.rateLimit.timeoutLength}
+        Other Errors: ${requestCreate.instance.timeoutLength}`)
+    .addField('API Key', `Dedicated Queries: ${keyPercentage * keyLimit} or ${keyPercentage * 100}%
+      Instance Queries: ${instanceUses}`);
   await interaction.editReply({ embeds: [statsEMbed] });
 }
 

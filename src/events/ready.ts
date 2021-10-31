@@ -12,6 +12,6 @@ export const execute = async (client: Client) => {
 
   while (true) {
     // eslint-disable-next-line no-await-in-loop
-    await client.hypixelAPI.loopMaker();
+    await client.hypixelAPI.requests.loopMaker();
   }
 };

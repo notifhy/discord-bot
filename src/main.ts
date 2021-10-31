@@ -29,8 +29,10 @@ client.config = {
   blockedUsers: blockedUsers,
   devMode: devMode,
 };
-client.hypixelAPI.requests = new RequestCreate(client);
-client.hypixelAPI.data = new Collection;
+client.hypixelAPI = {
+  requests: new RequestCreate(client),
+  data: new Collection,
+};
 
 (async () => {
   const eventsFolder = (await fs.readdir('./events')).filter(file => file.endsWith('.ts'));
