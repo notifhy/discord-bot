@@ -32,11 +32,68 @@ export const properties: CommandProperties = {
           {
             name: 'category',
             type: '3',
-            description: 'placeholder',
+            description: 'The category to execute on',
             required: true,
             choices: [
               {
-                name: 'abortError',
+                name: 'abortError (abort)',
+                value: 'abortError',
+              },
+              {
+                name: 'rateLimit (rateLimit)',
+                value: 'rateLimit',
+              },
+              {
+                name: 'instance (instance)',
+                value: 'instance',
+              },
+            ],
+          },
+          {
+            name: 'type',
+            type: '3',
+            description: 'The type to execute on',
+            required: true,
+            choices: [
+              {
+                name: 'abortThreshold (instance)',
+                value: 'abortThreshold',
+              },
+              {
+                name: 'baseTimeout (all)',
+                value: 'baseTimeout',
+              },
+              {
+                name: 'isGlobal (rateLimit)',
+                value: 'isGlobal',
+              },
+              {
+                name: 'keyPercentage (instance)',
+                value: 'keyPercentage',
+              },
+            ],
+          },
+          {
+            name: 'value',
+            type: '10',
+            description: 'An integer for the baseTimeout and a number for keyPercentage',
+            required: false,
+          },
+        ],
+      },
+      {
+        name: 'call',
+        type: '1',
+        description: 'Call a function from the API Request Handler',
+        options: [
+          {
+            name: 'category',
+            type: '3',
+            description: 'The category to execute on',
+            required: true,
+            choices: [
+              {
+                name: 'abortError (abort)',
                 value: 'abortError',
               },
               {
@@ -52,44 +109,11 @@ export const properties: CommandProperties = {
           {
             name: 'type',
             type: '3',
-            description: 'placeholder',
+            description: 'The type to execute on',
             required: true,
             choices: [
               {
-                name: 'isGlobal',
-                value: 'isGlobal',
-              },
-              {
-                name: 'baseTimeout',
-                value: 'baseTimeout',
-              },
-              {
-                name: 'keyPercentage',
-                value: 'keyPercentage',
-              },
-            ],
-          },
-          {
-            name: 'value',
-            type: '10',
-            description: 'An integer for the baseTimeout and a number for keyPercentage',
-            required: false,
-          },
-        ],
-      },
-      {
-        name: 'add',
-        type: '1',
-        description: 'Add errors or time to timeouts',
-        options: [
-          {
-            name: 'type',
-            type: '3',
-            description: 'The option to add to',
-            required: true,
-            choices: [
-              {
-                name: 'addAbort (abortError)',
+                name: 'addAbort (abort)',
                 value: 'addAbort',
               },
               {
@@ -99,6 +123,18 @@ export const properties: CommandProperties = {
               {
                 name: 'addUnusualError (instance)',
                 value: 'addUnusualError',
+              },
+              {
+                name: 'reportAbortError (abort)',
+                value: 'reportAbortError',
+              },
+              {
+                name: 'reportRateLimitError (rateLimit)',
+                value: 'reportRateLimitError',
+              },
+              {
+                name: 'reportUnusualError (instance',
+                value: 'reportUnusualError',
               },
             ],
           },
@@ -115,9 +151,9 @@ export const execute = async (interaction: CommandInteraction): Promise<void> =>
     break;
     case 'stats': await stats(interaction);
     break;
-    case 'set': await set(interaction, interaction.options.getString('category')!, interaction.options.getString('type')!, interaction.options.getNumber('value')!);
+    case 'set': await set(interaction, interaction.options.getString('category')!, interaction.options.getString('type')!, interaction.options.getNumber('value'));
     break;
-    case 'add': await add(interaction, interaction.options.getString('type')!);
+    case 'call': await call(interaction, interaction.options.getString('category')!, interaction.options.getString('type')!);
     break;
   }
 };
@@ -150,31 +186,24 @@ async function stats(interaction: CommandInteraction) {
   await interaction.editReply({ embeds: [statsEMbed] });
 }
 
-async function set(interaction: CommandInteraction, category: string, type: string, value: number) {
-  if (type === 'keyPercentage' && value > 1) throw new Error('Too high, must be below 1');
-  interaction.client.hypixelAPI.requests[category][type] = value;
+async function set(interaction: CommandInteraction, category: string, type: string, value: number | null) {
+  if (type === 'keyPercentage' && value !== null && value > 1) throw new Error('Too high, must be below 1');
+  interaction.client.hypixelAPI.requests[category][type] = type === 'isGlobal' ? Boolean(value) : value;
   const setEmbed = new BetterEmbed({ color: '#7289DA', footer: interaction })
     .setTitle('Updated Value!')
     .setDescription(`<RequestCreate>.${category}.${type} is now ${value}.`);
   await interaction.editReply({ embeds: [setEmbed] });
 }
 
-async function add(interaction: CommandInteraction, type: string) {
+async function call(interaction: CommandInteraction, category: string, type: string) {
   const requestCreate = interaction.client.hypixelAPI.requests;
-  let newValue: number;
-  if (type === 'addAbort') {
-    requestCreate.abortError.addAbort();
-    newValue = requestCreate.abortError.abortsLastMinute;
-  } else if (type === 'addTimeToTimeout') {
-    requestCreate.rateLimit.addTimeToTimeout();
-    newValue = requestCreate.rateLimit.rateLimitErrorsLastMinute;
-  } else if (type === 'addUnusualError') {
-    requestCreate.requests.instance.addUnusualError();
-    newValue = requestCreate.requests.instance.unusualErrorsLastMinute;
+  if (type === 'addAbort' || type === 'addTimeToTimeout' || type === 'addUnusualError') {
+    requestCreate[category][type]();
+  } else {
+    requestCreate[category][type](requestCreate);
   }
-  const addEmbed = new BetterEmbed({ color: '#7289DA', footer: interaction })
-    .setTitle('Added Value!')
-    //@ts-expect-error
-    .setDescription(`${type} has been executed and is now ${newValue}`);
-  await interaction.editReply({ embeds: [addEmbed] });
+  const callEmbed = new BetterEmbed({ color: '#7289DA', footer: interaction })
+    .setTitle('Executed!')
+    .setDescription(`Executed <RequestCreate>.${category}.${type}`);
+  await interaction.editReply({ embeds: [callEmbed] });
 }

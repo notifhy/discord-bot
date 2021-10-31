@@ -1,7 +1,7 @@
 import type { CommandInteraction } from 'discord.js';
 import type { AbortError } from '../../@types/error';
 import { BetterEmbed, cleanLength, formattedUnix, sendWebHook } from '../utility';
-import { errorWebhook, ownerID } from '../../../config.json';
+import { errorWebhook, keyLimit, ownerID } from '../../../config.json';
 import { RequestCreate } from '../../hypixelAPI/RequestCreate';
 import { RateLimitError } from './RateLimitError';
 import { HTTPError } from './HTTPError';
@@ -68,7 +68,11 @@ export class HypixelAPIEmbed extends BetterEmbed {
     super.setTitle(`Degraded Performance ${error instanceof Error ? error.name : 'Unknown Incident'}`)
       .addField('Type', automatic === true ? 'Automatic' : 'Manual');
 
-    const { resumeAfter } = RequestInstance.instance.getInstance();
+    const {
+      unusualErrorsLastMinute,
+      instanceUses,
+      resumeAfter,
+      keyPercentage } = RequestInstance.instance.getInstance();
 
     if (isAbortError(error)) {
       super.addField('Resuming In', cleanLength(resumeAfter - Date.now()) ?? 'Not applicable'); //Discord timestamp?
@@ -77,13 +81,13 @@ export class HypixelAPIEmbed extends BetterEmbed {
         .setDescription('The usable percentage of the key has been dropped by 5%. ')
         .addField('Resuming In', cleanLength(resumeAfter - Date.now()) ?? 'Not applicable')
         .addField('Listed Cause', error.message ?? 'Unknown')
-        .addField('Request', `Status: ${error.status}\nPath: ${error.path}`)
+        .addField('Request', `Status: ${error.status}\nPath: ${error.url}`)
         .addField('Global Rate Limit', RequestInstance.rateLimit.isGlobal === true ? 'Yes' : 'No');
     } else if (error instanceof HTTPError) {
       super
         .addField('Resuming In', cleanLength(resumeAfter - Date.now()) ?? 'Not applicable')
         .addField('Listed Cause', error.message ?? 'Unknown')
-        .addField('Request', `Status: ${error.status}\nPath: ${error.path}`);
+        .addField('Request', `Status: ${error.status}\nPath: ${error.url}`);
     } else if (error instanceof FetchError) {
       super
         .addField('Resuming In', cleanLength(resumeAfter - Date.now()) ?? 'Not applicable')
@@ -93,6 +97,17 @@ export class HypixelAPIEmbed extends BetterEmbed {
         .addField('Resuming In', cleanLength(resumeAfter - Date.now()) ?? 'Not applicable')
         .addField('Listed Cause', error.message ?? 'Unknown');
     } else super.setDescription(JSON.stringify(error));
+
+    super
+      .addField('Last Minute Statistics', `Abort Errors: ${RequestInstance.abortError.abortsLastMinute}
+        Rate Limit Errors: ${RequestInstance.rateLimit.rateLimitErrorsLastMinute}
+        Other Errors: ${unusualErrorsLastMinute}`)
+      .addField('Next Timeout Lengths', `May not be accurate
+        Abort Errors: ${cleanLength(RequestInstance.abortError.timeoutLength)}
+        Rate Limit Errors: ${cleanLength(RequestInstance.rateLimit.timeoutLength)}
+        Other Errors: ${cleanLength(RequestInstance.instance.timeoutLength)}`)
+      .addField('API Key', `Dedicated Queries: ${keyPercentage * keyLimit} or ${keyPercentage * 100}%
+        Instance Queries: ${instanceUses}`);
   }
 }
 

@@ -3,22 +3,17 @@ import { Response } from 'node-fetch';
 import { HypixelAPI } from '../../@types/hypixel';
 
 export class RateLimitError extends HTTPError {
-  json: HypixelAPI | null;
-
   constructor({
     message,
-    status,
     json,
-    path,
+    response,
   }: {
     message?: string | undefined,
-    status: number | string,
     json: HypixelAPI | null,
-    path: string,
+    response: Response,
   }) {
-    super({ message, status, path });
+    super({ message, json, response });
     this.name = 'RateLimitError';
-    this.json = json;
 
     Object.setPrototypeOf(this, RateLimitError.prototype);
     //Error.captureStackTrace(this, this.constructor);

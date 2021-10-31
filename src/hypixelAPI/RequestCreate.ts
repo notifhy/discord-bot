@@ -43,30 +43,42 @@ export class RequestCreate {
   async call(urls: string[], user: User) {
     try {
       console.log(`${formattedUnix({ date: false, utc: true })}, ${this.instance.instanceUses}`);
-      const unusualErrors = this.instance.unusualErrorsLastMinute < 2;
-      const abortErrors = this.abortError.abortsLastMinute < 2;
-      const timeoutExpired = Date.now() > this.instance.resumeAfter;
-      if (timeoutExpired === false || unusualErrors === false || abortErrors === false) return;
+      if (this.areFatalIssues() === true) return;
 
       this.instance.instanceUses += 1;
-
-      const promises: HypixelAPI[] = await Promise.all(urls.map(url =>
-        this.request(url),
+      const controller = new AbortController();
+      const abortTimeout = setTimeout(() => controller.abort(), 2500).unref();
+      const responses: Response[] | (HypixelAPI | null)[] = await Promise.all(urls.map(url =>
+        this.request(url, {}),
       ));
 
-      const { player: { firstLogin, lastLogin, lastLogout, version, language } } = promises[0];
+      clearTimeout(abortTimeout);
+
+      const JSONs = await Promise.all(responses.map(response =>
+        tryParse(response),
+      ));
+
+      responses.forEach((response, index) => {
+        if (response.ok) return;
+        const errorData = {
+          message: JSONs[index]?.cause,
+          json: JSONs[index],
+          response: response,
+        };
+        if (response.status === 429) throw new RateLimitError(errorData);
+        else throw new HTTPError(errorData);
+      });
+
+      const { player: { firstLogin, lastLogin, lastLogout, version, language } } = JSONs[0]!;
 
       await queryRun(`UPDATE users SET lastUpdated = '${Date.now()}', firstLogin = '${firstLogin ?? null}', lastLogin = '${lastLogin ?? null}', lastLogout = '${lastLogout ?? null}', version = '${version ?? user.version}', language = '${language ?? user.language}' WHERE discordID = '${user.discordID}'`);
     } catch (err) {
       const incidentID = Math.random().toString(36).substring(2, 10).toUpperCase();
-      const isPriority = (err instanceof Error && !isAbortError(err)) ||
-        (isAbortError(err) && this.abortError.abortsLastMinute > 1);
+      console.error(`${formattedUnix({ date: true, utc: true })} | An error has occurred on incident ${incidentID} | ${JSON.stringify(err)}`);
 
-      const {
-        unusualErrorsLastMinute,
-        instanceUses,
-        keyPercentage,
-      } = this.instance.getInstance();
+      if (isAbortError(err)) this.abortError.reportAbortError(this);
+      else if (err instanceof RateLimitError) this.rateLimit.reportRateLimitError(this, err);
+      else this.instance.reportUnusualError();
 
       const incidentEmbed = new HypixelAPIEmbed({
         RequestInstance: this,
@@ -74,75 +86,16 @@ export class RequestCreate {
         incidentID:
         incidentID,
         automatic: true,
-      })
-        .addField('Last Minute Statistics', `Abort Errors: ${this.abortError.abortsLastMinute}
-          Rate Limit Errors: ${this.rateLimit.rateLimitErrorsLastMinute}
-          Other Errors: ${unusualErrorsLastMinute}`)
-        .addField('Next Timeout Lengths', `May not be accurate
-          Abort Errors: ${cleanLength(this.abortError.timeoutLength)}
-          Rate Limit Errors: ${cleanLength(this.rateLimit.timeoutLength)}
-          Other Errors: ${cleanLength(this.instance.timeoutLength)}`)
-        .addField('API Key', `Dedicated Queries: ${keyPercentage * keyLimit} or ${keyPercentage * 100}%
-          Instance Queries: ${instanceUses}`);
+      });
 
-      console.error(`${formattedUnix({ date: true, utc: true })} | An error has occurred on incident ${incidentID} | ${JSON.stringify(err)}`);
       await sendWebHook({
-        content: isPriority === true ? `<@${ownerID[0]}>` : undefined,
+        content: this.isPriority(err) === true ? `<@${ownerID[0]}>` : undefined,
         embed: incidentEmbed,
         webHook: hypixelAPIWebhook,
         suppressError: true });
     }
-  }
 
-  async request(url: string, options?: object): Promise<HypixelAPI> {
-    const controller = new AbortController();
-    const abortTimeout = setTimeout(() => controller.abort(), 2500).unref();
-
-    try {
-      const response = await fetch(url, {
-        signal: controller.signal,
-        headers: { 'API-Key': hypixelAPIkey },
-        ...options,
-      });
-      const json = await tryFetch(response) as HypixelAPI | null;
-      if (response.ok === true && json !== null) return json;
-
-      if (response.status === 429) {
-        throw new RateLimitError({
-          message: json?.cause ?? 'Hit a rate limit',
-          status: response.status ?? 'Unknown',
-          json: json,
-          path: url,
-        });
-      }
-
-      throw new HTTPError({
-        message: json?.cause ?? undefined,
-        status: response.status ?? 'Unknown',
-        path: url,
-      });
-    } catch (err) {
-      const higherTimeout = Math.max(this.instance.resumeAfter, Date.now());
-      if (isAbortError(err)) {
-        this.abortError.addAbort();
-        const timeoutLength = higherTimeout + this.abortError.generateTimeoutLength();
-        if (this.abortError.abortsLastMinute > 1) this.instance.resumeAfter = timeoutLength;
-      } else if (err instanceof RateLimitError) {
-        this.rateLimit.setRateLimit({ isGlobal: err.json?.global ?? false });
-        this.instance.keyPercentage -= 0.05;
-        this.instance.resumeAfter = higherTimeout + this.rateLimit.generateTimeoutLength();
-      } else {
-        this.instance.addUnusualError();
-        const timeoutLength = higherTimeout + this.instance.generateTimeoutLength();
-        if (this.instance.unusualErrorsLastMinute > 1) this.instance.resumeAfter = timeoutLength;
-      }
-
-      throw err;
-    } finally {
-      clearTimeout(abortTimeout);
-    }
-
-    async function tryFetch(response: Response): Promise<HypixelAPI | null> {
+    async function tryParse(response: Response): Promise<HypixelAPI | null> {
       try {
         const json = await response.json();
         return json;
@@ -150,5 +103,45 @@ export class RequestCreate {
         return null;
       }
     }
+  }
+
+  async request(url: string, {
+    timesAborted = 0,
+    ...fetchOptions
+  }: {
+    timesAborted?: number,
+  }): Promise<Response> {
+    const controller = new AbortController();
+    const abortTimeout = setTimeout(() => controller.abort(), this.instance.abortThreshold).unref();
+
+    try {
+      const response = await fetch(url, {
+        signal: controller.signal,
+        headers: { 'API-Key': hypixelAPIkey },
+        ...fetchOptions,
+      });
+      return response;
+    } catch (err) {
+      if (isAbortError(err)) console.log('abort!');
+      if (isAbortError(err) && timesAborted < 1) {
+        return this.request(url, { timesAborted: timesAborted + 1, ...fetchOptions });
+      }
+      throw err;
+    } finally {
+      clearTimeout(abortTimeout);
+    }
+  }
+
+  areFatalIssues(): boolean {
+    const unusualErrors = this.instance.unusualErrorsLastMinute;
+    const abortErrors = this.abortError.abortsLastMinute;
+    const timeoutExpired = Date.now() > this.instance.resumeAfter;
+    return unusualErrors > 1 || abortErrors > 1 || timeoutExpired === false;
+  }
+
+  isPriority(error: unknown) {
+    const case1 = error instanceof Error && !isAbortError(error);
+    const case2 = isAbortError(error) && this.abortError.abortsLastMinute > 1;
+    return Boolean(case1 === true || case2 === true);
   }
 }

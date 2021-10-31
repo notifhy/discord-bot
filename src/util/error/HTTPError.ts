@@ -1,20 +1,27 @@
+import type { HypixelAPI } from '../../@types/hypixel';
+import type { Response } from 'node-fetch';
+
 export class HTTPError extends Error {
-  status: number | string;
-  path: string;
+  json: HypixelAPI | null;
+  response: Response;
+  status: number;
+  url: string;
 
   constructor({
     message,
-    status,
-    path,
+    json,
+    response,
   }: {
     message?: string | undefined,
-    status: number | string,
-    path: string,
+    json: HypixelAPI | null,
+    response: Response,
   }) {
     super(message);
     this.name = 'HTTPError';
-    this.status = status;
-    this.path = path;
+    this.json = json;
+    this.response = response;
+    this.status = response.status;
+    this.url = response.url;
 
     Object.setPrototypeOf(this, HTTPError.prototype);
     //Error.captureStackTrace(this, this.constructor);
