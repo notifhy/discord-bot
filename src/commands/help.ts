@@ -35,22 +35,21 @@ export const properties: CommandProperties = {
 
 export const execute = async (interaction: CommandInteraction): Promise<void> => {
   if (interaction.options.getSubcommand() === 'information') information(interaction);
-  else if (interaction.options.getString('command')) await specificCommand(interaction);
+  else if (interaction.options.getString('command')) await specific(interaction);
 	else await commands(interaction);
 };
 
 async function information(interaction: CommandInteraction) {
+  const locales = interaction.client.regionLocales;
   const informationEmbed = new BetterEmbed({ color: '#7289DA', footer: interaction })
-    .setTitle('Information')
-    .setDescription(`The HyGuard project was created to be an early warning system to alert users to prevent other nefarious individuals from hijacking your Minecraft account. It works by sending you your status on Hypixel on an interval, and alerting you on any unusual activity.`)
-		.addField(`**Data Collection**`, `/setup requires your Minecraft username to verify your account. This is necessary to the above function. It must be linked on Hypixel to ensure you are the owner of that account. Information gathered by this bot to do the above function are your Discord username/ID, Minecraft username, timezone, language, and login/logout times for Hypixel to cross-reference. This data is stored locally in a SQLite database.\n\nAdditionally, the bot also collects the guild ID whenever a command is sent from a new guild. This data is for the /server command.`)
-		.addField(`**Bug Reports and Suggestions**`, `Please report any bugs, exploits, or any suggestions to Attituding#6517. Join the [Hypixel Discord](https://discord.com/invite/hypixel) before you DM me so that you won't get blocked by Clyde. You can also [make a reply to the Hypixel forum post](https://hypixel.net/threads/discord-bot-hyguard-a-bot-that-monitors-your-account-24-7.4368395/) on this bot.`)
-		.addField(`**GitHub**`, `This project has a [Github page](<https://github.com/Attituding/HyGuard>), where the code is available under the MIT license. There is also extra documentation there incase you need it.`);
+    .setTitle(locales.localizer('commands.help.information.title', undefined))
+    .setDescription(locales.localizer('commands.help.information.description', undefined));
 
   await interaction.editReply({ embeds: [informationEmbed] });
 }
 
-async function specificCommand(interaction: CommandInteraction) {
+async function specific(interaction: CommandInteraction) {
+  const locales = interaction.client.regionLocales;
   const commandArg: string = interaction.options.getString('command') as string;
   const command: SlashCommand | undefined = interaction.client.commands.get(commandArg);
   const commandSearchEmbed = new BetterEmbed({ color: '#7289DA', footer: interaction });
@@ -58,29 +57,62 @@ async function specificCommand(interaction: CommandInteraction) {
   if (command === undefined) {
     commandSearchEmbed
       .setColor('#ff5555')
-      .setTitle(`Invalid Command!`)
-      .setDescription(`/${commandArg} isn't a valid command!`);
+      .setTitle(locales.localizer('commands.help.specific.invalid.title', undefined))
+      .setDescription(locales.localizer('commands.help.specific.invalid.description', undefined, {
+        command: commandArg,
+      }));
     await interaction.editReply({ embeds: [commandSearchEmbed] });
     return;
   }
 
-  commandSearchEmbed.setTitle(`/${command.properties.name}`);
-  if (command.properties.description) commandSearchEmbed.setDescription(`${command.properties.description}`);
-  if (command.properties.cooldown) commandSearchEmbed.addField('Command Cooldown', `${command.properties.cooldown / 1000} second(s)`);
-  if (command.properties.noDM === true) commandSearchEmbed.addField('Direct Messages', 'This command cannot be used in the DM channel');
-  if (command.properties.ownerOnly === true) commandSearchEmbed.addField('Bot Owner', 'Being an owner is required to execute this command');
+  commandSearchEmbed.setTitle(locales.localizer('commands.help.specific.title', undefined, {
+    command: commandArg,
+  }));
+
+  if (command.properties.description) {
+    commandSearchEmbed.setDescription(locales.localizer('commands.help.specific.description', undefined, {
+      command: commandArg,
+    }));
+  }
+
+  if (command.properties.cooldown) {
+    commandSearchEmbed.addField(locales.localizer('commands.help.specific.cooldown.name', undefined),
+    locales.localizer('commands.help.specific.cooldown.value', undefined, {
+      commandCooldown: command.properties.cooldown,
+    }));
+  }
+
+  if (command.properties.noDM === true) {
+    commandSearchEmbed.addField(locales.localizer('commands.help.specific.dm.name', undefined),
+    locales.localizer('commands.help.specific.dm.value', undefined, {
+      commandCooldown: command.properties.cooldown,
+    }));
+  }
+
+  if (command.properties.ownerOnly === true) {
+    commandSearchEmbed.addField(locales.localizer('commands.help.specific.owner.name', undefined),
+    locales.localizer('commands.help.specific.owner.value', undefined, {
+      commandCooldown: command.properties.cooldown,
+    }));
+  }
 
   await interaction.editReply({ embeds: [commandSearchEmbed] });
 }
 
 async function commands(interaction: CommandInteraction) {
+  const locales = interaction.client.regionLocales;
   const commandsCollection = interaction.client.commands.filter(command => command.properties.ownerOnly === false);
   const allCommandsEmbed = new BetterEmbed({ color: '#7289DA', footer: interaction })
-    .setTitle('Commands')
-    .setDescription('Arguments in brackets are required. Arguments in arrows are sometimes required based on the previous argument. You can use the command /help [command] [a command] to see more about a specific command.');
+    .setTitle(locales.localizer('commands.help.all.title', undefined))
+    .setDescription(locales.localizer('commands.help.all.description', undefined));
 
   for (const command of commandsCollection.values()) {
-    allCommandsEmbed.addField(`**${command.properties.usage}**`, command.properties.description);
+    allCommandsEmbed.addField(locales.localizer('commands.help.all.field.name', undefined, {
+      commandUsage: command.properties.usage,
+    }),
+    locales.localizer('commands.help.all.field.value', undefined, {
+      commandDescription: command.properties.description,
+    }));
   }
 
   await interaction.editReply({ embeds: [allCommandsEmbed] });

@@ -4,39 +4,42 @@ import { hypixelAPIkey, hypixelAPIWebhook, keyLimit, ownerID } from '../../confi
 import { cleanLength, formattedUnix, sendWebHook, timeout } from '../util/utility';
 import { queryGetAll, queryRun } from '../database';
 import { HypixelAPIEmbed, isAbortError } from '../util/error/helper';
-import { AbortError, Instance, RateLimit } from './RequestHelper';
+import { Abort, Instance, RateLimit, Unusual } from './RequestHelper';
 import fetch, { Response } from 'node-fetch';
 import { RateLimitError } from '../util/error/RateLimitError';
 import { HTTPError } from '../util/error/HTTPError';
 import { Client } from 'discord.js';
 
 export class RequestCreate {
-  [key: string]: any
-  instance: Instance;
-  abortError: AbortError;
+  [key: string]: any;
+  abort: Abort;
   rateLimit: RateLimit;
+  unusual: Unusual;
+  instance: Instance;
 
   constructor(client: Client) {
-    this.instance = new Instance;
-    this.abortError = new AbortError();
-    this.rateLimit = new RateLimit;
+    this.abort = new Abort();
+    this.rateLimit = new RateLimit();
+    this.unusual = new Unusual();
+    this.instance = new Instance();
     this.client = client;
   }
 
   async loopMaker() {
-    const userTable = 'users';
-    const baseURL = 'https://api.hypixel.net/%{type}%?uuid=%{uuid}%';
     const minute = 60;
     const secondsToMS = 1000;
-    const users = await queryGetAll(`SELECT * FROM ${userTable}`) as User[];
+    const users = await queryGetAll(`SELECT * FROM ${this.instance.userTable}`) as User[];
     const keyQueryLimit = keyLimit * this.instance.keyPercentage;
     const intervalBetweenRequests = minute / keyQueryLimit * secondsToMS;
 
     for (const user of users) {
-      const urls = user.urls.split(' ').map(url => baseURL.replace(/%{type}%/, url).replace(/%{uuid}%/, user.uuid));
+      const urls = user.urls
+        .split(' ')
+        .map(url => this.instance.baseURL
+        .replace(/%{type}%/, url)
+        .replace(/%{uuid}%/, user.uuid));
       if (this.instance.enabled === true) this.call(urls, user);
-      // eslint-disable-next-line no-await-in-loop
-      await timeout(intervalBetweenRequests * (urls.length || 1)); //Not ideal, refactor suggested
+      await timeout(intervalBetweenRequests * urls.length); // eslint-disable-line no-await-in-loop
     }
   }
 
@@ -46,13 +49,11 @@ export class RequestCreate {
       if (this.areFatalIssues() === true) return;
 
       this.instance.instanceUses += 1;
-      const controller = new AbortController();
-      const abortTimeout = setTimeout(() => controller.abort(), 2500).unref();
       const responses: Response[] | (HypixelAPI | null)[] = await Promise.all(urls.map(url =>
-        this.request(url, {}),
+        this.request(url, {
+          headers: { 'API-Key': hypixelAPIkey },
+        }, {}),
       ));
-
-      clearTimeout(abortTimeout);
 
       const JSONs = await Promise.all(responses.map(response =>
         tryParse(response),
@@ -74,18 +75,16 @@ export class RequestCreate {
       await queryRun(`UPDATE users SET lastUpdated = '${Date.now()}', firstLogin = '${firstLogin ?? null}', lastLogin = '${lastLogin ?? null}', lastLogout = '${lastLogout ?? null}', version = '${version ?? user.version}', language = '${language ?? user.language}' WHERE discordID = '${user.discordID}'`);
     } catch (err) {
       const incidentID = Math.random().toString(36).substring(2, 10).toUpperCase();
-      console.error(`${formattedUnix({ date: true, utc: true })} | An error has occurred on incident ${incidentID} | ${JSON.stringify(err)}`);
+      console.error(`${formattedUnix({ date: true, utc: true })} | An error has occurred on incident ${incidentID} | ${err}`);
 
-      if (isAbortError(err)) this.abortError.reportAbortError(this);
+      if (isAbortError(err)) this.abort.reportAbortError(this);
       else if (err instanceof RateLimitError) this.rateLimit.reportRateLimitError(this, err);
-      else this.instance.reportUnusualError();
+      else this.unusual.reportUnusualError(this);
 
       const incidentEmbed = new HypixelAPIEmbed({
-        RequestInstance: this,
+        requestCreate: this,
         error: err,
-        incidentID:
-        incidentID,
-        automatic: true,
+        incidentID: incidentID,
       });
 
       await sendWebHook({
@@ -106,8 +105,9 @@ export class RequestCreate {
   }
 
   async request(url: string, {
-    timesAborted = 0,
     ...fetchOptions
+  }, {
+    timesAborted = 0,
   }: {
     timesAborted?: number,
   }): Promise<Response> {
@@ -117,14 +117,12 @@ export class RequestCreate {
     try {
       const response = await fetch(url, {
         signal: controller.signal,
-        headers: { 'API-Key': hypixelAPIkey },
         ...fetchOptions,
       });
       return response;
     } catch (err) {
-      if (isAbortError(err)) console.log('abort!');
       if (isAbortError(err) && timesAborted < 1) {
-        return this.request(url, { timesAborted: timesAborted + 1, ...fetchOptions });
+        return this.request(url, { ...fetchOptions }, { timesAborted: timesAborted + 1 });
       }
       throw err;
     } finally {
@@ -132,16 +130,17 @@ export class RequestCreate {
     }
   }
 
-  areFatalIssues(): boolean {
-    const unusualErrors = this.instance.unusualErrorsLastMinute;
-    const abortErrors = this.abortError.abortsLastMinute;
+  areFatalIssues(): boolean { //Could be expanded
+    const unusualErrors = this.unusual.unusualErrorsLastMinute;
+    const abortErrors = this.abort.abortsLastMinute;
     const timeoutExpired = Date.now() > this.instance.resumeAfter;
-    return unusualErrors > 1 || abortErrors > 1 || timeoutExpired === false;
+    return Boolean(unusualErrors > 1 || abortErrors > 1 || timeoutExpired === false);
   }
 
   isPriority(error: unknown) {
     const case1 = error instanceof Error && !isAbortError(error);
-    const case2 = isAbortError(error) && this.abortError.abortsLastMinute > 1;
-    return Boolean(case1 === true || case2 === true);
+    const case2 = isAbortError(error) && this.abort.abortsLastMinute > 2;
+    const case3 = isAbortError(error) && this.abort.timeoutLength > this.abort.baseTimeout;
+    return Boolean(case1 === true || case2 === true || case3 === true);
   }
 }

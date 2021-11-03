@@ -36,15 +36,19 @@ export const properties: CommandProperties = {
             required: true,
             choices: [
               {
-                name: 'abortError (abort)',
-                value: 'abortError',
+                name: 'abort',
+                value: 'abort',
               },
               {
-                name: 'rateLimit (rateLimit)',
+                name: 'rateLimit',
                 value: 'rateLimit',
               },
               {
-                name: 'instance (instance)',
+                name: 'unusual',
+                value: 'unusual',
+              },
+              {
+                name: 'instance',
                 value: 'instance',
               },
             ],
@@ -60,7 +64,7 @@ export const properties: CommandProperties = {
                 value: 'abortThreshold',
               },
               {
-                name: 'baseTimeout (all)',
+                name: 'baseTimeout (abort, rateLimit, unusual)',
                 value: 'baseTimeout',
               },
               {
@@ -70,6 +74,14 @@ export const properties: CommandProperties = {
               {
                 name: 'keyPercentage (instance)',
                 value: 'keyPercentage',
+              },
+              {
+                name: 'resumeAfter (instance)',
+                value: 'resumeAfter',
+              },
+              {
+                name: 'timeoutLength (abort, rateLimit, unusual)',
+                value: 'timeoutLength',
               },
             ],
           },
@@ -93,12 +105,16 @@ export const properties: CommandProperties = {
             required: true,
             choices: [
               {
-                name: 'abortError (abort)',
-                value: 'abortError',
+                name: 'abort',
+                value: 'abort',
               },
               {
                 name: 'rateLimit',
                 value: 'rateLimit',
+              },
+              {
+                name: 'unusual',
+                value: 'unusual',
               },
               {
                 name: 'instance',
@@ -117,11 +133,11 @@ export const properties: CommandProperties = {
                 value: 'addAbort',
               },
               {
-                name: 'addTimeToTimeout (rateLimit)',
-                value: 'addTimeToTimeout',
+                name: 'addRateLimit (rateLimit)',
+                value: 'addRateLimit',
               },
               {
-                name: 'addUnusualError (instance)',
+                name: 'addUnusualError (unusual)',
                 value: 'addUnusualError',
               },
               {
@@ -133,7 +149,7 @@ export const properties: CommandProperties = {
                 value: 'reportRateLimitError',
               },
               {
-                name: 'reportUnusualError (instance',
+                name: 'reportUnusualError (unusual)',
                 value: 'reportUnusualError',
               },
             ],
@@ -169,21 +185,21 @@ async function toggle(interaction: CommandInteraction) {
 
 async function stats(interaction: CommandInteraction) {
   const requestCreate = interaction.client.hypixelAPI.requests;
-  const { unusualErrorsLastMinute, instanceUses, resumeAfter, keyPercentage } = requestCreate.instance.getInstance();
-  const statsEMbed = new BetterEmbed({ color: '#7289DA', footer: interaction })
+  const { instanceUses, resumeAfter, keyPercentage } = requestCreate.instance;
+  const statsEmbed = new BetterEmbed({ color: '#7289DA', footer: interaction })
     .addField('Enabled', requestCreate.instance.enabled === true ? 'Yes' : 'No')
     .addField('Resuming In', cleanLength(resumeAfter - Date.now()) ?? 'Not applicable')
     .addField('Global Rate Limit', requestCreate.rateLimit.isGlobal === true ? 'Yes' : 'No')
-    .addField('Last Minute Statistics', `Aborts: ${requestCreate.abortError.abortsLastMinute}
-      Rate Limits Hit: ${requestCreate.rateLimit.rateLimitErrorsLastMinute}
-      Other Errors: ${unusualErrorsLastMinute}`)
+    .addField('Last Minute Statistics', `Aborts: ${requestCreate.abort.abortsLastMinute}
+      Rate Limit Hits: ${requestCreate.rateLimit.rateLimitErrorsLastMinute}
+      Other Errors: ${requestCreate.unusual.unusualErrorsLastMinute}`)
     .addField('Next Timeout Lengths', `May not be accurate
-        Abort Errors: ${requestCreate.abortError.timeoutLength}
-        Rate Limit Errors: ${requestCreate.rateLimit.timeoutLength}
-        Other Errors: ${requestCreate.instance.timeoutLength}`)
+      Abort Errors: ${cleanLength(requestCreate.abort.timeoutLength)}
+      Rate Limit Errors: ${cleanLength(requestCreate.rateLimit.timeoutLength)}
+      Other Errors: ${cleanLength(requestCreate.unusual.timeoutLength)}`)
     .addField('API Key', `Dedicated Queries: ${keyPercentage * keyLimit} or ${keyPercentage * 100}%
       Instance Queries: ${instanceUses}`);
-  await interaction.editReply({ embeds: [statsEMbed] });
+  await interaction.editReply({ embeds: [statsEmbed] });
 }
 
 async function set(interaction: CommandInteraction, category: string, type: string, value: number | null) {
@@ -205,5 +221,6 @@ async function call(interaction: CommandInteraction, category: string, type: str
   const callEmbed = new BetterEmbed({ color: '#7289DA', footer: interaction })
     .setTitle('Executed!')
     .setDescription(`Executed <RequestCreate>.${category}.${type}`);
-  await interaction.editReply({ embeds: [callEmbed] });
+  await stats(interaction);
+  await interaction.followUp({ embeds: [callEmbed] });
 }

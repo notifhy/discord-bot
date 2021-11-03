@@ -16,6 +16,6 @@ export class RateLimitError extends HTTPError {
     this.name = 'RateLimitError';
 
     Object.setPrototypeOf(this, RateLimitError.prototype);
-    //Error.captureStackTrace(this, this.constructor);
+    Error.captureStackTrace(this, this.constructor);
   }
 }

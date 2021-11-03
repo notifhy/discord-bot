@@ -54,58 +54,56 @@ export class UserCommandError extends BetterEmbed {
 
 export class HypixelAPIEmbed extends BetterEmbed {
   constructor({
-    RequestInstance,
+    requestCreate,
     error,
     incidentID,
-    automatic,
   }: {
-    RequestInstance: RequestCreate,
+    requestCreate: RequestCreate,
     error: unknown,
     incidentID: string,
-    automatic: boolean,
   }) {
-    super({ color: '#AA0000', footer: [`Incident ${incidentID}`, 'https://i.imgur.com/MTClkTu.png'] });
-    super.setTitle(`Degraded Performance ${error instanceof Error ? error.name : 'Unknown Incident'}`)
-      .addField('Type', automatic === true ? 'Automatic' : 'Manual');
+    const { instanceUses, resumeAfter, keyPercentage } = requestCreate.instance;
+    const timeout = cleanLength(resumeAfter - Date.now());
 
-    const {
-      unusualErrorsLastMinute,
-      instanceUses,
-      resumeAfter,
-      keyPercentage } = RequestInstance.instance.getInstance();
+    super({ color: '#AA0000', footer: [`Incident ${incidentID}`, 'https://i.imgur.com/MTClkTu.png'] });
+    super.setTitle(`Degraded Performance`)
+      .addField('Type', error instanceof Error ? error.name : 'Unknown Incident');
+
+    if (timeout !== null) super.setDescription('A timeout has been automatically applied.');
 
     if (isAbortError(error)) {
-      super.addField('Resuming In', cleanLength(resumeAfter - Date.now()) ?? 'Not applicable'); //Discord timestamp?
+      super
+        .addField('Resuming In', timeout ?? 'Not applicable');
     } else if (error instanceof RateLimitError) {
       super
-        .setDescription('The usable percentage of the key has been dropped by 5%. ')
-        .addField('Resuming In', cleanLength(resumeAfter - Date.now()) ?? 'Not applicable')
+        .setDescription('The usable percentage of the key has been dropped by 5%. A timeout has also been applied.')
+        .addField('Resuming In', timeout ?? 'Not applicable')
         .addField('Listed Cause', error.message ?? 'Unknown')
         .addField('Request', `Status: ${error.status}\nPath: ${error.url}`)
-        .addField('Global Rate Limit', RequestInstance.rateLimit.isGlobal === true ? 'Yes' : 'No');
+        .addField('Global Rate Limit', requestCreate.rateLimit.isGlobal === true ? 'Yes' : 'No');
     } else if (error instanceof HTTPError) {
       super
-        .addField('Resuming In', cleanLength(resumeAfter - Date.now()) ?? 'Not applicable')
+        .addField('Resuming In', timeout ?? 'Not applicable')
         .addField('Listed Cause', error.message ?? 'Unknown')
         .addField('Request', `Status: ${error.status}\nPath: ${error.url}`);
     } else if (error instanceof FetchError) {
       super
-        .addField('Resuming In', cleanLength(resumeAfter - Date.now()) ?? 'Not applicable')
+        .addField('Resuming In', timeout ?? 'Not applicable')
         .addField('Listed Cause', error.message ?? 'Unknown');
     } else if (error instanceof Error) {
       super
-        .addField('Resuming In', cleanLength(resumeAfter - Date.now()) ?? 'Not applicable')
+        .addField('Resuming In', timeout ?? 'Not applicable')
         .addField('Listed Cause', error.message ?? 'Unknown');
     } else super.setDescription(JSON.stringify(error));
 
     super
-      .addField('Last Minute Statistics', `Abort Errors: ${RequestInstance.abortError.abortsLastMinute}
-        Rate Limit Errors: ${RequestInstance.rateLimit.rateLimitErrorsLastMinute}
-        Other Errors: ${unusualErrorsLastMinute}`)
+      .addField('Last Minute Statistics', `Abort Errors: ${requestCreate.abort.abortsLastMinute}
+        Rate Limit Hits: ${requestCreate.rateLimit.rateLimitErrorsLastMinute}
+        Other Errors: ${requestCreate.unusual.unusualErrorsLastMinute}`)
       .addField('Next Timeout Lengths', `May not be accurate
-        Abort Errors: ${cleanLength(RequestInstance.abortError.timeoutLength)}
-        Rate Limit Errors: ${cleanLength(RequestInstance.rateLimit.timeoutLength)}
-        Other Errors: ${cleanLength(RequestInstance.instance.timeoutLength)}`)
+        Abort Errors: ${cleanLength(requestCreate.abort.timeoutLength)}
+        Rate Limit Errors: ${cleanLength(requestCreate.rateLimit.timeoutLength)}
+        Other Errors: ${cleanLength(requestCreate.unusual.timeoutLength)}`)
       .addField('API Key', `Dedicated Queries: ${keyPercentage * keyLimit} or ${keyPercentage * 100}%
         Instance Queries: ${instanceUses}`);
   }

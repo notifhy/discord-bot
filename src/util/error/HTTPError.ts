@@ -24,6 +24,6 @@ export class HTTPError extends Error {
     this.url = response.url;
 
     Object.setPrototypeOf(this, HTTPError.prototype);
-    //Error.captureStackTrace(this, this.constructor);
+    Error.captureStackTrace(this, this.constructor);
   }
 }

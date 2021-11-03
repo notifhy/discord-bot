@@ -1,0 +1,47 @@
+{
+  "commands": {
+    "help": {
+      "information": {
+        "title": "Information",
+        "description": "placeholder"
+      },
+      "all": {
+        "title": "Commands",
+        "description": "Arguments in brackets are required. Arguments in arrows are sometimes required based on the previous argument. You can use the command /help [command] [a command] to see more about a specific command.",
+        "field": {
+          "name": "**%{commandUsage}%**",
+          "value": "%{commandDescription}%"
+        }
+      },
+      "specific": {
+        "invalid": {
+          "title": "Invalid Command!",
+          "description": "/%{command}% isn't a valid command!"
+        },
+        "title": "/%{command}%",
+        "description": "%{commandDescription}%",
+        "cooldown": {
+          "name": "Command Cooldown",
+          "value": "%{commandCooldown}% second(s)"
+        },
+        "dm": {
+          "name": "Direct Messages",
+          "value": "This command cannot be used in the DM channel"
+        },
+        "owner": {
+          "name": "Bot Owner",
+          "value": "Being an owner is required to execute this command"
+        }
+      }
+    },
+    "ping": {
+      "embed1": {
+        "title": "Pinging.."
+      },
+      "embed2": {
+        "title": "🏓 Ping!",
+        "description": "Websocket heartbeat is %{wsPing}%ms. This interaction took %{rtPing}%ms from registering the slash command to displaying the initial message."
+      }
+    }
+  }
+}

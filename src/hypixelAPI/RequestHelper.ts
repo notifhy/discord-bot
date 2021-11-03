@@ -3,7 +3,7 @@ import { HypixelAPI } from '../@types/hypixel';
 import { RateLimitError } from '../util/error/RateLimitError';
 import { isAbortError } from '../util/error/helper';
 
-export class AbortError {
+export class Abort {
   abortsLastMinute: number;
   baseTimeout: number;
   timeoutLength: number;
@@ -11,7 +11,7 @@ export class AbortError {
   constructor() {
     this.abortsLastMinute = 0;
     this.baseTimeout = 30000;
-    this.timeoutLength = 30000;
+    this.timeoutLength = this.baseTimeout;
   }
 
   addAbort(): void {
@@ -23,21 +23,20 @@ export class AbortError {
 
   generateTimeoutLength(): number {
     const timeout = this.timeoutLength;
-    this.addTimeToTimeout();
-    return timeout;
-  }
-
-  addTimeToTimeout(): void {
     this.timeoutLength += this.baseTimeout;
     setTimeout(() => {
       this.timeoutLength -= this.baseTimeout;
-    }, this.timeoutLength - this.baseTimeout + 60000);
+    }, timeout + (this.baseTimeout * 20));
+    return timeout;
   }
 
   reportAbortError(RequestInstance: RequestCreate): void {
-    const higherTimeout = Math.max(RequestInstance.instance.resumeAfter, Date.now());
+    const currentTimeout = Math.max(RequestInstance.instance.resumeAfter, Date.now());
     this.addAbort();
-    if (this.abortsLastMinute > 1) RequestInstance.instance.resumeAfter = higherTimeout + this.generateTimeoutLength();
+    if (this.timeoutLength > this.baseTimeout || this.abortsLastMinute > 1) {
+      const newTimeoutLength = this.generateTimeoutLength();
+      RequestInstance.instance.resumeAfter = currentTimeout + newTimeoutLength;
+    }
   }
 }
 
@@ -51,7 +50,7 @@ export class RateLimit {
     this.baseTimeout = 60000;
     this.isGlobal = false;
     this.rateLimitErrorsLastMinute = 0;
-    this.timeoutLength = 60000;
+    this.timeoutLength = this.baseTimeout;
   }
 
   addRateLimit(): void {
@@ -65,45 +64,32 @@ export class RateLimit {
     if (this.isGlobal === true) return this.timeoutLength + 5 * this.baseTimeout;
     else {
       const timeout = this.timeoutLength;
-      this.addTimeToTimeout();
+      this.timeoutLength += this.baseTimeout;
+      setTimeout(() => {
+        this.timeoutLength -= this.baseTimeout;
+      }, timeout + (this.baseTimeout * 20));
       return timeout;
     }
   }
 
-  addTimeToTimeout():void {
-    this.timeoutLength += this.baseTimeout;
-    setTimeout(() => {
-      this.timeoutLength -= this.baseTimeout;
-    }, this.timeoutLength - this.baseTimeout + 60000);
-  }
-
   reportRateLimitError(RequestInstance: RequestCreate, error: RateLimitError): void {
-    const higherTimeout = Math.max(RequestInstance.instance.resumeAfter, Date.now());
+    const currentTimeout = Math.max(RequestInstance.instance.resumeAfter, Date.now());
+    const additionalTimeout = currentTimeout + this.generateTimeoutLength();
     this.addRateLimit();
     this.isGlobal = error.json?.global ?? false;
     RequestInstance.instance.keyPercentage -= 0.05;
-    RequestInstance.instance.resumeAfter = higherTimeout + this.generateTimeoutLength();
+    RequestInstance.instance.resumeAfter = additionalTimeout;
   }
 }
 
-export class Instance {
-  abortThreshold: number;
+export class Unusual {
   baseTimeout: number;
-  enabled: boolean;
-  instanceUses: number;
-  keyPercentage: number;
-  resumeAfter: number;
   timeoutLength: number;
   unusualErrorsLastMinute: number;
 
   constructor() {
-    this.abortThreshold = 2500;
     this.baseTimeout = 30000;
-    this.enabled = true;
-    this.instanceUses = 0;
-    this.keyPercentage = 0.25;
-    this.resumeAfter = 0;
-    this.timeoutLength = 60000;
+    this.timeoutLength = this.baseTimeout;
     this.unusualErrorsLastMinute = 0;
   }
 
@@ -114,35 +100,39 @@ export class Instance {
     }, 60000);
   }
 
-  getInstance(): {
-    unusualErrorsLastMinute: number,
-    instanceUses: number,
-    resumeAfter: number,
-    keyPercentage: number,
-  } {
-    return {
-      instanceUses: this.instanceUses,
-      keyPercentage: this.keyPercentage,
-      resumeAfter: this.resumeAfter,
-      unusualErrorsLastMinute: this.unusualErrorsLastMinute,
-    };
-  }
-
   generateTimeoutLength(): number {
     const timeout = this.timeoutLength;
-    this.addTimeToTimeout();
-    return timeout;
-  }
-
-  addTimeToTimeout(): void {
     this.timeoutLength += this.baseTimeout;
     setTimeout(() => {
       this.timeoutLength -= this.baseTimeout;
-    }, this.timeoutLength - this.baseTimeout + 60000);
+    }, timeout + (this.baseTimeout * 20));
+    return timeout;
   }
 
-  reportUnusualError(): void {
+  reportUnusualError(RequestInstance: RequestCreate): void {
+    const currentTimeout = Math.max(RequestInstance.instance.resumeAfter, Date.now());
+    const additionalTimeout = currentTimeout + this.generateTimeoutLength();
     this.addUnusualError();
-    if (this.unusualErrorsLastMinute > 1) this.resumeAfter = this.generateTimeoutLength();
+    RequestInstance.instance.resumeAfter = additionalTimeout;
+  }
+}
+
+export class Instance {
+  abortThreshold: number;
+  readonly baseURL: string;
+  enabled: boolean;
+  instanceUses: number;
+  keyPercentage: number;
+  resumeAfter: number;
+  readonly userTable: string;
+
+  constructor() {
+    this.abortThreshold = 2500;
+    this.baseURL = 'https://api.hypixel.net/%{type}%?uuid=%{uuid}%';
+    this.enabled = true;
+    this.instanceUses = 0;
+    this.keyPercentage = 0.25;
+    this.resumeAfter = 0;
+    this.userTable = 'users';
   }
 }

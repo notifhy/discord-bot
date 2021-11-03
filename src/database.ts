@@ -1,4 +1,5 @@
 import Database from 'better-sqlite3';
+import { SQLiteError } from './util/error/SQLiteError';
 
 // eslint-disable-next-line no-warning-comments
 //TODO: Fix "any" after the rest is done
@@ -13,17 +14,11 @@ export function queryGet(query: string): Promise<unknown> {
     const db = new Database('../database.db');
     //'SELECT count(1) FROM users
 
-    try {
-      const preparedQuery = db.prepare(query);
-      const data: unknown = preparedQuery.get();
-      db.close();
-      if (data === undefined) throw SQLiteError('Row is undefined');
-      return resolve(data);
-    } catch (err) {
-      if (!(err instanceof Error)) throw err;
-      err.name = 'SQLiteError';
-      throw err;
-    }
+    const preparedQuery = db.prepare(query);
+    const data: unknown = preparedQuery.get();
+    db.close();
+    if (data === undefined) throw new SQLiteError(`The query ${query} returned an undefined value`);
+    return resolve(data);
   });
 }
 
@@ -37,48 +32,30 @@ export function queryGetAll(query: string): Promise<unknown> {
     const db = new Database('../database.db');
     //SELECT * FROM ${table}
 
-    try {
-      const preparedQuery = db.prepare(query);
-      const data: unknown = preparedQuery.all();
-      db.close();
-      return resolve(data);
-    } catch (err) {
-      if (!(err instanceof Error)) throw err;
-      err.name = 'SQLiteError';
-      throw err;
-    }
+    const preparedQuery = db.prepare(query);
+    const data: unknown = preparedQuery.all();
+    db.close();
+    return resolve(data);
   });
 }
 
 /*
   const tablename = 'barry';
   const columns = 'bay INTEGER, PLOY NOT NULL';
-  await queryRun(`CREATE TABLE IF NOT EXISTS ${tablename}(${collumms})`);
+  await queryRun(`CREATE TABLE IF NOT EXISTS ${tablename}(${columns})`);
 */
 
 export function queryRun(query: string): Promise<void> {
-  return new Promise<void>((resolve, reject) => {
+  return new Promise<void>(resolve => {
     const db = new Database('../database.db');
     //'CREATE TABLE IF NOT EXISTS servers(tests TEXT NOT NULL)'
     //'UPDATE table SET offline = ? WHERE id = ?'
     //'INSERT INTO servers VALUES(?,?,?)'
     //'DELETE FROM users WHERE id=(?)'
 
-    try {
-      const preparedQuery = db.prepare(query);
-      preparedQuery.run();
-      db.close();
-      return resolve();
-    } catch (err) {
-      if (!(err instanceof Error)) return reject(err);
-      err.name = 'SQLiteError';
-      return reject(err);
-    }
+    const preparedQuery = db.prepare(query);
+    preparedQuery.run();
+    db.close();
+    return resolve();
   });
-}
-
-function SQLiteError(message?: string) {
-  const constraint = new Error(message);
-  constraint.name = 'SQLiteError';
-  return constraint;
 }

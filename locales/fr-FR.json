@@ -1,0 +1,47 @@
+{
+  "commands": {
+    "help": {
+      "information": {
+        "title": "Information",
+        "description": "placeholder"
+      },
+      "all": {
+        "title": "Commandes",
+        "description": "Les arguments entre parenthèses sont obligatoires. Les arguments entre flèches sont parfois requis en fonction de l'argument précédent. Vous pouvez utiliser la commande /help [commande] [une commande] pour en savoir plus sur une commande spécifique.",
+        "field": {
+          "name": "**%{commandUsage}%**",
+          "value": "%{commandDescription}%"
+        }
+      },
+      "specific": {
+        "invalid": {
+          "title": "Commande Non Valide !",
+          "description": "/%{command}% n'est pas une commande valide !"
+        },
+        "title": "/%{command}%",
+        "description": "%{commandDescription}%",
+        "cooldown": {
+          "name": "Refroidissement Des Commandes",
+          "value": "%{commandCooldown}% seconde(s)"
+        },
+        "dm": {
+          "name": "Messages Directs",
+          "value": "Cette commande ne peut pas être utilisée dans le canal DM"
+        },
+        "owner": {
+          "name": "Propriétaire De Bot",
+          "value": "Il faut être propriétaire pour exécuter cette commande."
+        }
+      }
+    },
+    "ping": {
+      "embed1": {
+        "title": "Pinging.."
+      },
+      "embed2": {
+        "title": "🏓 Ping !",
+        "description": "Le battement de cœur de la websocket est de %{wsPing}%ms. Cette interaction a pris %{rtPing}%ms entre l'enregistrement de la commande slash et l'affichage du message initial."
+      }
+    }
+  }
+}

@@ -1,4 +1,5 @@
 import type { Collection, CommandInteraction, Client as DiscordClient } from 'discord.js';
+import { RegionLocales } from '../../locales/localesHandler';
 import { RequestCreate } from '../hypixelAPI/RequestCreate';
 import { User } from './database';
 
@@ -54,5 +55,6 @@ declare module 'discord.js' {
     cooldowns: Collection<string, Collection<string, number>>;
     config: Config,
     hypixelAPI: HypixelAPI;
+    regionLocales: RegionLocales;
   }
 }
