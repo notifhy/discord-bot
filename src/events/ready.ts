@@ -11,7 +11,6 @@ export const execute = async (client: Client) => {
   console.log(`Logged in as ${client!.user!.tag}!`);
 
   while (true) {
-    // eslint-disable-next-line no-await-in-loop
-    await client.hypixelAPI.requests.loopMaker();
+    await client.hypixelAPI.requests.loopMaker(); //eslint-disable-line no-await-in-loop
   }
 };

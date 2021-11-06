@@ -8,6 +8,7 @@ export const properties: CommandProperties = {
   description: 'Configure the bot',
   usage: '/config [block/userlimit/devmode/api]',
   cooldown: 5000,
+  ephemeral: true,
   noDM: false,
   ownerOnly: true,
   structure: {
@@ -41,7 +42,7 @@ export const properties: CommandProperties = {
 
 //JSON database moment.
 export const execute = async (interaction: CommandInteraction): Promise<void> => {
-  const responseEmbed = new BetterEmbed({ color: '#7289DA', footer: interaction });
+  const responseEmbed = new BetterEmbed({ color: '#7289DA', interaction: interaction, footer: null });
   const path = '../dynamicConfig.json';
   const file: Buffer = await fs.readFile(path);
   const readFile: Config = JSON.parse(file.toString());

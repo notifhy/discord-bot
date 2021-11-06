@@ -1,4 +1,50 @@
 {
+  "general": {
+    "errors": {
+      "title": "Oops!",
+      "description": "An error occurred while executing the command /%{commandName}%! This error has been automatically forwarded for review. Sorry.",
+      "field1": {
+        "name": "%{errorName}%",
+        "value": "%{errorMessage}%"
+      },
+      "field2": {
+        "name": "Over Max Length",
+        "value": "The message of this error is over 1024 characters long and was cut short"
+      },
+      "field3": {
+        "name": "Interaction ID",
+        "value": "%{interactionID}%"
+      }
+    }
+  },
+  "constraints": {
+    "blockedUsers" :{
+      "title": "Blocked User",
+      "description": "You were blocked form using this bot. You cannot appeal this."
+    },
+    "devMode": {
+      "title": "Developer Mode",
+      "description": "This bot is in developer only mode, likely due to a major issue or an upgrade that is taking place. Please check back later!"
+    },
+    "owner": {
+      "title": "Insufficient Permissions",
+      "description": "You cannot execute this command without being an owner!"
+    },
+    "dm": {
+      "title": "DM Channel",
+      "description": "You cannot execute this command in the DM channel! Please switch to a server channel!"
+    },
+    "cooldown": {
+      "embed1": {
+        "title": "Cooldown",
+      "description": "You are executing commands too quickly! This cooldown of this command is %{cooldown}% seconds. This message will turn green in %{timeLeft}% seconds once the cooldown expires."
+      },
+      "embed2": {
+        "title": "Cooldown Over",
+        "description": "The cooldown has expired! You can now execute the command /%{commandName}%!"
+      }
+    }
+  },
   "commands": {
     "help": {
       "information": {
@@ -20,6 +66,10 @@
         },
         "title": "/%{command}%",
         "description": "%{commandDescription}%",
+        "usage": {
+          "name": "Usage",
+          "value": "%{commandUsage}%"
+        },
         "cooldown": {
           "name": "Command Cooldown",
           "value": "%{commandCooldown}% second(s)"
@@ -32,6 +82,22 @@
           "name": "Bot Owner",
           "value": "Being an owner is required to execute this command"
         }
+      }
+    },
+    "modules": {
+      "title": "Modules",
+      "description": "You can add or remove modules here. See more about a module by selecting it. Then, press the button to remove or add it. If you want to delete some or all of your data used by or associated with this bot, you can request it with /deletedata.",
+      "moduleField": {
+        "name": "%{moduleName}% Module",
+        "value": "%{moduleDescription}%"
+      },
+      "statusField": {
+        "name": "Status",
+        "added": "You have added this module. Click on the button to disable it. Your data will be left intact.",
+        "removed": "This module is currently disabled. Click \"Enable\" to enable it."
+      },
+      "assets": {
+        
       }
     },
     "ping": {

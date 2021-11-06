@@ -133,6 +133,6 @@ export class Instance {
     this.instanceUses = 0;
     this.keyPercentage = 0.25;
     this.resumeAfter = 0;
-    this.userTable = 'users';
+    this.userTable = 'api';
   }
 }

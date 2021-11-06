@@ -8,12 +8,12 @@ export async function sendWebHook({
   suppressError = true,
 }: {
   content?: string,
-  embed: MessageEmbed,
+  embed: MessageEmbed[],
   webHook: WebHookConfig,
   suppressError?: boolean,
 }): Promise<void> {
   try {
-    await new WebhookClient({ id: webHook.id, token: webHook.token }).send({ content: content, embeds: [embed] });
+    await new WebhookClient({ id: webHook.id, token: webHook.token }).send({ content: content, embeds: embed });
   } catch (err) {
     if (!(err instanceof Error)) return;
     console.error(`${formattedUnix({ date: true, utc: true })} | An error has occurred while sending an WebHook | ${err.stack ?? err.message}`);
@@ -39,19 +39,23 @@ export function formattedUnix({
 export class BetterEmbed extends MessageEmbed {
   constructor({
     color,
+    interaction,
     footer,
   }: {
     color: ColorResolvable,
-    footer?: CommandInteraction | string[],
+    interaction: CommandInteraction | null,
+    footer: string[] | null,
   }) {
     super();
     super.setColor(color);
     super.setTimestamp();
 
-    if (footer instanceof CommandInteraction) {
-      const avatar = footer.user.displayAvatarURL({ dynamic: true });
-      super.setFooter(`/${footer.commandName}`, avatar);
-    } else if (Array.isArray(footer)) super.setFooter(footer[0], footer[1]);
+    if (interaction !== null) {
+      const avatar = interaction.user.displayAvatarURL({ dynamic: true });
+      super.setFooter(`/${interaction.commandName}`, avatar);
+    } else if (footer !== null) {
+      super.setFooter(footer[0], footer[1]);
+    }
   }
 }
 

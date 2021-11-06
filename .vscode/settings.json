@@ -3,11 +3,13 @@
     "aborterror",
     "cooldown",
     "cooldowns",
+    "deletedata",
     "devmode",
     "discordjs",
     "hypixel",
     "lclzlr",
     "lclzr",
+    "Minecraft",
     "ratelimit",
     "tablename",
     "userlimit"

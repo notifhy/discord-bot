@@ -1,11 +1,11 @@
 import type { Collection, CommandInteraction, Client as DiscordClient } from 'discord.js';
 import { RegionLocales } from '../../locales/localesHandler';
 import { RequestCreate } from '../hypixelAPI/RequestCreate';
-import { User } from './database';
+import { UserAPIData, UserData } from './database';
 
 export interface HypixelAPI {
   requests: RequestCreate;
-  data: Collection<string, Collection<string, User>>
+  data: Collection<string, Collection<string, UserData>>
 }
 
 export interface WebHookConfig {
@@ -33,15 +33,21 @@ export interface ClientEvents {
 export interface CommandProperties {
   name: string;
   description: string;
-  usage: string;
   cooldown: number;
+  ephemeral: boolean;
   noDM: boolean;
   ownerOnly: boolean;
   structure: object;
+  usage: string;
+}
+
+export interface CommandExecuteUserData {
+  userData: UserData;
+  userAPIData: UserAPIData;
 }
 
 export interface CommandExecute {
-  (interaction: CommandInteraction): Promise<void>
+  (interaction: CommandInteraction, user: CommandExecuteUserData): Promise<void>
 }
 
 export interface SlashCommand {

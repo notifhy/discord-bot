@@ -1,9 +1,9 @@
-import type { User } from '../@types/database';
+import type { UserAPIData } from '../@types/database';
 import type { HypixelAPI } from '../@types/hypixel';
 import { hypixelAPIkey, hypixelAPIWebhook, keyLimit, ownerID } from '../../config.json';
-import { cleanLength, formattedUnix, sendWebHook, timeout } from '../util/utility';
-import { queryGetAll, queryRun } from '../database';
-import { HypixelAPIEmbed, isAbortError } from '../util/error/helper';
+import { formattedUnix, sendWebHook, timeout } from '../util/utility';
+import { SQLiteWrapper } from '../database';
+import { ErrorStackEmbed, HypixelAPIEmbed, isAbortError } from '../util/error/helper';
 import { Abort, Instance, RateLimit, Unusual } from './RequestHelper';
 import fetch, { Response } from 'node-fetch';
 import { RateLimitError } from '../util/error/RateLimitError';
@@ -11,7 +11,7 @@ import { HTTPError } from '../util/error/HTTPError';
 import { Client } from 'discord.js';
 
 export class RequestCreate {
-  [key: string]: any;
+  [key: string]: any; //Remove
   abort: Abort;
   rateLimit: RateLimit;
   unusual: Unusual;
@@ -26,24 +26,49 @@ export class RequestCreate {
   }
 
   async loopMaker() {
-    const minute = 60;
-    const secondsToMS = 1000;
-    const users = await queryGetAll(`SELECT * FROM ${this.instance.userTable}`) as User[];
-    const keyQueryLimit = keyLimit * this.instance.keyPercentage;
-    const intervalBetweenRequests = minute / keyQueryLimit * secondsToMS;
+    try {
+      if (this.areFatalIssues() === true) return;
+      const minute = 60;
+      const secondsToMS = 1000;
+      const users = await new SQLiteWrapper().getAllUsers({ table: this.instance.userTable }) as UserAPIData[];
+      const keyQueryLimit = keyLimit * this.instance.keyPercentage;
+      const intervalBetweenRequests = minute / keyQueryLimit * secondsToMS;
 
-    for (const user of users) {
-      const urls = user.urls
-        .split(' ')
-        .map(url => this.instance.baseURL
-        .replace(/%{type}%/, url)
-        .replace(/%{uuid}%/, user.uuid));
-      if (this.instance.enabled === true) this.call(urls, user);
-      await timeout(intervalBetweenRequests * urls.length); // eslint-disable-line no-await-in-loop
+      for (const user of users) {
+        const urls = user.urls
+          .split(' ')
+          .map(url => this.instance.baseURL
+          .replace(/%{type}%/, url)
+          .replace(/%{uuid}%/, user.uuid));
+        if (this.instance.enabled === true) this.call(urls, user);
+        await timeout(intervalBetweenRequests * urls.length); //eslint-disable-line no-await-in-loop
+      }
+    } catch (err) {
+      const incidentID = Math.random().toString(36).substring(2, 10).toUpperCase();
+      console.error(`${formattedUnix({ date: true, utc: true })} | An error has occurred on incident ${incidentID} | `, err);
+
+      this.unusual.reportUnusualError(this);
+
+      const hypixelAPIEmbed = new HypixelAPIEmbed({
+        requestCreate: this,
+        error: err,
+        incidentID: incidentID,
+      });
+
+      const errorStackEmbed = new ErrorStackEmbed({
+        error: err,
+        incidentID: incidentID,
+      });
+
+      await sendWebHook({
+        content: `<@${ownerID[0]}>`,
+        embed: [hypixelAPIEmbed, errorStackEmbed],
+        webHook: hypixelAPIWebhook,
+        suppressError: true });
     }
   }
 
-  async call(urls: string[], user: User) {
+  async call(urls: string[], user: UserAPIData) {
     try {
       console.log(`${formattedUnix({ date: false, utc: true })}, ${this.instance.instanceUses}`);
       if (this.areFatalIssues() === true) return;
@@ -72,24 +97,40 @@ export class RequestCreate {
 
       const { player: { firstLogin, lastLogin, lastLogout, version, language } } = JSONs[0]!;
 
-      await queryRun(`UPDATE users SET lastUpdated = '${Date.now()}', firstLogin = '${firstLogin ?? null}', lastLogin = '${lastLogin ?? null}', lastLogout = '${lastLogout ?? null}', version = '${version ?? user.version}', language = '${language ?? user.language}' WHERE discordID = '${user.discordID}'`);
+      await new SQLiteWrapper().updateUser({
+        discordID: user.discordID,
+        table: 'api',
+        data: {
+          lastUpdated: Date.now(),
+          firstLogin: firstLogin ?? null,
+          lastLogin: lastLogin ?? null,
+          lastLogout: lastLogout ?? null,
+          version: version ?? user.version ?? null,
+          language: language ?? user.language ?? null,
+        },
+      });
     } catch (err) {
       const incidentID = Math.random().toString(36).substring(2, 10).toUpperCase();
-      console.error(`${formattedUnix({ date: true, utc: true })} | An error has occurred on incident ${incidentID} | ${err}`);
+      console.error(`${formattedUnix({ date: true, utc: true })} | An error has occurred on incident ${incidentID} | `, err);
 
       if (isAbortError(err)) this.abort.reportAbortError(this);
       else if (err instanceof RateLimitError) this.rateLimit.reportRateLimitError(this, err);
       else this.unusual.reportUnusualError(this);
 
-      const incidentEmbed = new HypixelAPIEmbed({
+      const hypixelAPIEmbed = new HypixelAPIEmbed({
         requestCreate: this,
+        error: err,
+        incidentID: incidentID,
+      });
+
+      const errorStackEmbed = new ErrorStackEmbed({
         error: err,
         incidentID: incidentID,
       });
 
       await sendWebHook({
         content: this.isPriority(err) === true ? `<@${ownerID[0]}>` : undefined,
-        embed: incidentEmbed,
+        embed: [hypixelAPIEmbed, errorStackEmbed],
         webHook: hypixelAPIWebhook,
         suppressError: true });
     }

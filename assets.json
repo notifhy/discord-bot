@@ -1,0 +1,22 @@
+{
+  "modules": {
+    "defender": {
+      "label": "Defender",
+      "description": "Get notified on unusual activity on your account",
+      "longDescription": "This module is the replacement for HyGuard. It features most of the same checks, although it has been slightly simplified for a better user experience.",
+      "value": "defender"
+    },
+    "friend": {
+      "label": "Friend Notifier",
+      "description": "Get notified whenever a friend logs on or out",
+      "longDescription": "This module will send you a notification when your friends log on or out. This can be sent in a channel or DM'd. You can only get notifications for people who have approved you on this bot for privacy reasons.",
+      "value": "friend"
+    },
+    "daily": {
+      "label": "Daily Rewards",
+      "description": "Get notified whenever you are about to miss your daily reward",
+      "longDescription": "This module will send you a DM whenever you are about to miss your daily reward. You can customize the threshold and the alert intervals.",
+      "value": "daily"
+    }
+  }
+}

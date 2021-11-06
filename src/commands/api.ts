@@ -8,6 +8,7 @@ export const properties: CommandProperties = {
   description: 'Configure the bot',
   usage: '/api [instance/toggle] <stats/>',
   cooldown: 0,
+  ephemeral: true,
   noDM: false,
   ownerOnly: true,
   structure: {
@@ -177,7 +178,7 @@ export const execute = async (interaction: CommandInteraction): Promise<void> =>
 async function toggle(interaction: CommandInteraction) {
   const originalValue = interaction.client.hypixelAPI.requests.instance.enabled;
   interaction.client.hypixelAPI.requests.instance.enabled = originalValue === false;
-  const toggleEmbed = new BetterEmbed({ color: '#7289DA', footer: interaction })
+  const toggleEmbed = new BetterEmbed({ color: '#7289DA', interaction: interaction, footer: null })
     .setTitle('Updated Value!')
     .setDescription(`The RequestCreate system is now ${originalValue === false ? 'on' : 'off'}!`);
   await interaction.editReply({ embeds: [toggleEmbed] });
@@ -186,7 +187,7 @@ async function toggle(interaction: CommandInteraction) {
 async function stats(interaction: CommandInteraction) {
   const requestCreate = interaction.client.hypixelAPI.requests;
   const { instanceUses, resumeAfter, keyPercentage } = requestCreate.instance;
-  const statsEmbed = new BetterEmbed({ color: '#7289DA', footer: interaction })
+  const statsEmbed = new BetterEmbed({ color: '#7289DA', interaction: interaction, footer: null })
     .addField('Enabled', requestCreate.instance.enabled === true ? 'Yes' : 'No')
     .addField('Resuming In', cleanLength(resumeAfter - Date.now()) ?? 'Not applicable')
     .addField('Global Rate Limit', requestCreate.rateLimit.isGlobal === true ? 'Yes' : 'No')
@@ -205,7 +206,7 @@ async function stats(interaction: CommandInteraction) {
 async function set(interaction: CommandInteraction, category: string, type: string, value: number | null) {
   if (type === 'keyPercentage' && value !== null && value > 1) throw new Error('Too high, must be below 1');
   interaction.client.hypixelAPI.requests[category][type] = type === 'isGlobal' ? Boolean(value) : value;
-  const setEmbed = new BetterEmbed({ color: '#7289DA', footer: interaction })
+  const setEmbed = new BetterEmbed({ color: '#7289DA', interaction: interaction, footer: null })
     .setTitle('Updated Value!')
     .setDescription(`<RequestCreate>.${category}.${type} is now ${value}.`);
   await interaction.editReply({ embeds: [setEmbed] });
@@ -218,7 +219,7 @@ async function call(interaction: CommandInteraction, category: string, type: str
   } else {
     requestCreate[category][type](requestCreate);
   }
-  const callEmbed = new BetterEmbed({ color: '#7289DA', footer: interaction })
+  const callEmbed = new BetterEmbed({ color: '#7289DA', interaction: interaction, footer: null })
     .setTitle('Executed!')
     .setDescription(`Executed <RequestCreate>.${category}.${type}`);
   await stats(interaction);

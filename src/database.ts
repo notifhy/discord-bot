@@ -1,61 +1,121 @@
 import Database from 'better-sqlite3';
+import { UserAPIData, UserData, ValidAPIUserUpdate, ValidUserUpdate } from './@types/database';
 import { SQLiteError } from './util/error/SQLiteError';
 
 // eslint-disable-next-line no-warning-comments
 //TODO: Fix "any" after the rest is done
 
-/*
-  const string = '2';
-  const output = await queryGet(`SELECT tests FROM test WHERE tests = '${string}' `);
-*/
+export class SQLiteWrapper {
+  queryGet({
+    query,
+    allowUndefined = false,
+  }: {
+    query: string,
+    allowUndefined?: boolean,
+  }): Promise<unknown> {
+    /*
+    const string = '2';
+    const output = await queryGet(`SELECT tests FROM test WHERE tests = '${string}' `);
+    SELECT * FROM ${table}
+    */
+    return new Promise<unknown>(resolve => {
+      const db = new Database('../database.db');
+      const data: unknown = db.prepare(query).get();
+      db.close();
+      if (allowUndefined === false && data === undefined) {
+        throw new SQLiteError(`The query ${query} returned an undefined value`);
+      }
+      return resolve(data);
+    });
+  }
 
-export function queryGet(query: string): Promise<unknown> {
-  return new Promise<unknown>(resolve => {
-    const db = new Database('../database.db');
-    //'SELECT count(1) FROM users
+  queryGetAll({
+    query,
+  }: {
+    query: string,
+  }): Promise<unknown> {
+    /*
+    const string = '2';
+    const output = await queryGetAll(`SELECT tests FROM test WHERE tests = '${string}' `);
+    */
+    return new Promise<unknown>(resolve => {
+      const db = new Database('../database.db');
+      const data: unknown = db.prepare(query).all();
+      db.close();
+      return resolve(data);
+    });
+  }
 
-    const preparedQuery = db.prepare(query);
-    const data: unknown = preparedQuery.get();
-    db.close();
-    if (data === undefined) throw new SQLiteError(`The query ${query} returned an undefined value`);
-    return resolve(data);
-  });
-}
+  queryRun({
+    query,
+  }: {
+    query: string,
+  }): Promise<void> {
+    /*
+    'CREATE TABLE IF NOT EXISTS servers(tests TEXT NOT NULL)'
+    'UPDATE table SET offline = ? WHERE id = ?'
+    'INSERT INTO servers VALUES(?,?,?)'
+    'DELETE FROM users WHERE id=(?)'
+    */
+    return new Promise<void>(resolve => {
+      const db = new Database('../database.db');
+      db.prepare(query).run();
+      db.close();
+      return resolve();
+    });
+  }
 
-/*
-  const string = '2';
-  const output = await queryGetAll(`SELECT tests FROM test WHERE tests = '${string}' `);
-*/
+  async getUser({
+    discordID,
+    table,
+  }: {
+    discordID: string,
+    table: string,
+  }): Promise<UserData | UserAPIData> {
+    const query = `SELECT * FROM ${table} WHERE discordID = '${discordID}'`;
+    const userData = await this.queryGet({ query: query, allowUndefined: true }) as UserData | UserAPIData;
+    return userData;
+  }
 
-export function queryGetAll(query: string): Promise<unknown> {
-  return new Promise<unknown>(resolve => {
-    const db = new Database('../database.db');
-    //SELECT * FROM ${table}
+  async getAllUsers({
+    table,
+  }: {
+    table: string
+  }): Promise<UserData[] | UserAPIData[]> {
+    const query = `SELECT * FROM ${table}`;
+    const userData = await this.queryGetAll({ query: query }) as UserData[] | UserAPIData[];
+    return userData;
+  }
 
-    const preparedQuery = db.prepare(query);
-    const data: unknown = preparedQuery.all();
-    db.close();
-    return resolve(data);
-  });
-}
+  async updateUser({
+    discordID,
+    table,
+    data,
+  }: {
+    discordID: string,
+    table: string,
+    data: ValidAPIUserUpdate | ValidUserUpdate,
+  }): Promise<UserData | UserAPIData> {
+    const setQuery: string[] = [];
+    for (const key in data) {
+      if (Object.prototype.hasOwnProperty.call(data, key)) {
+        setQuery.push(`${key} = '${data[key as keyof (ValidAPIUserUpdate | ValidUserUpdate)]}'`);
+      }
+    }
+    await this.queryRun({ query: `UPDATE ${table} SET ${setQuery.join(', ')} WHERE discordID = '${discordID}'` });
+    const returnQuery = `SELECT * FROM ${table} WHERE discordID = '${discordID}'`;
+    const newUserData = await this.queryGet({ query: returnQuery, allowUndefined: true }) as UserData | UserAPIData;
+    return newUserData;
+  }
 
-/*
-  const tablename = 'barry';
-  const columns = 'bay INTEGER, PLOY NOT NULL';
-  await queryRun(`CREATE TABLE IF NOT EXISTS ${tablename}(${columns})`);
-*/
-
-export function queryRun(query: string): Promise<void> {
-  return new Promise<void>(resolve => {
-    const db = new Database('../database.db');
-    //'CREATE TABLE IF NOT EXISTS servers(tests TEXT NOT NULL)'
-    //'UPDATE table SET offline = ? WHERE id = ?'
-    //'INSERT INTO servers VALUES(?,?,?)'
-    //'DELETE FROM users WHERE id=(?)'
-
-    const preparedQuery = db.prepare(query);
-    preparedQuery.run();
-    db.close();
-    return resolve();
-  });
+  async deleteUser({
+    discordID,
+    table,
+  }: {
+    discordID: string,
+    table: string,
+  }): Promise<void> {
+    const query = `DELETE * FROM ${table} WHERE discordID = '${discordID}'`;
+    await this.queryRun({ query: query });
+  }
 }

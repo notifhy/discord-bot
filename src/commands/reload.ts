@@ -8,6 +8,7 @@ export const properties: CommandProperties = {
   description: 'Reloads all or a command',
   usage: '/config [all/single] <command>',
   cooldown: 1000,
+  ephemeral: true,
   noDM: false,
   ownerOnly: true,
   structure: {
@@ -49,7 +50,7 @@ async function reloadAllCommands(interaction: CommandInteraction): Promise<void>
     interaction.client.commands.set(newCommand.properties.name, newCommand);
   }
 
-  const reloadedEmbed = new BetterEmbed({ color: '#7289DA', footer: interaction })
+  const reloadedEmbed = new BetterEmbed({ color: '#7289DA', interaction: interaction, footer: null })
     .setTitle(`Reloaded All Commands!`)
     .setDescription(`All commands have been reloaded! This action took ${Date.now() - now} milliseconds.`);
 
@@ -61,7 +62,7 @@ async function reloadCommand(interaction: CommandInteraction): Promise<void> {
   const command: SlashCommand | undefined = interaction.client.commands.get(input);
 
   if (command === undefined) {
-    const noCMDReloadEmbed = new BetterEmbed({ color: '#FF5555', footer: interaction })
+    const noCMDReloadEmbed = new BetterEmbed({ color: '#FF5555', interaction: interaction, footer: null })
       .setColor(`#FF5555`)
       .setTitle(`Unknown Command!`)
       .setDescription(`There is no command with the name \`${input}\`!`);
@@ -76,7 +77,7 @@ async function reloadCommand(interaction: CommandInteraction): Promise<void> {
   const newCommand: SlashCommand = require(`./${command.properties.name}.ts`);
   interaction.client.commands.set(newCommand.properties.name, newCommand);
 
-  const reloadedEmbed = new BetterEmbed({ color: '#7289DA', footer: interaction })
+  const reloadedEmbed = new BetterEmbed({ color: '#7289DA', interaction: interaction, footer: null })
     .setTitle(`/${input} Reloaded!`)
     .setDescription(`/${input} was successfully reloaded!`);
 

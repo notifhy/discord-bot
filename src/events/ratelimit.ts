@@ -9,5 +9,5 @@ export const properties: EventProperties = {
 };
 
 export const execute = (rateLimitInfo: RateLimitData): void => {
-  console.error(`${formattedUnix({ date: true, utc: true })} | Rate limit: ${JSON.stringify(rateLimitInfo)}`);
+  console.error(`${formattedUnix({ date: true, utc: true })} | Rate limit: `, rateLimitInfo);
 };

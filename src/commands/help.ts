@@ -7,6 +7,7 @@ export const properties: CommandProperties = {
   description: 'Displays helpful information and available commands',
   usage: '/help [commands/information] <command>',
   cooldown: 5000,
+  ephemeral: true,
   noDM: false,
   ownerOnly: false,
   structure: {
@@ -41,7 +42,7 @@ export const execute = async (interaction: CommandInteraction): Promise<void> =>
 
 async function information(interaction: CommandInteraction) {
   const locales = interaction.client.regionLocales;
-  const informationEmbed = new BetterEmbed({ color: '#7289DA', footer: interaction })
+  const informationEmbed = new BetterEmbed({ color: '#7289DA', interaction: interaction, footer: null })
     .setTitle(locales.localizer('commands.help.information.title', undefined))
     .setDescription(locales.localizer('commands.help.information.description', undefined));
 
@@ -52,7 +53,7 @@ async function specific(interaction: CommandInteraction) {
   const locales = interaction.client.regionLocales;
   const commandArg: string = interaction.options.getString('command') as string;
   const command: SlashCommand | undefined = interaction.client.commands.get(commandArg);
-  const commandSearchEmbed = new BetterEmbed({ color: '#7289DA', footer: interaction });
+  const commandSearchEmbed = new BetterEmbed({ color: '#7289DA', interaction: interaction, footer: null });
 
   if (command === undefined) {
     commandSearchEmbed
@@ -71,16 +72,23 @@ async function specific(interaction: CommandInteraction) {
 
   if (command.properties.description) {
     commandSearchEmbed.setDescription(locales.localizer('commands.help.specific.description', undefined, {
-      command: commandArg,
+      commandDescription: command.properties.description,
     }));
   }
 
-  if (command.properties.cooldown) {
-    commandSearchEmbed.addField(locales.localizer('commands.help.specific.cooldown.name', undefined),
+  console.log(locales.localizer('commands.help.specific.usage.name', undefined));
+  console.log(JSON.stringify(locales.localizer('commands.help.specific.usage', undefined)));
+  console.log(JSON.stringify(locales.localizer('commands.help.specific', undefined)));
+
+  commandSearchEmbed.addField(locales.localizer('commands.help.specific.usage.name', undefined),
+    locales.localizer('commands.help.specific.usage.value', undefined, {
+      commandUsage: command.properties.usage,
+  }));
+
+  commandSearchEmbed.addField(locales.localizer('commands.help.specific.cooldown.name', undefined),
     locales.localizer('commands.help.specific.cooldown.value', undefined, {
-      commandCooldown: command.properties.cooldown,
-    }));
-  }
+      commandCooldown: command.properties.cooldown / 1000,
+  }));
 
   if (command.properties.noDM === true) {
     commandSearchEmbed.addField(locales.localizer('commands.help.specific.dm.name', undefined),
@@ -102,13 +110,13 @@ async function specific(interaction: CommandInteraction) {
 async function commands(interaction: CommandInteraction) {
   const locales = interaction.client.regionLocales;
   const commandsCollection = interaction.client.commands.filter(command => command.properties.ownerOnly === false);
-  const allCommandsEmbed = new BetterEmbed({ color: '#7289DA', footer: interaction })
+  const allCommandsEmbed = new BetterEmbed({ color: '#7289DA', interaction: interaction, footer: null })
     .setTitle(locales.localizer('commands.help.all.title', undefined))
     .setDescription(locales.localizer('commands.help.all.description', undefined));
 
   for (const command of commandsCollection.values()) {
     allCommandsEmbed.addField(locales.localizer('commands.help.all.field.name', undefined, {
-      commandUsage: command.properties.usage,
+      commandUsage: `/${command.properties.name}`,
     }),
     locales.localizer('commands.help.all.field.value', undefined, {
       commandDescription: command.properties.description,

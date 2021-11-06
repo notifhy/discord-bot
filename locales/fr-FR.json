@@ -20,6 +20,10 @@
         },
         "title": "/%{command}%",
         "description": "%{commandDescription}%",
+        "usage": {
+          "name": "Usage",
+          "value": "%{commandUsage}%"
+        },
         "cooldown": {
           "name": "Refroidissement Des Commandes",
           "value": "%{commandCooldown}% seconde(s)"

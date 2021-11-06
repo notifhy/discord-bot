@@ -25,10 +25,7 @@
         "ignoreImports": true,
         "allow": ["Hypixel400_403_422"]
       }],
-      "no-extra-parens": ["error", "all", {
-        "conditionalAssign": false,
-        "nestedBinaryExpressions": false
-      }],
+      "no-extra-parens": "off",
       "prefer-named-capture-group": "off",
       "id-length": ["error", {
         "exceptions": ["i", "t"]

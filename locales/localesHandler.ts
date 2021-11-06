@@ -1,5 +1,6 @@
 import type { Locale, Locales, Parameters } from '../src/@types/locales';
 import * as fs from 'fs/promises';
+import { AssetModule, AssetModules } from '../src/@types/modules';
 
 export class RegionLocales {
   locales: Locales;
@@ -21,22 +22,37 @@ export class RegionLocales {
     return new RegionLocales(locales);
   }
 
-  // eslint-disable-next-line id-length
-  localizer(path: string, local: string | undefined, parameters?: Parameters) {
+  localizer(path: string, locale: string | undefined, parameters?: Parameters): string {
     const pathArray: string[] = path.split('.');
     let fetchedString: Locales | Locale | string = this.locales;
-    fetchedString = fetchedString[local ?? 'en-us' as keyof Locales];
+    fetchedString = fetchedString?.[locale ?? 'en-us' as keyof Locales] as Locale;
     for (const pathCommand of pathArray) {
       if (typeof fetchedString === 'string') break;
-      fetchedString = fetchedString[pathCommand as keyof Locale];
+      fetchedString = fetchedString?.[pathCommand as keyof Locale] as Locale | string;
+    }
+
+    if (typeof fetchedString !== 'string' || fetchedString === undefined) {
+      throw new RangeError('Fetched string is not of type string');
     }
 
     for (const parameter in parameters) {
       if (Object.prototype.hasOwnProperty.call(parameters, parameter)) {
         const regex: RegExp = new RegExp(`%{${parameter}}%`);
-        fetchedString = (fetchedString as string).replace(regex, String(parameters[parameter])); //eslint-disable-line no-extra-parens
+        fetchedString = fetchedString.replace(regex, String(parameters[parameter])); //eslint-disable-line no-extra-parens
       }
     }
-    return fetchedString as string;
+    return fetchedString;
+  }
+
+  get(path: string, locale: string): AssetModule {
+    const pathArray: string[] = path.split('.');
+    let fetchedItem = this.locales[locale ?? 'en-us' as keyof Locales] as AssetModule;
+
+    for (const pathCommand of pathArray) {
+      if (typeof fetchedItem === 'string') break;
+      fetchedItem = fetchedItem?.[pathCommand as keyof AssetModules] as unknown as AssetModule;
+    }
+
+    return fetchedItem;
   }
 }

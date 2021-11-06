@@ -1,5 +1,7 @@
+import { AssetModule } from './modules';
+
 export interface Locale {
-  [index: string]: Locale | string;
+  [index: string]: Locale | AssetModule | string;
 }
 
 export interface Locales {

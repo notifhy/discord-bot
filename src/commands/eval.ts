@@ -7,6 +7,7 @@ export const properties: CommandProperties = {
   description: 'Evaluates a string',
   usage: '/eval [string]',
   cooldown: 5000,
+  ephemeral: true,
   noDM: false,
   ownerOnly: true,
   structure: {
@@ -30,7 +31,7 @@ export const execute = async (interaction: CommandInteraction): Promise<void> =>
     const end = Date.now();
     const timeTaken = end - start;
     const outputMaxLength = Boolean(output?.length >= 1024);
-    const evalEmbed = new BetterEmbed({ color: '#7289DA', footer: interaction })
+    const evalEmbed = new BetterEmbed({ color: '#7289DA', interaction: interaction, footer: null })
       .setTitle('Executed Eval!')
       .addField(`Input`, `\`\`\`javascript\n${input}\n\`\`\``)
       .addField(`Output`, `\`\`\`javascript\n${output}\n\`\`\``)
@@ -42,7 +43,7 @@ export const execute = async (interaction: CommandInteraction): Promise<void> =>
   } catch (err) {
     if (!(err instanceof Error)) return;
     const outputMaxLength = Boolean(err.message.length >= 1024);
-    const evalEmbed = new BetterEmbed({ color: '#FF5555', footer: interaction })
+    const evalEmbed = new BetterEmbed({ color: '#FF5555', interaction: interaction, footer: null })
       .setTitle('Failed Eval!')
       .addField(`Input`, `\`${input}\``)
       .addField(`${err.name}:`, `${err.message}`);

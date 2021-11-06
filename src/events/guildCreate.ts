@@ -9,6 +9,6 @@ export const properties: EventProperties = {
 };
 
 export const execute = (guild: Guild): void => {
-  if (guild.available === false) return;
+  if (guild.available === false || !guild.client.isReady()) return;
   console.log(`${formattedUnix({ date: true, utc: true })} | Bot has joined a guild. Guild: ${guild.name} | ${guild.id} Guild Owner: ${guild.ownerId} Guild Member Count: ${guild.memberCount} (w/ bot)`);
 };

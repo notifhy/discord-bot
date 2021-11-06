@@ -11,6 +11,7 @@ export const properties: CommandProperties = {
   description: 'Deploy commands',
   usage: '/deploy [global/local] [user/owner]',
   cooldown: 5000,
+  ephemeral: true,
   noDM: false,
   ownerOnly: true,
   structure: {
@@ -98,7 +99,7 @@ export const execute = async (interaction: CommandInteraction): Promise<void> =>
     );
   }
 
-  const successEmbed = new BetterEmbed({ color: '#7289DA', footer: interaction })
+  const successEmbed = new BetterEmbed({ color: '#7289DA', interaction: interaction, footer: null })
     .setTitle('Success!')
     .setDescription(JSON.stringify(commands).slice(0, 4096) ?? 'None');
 
