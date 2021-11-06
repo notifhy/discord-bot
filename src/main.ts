@@ -67,7 +67,7 @@ client.hypixelAPI.requests.instance.enabled = client.config.api;
     client.commands.set(command.properties.name, command);
   }
 
-  client.regionLocales = await RegionLocales.ready();
+  client.regionLocales = new RegionLocales();
 
   if (client.config.api === true) await client.hypixelAPI.requests.loopMaker();
 

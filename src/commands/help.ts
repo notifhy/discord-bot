@@ -35,7 +35,7 @@ export const properties: CommandProperties = {
 };
 
 export const execute = async (interaction: CommandInteraction): Promise<void> => {
-  if (interaction.options.getSubcommand() === 'information') information(interaction);
+  if (interaction.options.getSubcommand() === 'information') await information(interaction);
   else if (interaction.options.getString('command')) await specific(interaction);
 	else await commands(interaction);
 };

@@ -131,7 +131,7 @@ export class Instance {
     this.baseURL = 'https://api.hypixel.net/%{type}%?uuid=%{uuid}%';
     this.enabled = true;
     this.instanceUses = 0;
-    this.keyPercentage = 0.25;
+    this.keyPercentage = 0.20;
     this.resumeAfter = 0;
     this.userTable = 'api';
   }

@@ -62,23 +62,12 @@ export class UserCommandErrorEmbed extends BetterEmbed {
     super({ color: '#AA0000', interaction: null, footer: [`Incident ${incidentID}`, interaction.user.displayAvatarURL({ dynamic: true })] });
     super
       .setTitle('Oops!')
-      .setDescription(locales.localizer('general.errors.description', undefined, {
-        commandName: interaction.commandName,
-      }))
-      .addField(locales.localizer('general.errors.field1.name', undefined, {
-        errorName: error.name,
-      }),
-      locales.localizer('general.errors.field1.value', undefined, {
-        errorMessage: error.message.slice(0, 1024) || '\u200B',
-      }));
+      .setDescription(`An error occurred while executing the command ${interaction.commandName}! This error has been automatically forwarded for review. Sorry.`)
+      .addField(error.name, error.message.slice(0, 1024) || '\u200B');
     if (messageOverLimit) {
-      super.addField(locales.localizer('general.errors.field2.name', undefined),
-      locales.localizer('general.errors.field2.value', undefined));
+      super.addField('Over Max Length', 'The message of this error is over 1024 characters long and was cut short');
     }
-    super.addField(locales.localizer('general.errors.field3.name', undefined),
-    locales.localizer('general.errors.field3.value', undefined, {
-      interactionID: interaction.id,
-    }));
+    super.addField('Interaction ID', interaction.id);
   }
 }
 
@@ -101,31 +90,32 @@ export class HypixelAPIEmbed extends BetterEmbed {
 
     if (isAbortError(error)) {
       super
+        .setTitle('Degraded Performance')
         .addField('Resuming In', timeout ?? 'Not applicable');
     } else if (error instanceof RateLimitError) {
       super
         .setTitle('Degraded Performance')
         .setDescription('The usable percentage of the key has been dropped by 5%. A timeout has also been applied.')
         .addField('Resuming In', timeout ?? 'Not applicable')
-        .addField('Listed Cause', error.message ?? 'Unknown')
-        .addField('Request', `Status: ${error.status}\nPath: ${error.url}`)
+        .addField('Listed Cause', error.message || 'Unknown')
+        .addField('Request', `Status: ${error.status}\nStatus Text: ${error.statusText}\nPath: ${error.url}`)
         .addField('Global Rate Limit', requestCreate.rateLimit.isGlobal === true ? 'Yes' : 'No');
     } else if (error instanceof HTTPError) {
       super
         .setTitle('Degraded Performance')
         .addField('Resuming In', timeout ?? 'Not applicable')
-        .addField('Listed Cause', error.message ?? 'Unknown')
-        .addField('Request', `Status: ${error.status}\nPath: ${error.url}`);
+        .addField('Listed Cause', error.message || 'Unknown')
+        .addField('Request', `Status: ${error.status}\nStatus Text: ${error.statusText}\nPath: ${error.url}`);
     } else if (error instanceof FetchError) {
       super
         .setTitle('Degraded Performance')
         .addField('Resuming In', timeout ?? 'Not applicable')
-        .addField('Listed Cause', error.message ?? 'Unknown');
+        .addField('Listed Cause', error.message || 'Unknown');
     } else if (error instanceof Error) {
       super
         .setTitle('Unexpected Incident')
         .addField('Resuming In', timeout ?? 'Not applicable')
-        .addField('Listed Cause', error.message ?? 'Unknown');
+        .addField('Listed Cause', error.message || 'Unknown');
     } else {
       super
         .setTitle('Unexpected Incident')

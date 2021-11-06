@@ -14,6 +14,11 @@ export interface UserAPIData {
   lastLogout: number | null;
   version: string | null;
   language: string | null;
+  mostRecentGameType: string | null;
+  lastClaimedReward: number | null;
+  rewardScore: number | null;
+  rewardHighScore: number | null;
+  totalDailyRewards: number | null;
 }
 
 export interface ValidUserUpdate {
@@ -22,7 +27,7 @@ export interface ValidUserUpdate {
   modules?: string | null;
 }
 
-export interface ValidAPIUserUpdate {
+export interface ValidAPIUserUpdate { //no idea how to simplify, ill do this later
   discordID?: string;
   uuid?: string;
   urls?: string | null;
@@ -32,4 +37,9 @@ export interface ValidAPIUserUpdate {
   lastLogout?: number | null;
   version?: string | null;
   language?: string | null;
+  mostRecentGameType?: string | null;
+  lastClaimedReward?: number | null | undefined;
+  rewardScore?: number | null | undefined;
+  rewardHighScore?: number | null | undefined;
+  totalDailyRewards?: number | null | undefined;
 }

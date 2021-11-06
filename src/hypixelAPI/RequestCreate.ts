@@ -64,7 +64,8 @@ export class RequestCreate {
         content: `<@${ownerID[0]}>`,
         embed: [hypixelAPIEmbed, errorStackEmbed],
         webHook: hypixelAPIWebhook,
-        suppressError: true });
+        suppressError: true,
+      });
     }
   }
 
@@ -95,7 +96,18 @@ export class RequestCreate {
         else throw new HTTPError(errorData);
       });
 
-      const { player: { firstLogin, lastLogin, lastLogout, version, language } } = JSONs[0]!;
+      const { player: {
+        firstLogin,
+        lastLogin,
+        lastLogout,
+        version,
+        language,
+        mostRecentGameType,
+        lastClaimedReward,
+        rewardScore,
+        rewardHighScore,
+        totalDailyRewards,
+      } } = JSONs[0]!;
 
       await new SQLiteWrapper().updateUser({
         discordID: user.discordID,
@@ -107,6 +119,11 @@ export class RequestCreate {
           lastLogout: lastLogout ?? null,
           version: version ?? user.version ?? null,
           language: language ?? user.language ?? null,
+          mostRecentGameType: mostRecentGameType ?? null,
+          lastClaimedReward: lastClaimedReward ?? null,
+          rewardScore: rewardScore ?? null,
+          rewardHighScore: rewardHighScore ?? null,
+          totalDailyRewards: totalDailyRewards ?? null,
         },
       });
     } catch (err) {

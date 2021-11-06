@@ -16,6 +16,11 @@ interface HypixelPlayerData {
   lastLogout: number | null | undefined;
   version: string | null | undefined;
   language: string | null | undefined;
+  mostRecentGameType: string | null | undefined;
+  lastClaimedReward: number | null | undefined;
+  rewardScore: number | null | undefined;
+  rewardHighScore: number | null | undefined;
+  totalDailyRewards: number | null | undefined;
 }
 
 export interface HypixelPlayer extends BaseHypixelAPI {

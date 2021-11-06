@@ -8,4 +8,7 @@ export interface AssetModule {
 
 export interface AssetModules {
   [key: string]: AssetModule;
+  defender: AssetModule;
+  friend: AssetModule;
+  daily: AssetModule;
 }

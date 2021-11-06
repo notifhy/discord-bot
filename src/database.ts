@@ -71,9 +71,9 @@ export class SQLiteWrapper {
   }: {
     discordID: string,
     table: string,
-  }): Promise<UserData | UserAPIData> {
+  }): Promise<UserData | UserAPIData | undefined> {
     const query = `SELECT * FROM ${table} WHERE discordID = '${discordID}'`;
-    const userData = await this.queryGet({ query: query, allowUndefined: true }) as UserData | UserAPIData;
+    const userData = await this.queryGet({ query: query, allowUndefined: true }) as UserData | UserAPIData | undefined;
     return userData;
   }
 
@@ -95,7 +95,7 @@ export class SQLiteWrapper {
     discordID: string,
     table: string,
     data: ValidAPIUserUpdate | ValidUserUpdate,
-  }): Promise<UserData | UserAPIData> {
+  }): Promise<UserData | UserAPIData | undefined> {
     const setQuery: string[] = [];
     for (const key in data) {
       if (Object.prototype.hasOwnProperty.call(data, key)) {
@@ -104,7 +104,7 @@ export class SQLiteWrapper {
     }
     await this.queryRun({ query: `UPDATE ${table} SET ${setQuery.join(', ')} WHERE discordID = '${discordID}'` });
     const returnQuery = `SELECT * FROM ${table} WHERE discordID = '${discordID}'`;
-    const newUserData = await this.queryGet({ query: returnQuery, allowUndefined: true }) as UserData | UserAPIData;
+    const newUserData = await this.queryGet({ query: returnQuery, allowUndefined: true }) as UserData | UserAPIData | undefined;
     return newUserData;
   }
 
