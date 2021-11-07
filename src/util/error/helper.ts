@@ -1,8 +1,8 @@
-import { CommandInteraction, StickerPack } from 'discord.js';
+import { CommandInteraction, MessageEmbed } from 'discord.js';
 import type { AbortError } from '../../@types/error';
 import { BetterEmbed, cleanLength, formattedUnix, sendWebHook } from '../utility';
-import { errorWebhook, keyLimit, ownerID } from '../../../config.json';
-import { RequestCreate } from '../../hypixelAPI/RequestCreate';
+import { fatalWebhook, keyLimit, ownerID } from '../../../config.json';
+import { HypixelRequestCall } from '../../hypixelAPI/HypixelRequestCall';
 import { RateLimitError } from './RateLimitError';
 import { HTTPError } from './HTTPError';
 import { FetchError } from 'node-fetch';
@@ -57,7 +57,6 @@ export class UserCommandErrorEmbed extends BetterEmbed {
     interaction: CommandInteraction,
     incidentID: string,
   }) {
-    const locales = interaction.client.regionLocales;
     const messageOverLimit = error.message.length >= 4096;
     super({ color: '#AA0000', interaction: null, footer: [`Incident ${incidentID}`, interaction.user.displayAvatarURL({ dynamic: true })] });
     super
@@ -71,13 +70,46 @@ export class UserCommandErrorEmbed extends BetterEmbed {
   }
 }
 
+export class HTTPErrorEmbed extends CommandErrorEmbed {
+  constructor({
+    error,
+    interaction,
+    incidentID,
+  }: {
+    error: Error,
+    interaction: CommandInteraction,
+    incidentID: string,
+  }) {
+    super({ error, interaction, incidentID });
+    super.setTitle('Unwanted HTTP Error');
+  }
+}
+
+export class UserHTTPErrorEmbed extends BetterEmbed {
+  constructor({
+    error,
+    interaction,
+    incidentID,
+  }: {
+    error: HTTPError,
+    interaction: CommandInteraction,
+    incidentID: string,
+  }) {
+    super({ color: '#AA0000', interaction: null, footer: [`Incident ${incidentID}`, interaction.user.displayAvatarURL({ dynamic: true })] });
+    super
+      .setTitle('Oops!')
+      .setDescription('An error has occurred while fetching data from Hypixel or its respective wrappers. This issue should resolve itself; check back later!')
+      .addField('Issue', error.response.statusText || `HTTP Code ${error.response.status}`);
+  }
+}
+
 export class HypixelAPIEmbed extends BetterEmbed {
   constructor({
     requestCreate,
     error,
     incidentID,
   }: {
-    requestCreate: RequestCreate,
+    requestCreate: HypixelRequestCall,
     error: unknown,
     incidentID: string,
   }) {
@@ -158,26 +190,29 @@ export class ErrorStackEmbed extends BetterEmbed {
 }
 
 export async function replyToError({
-  error,
+  embeds,
   interaction,
   incidentID,
 }: {
-  error: Error,
+  embeds: MessageEmbed[],
   interaction: CommandInteraction,
   incidentID: string,
 }): Promise<void> {
-  const userErrorEmbed = new UserCommandErrorEmbed({ error, interaction, incidentID });
-  const payLoad = { embeds: [userErrorEmbed], ephemeral: true };
+  const payLoad = { embeds: embeds, ephemeral: true };
 
   try {
-    console.error(`${formattedUnix({ date: true, utc: true })} | An error has occurred | ${error.stack ?? error.message}`);
     if (interaction.replied === true || interaction.deferred === true) await interaction.followUp(payLoad);
     else await interaction.reply(payLoad);
   } catch (err) {
     if (!(err instanceof Error)) return;
     console.error(`${formattedUnix({ date: true, utc: true })} | An error has occurred and also failed to notify the user | ${err.stack ?? err.message}`);
     const failedNotify = new CommandErrorEmbed({ error: err, interaction: interaction, incidentID: incidentID });
-    const stackEmbed = new ErrorStackEmbed({ error: error, incidentID: incidentID });
-    await sendWebHook({ content: `<@${ownerID[0]}>`, embed: [failedNotify, stackEmbed], webHook: errorWebhook, suppressError: true });
+    const stackEmbed = new ErrorStackEmbed({ error: err, incidentID: incidentID });
+    await sendWebHook({
+      content: `<@${ownerID.join('><@')}>`,
+      embed: [failedNotify, stackEmbed],
+      webhook: fatalWebhook,
+      suppressError: true,
+    });
   }
 }

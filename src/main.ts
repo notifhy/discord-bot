@@ -3,12 +3,16 @@ import type { Locales } from './@types/locales';
 import { Client, Collection, Intents } from 'discord.js';
 import { discordAPIkey as token } from '../config.json';
 import * as fs from 'fs/promises';
-import { RequestCreate } from './hypixelAPI/RequestCreate';
+import { HypixelRequestCall } from './hypixelAPI/HypixelRequestCall';
 import { api, blockedUsers, devMode } from '../dynamicConfig.json';
 import { RegionLocales } from '../locales/localesHandler';
 
 process.on('unhandledRejection', error => {
-  console.log('unhandled', error);
+  console.log('unhandledRejection', error);
+});
+
+process.on('uncaughtException', error => {
+  console.log('uncaughtException', error);
 });
 
 const client = new Client({
@@ -32,7 +36,7 @@ client.config = {
   devMode: devMode,
 };
 client.hypixelAPI = {
-  requests: new RequestCreate(client),
+  requests: new HypixelRequestCall(),
   data: new Collection,
 };
 client.hypixelAPI.requests.instance.enabled = client.config.api;
@@ -69,7 +73,7 @@ client.hypixelAPI.requests.instance.enabled = client.config.api;
 
   client.regionLocales = new RegionLocales();
 
-  if (client.config.api === true) await client.hypixelAPI.requests.loopMaker();
+  if (client.config.api === true) await client.hypixelAPI.requests.callAll();
 
   await client.login(token);
 })();

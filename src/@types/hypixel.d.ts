@@ -1,3 +1,7 @@
+/*
+Hypixel
+*/
+
 interface BaseHypixelAPI {
   success: boolean;
 }
@@ -42,3 +46,36 @@ export interface Hypixel429 extends BaseHypixelAPI {
 }
 
 export interface HypixelAPI extends HypixelPlayer, HypixelKey, Hypixel400_403_422, Hypixel429 {}
+
+/*
+Slothpixel
+*/
+
+interface Rewards {
+  'streak_current': number,
+  'streak_best': number,
+  'claimed': number,
+  'claimed_daily': number,
+}
+
+interface Links {
+  TWITTER: string | null;
+  YOUTUBE: string | null;
+  INSTAGRAM: string | null;
+  TWITCH: string | null;
+  DISCORD: string | null;
+  HYPIXEL: string | null;
+}
+
+export interface Slothpixel {
+  uuid: string;
+  username: string;
+  'mc_version': string | null;
+  'first_login': number | null;
+  'last_login': number | null;
+  'last_logout': number | null;
+  'last_game': string | null;
+  language: string | null;
+  rewards: Rewards;
+  links: Links;
+}

@@ -1,4 +1,4 @@
-import type { CommandProperties, Config } from '../@types/index';
+import type { CommandProperties } from '../@types/index';
 import { CommandInteraction } from 'discord.js';
 import { BetterEmbed, cleanLength } from '../util/utility';
 import { keyLimit } from '../../config.json';
@@ -180,7 +180,7 @@ async function toggle(interaction: CommandInteraction) {
   interaction.client.hypixelAPI.requests.instance.enabled = originalValue === false;
   const toggleEmbed = new BetterEmbed({ color: '#7289DA', interaction: interaction, footer: null })
     .setTitle('Updated Value!')
-    .setDescription(`The RequestCreate system is now ${originalValue === false ? 'on' : 'off'}!`);
+    .setDescription(`The HypixelRequestCall system is now ${originalValue === false ? 'on' : 'off'}!`);
   await interaction.editReply({ embeds: [toggleEmbed] });
 }
 

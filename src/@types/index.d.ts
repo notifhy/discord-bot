@@ -1,10 +1,10 @@
 import type { Collection, CommandInteraction, Client as DiscordClient } from 'discord.js';
 import { RegionLocales } from '../../locales/localesHandler';
-import { RequestCreate } from '../hypixelAPI/RequestCreate';
+import { HypixelRequestCall } from '../hypixelAPI/HypixelRequestCall';
 import { UserAPIData, UserData } from './database';
 
 export interface HypixelAPI {
-  requests: RequestCreate;
+  requests: HypixelRequestCall;
   data: Collection<string, Collection<string, UserData>>
 }
 

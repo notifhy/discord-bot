@@ -23,6 +23,7 @@
       "camelcase": ["error", {
         "ignoreDestructuring": true,
         "ignoreImports": true,
+        "properties": "never",
         "allow": ["Hypixel400_403_422"]
       }],
       "no-extra-parens": "off",

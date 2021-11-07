@@ -1,12 +1,13 @@
 import type { EventProperties, SlashCommand } from '../@types/index';
 import { BetterEmbed, formattedUnix, sendWebHook, timeout } from '../util/utility';
-import { CommandErrorEmbed, ConstraintEmbed, ErrorStackEmbed, replyToError } from '../util/error/helper';
-import { errorWebhook, nonFatalWebHook, ownerID } from '../../config.json';
+import { CommandErrorEmbed, ConstraintEmbed, ErrorStackEmbed, HTTPErrorEmbed, replyToError, UserCommandErrorEmbed, UserHTTPErrorEmbed } from '../util/error/helper';
+import { fatalWebhook, nonFatalWebhook, ownerID } from '../../config.json';
 import { Collection, CommandInteraction } from 'discord.js';
 import { ConstraintError } from '../util/error/ConstraintError';
 import * as fs from 'fs/promises';
 import { SQLiteWrapper } from '../database';
 import { UserAPIData, UserData } from '../@types/database';
+import { HTTPError } from '../util/error/HTTPError';
 
 export const properties: EventProperties = {
   name: 'interactionCreate',
@@ -41,20 +42,33 @@ export const execute = async (interaction: CommandInteraction): Promise<void> =>
         userAPIData,
       });
     }
-  } catch (err) {
-    if (!(err instanceof Error)) return; //=== false doesn't work for this. Very intuitive. ts(2571)
-    if (err instanceof ConstraintError) {
-      console.log(`${formattedUnix({ date: true, utc: true })} | ${interaction.user.tag} failed the constraint ${err.message} in interaction ${interaction.id}`);
-      const constraintEmbed = new ConstraintEmbed({ error: err, interaction: interaction });
-      await sendWebHook({ embed: [constraintEmbed], webHook: nonFatalWebHook });
+  } catch (error) {
+    if (!(error instanceof Error)) return; //=== false doesn't work for this. Very intuitive. ts(2571)
+    if (error instanceof ConstraintError) {
+      console.log(`${formattedUnix({ date: true, utc: true })} | ${interaction.user.tag} failed the constraint ${error.message} in interaction ${interaction.id}`);
+      const constraintErrorEmbed = new ConstraintEmbed({ error: error, interaction: interaction });
+      await sendWebHook({ embed: [constraintErrorEmbed], webhook: nonFatalWebhook });
       return;
     }
 
+    console.error(`${formattedUnix({ date: true, utc: true })} | An error has occurred | ${error.stack ?? error.message}`);
     const incidentID = Math.random().toString(36).substring(2, 10).toUpperCase();
-    const commandError = new CommandErrorEmbed({ error: err, interaction: interaction, incidentID: incidentID });
-    const stackEmbed = new ErrorStackEmbed({ error: err, incidentID: incidentID });
-    await replyToError({ error: err, interaction: interaction, incidentID: incidentID });
-    await sendWebHook({ embed: [commandError, stackEmbed], webHook: errorWebhook, suppressError: true });
+    const stackEmbed = new ErrorStackEmbed({ error: error, incidentID: incidentID });
+    let userErrorEmbed, errorEmbed;
+
+    if (error instanceof HTTPError) { //Unsightly, but it does work (I think)
+      userErrorEmbed = new UserHTTPErrorEmbed({ error: error, interaction: interaction, incidentID: incidentID });
+      errorEmbed = new HTTPErrorEmbed({ error: error, interaction: interaction, incidentID: incidentID });
+    } else {
+      userErrorEmbed = new UserCommandErrorEmbed({ error: error, interaction: interaction, incidentID: incidentID });
+      errorEmbed = new CommandErrorEmbed({ error: error, interaction: interaction, incidentID: incidentID });
+    }
+    await replyToError({ embeds: [userErrorEmbed], interaction: interaction, incidentID: incidentID });
+    await sendWebHook({
+      embed: [errorEmbed, stackEmbed],
+      webhook: error instanceof HTTPError ? nonFatalWebhook : fatalWebhook,
+      suppressError: true,
+    });
   }
 };
 

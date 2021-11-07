@@ -87,6 +87,16 @@ export class SQLiteWrapper {
     return userData;
   }
 
+  async newUser({
+    table,
+    data,
+  }: {
+    table: string,
+    data: UserAPIData | UserData,
+  }): Promise<void> {
+    await this.queryRun({ query: `INSERT INTO ${table} VALUES(${Object.values(data).join(', ')})` });
+  }
+
   async updateUser({
     discordID,
     table,

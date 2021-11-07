@@ -1,4 +1,4 @@
-import type { RequestCreate } from './RequestCreate';
+import type { HypixelRequestCall } from './HypixelRequestCall';
 import { HypixelAPI } from '../@types/hypixel';
 import { RateLimitError } from '../util/error/RateLimitError';
 import { isAbortError } from '../util/error/helper';
@@ -30,7 +30,7 @@ export class Abort {
     return timeout;
   }
 
-  reportAbortError(RequestInstance: RequestCreate): void {
+  reportAbortError(RequestInstance: HypixelRequestCall): void {
     const currentTimeout = Math.max(RequestInstance.instance.resumeAfter, Date.now());
     this.addAbort();
     if (this.timeoutLength > this.baseTimeout || this.abortsLastMinute > 1) {
@@ -72,7 +72,7 @@ export class RateLimit {
     }
   }
 
-  reportRateLimitError(RequestInstance: RequestCreate, error: RateLimitError): void {
+  reportRateLimitError(RequestInstance: HypixelRequestCall, error: RateLimitError): void {
     const currentTimeout = Math.max(RequestInstance.instance.resumeAfter, Date.now());
     const additionalTimeout = currentTimeout + this.generateTimeoutLength();
     this.addRateLimit();
@@ -109,7 +109,7 @@ export class Unusual {
     return timeout;
   }
 
-  reportUnusualError(RequestInstance: RequestCreate): void {
+  reportUnusualError(RequestInstance: HypixelRequestCall): void {
     const currentTimeout = Math.max(RequestInstance.instance.resumeAfter, Date.now());
     const additionalTimeout = currentTimeout + this.generateTimeoutLength();
     this.addUnusualError();
