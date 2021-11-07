@@ -26,7 +26,7 @@ export class Abort {
     this.timeoutLength += this.baseTimeout;
     setTimeout(() => {
       this.timeoutLength -= this.baseTimeout;
-    }, timeout + (this.baseTimeout * 20));
+    }, timeout + (this.baseTimeout * 50));
     return timeout;
   }
 
@@ -67,7 +67,7 @@ export class RateLimit {
       this.timeoutLength += this.baseTimeout;
       setTimeout(() => {
         this.timeoutLength -= this.baseTimeout;
-      }, timeout + (this.baseTimeout * 20));
+      }, timeout + (this.baseTimeout * 50));
       return timeout;
     }
   }
@@ -105,7 +105,7 @@ export class Unusual {
     this.timeoutLength += this.baseTimeout;
     setTimeout(() => {
       this.timeoutLength -= this.baseTimeout;
-    }, timeout + (this.baseTimeout * 20));
+    }, timeout + (this.baseTimeout * 50));
     return timeout;
   }
 
