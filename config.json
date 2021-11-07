@@ -1,0 +1,19 @@
+{
+  "hypixelAPIkey": "Hypixle API Key",
+  "discordAPIkey": "Discord API key",
+  "hypixelAPIWebhook": {
+    "id": "Webhook ID",
+    "token": "Webhook Token"
+  },
+  "errorWebhook": {
+    "id": "Webhook ID",
+    "token": "Webhook Token"
+  },
+  "nonFatalWebHook": {
+    "id": "Wekhook ID",
+    "token": "Webhook Token"
+  },
+  "ownerID": ["Discord User ID"],
+  "keyLimit": 120,
+  "clientID": "Bot ID",
+}
