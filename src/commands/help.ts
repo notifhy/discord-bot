@@ -1,6 +1,7 @@
-import type { CommandProperties, SlashCommand } from '../@types/index';
+import type { CommandExecute, CommandProperties, SlashCommand } from '../@types/index';
 import { CommandInteraction } from 'discord.js';
 import { BetterEmbed } from '../util/utility';
+import { UserData } from '../@types/database';
 
 export const properties: CommandProperties = {
   name: 'help',
@@ -34,22 +35,22 @@ export const properties: CommandProperties = {
   },
 };
 
-export const execute = async (interaction: CommandInteraction): Promise<void> => {
-  if (interaction.options.getSubcommand() === 'information') await information(interaction);
-  else if (interaction.options.getString('command')) await specific(interaction);
-	else await commands(interaction);
+export const execute: CommandExecute = async (interaction: CommandInteraction, { userData }): Promise<void> => {
+  if (interaction.options.getSubcommand() === 'information') await information(interaction, userData);
+  else if (interaction.options.getString('command')) await specific(interaction, userData);
+	else await commands(interaction, userData);
 };
 
-async function information(interaction: CommandInteraction) {
+async function information(interaction: CommandInteraction, userData: UserData) {
   const locales = interaction.client.regionLocales;
   const informationEmbed = new BetterEmbed({ color: '#7289DA', interaction: interaction, footer: null })
-    .setTitle(locales.localizer('commands.help.information.title', undefined))
-    .setDescription(locales.localizer('commands.help.information.description', undefined));
+    .setTitle(locales.localizer('commands.help.information.title', userData.language))
+    .setDescription(locales.localizer('commands.help.information.description', userData.language));
 
   await interaction.editReply({ embeds: [informationEmbed] });
 }
 
-async function specific(interaction: CommandInteraction) {
+async function specific(interaction: CommandInteraction, userData: UserData) {
   const locales = interaction.client.regionLocales;
   const commandArg: string = interaction.options.getString('command') as string;
   const command: SlashCommand | undefined = interaction.client.commands.get(commandArg);
@@ -58,48 +59,48 @@ async function specific(interaction: CommandInteraction) {
   if (command === undefined) {
     commandSearchEmbed
       .setColor('#ff5555')
-      .setTitle(locales.localizer('commands.help.specific.invalid.title', undefined))
-      .setDescription(locales.localizer('commands.help.specific.invalid.description', undefined, {
+      .setTitle(locales.localizer('commands.help.specific.invalid.title', userData.language))
+      .setDescription(locales.localizer('commands.help.specific.invalid.description', userData.language, {
         command: commandArg,
       }));
     await interaction.editReply({ embeds: [commandSearchEmbed] });
     return;
   }
 
-  commandSearchEmbed.setTitle(locales.localizer('commands.help.specific.title', undefined, {
+  commandSearchEmbed.setTitle(locales.localizer('commands.help.specific.title', userData.language, {
     command: commandArg,
   }));
 
   if (command.properties.description) {
-    commandSearchEmbed.setDescription(locales.localizer('commands.help.specific.description', undefined, {
+    commandSearchEmbed.setDescription(locales.localizer('commands.help.specific.description', userData.language, {
       commandDescription: command.properties.description,
     }));
   }
 
-  console.log(locales.localizer('commands.help.specific.usage.name', undefined));
-  console.log(JSON.stringify(locales.localizer('commands.help.specific.usage', undefined)));
-  console.log(JSON.stringify(locales.localizer('commands.help.specific', undefined)));
+  console.log(locales.localizer('commands.help.specific.usage.name', userData.language));
+  console.log(JSON.stringify(locales.localizer('commands.help.specific.usage', userData.language)));
+  console.log(JSON.stringify(locales.localizer('commands.help.specific', userData.language)));
 
-  commandSearchEmbed.addField(locales.localizer('commands.help.specific.usage.name', undefined),
-    locales.localizer('commands.help.specific.usage.value', undefined, {
+  commandSearchEmbed.addField(locales.localizer('commands.help.specific.usage.name', userData.language),
+    locales.localizer('commands.help.specific.usage.value', userData.language, {
       commandUsage: command.properties.usage,
   }));
 
-  commandSearchEmbed.addField(locales.localizer('commands.help.specific.cooldown.name', undefined),
-    locales.localizer('commands.help.specific.cooldown.value', undefined, {
+  commandSearchEmbed.addField(locales.localizer('commands.help.specific.cooldown.name', userData.language),
+    locales.localizer('commands.help.specific.cooldown.value', userData.language, {
       commandCooldown: command.properties.cooldown / 1000,
   }));
 
   if (command.properties.noDM === true) {
-    commandSearchEmbed.addField(locales.localizer('commands.help.specific.dm.name', undefined),
-    locales.localizer('commands.help.specific.dm.value', undefined, {
+    commandSearchEmbed.addField(locales.localizer('commands.help.specific.dm.name', userData.language),
+    locales.localizer('commands.help.specific.dm.value', userData.language, {
       commandCooldown: command.properties.cooldown,
     }));
   }
 
   if (command.properties.ownerOnly === true) {
-    commandSearchEmbed.addField(locales.localizer('commands.help.specific.owner.name', undefined),
-    locales.localizer('commands.help.specific.owner.value', undefined, {
+    commandSearchEmbed.addField(locales.localizer('commands.help.specific.owner.name', userData.language),
+    locales.localizer('commands.help.specific.owner.value', userData.language, {
       commandCooldown: command.properties.cooldown,
     }));
   }
@@ -107,18 +108,18 @@ async function specific(interaction: CommandInteraction) {
   await interaction.editReply({ embeds: [commandSearchEmbed] });
 }
 
-async function commands(interaction: CommandInteraction) {
+async function commands(interaction: CommandInteraction, userData: UserData) {
   const locales = interaction.client.regionLocales;
   const commandsCollection = interaction.client.commands.filter(command => command.properties.ownerOnly === false);
   const allCommandsEmbed = new BetterEmbed({ color: '#7289DA', interaction: interaction, footer: null })
-    .setTitle(locales.localizer('commands.help.all.title', undefined))
-    .setDescription(locales.localizer('commands.help.all.description', undefined));
+    .setTitle(locales.localizer('commands.help.all.title', userData.language))
+    .setDescription(locales.localizer('commands.help.all.description', userData.language));
 
   for (const command of commandsCollection.values()) {
-    allCommandsEmbed.addField(locales.localizer('commands.help.all.field.name', undefined, {
+    allCommandsEmbed.addField(locales.localizer('commands.help.all.field.name', userData.language, {
       commandUsage: `/${command.properties.name}`,
     }),
-    locales.localizer('commands.help.all.field.value', undefined, {
+    locales.localizer('commands.help.all.field.value', userData.language, {
       commandDescription: command.properties.description,
     }));
   }

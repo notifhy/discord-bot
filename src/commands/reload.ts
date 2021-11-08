@@ -1,4 +1,4 @@
-import type { CommandProperties, SlashCommand } from '../@types';
+import type { CommandExecute, CommandProperties, SlashCommand } from '../@types';
 import { CommandInteraction } from 'discord.js';
 import { BetterEmbed } from '../util/utility';
 import * as fs from 'fs';
@@ -33,7 +33,7 @@ export const properties: CommandProperties = {
   },
 };
 
-export const execute = async (interaction: CommandInteraction): Promise<void> => {
+export const execute: CommandExecute = async (interaction: CommandInteraction): Promise<void> => {
   if (interaction.options.getSubcommand() === 'all') await reloadAllCommands(interaction);
   else await reloadCommand(interaction);
 };

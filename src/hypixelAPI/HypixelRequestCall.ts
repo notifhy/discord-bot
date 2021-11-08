@@ -38,13 +38,15 @@ export class HypixelRequestCall {
       const intervalBetweenRequests = minute / keyQueryLimit * secondsToMS;
 
       for (const user of users) {
-        const urls = user.urls
-          .split(' ')
-          .map(url => this.instance.baseURL
-          .replace(/%{type}%/, url)
-          .replace(/%{uuid}%/, user.uuid));
-        if (this.instance.enabled === true) this.call(urls, user);
-        await timeout(intervalBetweenRequests * urls.length); //eslint-disable-line no-await-in-loop
+        if (user.urls) {
+          const urls = (user.urls ?? '')
+            .split(' ')
+            .map(url => this.instance.baseURL
+            .replace(/%{type}%/, url)
+            .replace(/%{uuid}%/, user.uuid));
+          if (this.instance.enabled === true) this.call(urls, user);
+          await timeout(intervalBetweenRequests * urls.length); //eslint-disable-line no-await-in-loop
+        }
       }
     } catch (error) {
       await this.handleRejects(error);

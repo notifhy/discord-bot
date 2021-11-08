@@ -1,4 +1,4 @@
-import type { CommandProperties } from '../@types/index';
+import type { CommandExecute, CommandProperties } from '../@types/index';
 import { CommandInteraction } from 'discord.js';
 import { BetterEmbed, cleanLength } from '../util/utility';
 import { keyLimit } from '../../config.json';
@@ -162,7 +162,7 @@ export const properties: CommandProperties = {
 };
 
 //JSON database moment.
-export const execute = async (interaction: CommandInteraction): Promise<void> => {
+export const execute: CommandExecute = async (interaction: CommandInteraction): Promise<void> => {
   switch (interaction.options.getSubcommand()) {
     case 'toggle': await toggle(interaction);
     break;

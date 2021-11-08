@@ -1,4 +1,35 @@
 {
+  "general": {
+
+  },
+  "constraints": {
+    "blockedUsers" :{
+      "title": "Utilisateur bloqué",
+      "description": "On vous a empêché d'utiliser ce robot. Vous ne pouvez pas faire appel de cette décision."
+    },
+    "devMode": {
+      "title": "Mode développeur",
+      "description": "Ce robot est en mode développeur uniquement, probablement en raison d'un problème majeur ou d'une mise à niveau en cours. Revenez nous voir plus tard !"
+    },
+    "owner": {
+      "title": "Permissions insuffisantes",
+      "description": "Vous ne pouvez pas exécuter cette commande sans être propriétaire !"
+    },
+    "dm": {
+      "title": "Chaîne DM",
+      "description": "Vous ne pouvez pas exécuter cette commande dans le chaîne DM ! Veuillez passer à un chaîne de serveur !"
+    },
+    "cooldown": {
+      "embed1": {
+        "title": "Refroidissement",
+      "description": "Vous exécutez les commandes trop rapidement ! Le cooldown de cette commande est de %{cooldown}% secondes. Ce message deviendra vert dans %{timeLeft}% secondes une fois que le cooldown aura expiré."
+      },
+      "embed2": {
+        "title": "Refroidissement terminé",
+        "description": "Le délai d'attente a expiré ! Tu peux maintenant exécuter la commande /%{commandName}% !"
+      }
+    }
+  },
   "commands": {
     "help": {
       "information": {
@@ -15,26 +46,88 @@
       },
       "specific": {
         "invalid": {
-          "title": "Commande Non Valide !",
+          "title": "Commande non valide",
           "description": "/%{command}% n'est pas une commande valide !"
         },
         "title": "/%{command}%",
         "description": "%{commandDescription}%",
         "usage": {
-          "name": "Usage",
+          "name": "Utilisation",
           "value": "%{commandUsage}%"
         },
         "cooldown": {
-          "name": "Refroidissement Des Commandes",
+          "name": "Refroidissement de Commande",
           "value": "%{commandCooldown}% seconde(s)"
         },
         "dm": {
-          "name": "Messages Directs",
-          "value": "Cette commande ne peut pas être utilisée dans le canal DM"
+          "name": "MP",
+          "value": "Cette commande ne peut pas être utilisée dans la chaîne DM"
         },
         "owner": {
-          "name": "Propriétaire De Bot",
+          "name": "Propriétaire de Bot",
           "value": "Il faut être propriétaire pour exécuter cette commande."
+        }
+      }
+    },
+    "language": {
+      "alreadySet": {
+        "title": "Déjà établir",
+        "description": "%{language}% est déjà votre langue de prédilection !"
+      },
+      "title": "Langue établir",
+      "description": "Votre langue a été changée en `%{language}%`! Veuillez noter que les traductions ne sont pas parfaites, mais que cela devrait être plus facile que de traduire soi-même."
+    },
+    "modules": {
+      "title": "Modules",
+      "description": "Vous pouvez ajouter ou supprimer des modules ici. Pour en savoir plus sur un module, sélectionnez-le. Ensuite, appuyez sur le bouton pour le supprimer ou l'ajouter. Si vous souhaitez supprimer tout ou partie de vos données utilisées par ou associées à ce bot, vous pouvez le demander avec /deletedata.",
+      "menuPlaceholder": "Sélectionnez un module",
+      "moduleField": {
+        "name": "%{moduleName}% Module",
+        "value": "%{moduleDescription}%"
+      },
+      "statusField": {
+        "name": "État",
+        "added": "Ce module est activé. Cliquez sur \"Désactiver\" pour le désactiver. Vos données resteront intactes.",
+        "removed": "Ce module est désactivé. Cliquez sur \"Enable\" pour l'activer."
+      },
+      "modules": {
+        "defender": {
+          "label": "Défenseur",
+          "description": "Soyez informé de toute activité inhabituelle sur votre compte",
+          "longDescription": "Ce module est le remplacement de HyGuard. Il comporte la plupart des mêmes contrôles, bien qu'il ait été légèrement simplifié pour une meilleure expérience utilisateur.",
+          "value": "defender"
+        },
+        "friend": {
+          "label": "Notificateur d'amis",
+          "description": "Recevez une notification dès qu'un ami se connecte ou se déconnecte.",
+          "longDescription": "Ce module vous enverra une notification lorsque vos amis se connectent ou se déconnectent. Cette notification peut être envoyée dans la chaîne ou par DM. Vous ne pouvez recevoir des notifications que pour les personnes qui vous ont approuvé sur ce bot pour des raisons de confidentialité.",
+          "value": "friend"
+        },
+        "daily": {
+          "label": "Récompenses quotidiennes",
+          "description": "Recevez une notification lorsque vous êtes sur le point de manquer votre récompense quotidienne.",
+          "longDescription": "Ce module vous envoie un DM lorsque vous êtes sur le point de manquer votre récompense quotidienne. Vous pouvez personnaliser le seuil et les intervalles d'alerte, y compris le nombre minimum d'heures avant la réinitialisation pour commencer à vous avertir.",
+          "value": "daily"
+        }
+      },
+      "buttons": {
+        "enable": {
+          "label": "Activer",
+          "id": "enableButton",
+          "style": "SUCCESS",
+          "invert": false
+        },
+        "disable": {
+          "label": "Désactiver",
+          "id": "disableButton",
+          "style": "DANGER",
+          "invert": true
+        },
+        "settings": {
+          "label": "Paramètres",
+          "id": "modifyButton",
+          "style": "PRIMARY",
+          "invert": true
         }
       }
     },
@@ -45,6 +138,30 @@
       "embed2": {
         "title": "🏓 Ping !",
         "description": "Le battement de cœur de la websocket est de %{wsPing}%ms. Cette interaction a pris %{rtPing}%ms entre l'enregistrement de la commande slash et l'affichage du message initial."
+      }
+    },
+    "register": {
+      "invalid": {
+        "title": "Entrée invalide",
+        "description": "Le nom d'utilisateur/UUID fourni n'est pas valide ! Le nom d'utilisateur ne peut pas contenir de caractères invalides. Les UUID doivent correspondre à l'expression rationnelle suivante : `/^[0-9a-f]{8}[0-9a-f]{4}[1-5][0-9a-f]{3}[89AB][0-9a-f]{3}[0-9a-f]{12}$/i`. Vous pouvez tester cette regex avec [__ce__](https://regex101.com/r/A866mm/1) site."
+      },
+      "notFound": {
+        "title": "Non trouvé",
+        "description": "Cet/ce %{inputType}% ne semble pas être valide. Vérifiez si vous ne l'avez pas mal orthographié."
+      },
+      "unlinked": {
+        "title": "Compte non lié",
+        "description": "Vous n'avez pas lié votre compte Discord à votre compte Minecraft sur Hypixel ! Suivez le guide ci-dessous. Si vous venez de le lier, veuillez attendre quelques minutes et réessayer."
+      },
+      "mismatched": {
+        "title": "Balise Discord mal assortie",
+        "description": "Ce compte Minecraft est actuellement lié à un autre compte Discord ! Si c'est votre compte, suivez le guide ci-dessous pour le relier à nouveau. Si vous venez de le relier, veuillez attendre quelques minutes et réessayer."
+      },
+      "title": "Enregistré",
+      "description": "Enregistré avec succès ! Vous pouvez maintenant ajouter des modules avec /modules.",
+      "field": {
+        "name": "Next Steps",
+        "value": "/help • Permet d'obtenir des informations sur une commande ou sur ce bot\n/language • Change la langue de ce bot"
       }
     }
   }

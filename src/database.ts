@@ -1,6 +1,7 @@
 import Database from 'better-sqlite3';
 import { UserAPIData, UserData, ValidAPIUserUpdate, ValidUserUpdate } from './@types/database';
 import { SQLiteError } from './util/error/SQLiteError';
+import { formattedUnix } from './util/utility';
 
 // eslint-disable-next-line no-warning-comments
 //TODO: Fix "any" after the rest is done
@@ -48,8 +49,10 @@ export class SQLiteWrapper {
 
   queryRun({
     query,
+    data,
   }: {
     query: string,
+    data?: (string | number | null)[]
   }): Promise<void> {
     /*
     'CREATE TABLE IF NOT EXISTS servers(tests TEXT NOT NULL)'
@@ -59,7 +62,7 @@ export class SQLiteWrapper {
     */
     return new Promise<void>(resolve => {
       const db = new Database('../database.db');
-      db.prepare(query).run();
+      db.prepare(query).run(data);
       db.close();
       return resolve();
     });
@@ -93,8 +96,14 @@ export class SQLiteWrapper {
   }: {
     table: string,
     data: UserAPIData | UserData,
-  }): Promise<void> {
-    await this.queryRun({ query: `INSERT INTO ${table} VALUES(${Object.values(data).join(', ')})` });
+  }): Promise<UserAPIData | UserData> {
+    const values = [];
+    for (let i = 0; i < Object.values(data).length; i += 1) values.push('?');
+    await this.queryRun({ query: `INSERT INTO ${table} VALUES(${values})`, data: Object.values(data) });
+    const returnQuery = `SELECT * FROM ${table} WHERE discordID = '${data.discordID}'`;
+    const newUserData = await this.queryGet({ query: returnQuery, allowUndefined: true }) as UserData | UserAPIData;
+    console.log(`${formattedUnix({ date: true, utc: true })} | ${data.discordID} added to ${table}`);
+    return newUserData;
   }
 
   async updateUser({
@@ -109,10 +118,10 @@ export class SQLiteWrapper {
     const setQuery: string[] = [];
     for (const key in data) {
       if (Object.prototype.hasOwnProperty.call(data, key)) {
-        setQuery.push(`${key} = '${data[key as keyof (ValidAPIUserUpdate | ValidUserUpdate)]}'`);
+        setQuery.push(`${key} = ?`);
       }
     }
-    await this.queryRun({ query: `UPDATE ${table} SET ${setQuery.join(', ')} WHERE discordID = '${discordID}'` });
+    await this.queryRun({ query: `UPDATE ${table} SET ${setQuery.join(', ')} WHERE discordID = '${discordID}'`, data: Object.values(data) });
     const returnQuery = `SELECT * FROM ${table} WHERE discordID = '${discordID}'`;
     const newUserData = await this.queryGet({ query: returnQuery, allowUndefined: true }) as UserData | UserAPIData | undefined;
     return newUserData;
@@ -125,7 +134,8 @@ export class SQLiteWrapper {
     discordID: string,
     table: string,
   }): Promise<void> {
-    const query = `DELETE * FROM ${table} WHERE discordID = '${discordID}'`;
-    await this.queryRun({ query: query });
+    const query = `DELETE * FROM ${table} WHERE discordID = ?`;
+    await this.queryRun({ query: query, data: [discordID] });
+    console.log(`${formattedUnix({ date: true, utc: true })} | ${discordID} data deleted from ${table}`);
   }
 }

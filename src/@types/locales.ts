@@ -1,6 +1,24 @@
 import { AssetModule } from './modules';
 
 /*
+Misc. Interfaces
+*/
+export interface ModuleButton {
+  [key: string]: string | boolean;
+  label: string;
+  id: string;
+  style: string,
+  invert: boolean;
+}
+
+export interface ModuleButtons {
+  [key: string]: ModuleButton;
+  enable: ModuleButton;
+  disable: ModuleButton;
+  settings: ModuleButton;
+}
+
+/*
 General Interfaces
 */
 export interface Field {
@@ -44,6 +62,12 @@ export interface Help {
   }
 }
 
+export interface Language {
+  alreadySet: BaseEmbed;
+  title: string;
+  description: string;
+}
+
 export interface Modules {
   title: string;
   description: string;
@@ -58,6 +82,7 @@ export interface Modules {
     friend: AssetModule;
     daily: AssetModule;
   }
+  buttons: ModuleButtons;
 }
 
 export interface Ping {
@@ -67,10 +92,22 @@ export interface Ping {
   embed2: BaseEmbed;
 }
 
+export interface Register {
+  invalid: BaseEmbed;
+  notFound: BaseEmbed;
+  unlinked: BaseEmbed;
+  mismatched: BaseEmbed;
+  title: string;
+  description: Field;
+  field: Field;
+}
+
 export interface Commands {
   help: Help;
+  language: Language;
   modules: Modules;
   ping: Ping;
+  register: Register;
 }
 
 /*
@@ -90,8 +127,10 @@ export type LocalesTree = Locale
   | Constraints
   | Commands
   | Help
+  | Language
   | Modules
   | Ping
+  | Register
 
 export interface Parameters {
   [index: string]: string | number;

@@ -1,4 +1,4 @@
-import type { CommandProperties } from '../@types/index';
+import type { CommandExecute, CommandProperties } from '../@types/index';
 import { CommandInteraction } from 'discord.js';
 import { BetterEmbed } from '../util/utility';
 
@@ -22,7 +22,7 @@ export const properties: CommandProperties = {
   },
 };
 
-export const execute = async (interaction: CommandInteraction): Promise<void> => {
+export const execute: CommandExecute = async (interaction: CommandInteraction): Promise<void> => {
   const input = interaction.options.getString('string') as string;
 
   try {

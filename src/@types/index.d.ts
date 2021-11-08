@@ -43,7 +43,7 @@ export interface CommandProperties {
 
 export interface CommandExecuteUserData {
   userData: UserData;
-  userAPIData: UserAPIData;
+  userAPIData?: UserAPIData;
 }
 
 export interface CommandExecute {
@@ -60,6 +60,7 @@ declare module 'discord.js' {
     commands: Collection<string, SlashCommand>;
     cooldowns: Collection<string, Collection<string, number>>;
     config: Config,
+    customStatus: boolean;
     hypixelAPI: HypixelAPI;
     regionLocales: RegionLocales;
   }

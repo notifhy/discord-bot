@@ -13,11 +13,8 @@ export async function sendWebHook({
   suppressError?: boolean,
 }): Promise<void> {
   try {
-    console.log('7');
     await new WebhookClient({ id: webhook.id, token: webhook.token }).send({ content: content, embeds: embed });
-    console.log('6');
   } catch (err) {
-    console.log('5', err);
     if (!(err instanceof Error)) return;
     console.error(`${formattedUnix({ date: true, utc: true })} | An error has occurred while sending an WebHook | ${err.stack ?? err.message}`);
     if (suppressError === true) return;

@@ -1,32 +1,36 @@
 import type { CommandExecute, CommandProperties } from '../@types/index';
-import { ButtonInteraction, CommandInteraction, Message, MessageActionRow, MessageButton, MessageComponentInteraction, MessageSelectMenu, MessageSelectMenuOptions, MessageSelectOption, MessageSelectOptionData, SelectMenuInteraction } from 'discord.js';
+import { ButtonInteraction, CommandInteraction, Message, MessageActionRow, MessageActionRowComponentResolvable, MessageButton, MessageButtonStyleResolvable, MessageComponentInteraction, MessageSelectMenu, MessageSelectOptionData, SelectMenuInteraction } from 'discord.js';
 import { BetterEmbed } from '../util/utility';
 import { UserData } from '../@types/database';
 import { SQLiteWrapper } from '../database';
 import { RegionLocales } from '../../locales/localesHandler';
-import { AssetModule, AssetModules } from '../@types/modules';
+import { AssetModules } from '../@types/modules';
+import { ModuleButtons } from '../@types/locales';
 
 export const properties: CommandProperties = {
-  name: 'module',
+  name: 'modules',
   description: 'placeholder',
-  usage: '/module',
+  usage: '/modules',
   cooldown: 15000,
   ephemeral: true,
   noDM: false,
   ownerOnly: false,
   structure: {
-    name: 'module',
+    name: 'modules',
     description: 'Add or remove modules for your Minecraft account',
   },
 };
 
-export const execute: CommandExecute = async (interaction: CommandInteraction, { userData: { language } }): Promise<void> => {
+export const execute: CommandExecute = async (interaction: CommandInteraction, { userData }): Promise<void> => {
   const locales = interaction.client.regionLocales;
   const moduleEmbed = new BetterEmbed({ color: '#7289DA', interaction: interaction, footer: null })
-    .setTitle(locales.localizer('commands.modules.title', language))
-    .setDescription(locales.localizer('commands.modules.description', language));
+    .setTitle(locales.localizer('commands.modules.title', userData.language))
+    .setDescription(locales.localizer('commands.modules.description', userData.language));
 
-  const moduleReply = await interaction.editReply({ embeds: [moduleEmbed], components: [userModuleSelectMenu({ locales: locales })] });
+  const moduleReply = await interaction.editReply({
+    embeds: [moduleEmbed],
+    components: [userModuleSelectMenu({ locales: locales, userData: userData })],
+  });
 
   const componentFilter = (i: MessageComponentInteraction) =>
     interaction.user.id === i.user.id && i.message.id === moduleReply.id;
@@ -58,8 +62,8 @@ export const execute: CommandExecute = async (interaction: CommandInteraction, {
 
   collector.on('end', async (collected, reason) => {
     if (reason === 'idle') {
-      const components = [userModuleSelectMenu({ locales: locales, disabled: true })];
-      if (collected.size > 0) components.push(moduleButtons({ isEnabled: false, allDisabled: true }));
+      const components = [userModuleSelectMenu({ locales: locales, userData: userData, disabled: true })];
+      if (collected.size > 0) components.push(moduleButtons({ locales: locales, userData: userData, isEnabled: false, allDisabled: true }));
       await interaction.editReply({
         embeds: [moduleEmbed],
         components: components,
@@ -80,7 +84,7 @@ async function selectMenuUpdate({
   const locales = interaction.client.regionLocales;
   const userData = await new SQLiteWrapper().getUser({ discordID: interaction.user.id, table: 'users' }) as UserData;
 
-  const modules = locales.get('commands.modules.modules', undefined) as unknown as AssetModules;
+  const modules = locales.get('commands.modules.modules', userData.language) as unknown as AssetModules;
   moduleEmbed
     .setFields(
       {
@@ -90,16 +94,16 @@ async function selectMenuUpdate({
       {
         name: 'Status',
         value: Boolean(userData.modules?.split(' ')?.includes(selected)) ?
-          locales.localizer('commands.modules.statusField.added', undefined) :
-          locales.localizer('commands.modules.statusField.removed', undefined),
+          locales.localizer('commands.modules.statusField.added', userData.language) :
+          locales.localizer('commands.modules.statusField.removed', userData.language),
       },
     );
 
   await interaction.update({
     embeds: [moduleEmbed],
     components: [
-      userModuleSelectMenu({ locales: locales, selected: selected }),
-      moduleButtons({ isEnabled: (userData.modules?.split(' ') ?? [])?.includes(selected) }),
+      userModuleSelectMenu({ locales: locales, userData: userData, selected: selected }),
+      moduleButtons({ locales: locales, userData: userData, isEnabled: (userData.modules?.split(' ') ?? [])?.includes(selected) }),
     ],
   });
 }
@@ -132,7 +136,7 @@ async function buttonUpdate({
     },
   }) as UserData;
 
-  const modules = locales.get('commands.modules.modules', undefined) as unknown as AssetModules;
+  const modules = locales.get('commands.modules.modules', userData.language) as unknown as AssetModules;
   moduleEmbed
     .setFields(
       {
@@ -140,33 +144,35 @@ async function buttonUpdate({
         value: modules[selected as keyof typeof modules].longDescription,
       },
       {
-        name: locales.localizer('commands.modules.statusField.name', undefined),
+        name: locales.localizer('commands.modules.statusField.name', userData.language),
         value: Boolean((userData.modules?.split(' ') ?? []).includes(selected)) ?
-          locales.localizer('commands.modules.statusField.added', undefined) :
-          locales.localizer('commands.modules.statusField.removed', undefined),
+          locales.localizer('commands.modules.statusField.added', userData.language) :
+          locales.localizer('commands.modules.statusField.removed', userData.language),
       },
     );
 
   await interaction.update({
     embeds: [moduleEmbed],
     components: [
-      userModuleSelectMenu({ locales: locales, selected: selected }),
-      moduleButtons({ isEnabled: (userData.modules?.split(' ') ?? [])?.includes(selected) }),
+      userModuleSelectMenu({ locales: locales, userData: userData, selected: selected }),
+      moduleButtons({ locales: locales, userData: userData, isEnabled: (userData.modules?.split(' ') ?? [])?.includes(selected) }),
     ],
   });
 }
 
 function userModuleSelectMenu({
   locales,
+  userData,
   selected,
   disabled,
 }: {
   locales: RegionLocales,
+  userData: UserData,
   selected?: string,
   disabled?: boolean,
 }): MessageActionRow {
   const selectMenuOptions: MessageSelectOptionData[] = [];
-  const modules = locales.get('commands.modules.modules', undefined) as unknown as AssetModules;
+  const modules = locales.get('commands.modules.modules', userData.language) as unknown as AssetModules;
   for (const module in modules) {
     if (Object.prototype.hasOwnProperty.call(modules, module)) {
       const { label, description, value } = modules[module as keyof typeof modules];
@@ -183,35 +189,38 @@ function userModuleSelectMenu({
     .addComponents(
       new MessageSelectMenu()
         .setCustomId('modules')
-        .setPlaceholder('Select a module')
+        .setPlaceholder(locales.localizer('commands.modules.menuPlaceholder', userData.language))
         .addOptions(selectMenuOptions)
         .setDisabled(disabled ?? false),
     );
 };
 
 function moduleButtons({
+  locales,
+  userData,
   isEnabled, //If the module in question is enabled
   allDisabled,
 }: {
+  locales: RegionLocales,
+  userData: UserData,
   isEnabled: boolean
   allDisabled?: boolean,
 }): MessageActionRow {
-  return new MessageActionRow()
-    .setComponents([
-      new MessageButton()
-        .setCustomId('enableButton')
-        .setLabel('Enable')
-        .setStyle('SUCCESS')
-        .setDisabled(allDisabled ?? isEnabled),
-      new MessageButton()
-        .setCustomId('disableButton')
-        .setLabel('Disable')
-        .setStyle('DANGER')
-        .setDisabled(allDisabled ?? isEnabled === false),
-      new MessageButton()
-        .setCustomId('modifyButton')
-        .setLabel('Settings')
-        .setStyle('PRIMARY')
-        .setDisabled(allDisabled ?? isEnabled === false),
-    ]);
+  const buttons: MessageActionRowComponentResolvable[] = [];
+  const components = locales.get('commands.modules.buttons', userData.language) as unknown as ModuleButtons;
+  for (const component in components) {
+    if (Object.prototype.hasOwnProperty.call(components, component)) {
+      const button = new MessageButton()
+        .setLabel(components[component].label)
+        .setCustomId(components[component].id)
+        .setStyle(components[component].style as MessageButtonStyleResolvable)
+        .setDisabled(components[component].invert === true ?
+          allDisabled ?? isEnabled === false :
+          allDisabled ?? isEnabled,
+        );
+        buttons.push(button);
+    }
+  }
+
+  return new MessageActionRow().setComponents(buttons);
 }

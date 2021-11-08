@@ -18,6 +18,7 @@ export interface UserAPIData {
   lastClaimedReward: number | null;
   rewardScore: number | null;
   rewardHighScore: number | null;
+  totalRewards: number | null;
   totalDailyRewards: number | null;
 }
 
@@ -41,5 +42,6 @@ export interface ValidAPIUserUpdate { //no idea how to simplify, ill do this lat
   lastClaimedReward?: number | null | undefined;
   rewardScore?: number | null | undefined;
   rewardHighScore?: number | null | undefined;
+  totalRewards?: number | null | undefined;
   totalDailyRewards?: number | null | undefined;
 }

@@ -25,6 +25,7 @@ interface HypixelPlayerData {
   rewardScore: number | null | undefined;
   rewardHighScore: number | null | undefined;
   totalDailyRewards: number | null | undefined;
+  totalRewards: number | null | undefined;
 }
 
 export interface HypixelPlayer extends BaseHypixelAPI {
@@ -54,8 +55,8 @@ Slothpixel
 interface Rewards {
   'streak_current': number,
   'streak_best': number,
-  'claimed': number,
   'claimed_daily': number,
+  'claimed': number,
 }
 
 interface Links {

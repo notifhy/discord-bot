@@ -23,7 +23,7 @@ const client = new Client({
   },
   presence: {
     status: 'dnd',
-    activities: [{ type: 'WATCHING', name: 'HELLO' }],
+    activities: [{ type: 'WATCHING', name: 'initialization | /help /register' }],
   },
   ws: { properties: { $browser: 'Discord iOS' } },
 });
@@ -35,6 +35,7 @@ client.config = {
   blockedUsers: blockedUsers,
   devMode: devMode,
 };
+client.customStatus = false;
 client.hypixelAPI = {
   requests: new HypixelRequestCall(),
   data: new Collection,

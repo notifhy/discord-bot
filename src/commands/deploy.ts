@@ -1,4 +1,4 @@
-import type { CommandProperties, SlashCommand } from '../@types/index';
+import type { CommandExecute, CommandProperties, SlashCommand } from '../@types/index';
 import { clientID, discordAPIkey as token } from '../../config.json';
 import { CommandInteraction } from 'discord.js';
 import { BetterEmbed } from '../util/utility';
@@ -68,7 +68,7 @@ export const properties: CommandProperties = {
   },
 };
 
-export const execute = async (interaction: CommandInteraction): Promise<void> => {
+export const execute: CommandExecute = async (interaction: CommandInteraction): Promise<void> => {
   const commandFiles = fs.readdirSync(__dirname).filter(file => file.endsWith('.ts'));
   const userCommands: object[] = [];
   const ownerCommands: object[] = [];
