@@ -1,5 +1,5 @@
 import type { UserAPIData } from '../@types/database';
-import type { HypixelAPI } from '../@types/hypixel';
+import type { HypixelAPI, HypixelPlayerData } from '../@types/hypixel';
 import type { Response } from 'node-fetch';
 import { hypixelAPIkey, hypixelAPIWebhook, keyLimit, ownerID } from '../../config.json';
 import { formattedUnix, sendWebHook, timeout } from '../util/utility';
@@ -9,8 +9,9 @@ import { Abort, Instance, RateLimit, Unusual } from './HypixelRequestHelper';
 import { RateLimitError } from '../util/error/RateLimitError';
 import { HTTPError } from '../util/error/HTTPError';
 import { Request } from './Request';
+import EventEmitter from 'node:events';
 
-export class HypixelRequestCall {
+export class HypixelRequestCall extends EventEmitter {
   [key: string]: any;
   abort: Abort;
   rateLimit: RateLimit;
@@ -18,6 +19,7 @@ export class HypixelRequestCall {
   instance: Instance;
 
   constructor() {
+    super();
     this.abort = new Abort();
     this.rateLimit = new RateLimit();
     this.unusual = new Unusual();
@@ -31,21 +33,19 @@ export class HypixelRequestCall {
         return;
       }
 
-      const minute = 60;
-      const secondsToMS = 1000;
-      const users = await new SQLiteWrapper().getAllUsers({ table: this.instance.userTable }) as UserAPIData[];
+      const users = await SQLiteWrapper.getAllUsers({
+        table: this.instance.userTable,
+        columns: ['discordID', 'uuid', 'modules'],
+      }) as UserAPIData[];
+
       const keyQueryLimit = keyLimit * this.instance.keyPercentage;
-      const intervalBetweenRequests = minute / keyQueryLimit * secondsToMS;
+      const intervalBetweenRequests = 60 / keyQueryLimit * 1000;
 
       for (const user of users) {
-        if (user.urls) {
-          const urls = (user.urls ?? '')
-            .split(' ')
-            .map(url => this.instance.baseURL
-            .replace(/%{type}%/, url)
-            .replace(/%{uuid}%/, user.uuid));
-          if (this.instance.enabled === true) this.call(urls, user);
-          await timeout(intervalBetweenRequests * urls.length); //eslint-disable-line no-await-in-loop
+        if (user.modules) {
+          const url = this.instance.baseURL.replace(/%{uuid}%/, user.uuid);
+          if (this.instance.enabled === true) this.call(url, user);
+          await timeout(intervalBetweenRequests); //eslint-disable-line no-await-in-loop
         }
       }
     } catch (error) {
@@ -53,65 +53,67 @@ export class HypixelRequestCall {
     }
   }
 
-  async call(urls: string[], user: UserAPIData) {
+  async call(url: string, user: UserAPIData) {
     try {
-      console.log(`${formattedUnix({ date: false, utc: true })}, ${this.instance.instanceUses}`);
+      console.log(`${formattedUnix({ date: true, utc: true })}, ${this.instance.instanceUses}`);
       if (this.areFatalIssues() === true) return;
 
       this.instance.instanceUses += 1;
-      const responses: Response[] | (HypixelAPI | null)[] = await Promise.all(urls.map(url =>
-        new Request({
-          maxAborts: 1,
-          abortThreshold: this.instance.abortThreshold,
-        }).request(url, {
-          headers: { 'API-Key': hypixelAPIkey },
-        }),
-      )) as Response[];
+      const response: Response | HypixelAPI | null = await new Request({
+        maxAborts: 1,
+        abortThreshold: this.instance.abortThreshold,
+      }).request(url, {
+        headers: { 'API-Key': hypixelAPIkey },
+      }) as Response;
 
-      const JSONs = await Promise.all(responses.map(response =>
-        tryParse(response),
-      ));
+      const JSON = await tryParse(response);
 
-      responses.forEach((response, index) => {
-        if (response.ok) return;
+      if (response.ok === false) {
         const errorData = {
-          message: JSONs[index]?.cause,
-          json: JSONs[index],
+          message: JSON?.cause,
+          json: JSON,
           response: response,
         };
         if (response.status === 429) throw new RateLimitError(errorData);
         else throw new HTTPError(errorData);
-      });
+      }
 
-      const { player: {
-        firstLogin,
-        lastLogin,
-        lastLogout,
-        version,
-        language,
-        mostRecentGameType,
-        lastClaimedReward,
-        rewardScore,
-        rewardHighScore,
-        totalDailyRewards,
-      } } = JSONs[0]!;
+      //Data is all good!
 
-      await new SQLiteWrapper().updateUser({
+      const now = Date.now();
+      const modules = user.modules?.split(' ');
+      const apiData = JSON!.player;
+      const playerData = {
+        lastUpdated: Date.now(),
+        firstLogin: apiData.firstLogin ?? null,
+        lastLogin: apiData.lastLogin ?? null,
+        lastLogout: apiData.lastLogout ?? null,
+        version: apiData.version ?? null,
+        language: apiData.language ?? null,
+        mostRecentGameType: apiData.mostRecentGameType ?? null,
+        lastClaimedReward: apiData.lastClaimedReward ?? null,
+        rewardScore: apiData.rewardScore ?? null,
+        rewardHighScore: apiData.rewardHighScore ?? null,
+        totalRewards: apiData.totalRewards ?? null,
+        totalDailyRewards: apiData.totalDailyRewards ?? null,
+      };
+
+      if (modules?.includes('defender')) {
+        this.emit('defenderEvent', user.discordID, now, playerData as HypixelPlayerData);
+      }
+
+      if (modules?.includes('friends')) {
+        this.emit('friendsEvent', user.discordID, now, playerData as HypixelPlayerData);
+      }
+
+      if (modules?.includes('daily')) {
+        this.emit('dailyEvent', user.discordID, now, playerData as HypixelPlayerData);
+      }
+
+      await SQLiteWrapper.updateUser({
         discordID: user.discordID,
         table: 'api',
-        data: {
-          lastUpdated: Date.now(),
-          firstLogin: firstLogin ?? null,
-          lastLogin: lastLogin ?? null,
-          lastLogout: lastLogout ?? null,
-          version: version ?? user.version ?? null,
-          language: language ?? user.language ?? null,
-          mostRecentGameType: mostRecentGameType ?? null,
-          lastClaimedReward: lastClaimedReward ?? null,
-          rewardScore: rewardScore ?? null,
-          rewardHighScore: rewardHighScore ?? null,
-          totalDailyRewards: totalDailyRewards ?? null,
-        },
+        data: playerData,
       });
     } catch (error) {
       await this.handleRejects(error);
@@ -127,12 +129,12 @@ export class HypixelRequestCall {
     }
   }
 
-  async handleRejects(error: unknown): Promise<void> {
+  private async handleRejects(error: unknown): Promise<void> {
     const incidentID = Math.random().toString(36).substring(2, 10).toUpperCase();
     console.error(`${formattedUnix({ date: true, utc: true })} | An error has occurred on incident ${incidentID} | `, error);
 
     if (isAbortError(error)) this.abort.reportAbortError(this);
-    else if (error instanceof RateLimitError) this.rateLimit.reportRateLimitError(this, error);
+    else if (error instanceof RateLimitError) this.rateLimit.reportRateLimitError(this, error?.json?.global);
     else this.unusual.reportUnusualError(this);
 
     const hypixelAPIEmbed = new HypixelAPIEmbed({
@@ -148,7 +150,7 @@ export class HypixelRequestCall {
 
     await sendWebHook({
       content: this.isPriority(error) === true ? `<@${ownerID.join('><@')}>` : undefined,
-      embed: [hypixelAPIEmbed, errorStackEmbed],
+      embeds: [hypixelAPIEmbed, errorStackEmbed],
       webhook: hypixelAPIWebhook,
       suppressError: false,
     });

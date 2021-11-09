@@ -3,11 +3,6 @@ import { RegionLocales } from '../../locales/localesHandler';
 import { HypixelRequestCall } from '../hypixelAPI/HypixelRequestCall';
 import { UserAPIData, UserData } from './database';
 
-export interface HypixelAPI {
-  requests: HypixelRequestCall;
-  data: Collection<string, Collection<string, UserData>>
-}
-
 export interface WebHookConfig {
   id: string;
   token: string;
@@ -61,7 +56,7 @@ declare module 'discord.js' {
     cooldowns: Collection<string, Collection<string, number>>;
     config: Config,
     customStatus: boolean;
-    hypixelAPI: HypixelAPI;
+    hypixelAPI: HypixelRequestCall;
     regionLocales: RegionLocales;
   }
 }

@@ -91,24 +91,27 @@ export const execute: CommandExecute = async (interaction: CommandInteraction, {
     return;
   }
 
-  await new SQLiteWrapper().newUser({
+  await SQLiteWrapper.newUser({
     table: 'api',
     data: {
       discordID: interaction.user.id,
       uuid: uuid,
-      urls: '',
+      modules: null,
       lastUpdated: Date.now(),
       firstLogin: first_login,
       lastLogin: last_login,
       lastLogout: last_logout,
       version: mc_version,
       language: language,
-      mostRecentGameType: last_game,
+      mostRecentGameType: null,
       lastClaimedReward: null,
       rewardScore: streak_current,
       rewardHighScore: streak_best,
       totalDailyRewards: claimed_daily,
       totalRewards: claimed,
+      defenderHistory: JSON.stringify([]),
+      friendHistory: JSON.stringify([]),
+      dailyHistory: JSON.stringify([]),
     },
   });
 

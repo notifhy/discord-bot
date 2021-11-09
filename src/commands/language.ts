@@ -47,7 +47,7 @@ export const execute: CommandExecute = async (interaction: CommandInteraction, {
     return;
   }
 
-  await new SQLiteWrapper().updateUser({
+  await SQLiteWrapper.updateUser({
     discordID: interaction.user.id,
     table: 'users',
     data: {

@@ -1,6 +1,6 @@
 import type { CommandExecute, CommandProperties } from '../@types/index';
 import { CommandInteraction } from 'discord.js';
-import { BetterEmbed, cleanLength } from '../util/utility';
+import { BetterEmbed, cleanLength, cleanRound } from '../util/utility';
 import { keyLimit } from '../../config.json';
 
 export const properties: CommandProperties = {
@@ -155,6 +155,12 @@ export const properties: CommandProperties = {
               },
             ],
           },
+          {
+            name: 'value',
+            type: '5',
+            description: 'A value used for isGlobal in reportRateLimitError',
+            required: false,
+          },
         ],
       },
     ],
@@ -170,14 +176,14 @@ export const execute: CommandExecute = async (interaction: CommandInteraction): 
     break;
     case 'set': await set(interaction, interaction.options.getString('category')!, interaction.options.getString('type')!, interaction.options.getNumber('value'));
     break;
-    case 'call': await call(interaction, interaction.options.getString('category')!, interaction.options.getString('type')!);
+    case 'call': await call(interaction, interaction.options.getString('category')!, interaction.options.getString('type')!, interaction.options.getBoolean('value'));
     break;
   }
 };
 
 async function toggle(interaction: CommandInteraction) {
-  const originalValue = interaction.client.hypixelAPI.requests.instance.enabled;
-  interaction.client.hypixelAPI.requests.instance.enabled = originalValue === false;
+  const originalValue = interaction.client.hypixelAPI.instance.enabled;
+  interaction.client.hypixelAPI.instance.enabled = originalValue === false;
   const toggleEmbed = new BetterEmbed({ color: '#7289DA', interaction: interaction, footer: null })
     .setTitle('Updated Value!')
     .setDescription(`The HypixelRequestCall system is now ${originalValue === false ? 'on' : 'off'}!`);
@@ -185,7 +191,7 @@ async function toggle(interaction: CommandInteraction) {
 }
 
 async function stats(interaction: CommandInteraction) {
-  const requestCreate = interaction.client.hypixelAPI.requests;
+  const requestCreate = interaction.client.hypixelAPI;
   const { instanceUses, resumeAfter, keyPercentage } = requestCreate.instance;
   const statsEmbed = new BetterEmbed({ color: '#7289DA', interaction: interaction, footer: null })
     .addField('Enabled', requestCreate.instance.enabled === true ? 'Yes' : 'No')
@@ -198,30 +204,30 @@ async function stats(interaction: CommandInteraction) {
       Abort Errors: ${cleanLength(requestCreate.abort.timeoutLength)}
       Rate Limit Errors: ${cleanLength(requestCreate.rateLimit.timeoutLength)}
       Other Errors: ${cleanLength(requestCreate.unusual.timeoutLength)}`)
-    .addField('API Key', `Dedicated Queries: ${keyPercentage * keyLimit} or ${keyPercentage * 100}%
+    .addField('API Key', `Dedicated Queries: ${cleanRound(keyPercentage * keyLimit, 1)} or ${cleanRound(keyPercentage * 100, 1)}%
       Instance Queries: ${instanceUses}`);
   await interaction.editReply({ embeds: [statsEmbed] });
 }
 
 async function set(interaction: CommandInteraction, category: string, type: string, value: number | null) {
   if (type === 'keyPercentage' && value !== null && value > 1) throw new Error('Too high, must be below 1');
-  interaction.client.hypixelAPI.requests[category][type] = type === 'isGlobal' ? Boolean(value) : value;
+  interaction.client.hypixelAPI[category][type] = type === 'isGlobal' ? Boolean(value) : value;
   const setEmbed = new BetterEmbed({ color: '#7289DA', interaction: interaction, footer: null })
     .setTitle('Updated Value!')
     .setDescription(`<RequestCreate>.${category}.${type} is now ${value}.`);
   await interaction.editReply({ embeds: [setEmbed] });
 }
 
-async function call(interaction: CommandInteraction, category: string, type: string) {
-  const requestCreate = interaction.client.hypixelAPI.requests;
+async function call(interaction: CommandInteraction, category: string, type: string, value: boolean | null) {
+  const requestCreate = interaction.client.hypixelAPI;
   if (type === 'addAbort' || type === 'addTimeToTimeout' || type === 'addUnusualError') {
     requestCreate[category][type]();
   } else {
-    requestCreate[category][type](requestCreate);
+    requestCreate[category][type](requestCreate, value ?? false); //value is used for reportAbortError's global field
   }
   const callEmbed = new BetterEmbed({ color: '#7289DA', interaction: interaction, footer: null })
     .setTitle('Executed!')
     .setDescription(`Executed <RequestCreate>.${category}.${type}`);
   await stats(interaction);
-  await interaction.followUp({ embeds: [callEmbed] });
+  await interaction.followUp({ embeds: [callEmbed], ephemeral: true });
 }

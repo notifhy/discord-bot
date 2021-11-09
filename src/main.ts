@@ -1,11 +1,11 @@
 import type { ClientEvents, SlashCommand } from './@types/index';
-import type { Locales } from './@types/locales';
 import { Client, Collection, Intents } from 'discord.js';
 import { discordAPIkey as token } from '../config.json';
 import * as fs from 'fs/promises';
 import { HypixelRequestCall } from './hypixelAPI/HypixelRequestCall';
 import { api, blockedUsers, devMode } from '../dynamicConfig.json';
 import { RegionLocales } from '../locales/localesHandler';
+import { ModuleEvents } from './@types/modules';
 
 process.on('unhandledRejection', error => {
   console.log('unhandledRejection', error);
@@ -36,45 +36,43 @@ client.config = {
   devMode: devMode,
 };
 client.customStatus = false;
-client.hypixelAPI = {
-  requests: new HypixelRequestCall(),
-  data: new Collection,
-};
-client.hypixelAPI.requests.instance.enabled = client.config.api;
+client.hypixelAPI = new HypixelRequestCall();
+client.hypixelAPI.instance.enabled = client.config.api;
+client.regionLocales = new RegionLocales();
 
 (async () => {
-  const eventsFolder = (await fs.readdir('./events')).filter(file => file.endsWith('.ts'));
   const commandsFolder = (await fs.readdir('./commands')).filter(file => file.endsWith('.ts'));
+  const eventsFolder = (await fs.readdir('./events')).filter(file => file.endsWith('.ts'));
+  const modulesFolder = (await fs.readdir('./modules')).filter(file => file.endsWith('.ts'));
 
-  const eventsPromises: Promise<ClientEvents>[] = [];
-  const commandsPromises: Promise<SlashCommand>[] = [];
+  const commandPromises: Promise<SlashCommand>[] = [];
+  const eventPromises: Promise<ClientEvents>[] = [];
+  const modulePromises: Promise<ModuleEvents>[] = [];
 
-  for (const file of eventsFolder) {
-    eventsPromises.push(import(`./events/${file}`));
-  }
-
-  for (const file of commandsFolder) {
-    commandsPromises.push(import(`./commands/${file}`));
-  }
+  for (const file of commandsFolder) commandPromises.push(import(`./commands/${file}`));
+  for (const file of eventsFolder) eventPromises.push(import(`./events/${file}`));
+  for (const file of modulesFolder) modulePromises.push(import(`./modules/${file}`));
 
   const resolvedPromises = await Promise.all([
-    Promise.all(eventsPromises),
-    Promise.all(commandsPromises),
+    Promise.all(commandPromises),
+    Promise.all(eventPromises),
+    Promise.all(modulePromises),
   ]);
 
-  for (const { properties: { name, once, hasParameter }, execute } of resolvedPromises[0]) {
+  for (const command of resolvedPromises[0]) {
+    client.commands.set(command.properties.name, command);
+  }
+
+  for (const { properties: { name, once, hasParameter }, execute } of resolvedPromises[1]) {
     const callExecute = (parameters: any) => hasParameter === true ? execute(parameters) : execute(client);
     if (once === false) client.on(name, parameters => callExecute(parameters));
     else client.once(name, parameters => callExecute(parameters));
   }
 
-  for (const command of resolvedPromises[1]) {
-    client.commands.set(command.properties.name, command);
+  for (const { properties: { name }, execute } of resolvedPromises[2]) {
+    console.log('sdad', name);
+    client.hypixelAPI.on(name, execute);
   }
-
-  client.regionLocales = new RegionLocales();
-
-  if (client.config.api === true) await client.hypixelAPI.requests.callAll();
 
   await client.login(token);
 })();

@@ -1,7 +1,4 @@
 import type { HypixelRequestCall } from './HypixelRequestCall';
-import { HypixelAPI } from '../@types/hypixel';
-import { RateLimitError } from '../util/error/RateLimitError';
-import { isAbortError } from '../util/error/helper';
 
 export class Abort {
   abortsLastMinute: number;
@@ -72,13 +69,16 @@ export class RateLimit {
     }
   }
 
-  reportRateLimitError(RequestInstance: HypixelRequestCall, error: RateLimitError): void {
+  reportRateLimitError(RequestInstance: HypixelRequestCall, isGlobal?: boolean): void {
+    this.isGlobal = isGlobal ?? false;
     const currentTimeout = Math.max(RequestInstance.instance.resumeAfter, Date.now());
     const additionalTimeout = currentTimeout + this.generateTimeoutLength();
     this.addRateLimit();
-    this.isGlobal = error.json?.global ?? false;
     RequestInstance.instance.keyPercentage -= 0.05;
     RequestInstance.instance.resumeAfter = additionalTimeout;
+    setTimeout(() => {
+      this.isGlobal = false;
+    }, additionalTimeout - Date.now());
   }
 }
 
@@ -128,7 +128,7 @@ export class Instance {
 
   constructor() {
     this.abortThreshold = 2500;
-    this.baseURL = 'https://api.hypixel.net/%{type}%?uuid=%{uuid}%';
+    this.baseURL = 'https://api.hypixel.net/player?uuid=%{uuid}%';
     this.enabled = true;
     this.instanceUses = 0;
     this.keyPercentage = 0.20;

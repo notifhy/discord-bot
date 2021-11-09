@@ -3,17 +3,17 @@ import { ColorResolvable, CommandInteraction, MessageEmbed, WebhookClient } from
 
 export async function sendWebHook({
   content,
-  embed,
+  embeds,
   webhook,
   suppressError = true,
 }: {
   content?: string,
-  embed: MessageEmbed[],
+  embeds: MessageEmbed[],
   webhook: WebHookConfig,
   suppressError?: boolean,
 }): Promise<void> {
   try {
-    await new WebhookClient({ id: webhook.id, token: webhook.token }).send({ content: content, embeds: embed });
+    await new WebhookClient({ id: webhook.id, token: webhook.token }).send({ content: content, embeds: embeds });
   } catch (err) {
     if (!(err instanceof Error)) return;
     console.error(`${formattedUnix({ date: true, utc: true })} | An error has occurred while sending an WebHook | ${err.stack ?? err.message}`);
@@ -101,6 +101,11 @@ export function cleanLength(ms: number | null): string | null {
     : minutes > 0
     ? `${minutes}m ${seconds}s`
     : `${seconds}s`;
+}
+
+export function cleanRound(number: number, decimals?: number) {
+  const decimalsFactor = 10 ** (decimals ?? 2);
+  return Math.round(number * decimalsFactor) / decimalsFactor;
 }
 
 export const timeout = (ms: number) => new Promise(res => setTimeout(res, ms));

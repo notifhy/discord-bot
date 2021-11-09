@@ -1,13 +1,12 @@
 export interface UserData {
   discordID: string;
   language: string;
-  modules: string;
 }
 
 export interface UserAPIData {
   discordID: string;
   uuid: string;
-  urls: string;
+  modules: string | null;
   lastUpdated: number;
   firstLogin: number | null;
   lastLogin: number | null;
@@ -20,18 +19,20 @@ export interface UserAPIData {
   rewardHighScore: number | null;
   totalRewards: number | null;
   totalDailyRewards: number | null;
+  defenderHistory: string;
+  friendHistory: string;
+  dailyHistory: string;
 }
 
 export interface ValidUserUpdate {
   discordID?: string;
   language?: string | null;
-  modules?: string | null;
 }
 
 export interface ValidAPIUserUpdate { //no idea how to simplify, ill do this later
   discordID?: string;
   uuid?: string;
-  urls?: string | null;
+  modules?: string | null;
   lastUpdated?: number;
   firstLogin?: number | null;
   lastLogin?: number | null;
@@ -44,4 +45,13 @@ export interface ValidAPIUserUpdate { //no idea how to simplify, ill do this lat
   rewardHighScore?: number | null | undefined;
   totalRewards?: number | null | undefined;
   totalDailyRewards?: number | null | undefined;
+  defenderHistory?: string;
+  friendHistory?: string;
+  dailyHistory?: string;
+}
+
+export interface FriendModule {
+  date: number;
+  lastLogin?: number | null;
+  lastLogout?: number | null;
 }

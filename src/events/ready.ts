@@ -17,7 +17,11 @@ export const execute = async (client: Client) => {
   setInterval(async () => {
     try {
       if (client.customStatus === false) {
-        const users = (await new SQLiteWrapper().getAllUsers({ table: 'api' })).length;
+        const users = (await SQLiteWrapper.getAllUsers({
+          table: 'api',
+          columns: ['discordID'],
+        })).length;
+
         client.user?.setActivity({
           type: 'WATCHING',
           name: `${users} accounts | /register /help | ${client.guilds.cache.size} servers`,
@@ -29,7 +33,7 @@ export const execute = async (client: Client) => {
       const stackEmbed = new ErrorStackEmbed({ error: error, incidentID: incidentID });
       await sendWebHook({
         content: `<@${ownerID.join('><@')}>`,
-        embed: [stackEmbed],
+        embeds: [stackEmbed],
         webhook: fatalWebhook,
         suppressError: true,
       });
@@ -37,6 +41,6 @@ export const execute = async (client: Client) => {
   }, 30_000);
 
   while (true) {
-    await client.hypixelAPI.requests.callAll(); //eslint-disable-line no-await-in-loop
+    await client.hypixelAPI.callAll(); //eslint-disable-line no-await-in-loop
   }
 };

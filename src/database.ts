@@ -7,7 +7,7 @@ import { formattedUnix } from './util/utility';
 //TODO: Fix "any" after the rest is done
 
 export class SQLiteWrapper {
-  queryGet({
+  static queryGet({
     query,
     allowUndefined = false,
   }: {
@@ -30,7 +30,7 @@ export class SQLiteWrapper {
     });
   }
 
-  queryGetAll({
+  static queryGetAll({
     query,
   }: {
     query: string,
@@ -47,7 +47,7 @@ export class SQLiteWrapper {
     });
   }
 
-  queryRun({
+  static queryRun({
     query,
     data,
   }: {
@@ -68,29 +68,33 @@ export class SQLiteWrapper {
     });
   }
 
-  async getUser({
+  static async getUser({
     discordID,
     table,
+    columns,
   }: {
     discordID: string,
     table: string,
+    columns: string[]
   }): Promise<UserData | UserAPIData | undefined> {
-    const query = `SELECT * FROM ${table} WHERE discordID = '${discordID}'`;
+    const query = `SELECT ${columns?.join(', ') ?? '*'} FROM ${table} WHERE discordID = '${discordID}'`;
     const userData = await this.queryGet({ query: query, allowUndefined: true }) as UserData | UserAPIData | undefined;
     return userData;
   }
 
-  async getAllUsers({
+  static async getAllUsers({
     table,
+    columns,
   }: {
     table: string
+    columns: string[]
   }): Promise<UserData[] | UserAPIData[]> {
-    const query = `SELECT * FROM ${table}`;
+    const query = `SELECT ${columns?.join(', ') ?? '*'} FROM ${table}`;
     const userData = await this.queryGetAll({ query: query }) as UserData[] | UserAPIData[];
     return userData;
   }
 
-  async newUser({
+  static async newUser({
     table,
     data,
   }: {
@@ -106,7 +110,7 @@ export class SQLiteWrapper {
     return newUserData;
   }
 
-  async updateUser({
+  static async updateUser({
     discordID,
     table,
     data,
@@ -127,7 +131,7 @@ export class SQLiteWrapper {
     return newUserData;
   }
 
-  async deleteUser({
+  static async deleteUser({
     discordID,
     table,
   }: {

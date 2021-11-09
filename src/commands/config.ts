@@ -47,7 +47,7 @@ export const execute: CommandExecute = async (interaction: CommandInteraction): 
   const readFile: Config = JSON.parse(file.toString());
 
   if (interaction.options.getSubcommand() === 'api') { //Persists across restarts
-    interaction.client.hypixelAPI.requests.instance.enabled = !readFile.api;
+    interaction.client.hypixelAPI.instance.enabled = !readFile.api;
     readFile.api = !readFile.api;
     responseEmbed.setTitle(`API State Updated!`);
     responseEmbed.setDescription(`API commands and functions are now ${readFile.api === true ? 'on' : 'off'}!`);

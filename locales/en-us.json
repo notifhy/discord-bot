@@ -61,7 +61,7 @@
         },
         "dm": {
           "name": "Direct Messages",
-          "value": "This command cannot be used in the DM channel"
+          "value": "This command cannot be used in a DM channel"
         },
         "owner": {
           "name": "Bot Owner",

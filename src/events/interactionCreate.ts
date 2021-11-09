@@ -2,9 +2,9 @@ import type { EventProperties, SlashCommand } from '../@types/index';
 import { BetterEmbed, formattedUnix, sendWebHook, timeout } from '../util/utility';
 import { CommandErrorEmbed, ConstraintEmbed, ErrorStackEmbed, HTTPErrorEmbed, replyToError, UserCommandErrorEmbed, UserHTTPErrorEmbed } from '../util/error/helper';
 import { fatalWebhook, nonFatalWebhook, ownerID } from '../../config.json';
-import { Collection, CommandInteraction, User } from 'discord.js';
+import { Collection, CommandInteraction } from 'discord.js';
 import { ConstraintError } from '../util/error/ConstraintError';
-import * as fs from 'fs/promises';
+import * as fs from 'node:fs/promises';
 import { SQLiteWrapper } from '../database';
 import { UserAPIData, UserData } from '../@types/database';
 import { HTTPError } from '../util/error/HTTPError';
@@ -21,27 +21,34 @@ export const execute = async (interaction: CommandInteraction): Promise<void> =>
       const command: SlashCommand | undefined = interaction.client.commands.get(interaction.commandName);
       if (command === undefined) return;
 
-      //Import's cache makes it not refresh upon executing this file ¯\_(ツ)_/¯
-      const file: Buffer = await fs.readFile('../dynamicConfig.json');
-      const { blockedUsers, devMode }: { blockedUsers: string[], devMode: string } = JSON.parse(file.toString());
-
       console.log(`${formattedUnix({ date: true, utc: true })} | Slash Command from ${interaction.user.tag} (${interaction.user.id}) for the command ${interaction.commandName}`);
 
       await interaction.deferReply({ ephemeral: command.properties.ephemeral });
 
-      let userData = await new SQLiteWrapper().getUser({ discordID: interaction.user.id, table: 'users' }) as UserData | undefined;
-      const userAPIData = await new SQLiteWrapper().getUser({ discordID: interaction.user.id, table: 'api' }) as UserAPIData | undefined;
+      //Import's cache makes it not refresh upon executing this file ¯\_(ツ)_/¯
+      const file: Buffer = await fs.readFile('../dynamicConfig.json');
+      const { blockedUsers, devMode }: { blockedUsers: string[], devMode: string } = JSON.parse(file.toString());
 
-      if (userData === undefined) {
-        userData = await new SQLiteWrapper().newUser({
-          table: 'users',
-          data: {
-            discordID: interaction.user.id,
-            language: 'en-us',
-            modules: '',
-          },
-        }) as UserData;
-      }
+      const userAPIData = await SQLiteWrapper.getUser({
+        discordID: interaction.user.id,
+        table: 'api',
+        columns: ['*'],
+      }) as UserAPIData | undefined;
+
+      const userData = //how do i make this look good
+      (await SQLiteWrapper.getUser({
+        discordID: interaction.user.id,
+        table: 'users',
+        columns: ['*'],
+      }) as UserData | undefined) ??
+      (await SQLiteWrapper.newUser({
+        table: 'users',
+        data: {
+          discordID: interaction.user.id,
+          language: 'en-us',
+        },
+      }) as UserData);
+
 
       await blockedConstraint(interaction, userData, blockedUsers);
       await devConstraint(interaction, userData, Boolean(devMode));
@@ -59,24 +66,27 @@ export const execute = async (interaction: CommandInteraction): Promise<void> =>
     if (error instanceof ConstraintError) {
       console.log(`${formattedUnix({ date: true, utc: true })} | ${interaction.user.tag} failed the constraint ${error.message} in interaction ${interaction.id}`);
       const constraintErrorEmbed = new ConstraintEmbed({ error: error, interaction: interaction });
-      await sendWebHook({ embed: [constraintErrorEmbed], webhook: nonFatalWebhook });
+      await sendWebHook({ embeds: [constraintErrorEmbed], webhook: nonFatalWebhook });
       return;
     }
 
     const incidentID = Math.random().toString(36).substring(2, 10).toUpperCase();
-    const stackEmbed = new ErrorStackEmbed({ error: error, incidentID: incidentID });
-    let userErrorEmbed, errorEmbed;
-
-    if (error instanceof HTTPError) { //Unsightly, but it does work (I think)
-      userErrorEmbed = new UserHTTPErrorEmbed({ error: error, interaction: interaction, incidentID: incidentID });
-      errorEmbed = new HTTPErrorEmbed({ error: error, interaction: interaction, incidentID: incidentID });
-    } else {
-      userErrorEmbed = new UserCommandErrorEmbed({ error: error, interaction: interaction, incidentID: incidentID });
-      errorEmbed = new CommandErrorEmbed({ error: error, interaction: interaction, incidentID: incidentID });
-    }
-    await replyToError({ embeds: [userErrorEmbed], interaction: interaction, incidentID: incidentID });
+    await replyToError({
+      embeds: [
+        error instanceof HTTPError ?
+        new UserHTTPErrorEmbed({ error: error, interaction: interaction, incidentID: incidentID }) :
+        new UserCommandErrorEmbed({ error: error, interaction: interaction, incidentID: incidentID }),
+      ],
+      interaction: interaction,
+      incidentID: incidentID,
+    });
     await sendWebHook({
-      embed: [errorEmbed, stackEmbed],
+      embeds: [
+        error instanceof HTTPError ?
+          new HTTPErrorEmbed({ error: error, interaction: interaction, incidentID: incidentID }) :
+          new CommandErrorEmbed({ error: error, interaction: interaction, incidentID: incidentID }),
+        new ErrorStackEmbed({ error: error, incidentID: incidentID }),
+      ],
       webhook: error instanceof HTTPError ? nonFatalWebhook : fatalWebhook,
       suppressError: true,
     });

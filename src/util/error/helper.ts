@@ -1,6 +1,6 @@
 import { CommandInteraction, MessageEmbed } from 'discord.js';
 import type { AbortError } from '../../@types/error';
-import { BetterEmbed, cleanLength, formattedUnix, sendWebHook } from '../utility';
+import { BetterEmbed, cleanLength, cleanRound, formattedUnix, sendWebHook } from '../utility';
 import { fatalWebhook, keyLimit, ownerID } from '../../../config.json';
 import { HypixelRequestCall } from '../../hypixelAPI/HypixelRequestCall';
 import { RateLimitError } from './RateLimitError';
@@ -41,7 +41,7 @@ export class CommandErrorEmbed extends BetterEmbed {
     super.setTitle('Unexpected Error')
       .addField('User', `Tag: ${interaction.user.tag}\nID: ${interaction.user.id}`)
       .addField('Interaction', interaction.id)
-      .addField('Source', `Channel Type: ${interaction.channel?.type}\nGuild Name: ${interaction.guild?.name}\nGuild ID: ${interaction.guild?.id}\nOwner ID: ${interaction.guild?.ownerId ?? 'None'}\nGuild Member Count: ${interaction.guild?.memberCount}`)
+      .addField('Source', `Command: ${interaction.commandName}\nChannel Type: ${interaction.channel?.type}\nGuild Name: ${interaction.guild?.name}\nGuild ID: ${interaction.guild?.id}\nOwner ID: ${interaction.guild?.ownerId ?? 'None'}\nGuild Member Count: ${interaction.guild?.memberCount}`)
       .addField('Extra', `Websocket Ping: ${interaction.client.ws.ping}\nCreated At: ${formattedUnix({ ms: interaction.createdTimestamp, date: true, utc: true })}`);
     if (stack.length >= 4096 === true) super.addField('Over Max Length', 'The stack is over 4096 characters long and was cut short');
   }
@@ -162,7 +162,7 @@ export class HypixelAPIEmbed extends BetterEmbed {
         Abort Errors: ${cleanLength(requestCreate.abort.timeoutLength)}
         Rate Limit Errors: ${cleanLength(requestCreate.rateLimit.timeoutLength)}
         Other Errors: ${cleanLength(requestCreate.unusual.timeoutLength)}`)
-      .addField('API Key', `Dedicated Queries: ${keyPercentage * keyLimit} or ${keyPercentage * 100}%
+      .addField('API Key', `Dedicated Queries: ${cleanRound(keyPercentage * keyLimit)} or ${cleanRound(keyPercentage * 100)}%
         Instance Queries: ${instanceUses}`);
   }
 }
@@ -210,7 +210,7 @@ export async function replyToError({
     const stackEmbed = new ErrorStackEmbed({ error: err, incidentID: incidentID });
     await sendWebHook({
       content: `<@${ownerID.join('><@')}>`,
-      embed: [failedNotify, stackEmbed],
+      embeds: [failedNotify, stackEmbed],
       webhook: fatalWebhook,
       suppressError: true,
     });

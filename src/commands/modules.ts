@@ -1,7 +1,7 @@
 import type { CommandExecute, CommandProperties } from '../@types/index';
 import { ButtonInteraction, CommandInteraction, Message, MessageActionRow, MessageActionRowComponentResolvable, MessageButton, MessageButtonStyleResolvable, MessageComponentInteraction, MessageSelectMenu, MessageSelectOptionData, SelectMenuInteraction } from 'discord.js';
 import { BetterEmbed } from '../util/utility';
-import { UserData } from '../@types/database';
+import { UserAPIData, UserData } from '../@types/database';
 import { SQLiteWrapper } from '../database';
 import { RegionLocales } from '../../locales/localesHandler';
 import { AssetModules } from '../@types/modules';
@@ -13,7 +13,7 @@ export const properties: CommandProperties = {
   usage: '/modules',
   cooldown: 15000,
   ephemeral: true,
-  noDM: false,
+  noDM: true,
   ownerOnly: false,
   structure: {
     name: 'modules',
@@ -47,6 +47,7 @@ export const execute: CommandExecute = async (interaction: CommandInteraction, {
       await selectMenuUpdate({
         moduleEmbed: moduleEmbed,
         interaction: i,
+        userData: userData,
         selected: selected,
       });
     } else if (i instanceof ButtonInteraction) {
@@ -54,6 +55,7 @@ export const execute: CommandExecute = async (interaction: CommandInteraction, {
         await buttonUpdate({
           moduleEmbed: moduleEmbed,
           interaction: i,
+          userData: userData,
           selected: selected,
         });
       }
@@ -75,14 +77,20 @@ export const execute: CommandExecute = async (interaction: CommandInteraction, {
 async function selectMenuUpdate({
   moduleEmbed,
   interaction,
+  userData,
   selected,
 }: {
   moduleEmbed: BetterEmbed,
   interaction: SelectMenuInteraction
+  userData: UserData,
   selected: string
 }) {
   const locales = interaction.client.regionLocales;
-  const userData = await new SQLiteWrapper().getUser({ discordID: interaction.user.id, table: 'users' }) as UserData;
+  const userAPIData: UserAPIData = await SQLiteWrapper.getUser({
+    discordID: interaction.user.id,
+    table: 'users',
+    columns: ['language'],
+  }) as UserAPIData;
 
   const modules = locales.get('commands.modules.modules', userData.language) as unknown as AssetModules;
   moduleEmbed
@@ -93,7 +101,7 @@ async function selectMenuUpdate({
       },
       {
         name: 'Status',
-        value: Boolean(userData.modules?.split(' ')?.includes(selected)) ?
+        value: Boolean(userAPIData.modules?.split(' ')?.includes(selected)) ?
           locales.localizer('commands.modules.statusField.added', userData.language) :
           locales.localizer('commands.modules.statusField.removed', userData.language),
       },
@@ -103,7 +111,7 @@ async function selectMenuUpdate({
     embeds: [moduleEmbed],
     components: [
       userModuleSelectMenu({ locales: locales, userData: userData, selected: selected }),
-      moduleButtons({ locales: locales, userData: userData, isEnabled: (userData.modules?.split(' ') ?? [])?.includes(selected) }),
+      moduleButtons({ locales: locales, userData: userData, isEnabled: (userAPIData.modules?.split(' ') ?? [])?.includes(selected) }),
     ],
   });
 }
@@ -111,30 +119,33 @@ async function selectMenuUpdate({
 async function buttonUpdate({
   moduleEmbed,
   interaction,
+  userData,
   selected,
 }: {
   moduleEmbed: BetterEmbed,
   interaction: ButtonInteraction
+  userData: UserData,
   selected: string
 }) {
   const locales = interaction.client.regionLocales;
-  let userData: UserData = await new SQLiteWrapper().getUser({
+  let userAPIData: UserAPIData = await SQLiteWrapper.getUser({
     discordID: interaction.user.id,
-    table: 'users',
-  }) as UserData;
+    table: 'api',
+    columns: ['modules'],
+  }) as UserAPIData;
 
-  const userModules = userData.modules?.split(' ') ?? []; //Extra logic to allow for concurrent instances of this command
+  const userModules = userAPIData.modules?.split(' ') ?? []; //Extra logic to allow for concurrent instances of this command
   const selectedModuleIndex = userModules.indexOf(selected);
   if (interaction.customId === 'disableButton' && selectedModuleIndex !== -1) userModules.splice(selectedModuleIndex, 1);
   else if (interaction.customId === 'enableButton' && selectedModuleIndex === -1) userModules.push(selected);
 
-  userData = await new SQLiteWrapper().updateUser({
+  userAPIData = await SQLiteWrapper.updateUser({
     discordID: interaction.user.id,
-    table: 'users',
+    table: 'api',
     data: {
       modules: userModules.join(' '),
     },
-  }) as UserData;
+  }) as UserAPIData;
 
   const modules = locales.get('commands.modules.modules', userData.language) as unknown as AssetModules;
   moduleEmbed
@@ -145,7 +156,7 @@ async function buttonUpdate({
       },
       {
         name: locales.localizer('commands.modules.statusField.name', userData.language),
-        value: Boolean((userData.modules?.split(' ') ?? []).includes(selected)) ?
+        value: Boolean((userAPIData.modules?.split(' ') ?? []).includes(selected)) ?
           locales.localizer('commands.modules.statusField.added', userData.language) :
           locales.localizer('commands.modules.statusField.removed', userData.language),
       },
@@ -155,7 +166,7 @@ async function buttonUpdate({
     embeds: [moduleEmbed],
     components: [
       userModuleSelectMenu({ locales: locales, userData: userData, selected: selected }),
-      moduleButtons({ locales: locales, userData: userData, isEnabled: (userData.modules?.split(' ') ?? [])?.includes(selected) }),
+      moduleButtons({ locales: locales, userData: userData, isEnabled: (userAPIData.modules?.split(' ') ?? [])?.includes(selected) }),
     ],
   });
 }
