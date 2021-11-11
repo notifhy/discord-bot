@@ -12,7 +12,7 @@ export interface AssetModules {
   [key: string]: AssetModule;
   defender: AssetModule;
   friend: AssetModule;
-  daily: AssetModule;
+  rewards: AssetModule;
 }
 
 export interface DefenderModuleData {
@@ -30,7 +30,7 @@ export interface FriendModuleData {
   lastLogout: number;
 }
 
-export interface DailyModuleData {
+export interface RewardModuleData {
   lastClaimedReward: number;
   rewardScore: number;
   rewardHighScore: number;

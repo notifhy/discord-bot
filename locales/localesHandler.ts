@@ -1,45 +1,36 @@
-import type { Locales, LocalesTree, Parameters } from '../src/@types/locales';
+import type { Locale, Locales, LocaleTree, Parameters } from '../src/@types/locales';
 import * as en from './en-us.json';
 import * as fr from './fr-FR.json';
 
-const test = {
-  'en-us': en,
-  'fr-FR': fr,
-};
-
-const locales: unknown = {
+const locales: Locales = {
   'en-us': en,
   'fr-FR': fr,
 };
 
 export class RegionLocales {
-  localizer(path: string, locale?: string, parameters?: Parameters): string {
-    const pathArray: string[] = path.split('.');
-    let fetchedString: LocalesTree | string = (locales as Locales)[(locale ?? 'en-us') as keyof Locales];
-    for (const pathCommand of pathArray) {
-      if (typeof fetchedString === 'string') break;
-      fetchedString = fetchedString?.[pathCommand as keyof LocalesTree] as LocalesTree | string;
-    }
+  locale(locale?: string): Locale {
+    if (!Object.keys(locales).includes(locale ?? 'en-us')) throw new RangeError('Invalid Locale');
+    const fetched: Locale = locales[(locale ?? 'en-us') as keyof Locales];
+    return fetched;
+  }
 
-    if (typeof fetchedString !== 'string' || fetchedString === undefined) {
-      throw new RangeError('Fetched string is not of type string');
-    }
-
+  replace(input: string, parameters?: Parameters): string {
+    let replaced: string = input;
     for (const parameter in parameters) {
       if (Object.prototype.hasOwnProperty.call(parameters, parameter)) {
         const regex: RegExp = new RegExp(`%{${parameter}}%`);
-        fetchedString = fetchedString?.replace(regex, String(parameters[parameter]));
+        replaced = replaced.replace(regex, String(parameters[parameter]));
       }
     }
-    return fetchedString;
+    return replaced;
   }
 
-  get(path: string, locale?: string) {
+  get(path: string, locale?: string): LocaleTree | string {
     const pathArray: string[] = path.split('.');
-    let fetchedString: LocalesTree | string = (locales as Locales)[(locale ?? 'en-us') as keyof Locales];
+    let fetchedString: LocaleTree | string = (locales as Locales)[(locale ?? 'en-us') as keyof Locales];
     for (const pathCommand of pathArray) {
       if (typeof fetchedString === 'string') break;
-      fetchedString = fetchedString?.[pathCommand as keyof LocalesTree] as LocalesTree | string;
+      fetchedString = fetchedString?.[pathCommand as keyof LocaleTree] as LocaleTree | string;
     }
 
     return fetchedString;

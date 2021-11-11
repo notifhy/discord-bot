@@ -31,20 +31,20 @@ export const properties: CommandProperties = {
 };
 
 export const execute: CommandExecute = async (interaction: CommandInteraction, { userData: userData }): Promise<void> => {
-  const locales = interaction.client.regionLocales;
+  const locale = interaction.client.regionLocales.locale(userData.language).commands.data;
   if (interaction.options.getSubcommand() === 'delete') {
     const confirmEmbed = new BetterEmbed({ color: '#7289DA', interaction: interaction, footer: null })
-      .setTitle('Confirmation')
-      .setDescription('Are you absolutely sure that you want to delete all of your data? All data stored in the database will be wiped. This is irreversible. Please confirm with the buttons below. As a side note, you can view all of your data with /data view.');
+      .setTitle(locale.delete.confirm.title)
+      .setDescription(locale.delete.confirm.description);
 
     const yesButton = new MessageButton()
       .setCustomId('true')
-      .setLabel('Yes')
+      .setLabel(locale.delete.yesButton)
       .setStyle('SUCCESS');
 
     const noButton = new MessageButton()
       .setCustomId('false')
-      .setLabel('No')
+      .setLabel(locale.delete.noButton)
       .setStyle('DANGER');
 
     const buttonRow = new MessageActionRow()
@@ -73,13 +73,13 @@ export const execute: CommandExecute = async (interaction: CommandInteraction, {
         await SQLiteWrapper.deleteUser({ discordID: userData.discordID, table: 'users' });
         await SQLiteWrapper.deleteUser({ discordID: userData.discordID, table: 'api' });
         const aborted = new BetterEmbed({ color: '#7289DA', interaction: interaction, footer: null })
-          .setTitle('Deleted')
-          .setDescription('Your data has been deleted.');
+          .setTitle(locale.delete.deleted.title)
+          .setDescription(locale.delete.deleted.description);
         await interaction.editReply({ embeds: [aborted], components: [disabledRow] });
       } else {
         const aborted = new BetterEmbed({ color: '#7289DA', interaction: interaction, footer: null })
-          .setTitle('Aborted')
-          .setDescription('Deletion Aborted.');
+          .setTitle(locale.delete.aborted.title)
+          .setDescription(locale.delete.aborted.description);
         await interaction.editReply({ embeds: [aborted], components: [disabledRow] });
       }
     });

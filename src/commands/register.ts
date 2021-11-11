@@ -27,7 +27,8 @@ export const properties: CommandProperties = {
 };
 
 export const execute: CommandExecute = async (interaction: CommandInteraction, { userData }): Promise<void> => {
-  const locales = interaction.client.regionLocales;
+  const locale = interaction.client.regionLocales.locale(userData.language).commands.register;
+  const replace = interaction.client.regionLocales.replace;
   const inputUUID = /^[0-9a-f]{8}(-?)[0-9a-f]{4}(-?)[1-5][0-9a-f]{3}(-?)[89AB][0-9a-f]{3}(-?)[0-9a-f]{12}$/i;
   const inputUsername = /^[a-zA-Z0-9_-]{1,24}$/g;
   const input: string = interaction.options.getString('player') as string;
@@ -35,8 +36,8 @@ export const execute: CommandExecute = async (interaction: CommandInteraction, {
 
   if (inputUUID.test(input) === false && inputUsername.test(input) === false) {
     const invalidEmbed = new BetterEmbed({ color: '#FF5555', interaction: interaction, footer: null })
-      .setTitle(locales.localizer('commands.register.invalid.title', userData.language))
-      .setDescription(locales.localizer('commands.register.invalid.description', userData.language));
+      .setTitle(locale.invalid.title)
+      .setDescription(locale.invalid.description);
     await interaction.editReply({ embeds: [invalidEmbed] });
     return;
   }
@@ -45,8 +46,8 @@ export const execute: CommandExecute = async (interaction: CommandInteraction, {
 
   if (response.status === 404) {
     const notFoundEmbed = new BetterEmbed({ color: '#FF5555', interaction: interaction, footer: null })
-      .setTitle(locales.localizer('commands.register.notFound.title', userData.language))
-      .setDescription(locales.localizer('commands.register.notFound.description', userData.language, {
+      .setTitle(locale.notFound.title)
+      .setDescription(replace(locale.notFound.description, {
         inputType: inputType,
       }));
     await interaction.editReply({ embeds: [notFoundEmbed] });
@@ -75,8 +76,8 @@ export const execute: CommandExecute = async (interaction: CommandInteraction, {
 
   if (DISCORD === null) {
     const unlinkedEmbed = new BetterEmbed({ color: '#FF5555', interaction: interaction, footer: null })
-      .setTitle(locales.localizer('commands.register.unlinked.title', userData.language))
-      .setDescription(locales.localizer('commands.register.unlinked.description', userData.language))
+      .setTitle(locale.unlinked.title)
+      .setDescription(locale.unlinked.description)
       .setImage('https://i.imgur.com/gGKd2s8.gif');
     await interaction.editReply({ embeds: [unlinkedEmbed] });
     return;
@@ -84,8 +85,8 @@ export const execute: CommandExecute = async (interaction: CommandInteraction, {
 
   if (DISCORD !== interaction.user.tag) {
     const mismatchedEmbed = new BetterEmbed({ color: '#FF5555', interaction: interaction, footer: null })
-      .setTitle(locales.localizer('commands.register.mismatched.title', userData.language))
-      .setDescription(locales.localizer('commands.register.mismatched.description', userData.language))
+      .setTitle(locale.mismatched.title)
+      .setDescription(locale.mismatched.description)
       .setImage('https://i.imgur.com/gGKd2s8.gif');
     await interaction.editReply({ embeds: [mismatchedEmbed] });
     return;
@@ -114,10 +115,10 @@ export const execute: CommandExecute = async (interaction: CommandInteraction, {
   });
 
   const registerEmbed = new BetterEmbed({ color: '#7289DA', interaction: interaction, footer: null })
-    .setTitle(locales.localizer('commands.register.title', userData.language))
-    .setDescription(locales.localizer('commands.register.description', userData.language))
-    .addField(locales.localizer('commands.register.field.name', userData.language),
-      locales.localizer('commands.register.field.value', userData.language));
+    .setTitle(locale.title)
+    .setDescription(locale.description)
+    .addField(locale.field.name,
+      locale.field.value);
 
 	await interaction.editReply({ embeds: [registerEmbed] });
 };

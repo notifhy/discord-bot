@@ -1,5 +1,5 @@
 import type { CommandExecute, CommandProperties } from '../@types/client';
-import { ColorResolvable, CommandInteraction, Message } from 'discord.js';
+import { CommandInteraction } from 'discord.js';
 import { BetterEmbed } from '../util/utility';
 import { SQLiteWrapper } from '../database';
 
@@ -34,13 +34,14 @@ export const properties: CommandProperties = {
 };
 
 export const execute: CommandExecute = async (interaction: CommandInteraction, { userData: userData }): Promise<void> => {
-  const locales = interaction.client.regionLocales;
   const language = interaction.options.getString('language') as string;
+  const locale = interaction.client.regionLocales.locale(language).commands.language;
+  const replace = interaction.client.regionLocales.replace;
 
   if (language === userData.language) {
     const alreadySetEmbed = new BetterEmbed({ color: '#FF5555', interaction: interaction, footer: null })
-      .setTitle(locales.localizer('commands.language.alreadySet.title', language))
-      .setDescription(locales.localizer('commands.language.alreadySet.description', language, {
+      .setTitle(locale.alreadySet.title)
+      .setDescription(replace(locale.alreadySet.description, {
         language: language,
       }));
     await interaction.editReply({ embeds: [alreadySetEmbed] });
@@ -56,8 +57,8 @@ export const execute: CommandExecute = async (interaction: CommandInteraction, {
   });
 
   const languageEmbed = new BetterEmbed({ color: '#7289DA', interaction: interaction, footer: null })
-    .setTitle(locales.localizer('commands.language.title', language))
-    .setDescription(locales.localizer('commands.language.description', language, {
+    .setTitle(locale.title)
+    .setDescription(replace(locale.description, {
       language: language,
     }));
 

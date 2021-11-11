@@ -55,9 +55,21 @@ export interface Constraints {
 /*
 Command Interface
 */
+export interface Data {
+  delete: {
+    confirm: BaseEmbed;
+    deleted: BaseEmbed;
+    aborted: BaseEmbed;
+    yesButton: string;
+    noButton: string;
+  }
+}
+
 export interface Help {
   information: BaseEmbed;
-  all: BaseEmbed & Field;
+  all: {
+    field: Field
+  } & BaseEmbed
   specific: {
     invalid: BaseEmbed;
     title: string;
@@ -78,7 +90,8 @@ export interface Language {
 export interface Modules {
   title: string;
   description: string;
-  moduleField: BaseEmbed;
+  moduleField: Field;
+  menuPlaceholder: string;
   statusField: {
     name: string,
     added: string;
@@ -87,7 +100,7 @@ export interface Modules {
   modules: {
     defender: AssetModule;
     friend: AssetModule;
-    daily: AssetModule;
+    rewards: AssetModule;
   }
   buttons: ModuleButtons;
 }
@@ -105,11 +118,12 @@ export interface Register {
   unlinked: BaseEmbed;
   mismatched: BaseEmbed;
   title: string;
-  description: Field;
+  description: string;
   field: Field;
 }
 
 export interface Commands {
+  data: Data;
   help: Help;
   language: Language;
   modules: Modules;
@@ -130,7 +144,7 @@ export interface Locales {
   'fr-FR': Locale;
 }
 
-export type LocalesTree = Locale
+export type LocaleTree = Locale
   | General
   | Constraints
   | Commands

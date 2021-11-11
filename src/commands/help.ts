@@ -42,16 +42,17 @@ export const execute: CommandExecute = async (interaction: CommandInteraction, {
 };
 
 async function information(interaction: CommandInteraction, userData: UserData) {
-  const locales = interaction.client.regionLocales;
+  const locale = interaction.client.regionLocales.locale(userData.language).commands.help;
   const informationEmbed = new BetterEmbed({ color: '#7289DA', interaction: interaction, footer: null })
-    .setTitle(locales.localizer('commands.help.information.title', userData.language))
-    .setDescription(locales.localizer('commands.help.information.description', userData.language));
+    .setTitle(locale.information.title)
+    .setDescription(locale.information.description);
 
   await interaction.editReply({ embeds: [informationEmbed] });
 }
 
 async function specific(interaction: CommandInteraction, userData: UserData) {
-  const locales = interaction.client.regionLocales;
+  const locale = interaction.client.regionLocales.locale(userData.language).commands.help;
+  const replace = interaction.client.regionLocales.replace;
   const commandArg: string = interaction.options.getString('command') as string;
   const command: SlashCommand | undefined = interaction.client.commands.get(commandArg);
   const commandSearchEmbed = new BetterEmbed({ color: '#7289DA', interaction: interaction, footer: null });
@@ -59,68 +60,61 @@ async function specific(interaction: CommandInteraction, userData: UserData) {
   if (command === undefined) {
     commandSearchEmbed
       .setColor('#ff5555')
-      .setTitle(locales.localizer('commands.help.specific.invalid.title', userData.language))
-      .setDescription(locales.localizer('commands.help.specific.invalid.description', userData.language, {
+      .setTitle(locale.specific.invalid.title)
+      .setDescription(replace(locale.specific.invalid.description, {
         command: commandArg,
       }));
     await interaction.editReply({ embeds: [commandSearchEmbed] });
     return;
   }
 
-  commandSearchEmbed.setTitle(locales.localizer('commands.help.specific.title', userData.language, {
+  commandSearchEmbed.setTitle(replace(locale.specific.title, {
     command: commandArg,
   }));
 
   if (command.properties.description) {
-    commandSearchEmbed.setDescription(locales.localizer('commands.help.specific.description', userData.language, {
+    commandSearchEmbed.setDescription(replace(locale.specific.description, {
       commandDescription: command.properties.description,
     }));
   }
 
-  console.log(locales.localizer('commands.help.specific.usage.name', userData.language));
-  console.log(JSON.stringify(locales.localizer('commands.help.specific.usage', userData.language)));
-  console.log(JSON.stringify(locales.localizer('commands.help.specific', userData.language)));
-
-  commandSearchEmbed.addField(locales.localizer('commands.help.specific.usage.name', userData.language),
-    locales.localizer('commands.help.specific.usage.value', userData.language, {
-      commandUsage: command.properties.usage,
+  commandSearchEmbed.addField(locale.specific.usage.name,
+    replace(locale.specific.usage.value, {
+    commandUsage: command.properties.usage,
   }));
 
-  commandSearchEmbed.addField(locales.localizer('commands.help.specific.cooldown.name', userData.language),
-    locales.localizer('commands.help.specific.cooldown.value', userData.language, {
+  commandSearchEmbed.addField(locale.specific.cooldown.name,
+    replace(locale.specific.cooldown.value, {
       commandCooldown: command.properties.cooldown / 1000,
   }));
 
   if (command.properties.noDM === true) {
-    commandSearchEmbed.addField(locales.localizer('commands.help.specific.dm.name', userData.language),
-    locales.localizer('commands.help.specific.dm.value', userData.language, {
-      commandCooldown: command.properties.cooldown,
-    }));
+    commandSearchEmbed.addField(locale.specific.dm.name,
+      replace(locale.specific.dm.value));
   }
 
   if (command.properties.ownerOnly === true) {
-    commandSearchEmbed.addField(locales.localizer('commands.help.specific.owner.name', userData.language),
-    locales.localizer('commands.help.specific.owner.value', userData.language, {
-      commandCooldown: command.properties.cooldown,
-    }));
+    commandSearchEmbed.addField(locale.specific.owner.name,
+      replace(locale.specific.owner.value));
   }
 
   await interaction.editReply({ embeds: [commandSearchEmbed] });
 }
 
 async function commands(interaction: CommandInteraction, userData: UserData) {
-  const locales = interaction.client.regionLocales;
+  const locale = interaction.client.regionLocales.locale(userData.language).commands.help;
+  const replace = interaction.client.regionLocales.replace;
   const commandsCollection = interaction.client.commands.filter(command => command.properties.ownerOnly === false);
   const allCommandsEmbed = new BetterEmbed({ color: '#7289DA', interaction: interaction, footer: null })
-    .setTitle(locales.localizer('commands.help.all.title', userData.language))
-    .setDescription(locales.localizer('commands.help.all.description', userData.language));
+    .setTitle(locale.all.title)
+    .setDescription(locale.all.description);
 
   for (const command of commandsCollection.values()) {
-    allCommandsEmbed.addField(locales.localizer('commands.help.all.field.name', userData.language, {
+    allCommandsEmbed.addField(replace(locale.all.field.name, {
       commandUsage: `/${command.properties.name}`,
     }),
-    locales.localizer('commands.help.all.field.value', userData.language, {
-      commandDescription: command.properties.description,
+      replace(locale.all.field.value, {
+        commandDescription: command.properties.description,
     }));
   }
 

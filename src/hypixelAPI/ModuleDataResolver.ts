@@ -67,8 +67,6 @@ export class ModuleDataResolver {
                   }
                 }
 
-                console.log(differences);
-
                 const payLoad = {
                   date: now,
                   differences: differences,
