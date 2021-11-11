@@ -1,5 +1,5 @@
 import type { EventProperties, SlashCommand } from '../@types/client';
-import { BetterEmbed, formattedUnix, timeout } from '../util/utility';
+import { BetterEmbed, cleanRound, formattedUnix, timeout } from '../util/utility';
 import { ownerID } from '../../config.json';
 import { Collection, CommandInteraction } from 'discord.js';
 import { ConstraintError } from '../util/error/ConstraintError';
@@ -123,7 +123,7 @@ async function cooldownConstraint(interaction: CommandInteraction, userData: Use
     const cooldownEmbed = new BetterEmbed({ color: '#AA0000', interaction: interaction, footer: null })
       .setTitle(locales.localizer('constraints.cooldown.embed1.title', userData.language))
       .setDescription(locales.localizer('constraints.cooldown.embed1.description', userData.language, {
-        cooldown: command.properties.cooldown / 1000,
+        cooldown: cleanRound(command.properties.cooldown / 1000),
         timeLeft: timeLeft / 1000,
       }));
 

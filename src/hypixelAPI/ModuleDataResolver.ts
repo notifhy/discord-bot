@@ -1,5 +1,5 @@
 import { Client } from 'discord.js';
-import { UserAPIData } from '../@types/database';
+import { HistoryProperties, UserAPIData } from '../@types/database';
 import { HypixelPlayerData, SanitizedHypixelPlayerData } from '../@types/hypixel';
 import { SQLiteWrapper } from '../database';
 import { timeout } from '../util/utility';
@@ -49,6 +49,8 @@ export class ModuleDataResolver {
               try {
                 const url = this.instance.baseURL.replace(/%{uuid}%/, user.uuid);
                 const hypixelPlayerData: SanitizedHypixelPlayerData = this.sanitizeData(await this.hypixelRequestCall.call(url, this), user);
+                const now = Date.now();
+
                 const oldUserAPIData: UserAPIData = await SQLiteWrapper.getUser({
                   discordID: user.discordID,
                   table: 'api',
@@ -59,14 +61,9 @@ export class ModuleDataResolver {
                   discordID: user.discordID,
                   date: Date.now(),
                   hypixelPlayerData: hypixelPlayerData,
-                  oldUserAPIData: oldUserAPIData,
                 };
 
-                await SQLiteWrapper.updateUser({
-                  discordID: user.discordID,
-                  table: 'api',
-                  data: Object.assign({ lastUpdated: payLoad.date }, hypixelPlayerData),
-                });
+                await this.updateDatabase({ hypixelPlayerData, now, oldUserAPIData, user });
 
                 const modules = []; //Not really worth using a loop here
                 //if (user.modules?.includes('defender')) modules.push(defenderModule.execute(payLoad));
@@ -83,6 +80,44 @@ export class ModuleDataResolver {
     } catch (error) {
       await errorHandler({ error: error, moduleDataResolver: this });
     }
+  }
+
+  private async updateDatabase({
+    hypixelPlayerData,
+    now,
+    oldUserAPIData,
+    user,
+  }: {
+    hypixelPlayerData: SanitizedHypixelPlayerData,
+    now: number,
+    oldUserAPIData: UserAPIData,
+    user: UserAPIData
+  }) {
+    const newData = Object.assign({ lastUpdated: now }, hypixelPlayerData);
+    const historyUpdate: HistoryProperties = {
+      date: now,
+    };
+
+    for (const key in hypixelPlayerData) {
+      if (Object.prototype.hasOwnProperty.call(hypixelPlayerData, key) === true) {
+        if (hypixelPlayerData[key as keyof SanitizedHypixelPlayerData] !== oldUserAPIData[key as keyof UserAPIData]) {
+          (historyUpdate[key as keyof HistoryProperties] as unknown) = hypixelPlayerData[key as keyof SanitizedHypixelPlayerData];
+        }
+      }
+    }
+
+    if (Object.keys(historyUpdate).length > 1) {
+      const history = oldUserAPIData.history as HistoryProperties[];
+      history.splice(50);
+      history.unshift(historyUpdate);
+      Object.assign(newData, { history: history });
+    }
+
+    await SQLiteWrapper.updateUser({
+      discordID: user.discordID,
+      table: 'api',
+      data: newData,
+    });
   }
 
   private sanitizeData(hypixelPlayerData: HypixelPlayerData, userAPIData: UserAPIData) {

@@ -109,9 +109,7 @@ export const execute: CommandExecute = async (interaction: CommandInteraction, {
       rewardHighScore: streak_best,
       totalDailyRewards: claimed_daily,
       totalRewards: claimed,
-      defenderHistory: JSON.stringify([]),
-      friendHistory: JSON.stringify([]),
-      dailyHistory: JSON.stringify([]),
+      history: [],
     },
   });
 

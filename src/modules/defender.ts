@@ -1,4 +1,4 @@
-import { UserAPIData, UserData, ValidAPIUserUpdate } from '../@types/database';
+import { UserAPIData, UserAPIDataUpdate, UserData } from '../@types/database';
 import { SQLiteWrapper } from '../database';
 import { SanitizedHypixelPlayerData } from '../@types/hypixel';
 

@@ -32,6 +32,13 @@ export interface BaseEmbed {
 }
 
 /*
+General Interface
+*/
+export interface General {
+  moduleHistories: string[];
+}
+
+/*
 Constraint Interface
 */
 export interface Constraints {
@@ -124,6 +131,7 @@ export interface Locales {
 }
 
 export type LocalesTree = Locale
+  | General
   | Constraints
   | Commands
   | Help

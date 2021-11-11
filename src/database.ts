@@ -1,5 +1,5 @@
 import Database from 'better-sqlite3';
-import { UserAPIData, UserData, ValidAPIUserUpdate, ValidUserUpdate } from './@types/database';
+import { RawUserAPIData, RawUserData, UserAPIData, UserAPIDataUpdate, UserData, UserDataUpdate } from './@types/database';
 import { SQLiteError } from './util/error/SQLiteError';
 import { formattedUnix } from './util/utility';
 
@@ -78,8 +78,8 @@ export class SQLiteWrapper {
     columns: string[]
   }): Promise<UserData | UserAPIData | undefined> {
     const query = `SELECT ${columns?.join(', ') ?? '*'} FROM ${table} WHERE discordID = '${discordID}'`;
-    const userData = await this.queryGet({ query: query, allowUndefined: true }) as UserData | UserAPIData | undefined;
-    return userData;
+    const data = await this.queryGet({ query: query, allowUndefined: false }) as RawUserData | RawUserAPIData;
+    return this.databaseToJSON({ input: data });
   }
 
   static async getAllUsers({
@@ -103,7 +103,11 @@ export class SQLiteWrapper {
   }): Promise<UserAPIData | UserData> {
     const values = [];
     for (let i = 0; i < Object.values(data).length; i += 1) values.push('?');
-    await this.queryRun({ query: `INSERT INTO ${table} VALUES(${values})`, data: Object.values(data) });
+    const dataArray = Object.values(data) as (string | number | null)[];
+    dataArray.forEach((value, index, array) => {
+      if (value !== null && typeof value === 'object') array[index] = JSON.stringify(value);
+    });
+    await this.queryRun({ query: `INSERT INTO ${table} VALUES(${values})`, data: dataArray });
     const returnQuery = `SELECT * FROM ${table} WHERE discordID = '${data.discordID}'`;
     const newUserData = await this.queryGet({ query: returnQuery, allowUndefined: true }) as UserData | UserAPIData;
     console.log(`${formattedUnix({ date: true, utc: true })} | ${data.discordID} added to ${table}`);
@@ -117,7 +121,7 @@ export class SQLiteWrapper {
   }: {
     discordID: string,
     table: string,
-    data: ValidAPIUserUpdate | ValidUserUpdate,
+    data: UserAPIDataUpdate | UserDataUpdate,
   }): Promise<UserData | UserAPIData | undefined> {
     const setQuery: string[] = [];
     for (const key in data) {
@@ -125,7 +129,11 @@ export class SQLiteWrapper {
         setQuery.push(`${key} = ?`);
       }
     }
-    await this.queryRun({ query: `UPDATE ${table} SET ${setQuery.join(', ')} WHERE discordID = '${discordID}'`, data: Object.values(data) });
+    const dataArray = Object.values(data) as (string | number | null)[];
+    dataArray.forEach((value, index, array) => {
+      if (value !== null && typeof value === 'object') array[index] = JSON.stringify(value);
+    });
+    await this.queryRun({ query: `UPDATE ${table} SET ${setQuery.join(', ')} WHERE discordID = '${discordID}'`, data: dataArray });
     const returnQuery = `SELECT * FROM ${table} WHERE discordID = '${discordID}'`;
     const newUserData = await this.queryGet({ query: returnQuery, allowUndefined: true }) as UserData | UserAPIData | undefined;
     return newUserData;
@@ -141,5 +149,33 @@ export class SQLiteWrapper {
     const query = `DELETE * FROM ${table} WHERE discordID = ?`;
     await this.queryRun({ query: query, data: [discordID] });
     console.log(`${formattedUnix({ date: true, utc: true })} | ${discordID} data deleted from ${table}`);
+  }
+
+  //Note that this only checks one level deep
+  static databaseToJSON({
+    input,
+  }: {
+    input: RawUserData | RawUserAPIData,
+  }): UserData | UserAPIData {
+    for (const key in input) {
+      (input[key as keyof typeof input] as unknown) = this.tryJSON<typeof input, UserData | UserAPIData>(input[key as keyof typeof input]);
+    }
+    return input as unknown as UserData | UserAPIData;
+  }
+
+  //Taken from https://stackoverflow.com/a/52799327 under CC BY-SA 4.0
+  //Takes an input and tests for a JSON structure (excluding primitives)
+  static tryJSON<Input, Output>(input: string | number | null): typeof input | Output[keyof Output] {
+    if (typeof input !== 'string') return input;
+    try {
+        const JSONized = JSON.parse(input) as Input[keyof Input];
+        const type = Object.prototype.toString.call(JSONized);
+        return type === '[object Object]' ||
+          type === '[object Array]' ?
+          JSONized as unknown as Output[keyof Output] :
+          input as unknown as Output[keyof Output];
+    } catch (err) {
+        return input;
+    }
   }
 }

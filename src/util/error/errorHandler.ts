@@ -1,5 +1,5 @@
 import { Interaction, MessageEmbed, MessageEmbedOptions } from 'discord.js';
-import { fatalWebhook, nonFatalWebhook, ownerID } from '../../../config.json';
+import { fatalWebhook, hypixelAPIWebhook, nonFatalWebhook, ownerID } from '../../../config.json';
 import { ModuleDataResolver } from '../../hypixelAPI/ModuleDataResolver';
 import { BetterEmbed, formattedUnix, sendWebHook } from '../utility';
 import { ConstraintError } from './ConstraintError';
@@ -24,13 +24,13 @@ export default async ({
 
   if (interaction?.isCommand()) {
     if (error instanceof ConstraintError) {
-      console.log(`${formattedUnix({ date: true, utc: true })} | ${interaction.user.tag} failed the constraint ${error.message} in interaction ${interaction.id} | Priority: Low |`);
+      console.log(`${formattedUnix({ date: true, utc: true })} | ${interaction.user.tag} failed the constraint ${error.message} in interaction ${interaction.id} | Priority: Low`);
       incidentPayload.unshift(new ConstraintEmbed({ error: error, interaction: interaction }));
       shouldPing = false;
     } else if (error instanceof HTTPError) {
       console.error(`${formattedUnix({ date: true, utc: true })} | An error has occurred on incident ${incidentID} | Priority: Medium |`, error);
       userPayload.unshift(new UserHTTPErrorEmbed({ error: error, interaction: interaction, incidentID: incidentID }));
-      incidentPayload.unshift(new CommandErrorEmbed({ error: error, interaction: interaction, incidentID: incidentID }));
+      incidentPayload.unshift(new HTTPErrorEmbed({ error: error, interaction: interaction, incidentID: incidentID }));
     } else if (error instanceof Error) {
       console.error(`${formattedUnix({ date: true, utc: true })} | An error has occurred on incident ${incidentID} | Priority: High |`, error);
       userPayload.unshift(new UserCommandErrorEmbed({ interaction: interaction, incidentID: incidentID }));
@@ -68,7 +68,10 @@ export default async ({
   await sendWebHook({
     content: shouldPing === true ? `<@${ownerID.join('><@')}>` : undefined,
     embeds: incidentPayload,
-    webhook: error instanceof ConstraintError ? nonFatalWebhook : fatalWebhook,
+    webhook: moduleDataResolver ?
+      hypixelAPIWebhook :
+      error instanceof ConstraintError ?
+      nonFatalWebhook : fatalWebhook,
     suppressError: true,
   });
 };

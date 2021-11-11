@@ -1,6 +1,6 @@
 {
   "general": {
-
+    "moduleHistories": ["defenderHistory", "friendHistory", "rewardHistory"]
   },
   "constraints": {
     "blockedUsers" :{
@@ -31,6 +31,9 @@
     }
   },
   "commands": {
+    "data": {
+
+    },
     "help": {
       "information": {
         "title": "Information",
