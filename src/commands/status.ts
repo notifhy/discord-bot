@@ -1,4 +1,4 @@
-import type { CommandExecute, CommandProperties, Config } from '../@types/index';
+import type { CommandExecute, CommandProperties, Config } from '../@types/client';
 import { CommandInteraction } from 'discord.js';
 import { BetterEmbed } from '../util/utility';
 import * as fs from 'fs/promises';

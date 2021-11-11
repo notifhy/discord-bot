@@ -1,4 +1,4 @@
-import type { SlashCommand } from './@types/index';
+import type { SlashCommand } from './@types/client';
 import { clientID, discordAPIkey as token } from '../config.json';
 import { Routes } from 'discord-api-types/v9';
 import { REST } from '@discordjs/rest';

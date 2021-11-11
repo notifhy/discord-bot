@@ -1,4 +1,4 @@
-import type { CommandExecute, CommandProperties, SlashCommand } from '../@types/index';
+import type { CommandExecute, CommandProperties, SlashCommand } from '../@types/client';
 import { clientID, discordAPIkey as token } from '../../config.json';
 import { CommandInteraction } from 'discord.js';
 import { BetterEmbed } from '../util/utility';

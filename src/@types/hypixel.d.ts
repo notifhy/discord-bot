@@ -18,8 +18,8 @@ interface HypixelPlayerData {
   firstLogin: number | null | undefined;
   lastLogin: number | null | undefined;
   lastLogout: number | null | undefined;
-  version: string | null | undefined;
-  language: string | null | undefined;
+  mcVersionRp: string | null | undefined;
+  userLanguage: string | null | undefined;
   mostRecentGameType: string | null | undefined;
   lastClaimedReward: number | null | undefined;
   rewardScore: number | null | undefined;
@@ -47,6 +47,20 @@ export interface Hypixel429 extends BaseHypixelAPI {
 }
 
 export interface HypixelAPI extends HypixelPlayer, HypixelKey, Hypixel400_403_422, Hypixel429 {}
+
+export interface SanitizedHypixelPlayerData {
+  firstLogin: number | null;
+  lastLogin: number | null;
+  lastLogout: number | null;
+  version: string | null;
+  language: string | null;
+  mostRecentGameType: string | null;
+  lastClaimedReward: number | null;
+  rewardScore: number | null;
+  rewardHighScore: number | null;
+  totalDailyRewards: number | null;
+  totalRewards: number | null;
+}
 
 /*
 Slothpixel

@@ -1,4 +1,4 @@
-import type { EventProperties } from '../@types/index';
+import type { EventProperties } from '../@types/client';
 import type { Client } from 'discord.js';
 import { fatalWebhook, ownerID } from '../../config.json';
 import { SQLiteWrapper } from '../database';
@@ -41,6 +41,6 @@ export const execute = async (client: Client) => {
   }, 30_000);
 
   while (true) {
-    await client.hypixelAPI.callAll(); //eslint-disable-line no-await-in-loop
+    await client.hypixelAPI.cycle(); //eslint-disable-line no-await-in-loop
   }
 };

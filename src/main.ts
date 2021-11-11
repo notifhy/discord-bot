@@ -1,11 +1,11 @@
-import type { ClientEvents, SlashCommand } from './@types/index';
+import type { ClientEvents, SlashCommand } from './@types/client';
 import { Client, Collection, Intents } from 'discord.js';
 import { discordAPIkey as token } from '../config.json';
 import * as fs from 'fs/promises';
-import { HypixelRequestCall } from './hypixelAPI/HypixelRequestCall';
-import { api, blockedUsers, devMode } from '../dynamicConfig.json';
 import { RegionLocales } from '../locales/localesHandler';
-import { ModuleEvents } from './@types/modules';
+import { SQLiteWrapper } from './database';
+import { DatabaseConfig } from './@types/database';
+import { ModuleDataResolver } from './hypixelAPI/ModuleDataResolver';
 
 process.on('unhandledRejection', error => {
   console.log('unhandledRejection', error);
@@ -30,33 +30,23 @@ const client = new Client({
 
 client.commands = new Collection();
 client.cooldowns = new Collection();
-client.config = {
-  api: api,
-  blockedUsers: blockedUsers,
-  devMode: devMode,
-};
 client.customStatus = false;
-client.hypixelAPI = new HypixelRequestCall();
-client.hypixelAPI.instance.enabled = client.config.api;
+client.hypixelAPI = new ModuleDataResolver(client);
 client.regionLocales = new RegionLocales();
 
 (async () => {
   const commandsFolder = (await fs.readdir('./commands')).filter(file => file.endsWith('.ts'));
   const eventsFolder = (await fs.readdir('./events')).filter(file => file.endsWith('.ts'));
-  const modulesFolder = (await fs.readdir('./modules')).filter(file => file.endsWith('.ts'));
 
   const commandPromises: Promise<SlashCommand>[] = [];
   const eventPromises: Promise<ClientEvents>[] = [];
-  const modulePromises: Promise<ModuleEvents>[] = [];
 
   for (const file of commandsFolder) commandPromises.push(import(`./commands/${file}`));
   for (const file of eventsFolder) eventPromises.push(import(`./events/${file}`));
-  for (const file of modulesFolder) modulePromises.push(import(`./modules/${file}`));
 
   const resolvedPromises = await Promise.all([
     Promise.all(commandPromises),
     Promise.all(eventPromises),
-    Promise.all(modulePromises),
   ]);
 
   for (const command of resolvedPromises[0]) {
@@ -69,10 +59,17 @@ client.regionLocales = new RegionLocales();
     else client.once(name, parameters => callExecute(parameters));
   }
 
-  for (const { properties: { name }, execute } of resolvedPromises[2]) {
-    console.log('sdad', name);
-    client.hypixelAPI.on(name, execute);
-  }
+  const config = await SQLiteWrapper.queryGet({
+    query: 'SELECT * FROM config WHERE rowid = 1',
+  }) as DatabaseConfig;
+
+  client.config = {
+    baseURL: config.baseURL,
+    blockedUsers: JSON.parse(config.blockedUsers),
+    devMode: Boolean(config.devMode),
+    enabled: Boolean(config.enabled),
+    uses: config.uses,
+  };
 
   await client.login(token);
 })();

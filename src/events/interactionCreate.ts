@@ -1,13 +1,12 @@
-import type { EventProperties, SlashCommand } from '../@types/index';
-import { BetterEmbed, formattedUnix, sendWebHook, timeout } from '../util/utility';
-import { CommandErrorEmbed, ConstraintEmbed, ErrorStackEmbed, HTTPErrorEmbed, replyToError, UserCommandErrorEmbed, UserHTTPErrorEmbed } from '../util/error/helper';
-import { fatalWebhook, nonFatalWebhook, ownerID } from '../../config.json';
+import type { EventProperties, SlashCommand } from '../@types/client';
+import { BetterEmbed, formattedUnix, timeout } from '../util/utility';
+import { ownerID } from '../../config.json';
 import { Collection, CommandInteraction } from 'discord.js';
 import { ConstraintError } from '../util/error/ConstraintError';
-import * as fs from 'node:fs/promises';
 import { SQLiteWrapper } from '../database';
 import { UserAPIData, UserData } from '../@types/database';
-import { HTTPError } from '../util/error/HTTPError';
+import errorHandler from '../util/error/errorHandler';
+
 
 export const properties: EventProperties = {
   name: 'interactionCreate',
@@ -25,9 +24,7 @@ export const execute = async (interaction: CommandInteraction): Promise<void> =>
 
       await interaction.deferReply({ ephemeral: command.properties.ephemeral });
 
-      //Import's cache makes it not refresh upon executing this file ¯\_(ツ)_/¯
-      const file: Buffer = await fs.readFile('../dynamicConfig.json');
-      const { blockedUsers, devMode }: { blockedUsers: string[], devMode: string } = JSON.parse(file.toString());
+      const { blockedUsers, devMode }: { blockedUsers: string[], devMode: boolean } = interaction.client.config;
 
       const userAPIData = await SQLiteWrapper.getUser({
         discordID: interaction.user.id,
@@ -61,35 +58,7 @@ export const execute = async (interaction: CommandInteraction): Promise<void> =>
       });
     }
   } catch (error) {
-    console.error(`${formattedUnix({ date: true, utc: true })} | An error has occurred |`, error);
-    if (!(error instanceof Error)) return; //=== false doesn't work for instanceof. Very intuitive. ts(2571)
-    if (error instanceof ConstraintError) {
-      console.log(`${formattedUnix({ date: true, utc: true })} | ${interaction.user.tag} failed the constraint ${error.message} in interaction ${interaction.id}`);
-      const constraintErrorEmbed = new ConstraintEmbed({ error: error, interaction: interaction });
-      await sendWebHook({ embeds: [constraintErrorEmbed], webhook: nonFatalWebhook });
-      return;
-    }
-
-    const incidentID = Math.random().toString(36).substring(2, 10).toUpperCase();
-    await replyToError({
-      embeds: [
-        error instanceof HTTPError ?
-        new UserHTTPErrorEmbed({ error: error, interaction: interaction, incidentID: incidentID }) :
-        new UserCommandErrorEmbed({ error: error, interaction: interaction, incidentID: incidentID }),
-      ],
-      interaction: interaction,
-      incidentID: incidentID,
-    });
-    await sendWebHook({
-      embeds: [
-        error instanceof HTTPError ?
-          new HTTPErrorEmbed({ error: error, interaction: interaction, incidentID: incidentID }) :
-          new CommandErrorEmbed({ error: error, interaction: interaction, incidentID: incidentID }),
-        new ErrorStackEmbed({ error: error, incidentID: incidentID }),
-      ],
-      webhook: error instanceof HTTPError ? nonFatalWebhook : fatalWebhook,
-      suppressError: true,
-    });
+    await errorHandler({ error: error, interaction: interaction });
   }
 };
 

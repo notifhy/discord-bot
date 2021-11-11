@@ -1,4 +1,4 @@
-import type { CommandExecute, CommandProperties, SlashCommand } from '../@types/index';
+import type { CommandExecute, CommandProperties, SlashCommand } from '../@types/client';
 import { CommandInteraction } from 'discord.js';
 import { BetterEmbed } from '../util/utility';
 import { UserData } from '../@types/database';

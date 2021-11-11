@@ -1,4 +1,4 @@
-import type { WebHookConfig } from '../@types/index';
+import type { WebHookConfig } from '../@types/client';
 import { ColorResolvable, CommandInteraction, MessageEmbed, WebhookClient } from 'discord.js';
 
 export async function sendWebHook({

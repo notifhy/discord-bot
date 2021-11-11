@@ -1,6 +1,6 @@
 import type { Collection, CommandInteraction, Client as DiscordClient } from 'discord.js';
 import { RegionLocales } from '../../locales/localesHandler';
-import { HypixelRequestCall } from '../hypixelAPI/HypixelRequestCall';
+import { ModuleDataResolver } from '../hypixelAPI/ModuleDataResolver';
 import { UserAPIData, UserData } from './database';
 
 export interface WebHookConfig {
@@ -9,9 +9,11 @@ export interface WebHookConfig {
 }
 
 export interface Config {
-  api: boolean;
+  baseURL: string;
   blockedUsers: string[];
   devMode: boolean;
+  enabled: boolean
+  uses: number;
 }
 
 export interface EventProperties {
@@ -56,7 +58,7 @@ declare module 'discord.js' {
     cooldowns: Collection<string, Collection<string, number>>;
     config: Config,
     customStatus: boolean;
-    hypixelAPI: HypixelRequestCall;
+    hypixelAPI: ModuleDataResolver;
     regionLocales: RegionLocales;
   }
 }

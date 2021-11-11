@@ -1,7 +1,8 @@
-import type { CommandExecute, CommandProperties } from '../@types/index';
+import type { CommandExecute, CommandProperties } from '../@types/client';
 import { CommandInteraction } from 'discord.js';
 import { BetterEmbed, cleanLength, cleanRound } from '../util/utility';
 import { keyLimit } from '../../config.json';
+import { ModuleDataResolver } from '../hypixelAPI/ModuleDataResolver';
 
 export const properties: CommandProperties = {
   name: 'api',
@@ -15,11 +16,6 @@ export const properties: CommandProperties = {
     name: 'api',
     description: 'Toggles dynamic settings',
     options: [
-      {
-        name: 'toggle',
-        description: 'Enable or disable API functions',
-        type: '1',
-      },
       {
         name: 'stats',
         type: '1',
@@ -170,8 +166,6 @@ export const properties: CommandProperties = {
 //JSON database moment.
 export const execute: CommandExecute = async (interaction: CommandInteraction): Promise<void> => {
   switch (interaction.options.getSubcommand()) {
-    case 'toggle': await toggle(interaction);
-    break;
     case 'stats': await stats(interaction);
     break;
     case 'set': await set(interaction, interaction.options.getString('category')!, interaction.options.getString('type')!, interaction.options.getNumber('value'));
@@ -181,20 +175,11 @@ export const execute: CommandExecute = async (interaction: CommandInteraction): 
   }
 };
 
-async function toggle(interaction: CommandInteraction) {
-  const originalValue = interaction.client.hypixelAPI.instance.enabled;
-  interaction.client.hypixelAPI.instance.enabled = originalValue === false;
-  const toggleEmbed = new BetterEmbed({ color: '#7289DA', interaction: interaction, footer: null })
-    .setTitle('Updated Value!')
-    .setDescription(`The HypixelRequestCall system is now ${originalValue === false ? 'on' : 'off'}!`);
-  await interaction.editReply({ embeds: [toggleEmbed] });
-}
-
 async function stats(interaction: CommandInteraction) {
   const requestCreate = interaction.client.hypixelAPI;
   const { instanceUses, resumeAfter, keyPercentage } = requestCreate.instance;
   const statsEmbed = new BetterEmbed({ color: '#7289DA', interaction: interaction, footer: null })
-    .addField('Enabled', requestCreate.instance.enabled === true ? 'Yes' : 'No')
+    .addField('Enabled', interaction.client.config.enabled === true ? 'Yes' : 'No')
     .addField('Resuming In', cleanLength(resumeAfter - Date.now()) ?? 'Not applicable')
     .addField('Global Rate Limit', requestCreate.rateLimit.isGlobal === true ? 'Yes' : 'No')
     .addField('Last Minute Statistics', `Aborts: ${requestCreate.abort.abortsLastMinute}
@@ -211,7 +196,7 @@ async function stats(interaction: CommandInteraction) {
 
 async function set(interaction: CommandInteraction, category: string, type: string, value: number | null) {
   if (type === 'keyPercentage' && value !== null && value > 1) throw new Error('Too high, must be below 1');
-  interaction.client.hypixelAPI[category][type] = type === 'isGlobal' ? Boolean(value) : value;
+  interaction.client.hypixelAPI[category as keyof ModuleDataResolver][type] = type === 'isGlobal' ? Boolean(value) : value;
   const setEmbed = new BetterEmbed({ color: '#7289DA', interaction: interaction, footer: null })
     .setTitle('Updated Value!')
     .setDescription(`<RequestCreate>.${category}.${type} is now ${value}.`);

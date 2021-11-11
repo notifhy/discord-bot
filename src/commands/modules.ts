@@ -1,4 +1,4 @@
-import type { CommandExecute, CommandProperties } from '../@types/index';
+import type { CommandExecute, CommandProperties } from '../@types/client';
 import { ButtonInteraction, CommandInteraction, Message, MessageActionRow, MessageActionRowComponentResolvable, MessageButton, MessageButtonStyleResolvable, MessageComponentInteraction, MessageSelectMenu, MessageSelectOptionData, SelectMenuInteraction } from 'discord.js';
 import { BetterEmbed } from '../util/utility';
 import { UserAPIData, UserData } from '../@types/database';
@@ -13,7 +13,7 @@ export const properties: CommandProperties = {
   usage: '/modules',
   cooldown: 15000,
   ephemeral: true,
-  noDM: true,
+  noDM: false,
   ownerOnly: false,
   structure: {
     name: 'modules',
@@ -32,10 +32,13 @@ export const execute: CommandExecute = async (interaction: CommandInteraction, {
     components: [userModuleSelectMenu({ locales: locales, userData: userData })],
   });
 
+  await interaction.client.channels.fetch(interaction.channelId); //Loads channel into cache to use for the component collector
+  //The chance of failure is low enough to accept
+
   const componentFilter = (i: MessageComponentInteraction) =>
     interaction.user.id === i.user.id && i.message.id === moduleReply.id;
 
-  const collector = (moduleReply as Message).createMessageComponentCollector({
+  const collector = interaction!.channel!.createMessageComponentCollector({
     filter: componentFilter,
     idle: 150_000,
   });

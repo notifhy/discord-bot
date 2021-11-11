@@ -1,7 +1,9 @@
-import type { CommandExecute, CommandProperties, Config } from '../@types/index';
+import type { CommandExecute, CommandProperties, Config } from '../@types/client';
 import { CommandInteraction } from 'discord.js';
 import { BetterEmbed } from '../util/utility';
 import * as fs from 'fs/promises';
+import { SQLiteWrapper } from '../database';
+import { DatabaseConfig } from '../@types/database';
 
 export const properties: CommandProperties = {
   name: 'config',
@@ -42,39 +44,45 @@ export const properties: CommandProperties = {
 
 export const execute: CommandExecute = async (interaction: CommandInteraction): Promise<void> => {
   const responseEmbed = new BetterEmbed({ color: '#7289DA', interaction: interaction, footer: null });
-  const path = '../dynamicConfig.json';
-  const file: Buffer = await fs.readFile(path);
-  const readFile: Config = JSON.parse(file.toString());
+  const config = await SQLiteWrapper.queryGet({
+    query: 'SELECT blockedUsers, devMode, enabled FROM config WHERE rowid = 1', //row id correct?
+    allowUndefined: false,
+  }) as DatabaseConfig;
 
   if (interaction.options.getSubcommand() === 'api') { //Persists across restarts
-    interaction.client.hypixelAPI.instance.enabled = !readFile.api;
-    readFile.api = !readFile.api;
+    config.enabled = Number(!Boolean(config.enabled));
+    interaction.client.config.enabled = Boolean(config.enabled);
     responseEmbed.setTitle(`API State Updated!`);
-    responseEmbed.setDescription(`API commands and functions are now ${readFile.api === true ? 'on' : 'off'}!`);
+    responseEmbed.setDescription(`API commands and functions are now ${Boolean(config.enabled) === true ? 'on' : 'off'}!`);
   } else if (interaction.options.getSubcommand() === 'block') {
     const user = interaction.options.getString('user') as string;
-    const blockedUserIndex = readFile.blockedUsers.indexOf(user);
+    const blockedUsers = JSON.parse(config.blockedUsers) as string[];
+    const blockedUserIndex = blockedUsers.indexOf(user);
     if (blockedUserIndex === -1) {
-      readFile.blockedUsers.push(user);
+      blockedUsers.push(user);
       responseEmbed.setTitle(`User Added`);
       responseEmbed.setDescription(`${user} was added to the blacklist!`);
     } else {
-      readFile.blockedUsers.splice(blockedUserIndex, 1);
+      blockedUsers.splice(blockedUserIndex, 1);
       responseEmbed.setTitle(`User Removed`);
       responseEmbed.setDescription(`${user} was removed from the blacklist!`);
     }
+    config.blockedUsers = JSON.stringify(blockedUsers);
+    interaction.client.config.blockedUsers = blockedUsers;
   } else if (interaction.options.getSubcommand() === 'devmode') {
-    readFile.devMode = !readFile.devMode;
+    config.devMode = Number(!Boolean(config.devMode));
+    interaction.client.config.devMode = Boolean(config.devMode);
     responseEmbed.setTitle(`Developer Mode Updated`);
-    responseEmbed.setDescription(`Developer Mode is now ${readFile.devMode === true ? 'on' : 'off'}!`);
+    responseEmbed.setDescription(`Developer Mode is now ${Boolean(config.devMode) === true ? 'on' : 'off'}!`);
   }
 
-  interaction.client.config = {
-    api: readFile.api,
-    blockedUsers: readFile.blockedUsers,
-    devMode: readFile.devMode,
-  };
-
-  await fs.writeFile(path, JSON.stringify(readFile));
+  await SQLiteWrapper.queryRun({
+    query: 'UPDATE config set blockedUsers = ?, devMode = ?, enabled = ? WHERE rowid = 1',
+    data: [
+      config.blockedUsers,
+      config.devMode,
+      config.enabled,
+    ],
+  });
   await interaction.editReply({ embeds: [responseEmbed] });
 };

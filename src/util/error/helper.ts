@@ -6,6 +6,7 @@ import { HypixelRequestCall } from '../../hypixelAPI/HypixelRequestCall';
 import { RateLimitError } from './RateLimitError';
 import { HTTPError } from './HTTPError';
 import { FetchError } from 'node-fetch';
+import { ModuleDataResolver } from '../../hypixelAPI/ModuleDataResolver';
 
 export const isAbortError = (error: any): error is AbortError => error?.name === 'AbortError';
 
@@ -19,10 +20,10 @@ export class ConstraintEmbed extends BetterEmbed {
   }) {
     super({ color: '#AA0000', interaction: interaction, footer: null });
     super.setTitle('User Failed Constraints')
-    .addField('Constraint Type', error.message)
-    .addField('User', `Tag: ${interaction.user.tag}\nID: ${interaction.user.id}`)
-    .addField('Interaction', interaction.id)
-    .addField('Source', `Channel Type: ${interaction.channel?.type}\nGuild Name: ${interaction.guild?.name}\nGuild ID: ${interaction.guild?.id}\nOwner ID: ${interaction.guild?.ownerId ?? 'None'}\nGuild Member Count: ${interaction.guild?.memberCount}`);
+      .addField('Constraint Type', error.message)
+      .addField('User', `Tag: ${interaction.user.tag}\nID: ${interaction.user.id}`)
+      .addField('Interaction', interaction.id)
+      .addField('Source', `Channel Type: ${interaction.channel?.type}\nGuild Name: ${interaction.guild?.name}\nGuild ID: ${interaction.guild?.id}\nOwner ID: ${interaction.guild?.ownerId ?? 'None'}\nGuild Member Count: ${interaction.guild?.memberCount}`);
   }
 }
 
@@ -49,23 +50,16 @@ export class CommandErrorEmbed extends BetterEmbed {
 
 export class UserCommandErrorEmbed extends BetterEmbed {
   constructor({
-    error,
     interaction,
     incidentID,
   }: {
-    error: Error,
     interaction: CommandInteraction,
     incidentID: string,
   }) {
-    const messageOverLimit = error.message.length >= 4096;
     super({ color: '#AA0000', interaction: null, footer: [`Incident ${incidentID}`, interaction.user.displayAvatarURL({ dynamic: true })] });
     super
       .setTitle('Oops!')
-      .setDescription(`An error occurred while executing the command ${interaction.commandName}! This error has been automatically forwarded for review. Sorry.`)
-      .addField(error.name, error.message.slice(0, 1024) || '\u200B');
-    if (messageOverLimit) {
-      super.addField('Over Max Length', 'The message of this error is over 1024 characters long and was cut short');
-    }
+      .setDescription(`An error occurred while executing the command ${interaction.commandName}! This error has been automatically forwarded for review. It should be resolved within a reasonable amount of time. Sorry.`);
     super.addField('Interaction ID', interaction.id);
   }
 }
@@ -81,7 +75,7 @@ export class HTTPErrorEmbed extends CommandErrorEmbed {
     incidentID: string,
   }) {
     super({ error, interaction, incidentID });
-    super.setTitle('Unwanted HTTP Error');
+    super.setTitle('Unexpected HTTP Error');
   }
 }
 
@@ -105,15 +99,15 @@ export class UserHTTPErrorEmbed extends BetterEmbed {
 
 export class HypixelAPIEmbed extends BetterEmbed {
   constructor({
-    requestCreate,
+    moduleDataResolver,
     error,
     incidentID,
   }: {
-    requestCreate: HypixelRequestCall,
+    moduleDataResolver: ModuleDataResolver,
     error: unknown,
     incidentID: string,
   }) {
-    const { instanceUses, resumeAfter, keyPercentage } = requestCreate.instance;
+    const { instanceUses, resumeAfter, keyPercentage } = moduleDataResolver.instance;
     const timeout = cleanLength(resumeAfter - Date.now());
 
     super({ color: '#AA0000', interaction: null, footer: [`Incident ${incidentID}`] });
@@ -131,7 +125,7 @@ export class HypixelAPIEmbed extends BetterEmbed {
         .addField('Resuming In', timeout ?? 'Not applicable')
         .addField('Listed Cause', error.message || 'Unknown')
         .addField('Request', `Status: ${error.status}\nStatus Text: ${error.statusText}\nPath: ${error.url}`)
-        .addField('Global Rate Limit', requestCreate.rateLimit.isGlobal === true ? 'Yes' : 'No');
+        .addField('Global Rate Limit', moduleDataResolver.rateLimit.isGlobal === true ? 'Yes' : 'No');
     } else if (error instanceof HTTPError) {
       super
         .setTitle('Degraded Performance')
@@ -155,13 +149,13 @@ export class HypixelAPIEmbed extends BetterEmbed {
     }
 
     super
-      .addField('Last Minute Statistics', `Abort Errors: ${requestCreate.abort.abortsLastMinute}
-        Rate Limit Hits: ${requestCreate.rateLimit.rateLimitErrorsLastMinute}
-        Other Errors: ${requestCreate.unusual.unusualErrorsLastMinute}`)
+      .addField('Last Minute Statistics', `Abort Errors: ${moduleDataResolver.abort.abortsLastMinute}
+        Rate Limit Hits: ${moduleDataResolver.rateLimit.rateLimitErrorsLastMinute}
+        Other Errors: ${moduleDataResolver.unusual.unusualErrorsLastMinute}`)
       .addField('Next Timeout Lengths', `May not be accurate
-        Abort Errors: ${cleanLength(requestCreate.abort.timeoutLength)}
-        Rate Limit Errors: ${cleanLength(requestCreate.rateLimit.timeoutLength)}
-        Other Errors: ${cleanLength(requestCreate.unusual.timeoutLength)}`)
+        Abort Errors: ${cleanLength(moduleDataResolver.abort.timeoutLength)}
+        Rate Limit Errors: ${cleanLength(moduleDataResolver.rateLimit.timeoutLength)}
+        Other Errors: ${cleanLength(moduleDataResolver.unusual.timeoutLength)}`)
       .addField('API Key', `Dedicated Queries: ${cleanRound(keyPercentage * keyLimit)} or ${cleanRound(keyPercentage * 100)}%
         Instance Queries: ${instanceUses}`);
   }

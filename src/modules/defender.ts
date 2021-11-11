@@ -1,19 +1,22 @@
 import { UserAPIData, UserData, ValidAPIUserUpdate } from '../@types/database';
-import type { EventProperties } from '../@types/index';
 import { SQLiteWrapper } from '../database';
-import { formattedUnix } from '../util/utility';
+import { SanitizedHypixelPlayerData } from '../@types/hypixel';
 
 export const properties = {
   name: 'defenderEvent',
 };
 
-export const execute = async (discordID: string, date: number, data: ValidAPIUserUpdate): Promise<void> => {
-  const userAPIData: UserAPIData = await SQLiteWrapper.getUser({
-    discordID: discordID,
-    table: 'api',
-    columns: ['lastLogin', 'lastLogout'],
-  }) as UserAPIData;
-
+export const execute = async ({
+  discordID,
+  date,
+  hypixelPlayerData,
+  oldUserAPIData,
+}: {
+  discordID: string,
+  date: number,
+  hypixelPlayerData: SanitizedHypixelPlayerData
+  oldUserAPIData: UserAPIData,
+}): Promise<void> => {
   const userData: UserData = await SQLiteWrapper.getUser({
     discordID: discordID,
     table: 'users',

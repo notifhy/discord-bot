@@ -1,4 +1,4 @@
-import type { CommandExecute, CommandProperties } from '../@types/index';
+import type { CommandExecute, CommandProperties } from '../@types/client';
 import { ColorResolvable, CommandInteraction, Message } from 'discord.js';
 import { BetterEmbed } from '../util/utility';
 import { SQLiteWrapper } from '../database';

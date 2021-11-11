@@ -1,4 +1,4 @@
-import type { HypixelRequestCall } from './HypixelRequestCall';
+import type { ModuleDataResolver } from './ModuleDataResolver';
 
 export class Abort {
   abortsLastMinute: number;
@@ -27,7 +27,7 @@ export class Abort {
     return timeout;
   }
 
-  reportAbortError(RequestInstance: HypixelRequestCall): void {
+  reportAbortError(RequestInstance: ModuleDataResolver): void {
     const currentTimeout = Math.max(RequestInstance.instance.resumeAfter, Date.now());
     this.addAbort();
     if (this.timeoutLength > this.baseTimeout || this.abortsLastMinute > 1) {
@@ -69,7 +69,7 @@ export class RateLimit {
     }
   }
 
-  reportRateLimitError(RequestInstance: HypixelRequestCall, isGlobal?: boolean): void {
+  reportRateLimitError(RequestInstance: ModuleDataResolver, isGlobal?: boolean): void {
     this.isGlobal = isGlobal ?? false;
     const currentTimeout = Math.max(RequestInstance.instance.resumeAfter, Date.now());
     const additionalTimeout = currentTimeout + this.generateTimeoutLength();
@@ -109,7 +109,7 @@ export class Unusual {
     return timeout;
   }
 
-  reportUnusualError(RequestInstance: HypixelRequestCall): void {
+  reportUnusualError(RequestInstance: ModuleDataResolver): void {
     const currentTimeout = Math.max(RequestInstance.instance.resumeAfter, Date.now());
     const additionalTimeout = currentTimeout + this.generateTimeoutLength();
     this.addUnusualError();
@@ -120,19 +120,15 @@ export class Unusual {
 export class Instance {
   abortThreshold: number;
   readonly baseURL: string;
-  enabled: boolean;
   instanceUses: number;
   keyPercentage: number;
   resumeAfter: number;
-  readonly userTable: string;
 
   constructor() {
     this.abortThreshold = 2500;
     this.baseURL = 'https://api.hypixel.net/player?uuid=%{uuid}%';
-    this.enabled = true;
     this.instanceUses = 0;
     this.keyPercentage = 0.20;
     this.resumeAfter = 0;
-    this.userTable = 'api';
   }
 }

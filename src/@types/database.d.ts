@@ -1,3 +1,11 @@
+export interface DatabaseConfig {
+  baseURL: string;
+  blockedUsers: string;
+  devMode: number;
+  enabled: number;
+  uses: number;
+}
+
 export interface UserData {
   discordID: string;
   language: string;
@@ -29,7 +37,7 @@ export interface ValidUserUpdate {
   language?: string | null;
 }
 
-export interface ValidAPIUserUpdate { //no idea how to simplify, ill do this later
+export interface ValidAPIUserUpdate { //no idea how to simplify, I'll do this later
   discordID?: string;
   uuid?: string;
   modules?: string | null;

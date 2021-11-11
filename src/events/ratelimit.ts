@@ -1,4 +1,4 @@
-import type { EventProperties } from '../@types/index';
+import type { EventProperties } from '../@types/client';
 import type { RateLimitData } from 'discord.js';
 import { formattedUnix } from '../util/utility';
 

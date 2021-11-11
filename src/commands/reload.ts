@@ -1,4 +1,4 @@
-import type { CommandExecute, CommandProperties, SlashCommand } from '../@types';
+import type { CommandExecute, CommandProperties, SlashCommand } from '../@types/client';
 import { CommandInteraction } from 'discord.js';
 import { BetterEmbed } from '../util/utility';
 import * as fs from 'fs';

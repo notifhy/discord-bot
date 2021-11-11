@@ -103,11 +103,11 @@
           "longDescription": "Ce module vous enverra une notification lorsque vos amis se connectent ou se déconnectent. Cette notification peut être envoyée dans la chaîne ou par DM. Vous ne pouvez recevoir des notifications que pour les personnes qui vous ont approuvé sur ce bot pour des raisons de confidentialité.",
           "value": "friend"
         },
-        "daily": {
+        "rewards": {
           "label": "Récompenses quotidiennes",
           "description": "Recevez une notification lorsque vous êtes sur le point de manquer votre récompense quotidienne.",
           "longDescription": "Ce module vous envoie un DM lorsque vous êtes sur le point de manquer votre récompense quotidienne. Vous pouvez personnaliser le seuil et les intervalles d'alerte, y compris le nombre minimum d'heures avant la réinitialisation pour commencer à vous avertir.",
-          "value": "daily"
+          "value": "rewards"
         }
       },
       "buttons": {
