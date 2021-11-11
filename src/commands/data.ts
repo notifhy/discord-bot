@@ -1,7 +1,8 @@
 import type { CommandExecute, CommandProperties } from '../@types/client';
-import { ColorResolvable, CommandInteraction, Message } from 'discord.js';
+import { ButtonInteraction, ColorResolvable, CommandInteraction, Message, MessageActionRow, MessageButton, MessageComponentInteraction } from 'discord.js';
 import { SQLiteWrapper } from '../database';
 import { UserAPIData } from '../@types/database';
+import { BetterEmbed } from '../util/utility';
 
 export const properties: CommandProperties = {
   name: 'data',
@@ -32,7 +33,56 @@ export const properties: CommandProperties = {
 export const execute: CommandExecute = async (interaction: CommandInteraction, { userData: userData }): Promise<void> => {
   const locales = interaction.client.regionLocales;
   if (interaction.options.getSubcommand() === 'delete') {
+    const confirmEmbed = new BetterEmbed({ color: '#7289DA', interaction: interaction, footer: null })
+      .setTitle('Confirmation')
+      .setDescription('Are you absolutely sure that you want to delete all of your data? All data stored in the database will be wiped. This is irreversible. Please confirm with the buttons below. As a side note, you can view all of your data with /data view.');
 
+    const yesButton = new MessageButton()
+      .setCustomId('true')
+      .setLabel('Yes')
+      .setStyle('SUCCESS');
+
+    const noButton = new MessageButton()
+      .setCustomId('false')
+      .setLabel('No')
+      .setStyle('DANGER');
+
+    const buttonRow = new MessageActionRow()
+      .addComponents(yesButton, noButton);
+
+    const confirmation = await interaction.editReply({ embeds: [confirmEmbed], components: [buttonRow] });
+    await interaction.client.channels.fetch(interaction.channelId);
+
+    const componentFilter = (i: MessageComponentInteraction) =>
+      interaction.user.id === i.user.id && i.message.id === confirmation.id;
+
+    const collector = interaction!.channel!.createMessageComponentCollector({
+      filter: componentFilter,
+      idle: 30_000,
+      componentType: 'BUTTON',
+      max: 1,
+    });
+
+    collector.on('collect', async (i: ButtonInteraction) => {
+      yesButton.setDisabled();
+      noButton.setDisabled();
+      const disabledRow = new MessageActionRow()
+        .setComponents(yesButton, noButton);
+
+      if (i.customId === 'true') {
+        await SQLiteWrapper.deleteUser({ discordID: userData.discordID, table: 'users' });
+        await SQLiteWrapper.deleteUser({ discordID: userData.discordID, table: 'api' });
+        const aborted = new BetterEmbed({ color: '#7289DA', interaction: interaction, footer: null })
+          .setTitle('Deleted')
+          .setDescription('Your data has been deleted.');
+        await interaction.editReply({ embeds: [aborted], components: [disabledRow] });
+      } else {
+        const aborted = new BetterEmbed({ color: '#7289DA', interaction: interaction, footer: null })
+          .setTitle('Aborted')
+          .setDescription('Deletion Aborted.');
+        await interaction.editReply({ embeds: [aborted], components: [disabledRow] });
+      }
+    });
   } else {
     const userAPIData = await SQLiteWrapper.getUser({
       discordID: userData.discordID,

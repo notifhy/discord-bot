@@ -148,7 +148,7 @@ export class SQLiteWrapper {
   }): Promise<void> {
     const query = `DELETE * FROM ${table} WHERE discordID = ?`;
     await this.queryRun({ query: query, data: [discordID] });
-    console.log(`${formattedUnix({ date: true, utc: true })} | ${discordID} data deleted from ${table}`);
+    //console.log(`${formattedUnix({ date: true, utc: true })} | ${discordID} data deleted from ${table}`);
   }
 
   //Note that this only checks one level deep

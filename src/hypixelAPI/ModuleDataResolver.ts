@@ -1,5 +1,5 @@
 import { Client } from 'discord.js';
-import { HistoryProperties, UserAPIData } from '../@types/database';
+import { History, HistoryData, UserAPIData } from '../@types/database';
 import { HypixelPlayerData, SanitizedHypixelPlayerData } from '../@types/hypixel';
 import { SQLiteWrapper } from '../database';
 import { timeout } from '../util/utility';
@@ -43,31 +43,50 @@ export class ModuleDataResolver {
       const intervalBetweenRequests = 60 / keyQueryLimit * 1000;
 
       for (const user of users) {
-        if (user.modules) {
-          if (this.client.config.enabled === true && this.areFatalIssues() === false) {
+        if (user.modules.length > 0) {
+          if (this.areFatalIssues() === false) {
             (async () => {
               try {
                 const url = this.instance.baseURL.replace(/%{uuid}%/, user.uuid);
                 const hypixelPlayerData: SanitizedHypixelPlayerData = this.sanitizeData(await this.hypixelRequestCall.call(url, this), user);
                 const now = Date.now();
 
-                const oldUserAPIData: UserAPIData = await SQLiteWrapper.getUser({
+                const oldUserAPIData = await SQLiteWrapper.getUser({
                   discordID: user.discordID,
                   table: 'api',
                   columns: ['*'],
                 }) as UserAPIData;
 
+                const differences: HistoryData = {};
+
+                for (const key in hypixelPlayerData) {
+                  if (Object.prototype.hasOwnProperty.call(hypixelPlayerData, key) === true) {
+                    if (hypixelPlayerData[key as keyof SanitizedHypixelPlayerData] !== oldUserAPIData[key as keyof UserAPIData]) {
+                      (differences[key as keyof HistoryData] as unknown) = hypixelPlayerData[key as keyof SanitizedHypixelPlayerData];
+                    }
+                  }
+                }
+
+                console.log(differences);
+
                 const payLoad = {
+                  date: now,
+                  differences: differences,
                   discordID: user.discordID,
-                  date: Date.now(),
                   hypixelPlayerData: hypixelPlayerData,
                 };
 
-                await this.updateDatabase({ hypixelPlayerData, now, oldUserAPIData, user });
+                await this.updateDatabase({
+                  differences,
+                  hypixelPlayerData,
+                  now,
+                  oldUserAPIData,
+                  user,
+                });
 
                 const modules = []; //Not really worth using a loop here
                 //if (user.modules?.includes('defender')) modules.push(defenderModule.execute(payLoad));
-                if (user.modules?.includes('friend')) modules.push(friendModule.execute(payLoad));
+                if (user.modules.includes('friend')) modules.push(friendModule.execute(payLoad));
                 await Promise.all(modules);
               } catch (error) {
                 await errorHandler({ error: error, moduleDataResolver: this });
@@ -83,40 +102,32 @@ export class ModuleDataResolver {
   }
 
   private async updateDatabase({
+    differences,
     hypixelPlayerData,
     now,
     oldUserAPIData,
     user,
   }: {
+    differences: HistoryData,
     hypixelPlayerData: SanitizedHypixelPlayerData,
     now: number,
     oldUserAPIData: UserAPIData,
     user: UserAPIData
   }) {
-    const newData = Object.assign({ lastUpdated: now }, hypixelPlayerData);
-    const historyUpdate: HistoryProperties = {
-      date: now,
-    };
+    const newUserAPIData = Object.assign({ lastUpdated: now }, hypixelPlayerData);
 
-    for (const key in hypixelPlayerData) {
-      if (Object.prototype.hasOwnProperty.call(hypixelPlayerData, key) === true) {
-        if (hypixelPlayerData[key as keyof SanitizedHypixelPlayerData] !== oldUserAPIData[key as keyof UserAPIData]) {
-          (historyUpdate[key as keyof HistoryProperties] as unknown) = hypixelPlayerData[key as keyof SanitizedHypixelPlayerData];
-        }
-      }
-    }
-
-    if (Object.keys(historyUpdate).length > 1) {
-      const history = oldUserAPIData.history as HistoryProperties[];
-      history.splice(50);
+    if (Object.keys(differences).length > 0) {
+      const historyUpdate: History = Object.assign({ date: now }, differences);
+      const history: History[] = oldUserAPIData.history;
       history.unshift(historyUpdate);
-      Object.assign(newData, { history: history });
+      history.splice(100);
+      Object.assign(newUserAPIData, { history: history });
     }
 
     await SQLiteWrapper.updateUser({
       discordID: user.discordID,
       table: 'api',
-      data: newData,
+      data: newUserAPIData,
     });
   }
 
@@ -137,9 +148,10 @@ export class ModuleDataResolver {
   }
 
   areFatalIssues(): boolean { //Could be expanded
+    const enabled = this.client.config.enabled === true;
     const unusualErrors = this.unusual.unusualErrorsLastMinute;
     const abortErrors = this.abort.abortsLastMinute;
     const timeoutExpired = Date.now() > this.instance.resumeAfter;
-    return Boolean(unusualErrors > 1 || abortErrors > 1 || timeoutExpired === false);
+    return Boolean(enabled === false || unusualErrors > 1 || abortErrors > 1 || timeoutExpired === false);
   }
 }

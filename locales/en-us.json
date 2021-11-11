@@ -1,6 +1,6 @@
 {
   "general": {
-    "moduleHistories": ["defenderHistory", "friendHistory", "rewardHistory"]
+
   },
   "constraints": {
     "blockedUsers" :{
@@ -32,7 +32,22 @@
   },
   "commands": {
     "data": {
-
+      "delete": {
+        "confirm": {
+          "title": "Confirmation",
+          "description": "Are you absolutely sure that you want to delete all of your data? All data stored in the database will be wiped. This is irreversible. Please confirm with the buttons below. As a side note, you can view all of your data with /data view."
+        },
+        "deleted": {
+          "title": "Deleted",
+          "description": "Your data has been deleted."
+        },
+        "aborted": {
+          "title": "Aborted",
+          "description": "Deletion Aborted."
+        },
+        "yesButton": "Yes",
+        "noButton": "No"
+      }
     },
     "help": {
       "information": {

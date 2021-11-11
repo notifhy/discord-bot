@@ -1,5 +1,4 @@
-interface HistoryProperties {
-  date: number;
+export interface HistoryData {
   firstLogin?: number;
   lastLogin?: number;
   lastLogout?: number;
@@ -11,6 +10,10 @@ interface HistoryProperties {
   rewardHighScore?: number;
   totalRewards?: number;
   totalDailyRewards?: number;
+}
+
+export interface History extends HistoryData {
+  date: number;
 }
 
 export interface DatabaseConfig {
@@ -53,7 +56,7 @@ export interface UserData {
 export interface UserAPIData {
   discordID: string;
   uuid: string;
-  modules: string | null;
+  modules: string[];
   lastUpdated: number;
   firstLogin: number | null;
   lastLogin: number | null;
@@ -66,7 +69,7 @@ export interface UserAPIData {
   rewardHighScore: number | null;
   totalRewards: number | null;
   totalDailyRewards: number | null;
-  history: HistoryProperties[];
+  history: History[];
 }
 
 export interface UserDataUpdate extends Partial<UserData> {}

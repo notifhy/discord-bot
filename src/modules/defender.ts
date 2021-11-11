@@ -1,4 +1,4 @@
-import { UserAPIData, UserAPIDataUpdate, UserData } from '../@types/database';
+import { HistoryData, UserData } from '../@types/database';
 import { SQLiteWrapper } from '../database';
 import { SanitizedHypixelPlayerData } from '../@types/hypixel';
 
@@ -7,15 +7,15 @@ export const properties = {
 };
 
 export const execute = async ({
-  discordID,
   date,
+  discordID,
+  differences,
   hypixelPlayerData,
-  oldUserAPIData,
 }: {
-  discordID: string,
   date: number,
+  differences: HistoryData,
+  discordID: string,
   hypixelPlayerData: SanitizedHypixelPlayerData
-  oldUserAPIData: UserAPIData,
 }): Promise<void> => {
   const userData: UserData = await SQLiteWrapper.getUser({
     discordID: discordID,

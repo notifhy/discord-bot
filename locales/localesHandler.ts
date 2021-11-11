@@ -2,6 +2,11 @@ import type { Locales, LocalesTree, Parameters } from '../src/@types/locales';
 import * as en from './en-us.json';
 import * as fr from './fr-FR.json';
 
+const test = {
+  'en-us': en,
+  'fr-FR': fr,
+};
+
 const locales: unknown = {
   'en-us': en,
   'fr-FR': fr,

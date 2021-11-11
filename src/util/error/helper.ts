@@ -59,7 +59,7 @@ export class UserCommandErrorEmbed extends BetterEmbed {
     super({ color: '#AA0000', interaction: null, footer: [`Incident ${incidentID}`, interaction.user.displayAvatarURL({ dynamic: true })] });
     super
       .setTitle('Oops!')
-      .setDescription(`An error occurred while executing the command ${interaction.commandName}! This error has been automatically forwarded for review. It should be resolved within a reasonable amount of time. Sorry.`);
+      .setDescription(`An error occurred while executing the command /${interaction.commandName}! This error has been automatically forwarded for review. It should be resolved within a reasonable amount of time. Sorry.`);
     super.addField('Interaction ID', interaction.id);
   }
 }

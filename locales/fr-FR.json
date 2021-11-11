@@ -31,6 +31,24 @@
     }
   },
   "commands": {
+    "data": {
+      "delete": {
+        "confirm": {
+          "title": "Confirmation",
+          "description": "Êtes-vous absolument sûr de vouloir supprimer toutes vos données ? Toutes les données stockées dans la base de données seront effacées. Cette opération est irréversible. Veuillez confirmer avec les boutons ci-dessous. Par ailleurs, vous pouvez visualiser toutes vos données avec /data view."
+        },
+        "deleted": {
+          "title": "Supprimé",
+          "description": "Vos données ont été supprimées."
+        },
+        "aborted": {
+          "title": "Interrompre",
+          "description": "Suppression interrompue."
+        },
+        "yesButton": "Oui",
+        "noButton": "Non"
+      }
+    },
     "help": {
       "information": {
         "title": "Information",

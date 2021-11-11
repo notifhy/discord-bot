@@ -96,7 +96,7 @@ export const execute: CommandExecute = async (interaction: CommandInteraction, {
     data: {
       discordID: interaction.user.id,
       uuid: uuid,
-      modules: null,
+      modules: [],
       lastUpdated: Date.now(),
       firstLogin: first_login,
       lastLogin: last_login,

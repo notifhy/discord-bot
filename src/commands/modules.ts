@@ -91,8 +91,8 @@ async function selectMenuUpdate({
   const locales = interaction.client.regionLocales;
   const userAPIData: UserAPIData = await SQLiteWrapper.getUser({
     discordID: interaction.user.id,
-    table: 'users',
-    columns: ['language'],
+    table: 'api',
+    columns: ['modules'],
   }) as UserAPIData;
 
   const modules = locales.get('commands.modules.modules', userData.language) as unknown as AssetModules;
@@ -104,7 +104,7 @@ async function selectMenuUpdate({
       },
       {
         name: 'Status',
-        value: Boolean(userAPIData.modules?.split(' ')?.includes(selected)) ?
+        value: Boolean(userAPIData.modules.includes(selected)) ?
           locales.localizer('commands.modules.statusField.added', userData.language) :
           locales.localizer('commands.modules.statusField.removed', userData.language),
       },
@@ -114,7 +114,7 @@ async function selectMenuUpdate({
     embeds: [moduleEmbed],
     components: [
       userModuleSelectMenu({ locales: locales, userData: userData, selected: selected }),
-      moduleButtons({ locales: locales, userData: userData, isEnabled: (userAPIData.modules?.split(' ') ?? [])?.includes(selected) }),
+      moduleButtons({ locales: locales, userData: userData, isEnabled: userAPIData.modules.includes(selected) }),
     ],
   });
 }
@@ -137,7 +137,7 @@ async function buttonUpdate({
     columns: ['modules'],
   }) as UserAPIData;
 
-  const userModules = userAPIData.modules?.split(' ') ?? []; //Extra logic to allow for concurrent instances of this command
+  const userModules = userAPIData.modules; //Extra logic to allow for concurrent instances of this command
   const selectedModuleIndex = userModules.indexOf(selected);
   if (interaction.customId === 'disableButton' && selectedModuleIndex !== -1) userModules.splice(selectedModuleIndex, 1);
   else if (interaction.customId === 'enableButton' && selectedModuleIndex === -1) userModules.push(selected);
@@ -146,7 +146,7 @@ async function buttonUpdate({
     discordID: interaction.user.id,
     table: 'api',
     data: {
-      modules: userModules.join(' '),
+      modules: userModules,
     },
   }) as UserAPIData;
 
@@ -159,7 +159,7 @@ async function buttonUpdate({
       },
       {
         name: locales.localizer('commands.modules.statusField.name', userData.language),
-        value: Boolean((userAPIData.modules?.split(' ') ?? []).includes(selected)) ?
+        value: Boolean(userAPIData.modules.includes(selected)) ?
           locales.localizer('commands.modules.statusField.added', userData.language) :
           locales.localizer('commands.modules.statusField.removed', userData.language),
       },
@@ -169,7 +169,7 @@ async function buttonUpdate({
     embeds: [moduleEmbed],
     components: [
       userModuleSelectMenu({ locales: locales, userData: userData, selected: selected }),
-      moduleButtons({ locales: locales, userData: userData, isEnabled: (userAPIData.modules?.split(' ') ?? [])?.includes(selected) }),
+      moduleButtons({ locales: locales, userData: userData, isEnabled: userAPIData.modules.includes(selected) }),
     ],
   });
 }
