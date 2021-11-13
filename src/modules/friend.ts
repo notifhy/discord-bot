@@ -1,5 +1,5 @@
 import type { FriendModule, HistoryData, UserAPIData, UserData } from '../@types/database';
-import { HypixelPlayerData, SanitizedHypixelPlayerData } from '../@types/hypixel';
+import { CleanHypixelPlayerData } from '../@types/hypixel';
 import { SQLiteWrapper } from '../database';
 
 export const properties = {
@@ -15,7 +15,7 @@ export const execute = async ({
   date: number,
   differences: HistoryData,
   discordID: string,
-  hypixelPlayerData: SanitizedHypixelPlayerData
+  hypixelPlayerData: CleanHypixelPlayerData
 }): Promise<void> => {
   //if (hypixelPlayerData.lastLogin === oldUserAPIData.lastLogin && hypixelPlayerData.lastLogout === oldUserAPIData.lastLogout) return;
 };

@@ -2,38 +2,8 @@
 Hypixel
 */
 
-interface BaseHypixelAPI {
+export interface BaseHypixelAPI {
   success: boolean;
-}
-
-interface HypixelKeyRecord {
-  key: string;
-  owner: string;
-  limit: number;
-  queriesInPastMin: number;
-  totalQueries: number;
-}
-
-interface HypixelPlayerData {
-  firstLogin: number | null | undefined;
-  lastLogin: number | null | undefined;
-  lastLogout: number | null | undefined;
-  mcVersionRp: string | null | undefined;
-  userLanguage: string | null | undefined;
-  mostRecentGameType: string | null | undefined;
-  lastClaimedReward: number | null | undefined;
-  rewardScore: number | null | undefined;
-  rewardHighScore: number | null | undefined;
-  totalDailyRewards: number | null | undefined;
-  totalRewards: number | null | undefined;
-}
-
-export interface HypixelPlayer extends BaseHypixelAPI {
-  player: HypixelPlayerData;
-}
-
-export interface HypixelKey extends BaseHypixelAPI {
-  record: HypixelKeyRecord;
 }
 
 export interface Hypixel400_403_422 extends BaseHypixelAPI {
@@ -46,21 +16,54 @@ export interface Hypixel429 extends BaseHypixelAPI {
   global: boolean;
 }
 
-export interface HypixelAPI extends HypixelPlayer, HypixelKey, Hypixel400_403_422, Hypixel429 {}
 
-export interface SanitizedHypixelPlayerData {
-  firstLogin: number | null;
-  lastLogin: number | null;
-  lastLogout: number | null;
-  version: string | null;
-  language: string | null;
-  mostRecentGameType: string | null;
-  lastClaimedReward: number | null;
-  rewardScore: number | null;
-  rewardHighScore: number | null;
-  totalDailyRewards: number | null;
-  totalRewards: number | null;
+export interface RawHypixelPlayerData {
+  firstLogin: number | null | undefined;
+  lastLogin: number | null | undefined;
+  lastLogout: number | null | undefined;
+  mcVersionRp: string | null | undefined;
+  userLanguage: string | null | undefined;
+  lastClaimedReward: number | null | undefined;
+  rewardScore: number | null | undefined;
+  rewardHighScore: number | null | undefined;
+  totalDailyRewards: number | null | undefined;
+  totalRewards: number | null | undefined;
 }
+
+export interface RawHypixelStatusData {
+  gameType: string | null | undefined;
+}
+
+export interface RawHypixelPlayer extends BaseHypixelAPI {
+  player: RawHypixelPlayerData;
+}
+
+export interface RawHypixelStatus extends BaseHypixelAPI {
+  session: RawHypixelStatusData;
+}
+
+export type HypixelAPIError =
+  | Hypixel400_403_422
+  | Hypixel429
+
+export type HypixelAPIOk =
+  | RawHypixelPlayer
+  | RawHypixelStatus
+
+export interface CleanHypixelPlayerData {
+  firstLogin: number | null | undefined;
+  lastLogin: number | null | undefined;
+  lastLogout: number | null | undefined;
+  version: string | null | undefined;
+  language: string | null | undefined;
+  lastClaimedReward: number | null | undefined;
+  rewardScore: number | null | undefined;
+  rewardHighScore: number | null | undefined;
+  totalDailyRewards: number | null | undefined;
+  totalRewards: number | null | undefined;
+}
+
+export interface CleanHypixelStatusData extends Required<RawHypixelStatusData> {}
 
 /*
 Slothpixel

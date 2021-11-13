@@ -104,7 +104,7 @@ export const execute: CommandExecute = async (interaction: CommandInteraction, {
       lastLogout: last_logout,
       version: mc_version,
       language: language,
-      mostRecentGameType: null,
+      gameType: null,
       lastClaimedReward: null,
       rewardScore: streak_current,
       rewardHighScore: streak_best,

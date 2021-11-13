@@ -1,4 +1,4 @@
-import type { HypixelAPI, HypixelPlayerData } from '../@types/hypixel';
+import type { Hypixel400_403_422, Hypixel429, HypixelAPIError, HypixelAPIOk } from '../@types/hypixel';
 import type { Response } from 'node-fetch';
 import { hypixelAPIkey } from '../../config.json';
 import { RateLimitError } from '../util/error/RateLimitError';
@@ -7,9 +7,9 @@ import { Request } from './Request';
 import { ModuleDataResolver } from './ModuleDataResolver';
 
 export class HypixelRequestCall {
-  async call(url: string, moduleDataResolver: ModuleDataResolver): Promise<HypixelPlayerData> {
+  async call(url: string, moduleDataResolver: ModuleDataResolver): Promise<HypixelAPIOk> {
     moduleDataResolver.instance.instanceUses += 1;
-    const response: Response | HypixelAPI | null = await new Request({
+    const response: Response = await new Request({
       maxAborts: 1,
       abortThreshold: moduleDataResolver.instance.abortThreshold,
     }).request(url, {
@@ -18,20 +18,25 @@ export class HypixelRequestCall {
 
     const JSON = await tryParse(response);
 
-    if (response.ok === false || JSON === null) {
+    const isHypixelAPIError = (json: HypixelAPIOk | HypixelAPIError | null): json is HypixelAPIError =>
+      response.ok === false || JSON === null;
+
+    const isRateLimit = (json: HypixelAPIError): json is Hypixel429 =>
+      response.status === 429;
+
+    if (isHypixelAPIError(JSON)) { //typescript.
       const errorData = {
         message: JSON?.cause,
-        json: JSON,
         response: response,
       };
-      if (response.status === 429) throw new RateLimitError(errorData);
-      else throw new HTTPError(errorData);
+      if (isRateLimit(JSON)) throw new RateLimitError(Object.assign(errorData, { json: JSON }));
+      else throw new HTTPError<Hypixel400_403_422>(Object.assign(errorData, { json: JSON }));
     }
 
     //Data is all good!
-    return JSON.player as HypixelPlayerData;
+    return JSON as HypixelAPIOk;
 
-    async function tryParse(res: Response): Promise<HypixelAPI | null> {
+    async function tryParse(res: Response): Promise<HypixelAPIOk | HypixelAPIError | null> {
       try {
         return await res.json();
       } catch {

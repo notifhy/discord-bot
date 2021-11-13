@@ -144,7 +144,6 @@ export class SQLiteWrapper {
       }
     }
     const dataArray = Object.values(data).map(value => value !== null && typeof value === 'object' ? JSON.stringify(value) : value);
-    console.log(dataArray);
     await this.queryRun({ query: `UPDATE ${table} SET ${setQuery.join(', ')} WHERE discordID = '${discordID}'`, data: dataArray });
     if (returnNew === false) return;
     const returnQuery = `SELECT * FROM ${table} WHERE discordID = '${discordID}'`;

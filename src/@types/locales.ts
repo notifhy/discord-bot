@@ -179,7 +179,8 @@ export interface Locales {
   'fr-FR': Locale;
 }
 
-export type LocaleTree = Locale
+export type LocaleTree =
+  | Locale
   | General
   | Constraints
   | Commands

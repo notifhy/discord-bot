@@ -51,12 +51,12 @@ export const execute: CommandExecute = async (interaction: CommandInteraction, {
       .addComponents(yesButton, noButton);
 
     const confirmation = await interaction.editReply({ embeds: [confirmEmbed], components: [buttonRow] });
-    await interaction.client.channels.fetch(interaction.channelId);
+    await interaction.channel?.messages.fetch(confirmation.id);
 
     const componentFilter = (i: MessageComponentInteraction) =>
-      interaction.user.id === i.user.id && i.message.id === confirmation.id;
+      interaction.user.id === i.user.id && i.message.id === confirmation.id; //temp changes
 
-    const collector = interaction!.channel!.createMessageComponentCollector({
+    const collector = (confirmation as Message)!.createMessageComponentCollector({
       filter: componentFilter,
       idle: 30_000,
       componentType: 'BUTTON',

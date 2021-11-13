@@ -126,7 +126,7 @@ export class Instance {
 
   constructor() {
     this.abortThreshold = 2500;
-    this.baseURL = 'https://api.hypixel.net/player?uuid=%{uuid}%';
+    this.baseURL = 'https://api.hypixel.net/%{type}%?uuid=%{uuid}%';
     this.instanceUses = 0;
     this.keyPercentage = 0.20;
     this.resumeAfter = 0;

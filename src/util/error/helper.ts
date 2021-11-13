@@ -7,6 +7,7 @@ import { RateLimitError } from './RateLimitError';
 import { HTTPError } from './HTTPError';
 import { FetchError } from 'node-fetch';
 import { ModuleDataResolver } from '../../hypixelAPI/ModuleDataResolver';
+import { HypixelAPIError } from '../../@types/hypixel';
 
 export const isAbortError = (error: any): error is AbortError => error?.name === 'AbortError';
 
@@ -85,7 +86,7 @@ export class UserHTTPErrorEmbed extends BetterEmbed {
     interaction,
     incidentID,
   }: {
-    error: HTTPError,
+    error: HTTPError<HypixelAPIError>,
     interaction: CommandInteraction,
     incidentID: string,
   }) {

@@ -42,7 +42,7 @@ export interface RawUserAPIData {
   lastLogout: number | null;
   version: string | null;
   language: string | null;
-  mostRecentGameType: string | null;
+  gameType: string | null;
   lastClaimedReward: number | null;
   rewardScore: number | null;
   rewardHighScore: number | null;
@@ -64,7 +64,7 @@ export interface UserAPIData extends BaseUserData{
   lastLogout: number | null;
   version: string | null;
   language: string | null;
-  mostRecentGameType: string | null;
+  gameType: string | null;
   lastClaimedReward: number | null;
   rewardScore: number | null;
   rewardHighScore: number | null;

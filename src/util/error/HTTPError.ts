@@ -1,8 +1,8 @@
-import type { HypixelAPI } from '../../@types/hypixel';
+import type { HypixelAPIError } from '../../@types/hypixel';
 import type { Response } from 'node-fetch';
 
-export class HTTPError extends Error {
-  json: HypixelAPI | null;
+export class HTTPError<JSON> extends Error {
+  json: JSON | null;
   response: Response;
   status: number;
   statusText: string;
@@ -14,7 +14,7 @@ export class HTTPError extends Error {
     response,
   }: {
     message?: string | undefined,
-    json?: HypixelAPI | null,
+    json?: JSON | null,
     response: Response,
   }) {
     super(message ?? response.statusText);

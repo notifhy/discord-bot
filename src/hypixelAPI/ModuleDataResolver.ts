@@ -1,6 +1,6 @@
 import { Client } from 'discord.js';
 import { History, HistoryData, RawUserAPIData, UserAPIData, UserAPIDataUpdate } from '../@types/database';
-import { HypixelPlayerData, SanitizedHypixelPlayerData } from '../@types/hypixel';
+import { CleanHypixelPlayerData, CleanHypixelStatusData, HypixelAPIOk, RawHypixelPlayer, RawHypixelPlayerData, RawHypixelStatus, RawHypixelStatusData } from '../@types/hypixel';
 import { SQLiteWrapper } from '../database';
 import { timeout } from '../util/utility';
 import { keyLimit } from '../../config.json';
@@ -36,7 +36,7 @@ export class ModuleDataResolver {
 
       const users = await SQLiteWrapper.getAllUsers<RawUserAPIData, UserAPIData>({
         table: 'api',
-        columns: ['discordID', 'uuid', 'modules'],
+        columns: ['discordID', 'uuid', 'modules', 'lastLogin', 'lastLogout'],
       }) as UserAPIData[];
 
       const keyQueryLimit = keyLimit * this.instance.keyPercentage;
@@ -44,11 +44,12 @@ export class ModuleDataResolver {
 
       for (const user of users) {
         if (user.modules.length > 0) {
+          const urls = this.formURLs(user);
           if (this.areFatalIssues() === false) {
             (async () => {
               try {
-                const url = this.instance.baseURL.replace(/%{uuid}%/, user.uuid);
-                const hypixelPlayerData: SanitizedHypixelPlayerData = this.sanitizeData(await this.hypixelRequestCall.call(url, this), user);
+                const [cleanHypixelPlayerData, cleanHypixelStatusData] = await this.fetch(user, urls);
+                const hypixelData = Object.assign(cleanHypixelPlayerData, cleanHypixelStatusData);
                 const now = Date.now();
 
                 const oldUserAPIData = await SQLiteWrapper.getUser<RawUserAPIData, UserAPIData>({
@@ -60,20 +61,13 @@ export class ModuleDataResolver {
 
                 const differences: HistoryData = {};
 
-                for (const key in hypixelPlayerData) {
-                  if (Object.prototype.hasOwnProperty.call(hypixelPlayerData, key) === true) {
-                    if (hypixelPlayerData[key as keyof SanitizedHypixelPlayerData] !== oldUserAPIData[key as keyof UserAPIData]) {
-                      (differences[key as keyof HistoryData] as unknown) = hypixelPlayerData[key as keyof SanitizedHypixelPlayerData];
+                for (const key in hypixelData) {
+                  if (Object.prototype.hasOwnProperty.call(hypixelData, key) === true) {
+                    if (hypixelData[key as keyof typeof hypixelData] !== oldUserAPIData[key as keyof UserAPIData]) {
+                      (differences[key as keyof HistoryData] as unknown) = hypixelData[key as keyof typeof hypixelData];
                     }
                   }
                 }
-
-                const payLoad = {
-                  date: now,
-                  differences: differences,
-                  discordID: user.discordID,
-                  hypixelPlayerData: hypixelPlayerData,
-                };
 
                 await this.updateDatabase({
                   differences,
@@ -82,7 +76,14 @@ export class ModuleDataResolver {
                   user,
                 });
 
-                const modules = []; //Not really worth using a loop here
+                const payLoad = {
+                  date: now,
+                  differences: differences,
+                  discordID: user.discordID,
+                  hypixelPlayerData: hypixelData,
+                };
+
+                const modules = [];
                 //if (user.modules?.includes('defender')) modules.push(defenderModule.execute(payLoad));
                 if (user.modules.includes('friend')) modules.push(friendModule.execute(payLoad));
                 await Promise.all(modules);
@@ -91,12 +92,28 @@ export class ModuleDataResolver {
               }
             })();
           }
-          await timeout(intervalBetweenRequests); //eslint-disable-line no-await-in-loop
+          await timeout(intervalBetweenRequests * urls.length); //eslint-disable-line no-await-in-loop
         }
       }
     } catch (error) {
       await errorHandler({ error: error, moduleDataResolver: this });
     }
+  }
+
+  private formURLs(user: UserAPIData): string[] {
+    const urls: string[] = [this.instance.baseURL.replace(/%{type}%/, 'player')];
+    if (Number(user.lastLogin) > Number(user.lastLogout)) urls.push(this.instance.baseURL.replace(/%{type}%/, 'status'));
+
+    return urls.map(url => url.replace(/%{uuid}%/, user.uuid));
+  }
+
+  private async fetch(user: UserAPIData, urls: string[]): Promise<[CleanHypixelPlayerData, CleanHypixelStatusData | undefined]> {
+    const urlPromises: Promise<HypixelAPIOk>[] = urls.map(url => this.hypixelRequestCall.call(url, this), user);
+    const hypixelAPIOk: HypixelAPIOk[] = await Promise.all(urlPromises);
+
+    const hypixelPlayerData: CleanHypixelPlayerData = this.cleanPlayerData(hypixelAPIOk[0] as RawHypixelPlayer, user);
+    const hypixelStatusData: CleanHypixelStatusData | undefined = this.cleanStatusData(hypixelAPIOk[1] as RawHypixelStatus | undefined);
+    return [hypixelPlayerData, hypixelStatusData];
   }
 
   private async updateDatabase({
@@ -127,27 +144,35 @@ export class ModuleDataResolver {
     });
   }
 
-  private sanitizeData(hypixelPlayerData: HypixelPlayerData, userAPIData: UserAPIData) {
-    return {
-      firstLogin: hypixelPlayerData.firstLogin ?? null,
-      lastLogin: hypixelPlayerData.lastLogin ?? null,
-      lastLogout: hypixelPlayerData.lastLogout ?? null,
-      version: hypixelPlayerData.mcVersionRp ?? userAPIData.version ?? null,
-      language: hypixelPlayerData.userLanguage ?? userAPIData.language ?? 'ENGLISH',
-      mostRecentGameType: hypixelPlayerData.mostRecentGameType ?? null,
-      lastClaimedReward: hypixelPlayerData.lastClaimedReward ?? null,
-      rewardScore: hypixelPlayerData.rewardScore ?? null,
-      rewardHighScore: hypixelPlayerData.rewardHighScore ?? null,
-      totalDailyRewards: hypixelPlayerData.totalDailyRewards ?? null,
-      totalRewards: hypixelPlayerData.totalRewards ?? null,
-    } as SanitizedHypixelPlayerData;
-  }
-
   areFatalIssues(): boolean { //Could be expanded
     const enabled = this.client.config.enabled === true;
     const unusualErrors = this.unusual.unusualErrorsLastMinute;
     const abortErrors = this.abort.abortsLastMinute;
     const timeoutExpired = Date.now() > this.instance.resumeAfter;
     return Boolean(enabled === false || unusualErrors > 1 || abortErrors > 1 || timeoutExpired === false);
+  }
+
+  private cleanPlayerData(rawHypixelPlayer: RawHypixelPlayer, userAPIData: UserAPIData) {
+    const rawHypixelPlayerData: RawHypixelPlayerData = rawHypixelPlayer.player;
+    return {
+      firstLogin: rawHypixelPlayerData.firstLogin ?? null,
+      lastLogin: rawHypixelPlayerData.lastLogin ?? null,
+      lastLogout: rawHypixelPlayerData.lastLogout ?? null,
+      version: rawHypixelPlayerData.mcVersionRp ?? userAPIData.version ?? null,
+      language: rawHypixelPlayerData.userLanguage ?? userAPIData.language ?? 'ENGLISH',
+      lastClaimedReward: rawHypixelPlayerData.lastClaimedReward ?? null,
+      rewardScore: rawHypixelPlayerData.rewardScore ?? null,
+      rewardHighScore: rawHypixelPlayerData.rewardHighScore ?? null,
+      totalDailyRewards: rawHypixelPlayerData.totalDailyRewards ?? null,
+      totalRewards: rawHypixelPlayerData.totalRewards ?? null,
+    } as CleanHypixelPlayerData;
+  }
+
+  private cleanStatusData(rawHypixelStatus: RawHypixelStatus | undefined) {
+    if (rawHypixelStatus === undefined) return undefined;
+    const rawHypixelStatusData: RawHypixelStatusData = rawHypixelStatus.session;
+    return {
+      gameType: rawHypixelStatusData.gameType ?? null,
+    } as CleanHypixelStatusData;
   }
 }
