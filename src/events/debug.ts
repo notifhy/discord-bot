@@ -8,5 +8,6 @@ export const properties: EventProperties = {
 };
 
 export const execute = (info: string): void => {
+  return;
   console.log(`${formattedUnix({ date: true, utc: true })} |`, info);
 };

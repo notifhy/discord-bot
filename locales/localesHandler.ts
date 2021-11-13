@@ -22,17 +22,18 @@ export class RegionLocales {
         replaced = replaced.replace(regex, String(parameters[parameter]));
       }
     }
+
     return replaced;
   }
 
   get(path: string, locale?: string): LocaleTree | string {
     const pathArray: string[] = path.split('.');
-    let fetchedString: LocaleTree | string = (locales as Locales)[(locale ?? 'en-us') as keyof Locales];
+    let fetched: LocaleTree | string = (locales as Locales)[(locale ?? 'en-us') as keyof Locales];
     for (const pathCommand of pathArray) {
-      if (typeof fetchedString === 'string') break;
-      fetchedString = fetchedString?.[pathCommand as keyof LocaleTree] as LocaleTree | string;
+      if (typeof fetched === 'string') break;
+      fetched = fetched?.[pathCommand as keyof LocaleTree] as LocaleTree | string;
     }
 
-    return fetchedString;
+    return fetched;
   }
 }

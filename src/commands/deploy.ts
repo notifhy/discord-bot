@@ -10,7 +10,7 @@ export const properties: CommandProperties = {
   name: 'deploy',
   description: 'Deploy commands',
   usage: '/deploy [global/local] [user/owner]',
-  cooldown: 5000,
+  cooldown: 0,
   ephemeral: true,
   noDM: false,
   ownerOnly: true,

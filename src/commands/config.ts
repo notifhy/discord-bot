@@ -3,13 +3,13 @@ import { CommandInteraction } from 'discord.js';
 import { BetterEmbed } from '../util/utility';
 import * as fs from 'fs/promises';
 import { SQLiteWrapper } from '../database';
-import { DatabaseConfig } from '../@types/database';
+import { RawConfig } from '../@types/database';
 
 export const properties: CommandProperties = {
   name: 'config',
   description: 'Configure the bot',
   usage: '/config [block/userlimit/devmode/api]',
-  cooldown: 5000,
+  cooldown: 0,
   ephemeral: true,
   noDM: false,
   ownerOnly: true,
@@ -45,9 +45,9 @@ export const properties: CommandProperties = {
 export const execute: CommandExecute = async (interaction: CommandInteraction): Promise<void> => {
   const responseEmbed = new BetterEmbed({ color: '#7289DA', interaction: interaction, footer: null });
   const config = await SQLiteWrapper.queryGet({
-    query: 'SELECT blockedUsers, devMode, enabled FROM config WHERE rowid = 1', //row id correct?
+    query: 'SELECT blockedUsers, devMode, enabled FROM config WHERE rowid = 1',
     allowUndefined: false,
-  }) as DatabaseConfig;
+  }) as RawConfig;
 
   if (interaction.options.getSubcommand() === 'api') { //Persists across restarts
     config.enabled = Number(!Boolean(config.enabled));

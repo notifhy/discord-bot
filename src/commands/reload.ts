@@ -7,7 +7,7 @@ export const properties: CommandProperties = {
   name: 'reload',
   description: 'Reloads all or a command',
   usage: '/config [all/single] <command>',
-  cooldown: 1000,
+  cooldown: 0,
   ephemeral: true,
   noDM: false,
   ownerOnly: true,

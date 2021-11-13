@@ -1,10 +1,10 @@
 import { Client } from 'discord.js';
-import { History, HistoryData, UserAPIData } from '../@types/database';
+import { History, HistoryData, RawUserAPIData, UserAPIData, UserAPIDataUpdate } from '../@types/database';
 import { HypixelPlayerData, SanitizedHypixelPlayerData } from '../@types/hypixel';
 import { SQLiteWrapper } from '../database';
 import { timeout } from '../util/utility';
 import { keyLimit } from '../../config.json';
-import { Abort, Instance, RateLimit, Unusual } from './HypixelRequestHelper';
+import { Abort, Instance, RateLimit, Unusual } from './ModuleRequestHelper';
 import { HypixelRequestCall } from './HypixelRequestCall';
 import * as friendModule from '../modules/friend';
 import * as defenderModule from '../modules/defender';
@@ -34,7 +34,7 @@ export class ModuleDataResolver {
         await timeout(this.instance.resumeAfter - Date.now());
       }
 
-      const users = await SQLiteWrapper.getAllUsers({
+      const users = await SQLiteWrapper.getAllUsers<RawUserAPIData, UserAPIData>({
         table: 'api',
         columns: ['discordID', 'uuid', 'modules'],
       }) as UserAPIData[];
@@ -51,10 +51,11 @@ export class ModuleDataResolver {
                 const hypixelPlayerData: SanitizedHypixelPlayerData = this.sanitizeData(await this.hypixelRequestCall.call(url, this), user);
                 const now = Date.now();
 
-                const oldUserAPIData = await SQLiteWrapper.getUser({
+                const oldUserAPIData = await SQLiteWrapper.getUser<RawUserAPIData, UserAPIData>({
                   discordID: user.discordID,
                   table: 'api',
                   columns: ['*'],
+                  allowUndefined: false,
                 }) as UserAPIData;
 
                 const differences: HistoryData = {};
@@ -76,7 +77,6 @@ export class ModuleDataResolver {
 
                 await this.updateDatabase({
                   differences,
-                  hypixelPlayerData,
                   now,
                   oldUserAPIData,
                   user,
@@ -101,28 +101,26 @@ export class ModuleDataResolver {
 
   private async updateDatabase({
     differences,
-    hypixelPlayerData,
     now,
     oldUserAPIData,
     user,
   }: {
     differences: HistoryData,
-    hypixelPlayerData: SanitizedHypixelPlayerData,
     now: number,
     oldUserAPIData: UserAPIData,
     user: UserAPIData
   }) {
-    const newUserAPIData = Object.assign({ lastUpdated: now }, hypixelPlayerData);
+    const newUserAPIData: UserAPIDataUpdate = Object.assign({ lastUpdated: now }, differences);
 
     if (Object.keys(differences).length > 0) {
       const historyUpdate: History = Object.assign({ date: now }, differences);
       const history: History[] = oldUserAPIData.history;
       history.unshift(historyUpdate);
-      history.splice(100);
+      history.splice(250);
       Object.assign(newUserAPIData, { history: history });
     }
 
-    await SQLiteWrapper.updateUser({
+    await SQLiteWrapper.updateUser<UserAPIDataUpdate, RawUserAPIData, UserAPIData>({
       discordID: user.discordID,
       table: 'api',
       data: newUserAPIData,

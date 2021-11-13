@@ -4,7 +4,7 @@ import { ownerID } from '../../config.json';
 import { Collection, CommandInteraction } from 'discord.js';
 import { ConstraintError } from '../util/error/ConstraintError';
 import { SQLiteWrapper } from '../database';
-import { UserAPIData, UserData } from '../@types/database';
+import { RawUserData, UserAPIData, UserData } from '../@types/database';
 import errorHandler from '../util/error/errorHandler';
 
 
@@ -30,21 +30,25 @@ export const execute = async (interaction: CommandInteraction): Promise<void> =>
         discordID: interaction.user.id,
         table: 'api',
         columns: ['*'],
+        allowUndefined: true,
       }) as UserAPIData | undefined;
 
-      const userData = //how do i make this look good
-      (await SQLiteWrapper.getUser({
-        discordID: interaction.user.id,
-        table: 'users',
-        columns: ['*'],
-      }) as UserData | undefined) ??
-      (await SQLiteWrapper.newUser({
-        table: 'users',
-        data: {
+      const userData =
+        (await SQLiteWrapper.getUser<RawUserData, UserData>({
           discordID: interaction.user.id,
-          language: 'en-us',
-        },
-      }) as UserData);
+          table: 'users',
+          columns: ['*'],
+          allowUndefined: true,
+        })
+        ??
+        await SQLiteWrapper.newUser<UserData, RawUserData, UserData>({
+          table: 'users',
+          returnNew: true,
+          data: {
+            discordID: interaction.user.id,
+            language: 'en-us',
+          },
+        })) as UserData;
 
 
       await blockedConstraint(interaction, userData, blockedUsers);
@@ -124,8 +128,8 @@ async function cooldownConstraint(interaction: CommandInteraction, userData: Use
     const cooldownEmbed = new BetterEmbed({ color: '#AA0000', interaction: interaction, footer: null })
       .setTitle(locale.cooldown.embed1.title)
       .setDescription(replace(locale.cooldown.embed1.description, {
-        cooldown: cleanRound(command.properties.cooldown / 1000),
-        timeLeft: timeLeft / 1000,
+        cooldown: command.properties.cooldown / 1000,
+        timeLeft: cleanRound(timeLeft / 1000),
       }));
 
     await interaction.editReply({ embeds: [cooldownEmbed] });

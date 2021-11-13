@@ -4,7 +4,7 @@ import { discordAPIkey as token } from '../config.json';
 import * as fs from 'fs/promises';
 import { RegionLocales } from '../locales/localesHandler';
 import { SQLiteWrapper } from './database';
-import { DatabaseConfig } from './@types/database';
+import { RawConfig } from './@types/database';
 import { ModuleDataResolver } from './hypixelAPI/ModuleDataResolver';
 
 process.on('unhandledRejection', error => {
@@ -61,7 +61,7 @@ client.regionLocales = new RegionLocales();
 
   const config = await SQLiteWrapper.queryGet({
     query: 'SELECT * FROM config WHERE rowid = 1',
-  }) as DatabaseConfig;
+  }) as RawConfig;
 
   client.config = {
     baseURL: config.baseURL,

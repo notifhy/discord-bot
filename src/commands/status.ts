@@ -7,7 +7,7 @@ export const properties: CommandProperties = {
   name: 'status',
   description: 'Set a custom status',
   usage: '/status [set/clear] <string>',
-  cooldown: 5000,
+  cooldown: 0,
   ephemeral: true,
   noDM: false,
   ownerOnly: true,

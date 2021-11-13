@@ -7,7 +7,7 @@ export const properties: CommandProperties = {
   name: 'help',
   description: 'Displays helpful information and available commands',
   usage: '/help [commands/information] <command>',
-  cooldown: 5000,
+  cooldown: 5_000,
   ephemeral: true,
   noDM: false,
   ownerOnly: false,

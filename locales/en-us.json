@@ -2,34 +2,6 @@
   "general": {
 
   },
-  "constraints": {
-    "blockedUsers" :{
-      "title": "Blocked User",
-      "description": "You were blocked form using this bot. You cannot appeal this."
-    },
-    "devMode": {
-      "title": "Developer Mode",
-      "description": "This bot is in developer only mode, likely due to a major issue or an upgrade that is taking place. Please check back later!"
-    },
-    "owner": {
-      "title": "Insufficient Permissions",
-      "description": "You cannot execute this command without being an owner!"
-    },
-    "dm": {
-      "title": "DM Channel",
-      "description": "You cannot execute this command in the DM channel! Please switch to a server channel!"
-    },
-    "cooldown": {
-      "embed1": {
-        "title": "Cooldown",
-      "description": "You are executing commands too quickly! This cooldown of this command is %{cooldown}% seconds. This message will turn green in %{timeLeft}% seconds once the cooldown expires."
-      },
-      "embed2": {
-        "title": "Cooldown Over",
-        "description": "The cooldown has expired! You can now execute the command /%{commandName}%!"
-      }
-    }
-  },
   "commands": {
     "data": {
       "delete": {
@@ -96,6 +68,63 @@
       "description": "Your language has been changed to `%{language}%`!"
     },
     "modules": {
+      "defender": {
+        "title": "Defender Module",
+        "description": "You can add or remove modules here. See more about a module by selecting it. Then, press the button to remove or add it. If you want to delete some or all of your data used by or associated with this bot, you can request it with /deletedata.",
+        "menuPlaceholder": "Defender Settings",
+        "menu": {
+          "toggle": {
+            "label": "Toggle",
+            "description": "Toggle whether this module is active",
+            "longDescription": "Enable or disable this module. However, this module will not be activated if you have not configured it.",
+            "value": "toggle",
+            "enableButton": "Enable",
+            "disableButton": "Disable"
+          }
+        }
+      },
+      "friend": {
+        "title": "Friend Module",
+        "description": "placeholder",
+        "menuPlaceholder": "Select a module",
+        "menu": {
+          "toggle": {
+            "label": "Toggle",
+            "description": "Toggle whether this module is active",
+            "longDescription": "Enable or disable this module. However, this module cannot be enabled if you have not configured it.",
+            "value": "toggle",
+            "enableButton": "Enable",
+            "disableButton": "Disable"
+          },
+          "channel": {
+            "label": "Channel",
+            "description": "Set a channel to send logins and logouts to",
+            "longDescription": "Due to limitations, you need to set a channel with /channel",
+            "value": "channel"
+          }
+        }
+      },
+      "rewards": {
+        "title": "Modules",
+        "description": "This module ",
+        "menuPlaceholder": "Select a module",
+        "menu": {
+          "toggle": {
+            "label": "Toggle",
+            "description": "Toggle whether this module is active",
+            "longDescription": "Enable or disable this module. However, this module will not be activated if you have not configured it.",
+            "value": "toggle",
+            "enableButton": "Enable",
+            "disableButton": "Disable"
+          },
+          "grace": {
+            "label": "Grace Period",
+            "description": "Set when the bot should start alerting you",
+            "longDescription": "Set the amount of hours ahead of the daily reward reset for when the bot should start pinging you",
+            "value": "grace"
+          }
+        }
+      },
       "title": "Modules",
       "description": "You can add or remove modules here. See more about a module by selecting it. Then, press the button to remove or add it. If you want to delete some or all of your data used by or associated with this bot, you can request it with /deletedata.",
       "menuPlaceholder": "Select a module",
@@ -155,7 +184,7 @@
       },
       "embed2": {
         "title": "🏓 Ping!",
-        "description": "Websocket heartbeat is %{wsPing}%ms. This interaction took %{rtPing}%ms from registering the slash command to displaying the initial message."
+        "description": "Websocket heartbeat is %{wsPing}%ms. Roundtrip latency is %{rtPing}%ms."
       }
     },
     "register": {
@@ -180,6 +209,34 @@
       "field": {
         "name": "Next Steps",
         "value": "/help • See information about any command or about this bot\n/language • Set a language for this bot"
+      }
+    }
+  },
+  "constraints": {
+    "blockedUsers" :{
+      "title": "Blocked User",
+      "description": "You were blocked form using this bot. You cannot appeal this."
+    },
+    "devMode": {
+      "title": "Developer Mode",
+      "description": "This bot is in developer only mode, likely due to a major issue or an upgrade that is taking place. Please check back later!"
+    },
+    "owner": {
+      "title": "Insufficient Permissions",
+      "description": "You cannot execute this command without being an owner!"
+    },
+    "dm": {
+      "title": "DM Channel",
+      "description": "You cannot execute this command in the DM channel! Please switch to a server channel!"
+    },
+    "cooldown": {
+      "embed1": {
+        "title": "Cooldown",
+      "description": "You are executing commands too quickly! This cooldown of this command is %{cooldown}% seconds. This message will turn green in %{timeLeft}% seconds once the cooldown expires."
+      },
+      "embed2": {
+        "title": "Cooldown Over",
+        "description": "The cooldown has expired! You can now execute the command /%{commandName}%!"
       }
     }
   }

@@ -5,12 +5,13 @@ import { Request } from '../hypixelAPI/Request';
 import { HTTPError } from '../util/error/HTTPError';
 import { Slothpixel } from '../@types/hypixel';
 import { SQLiteWrapper } from '../database';
+import { RawUserAPIData, UserAPIData } from '../@types/database';
 
 export const properties: CommandProperties = {
   name: 'register',
   description: 'Register and setup your profile',
   usage: '/register [username/uuid]',
-  cooldown: 15000,
+  cooldown: 15_000,
   ephemeral: true,
   noDM: false,
   ownerOnly: false,
@@ -63,7 +64,6 @@ export const execute: CommandExecute = async (interaction: CommandInteraction, {
     last_logout,
     mc_version,
     language,
-    last_game,
     rewards: {
       streak_current,
       streak_best,
@@ -92,7 +92,7 @@ export const execute: CommandExecute = async (interaction: CommandInteraction, {
     return;
   }
 
-  await SQLiteWrapper.newUser({
+  await SQLiteWrapper.newUser<UserAPIData, RawUserAPIData, UserAPIData>({
     table: 'api',
     data: {
       discordID: interaction.user.id,

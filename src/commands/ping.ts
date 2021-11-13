@@ -6,7 +6,7 @@ export const properties: CommandProperties = {
   name: 'ping',
   description: 'Returns the ping of the bot',
   usage: '/ping',
-  cooldown: 5000,
+  cooldown: 5_000,
   ephemeral: true,
   noDM: false,
   ownerOnly: false,

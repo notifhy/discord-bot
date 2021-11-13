@@ -1,14 +1,14 @@
 import type { CommandExecute, CommandProperties } from '../@types/client';
 import { ButtonInteraction, ColorResolvable, CommandInteraction, Message, MessageActionRow, MessageButton, MessageComponentInteraction } from 'discord.js';
 import { SQLiteWrapper } from '../database';
-import { UserAPIData } from '../@types/database';
+import { RawUserAPIData, UserAPIData } from '../@types/database';
 import { BetterEmbed } from '../util/utility';
 
 export const properties: CommandProperties = {
   name: 'data',
   description: 'View and/or delete all data stored or used by this bot',
   usage: '/data',
-  cooldown: 60000,
+  cooldown: 30_000,
   ephemeral: false, //Temporary, file preview fails with this on. MessageAttachment is also bugged, completely broken. Doesn't attach ID.
   noDM: false,
   ownerOnly: false,
@@ -75,19 +75,20 @@ export const execute: CommandExecute = async (interaction: CommandInteraction, {
         const aborted = new BetterEmbed({ color: '#7289DA', interaction: interaction, footer: null })
           .setTitle(locale.delete.deleted.title)
           .setDescription(locale.delete.deleted.description);
-        await interaction.editReply({ embeds: [aborted], components: [disabledRow] });
+        await i.update({ embeds: [aborted], components: [disabledRow] });
       } else {
         const aborted = new BetterEmbed({ color: '#7289DA', interaction: interaction, footer: null })
           .setTitle(locale.delete.aborted.title)
           .setDescription(locale.delete.aborted.description);
-        await interaction.editReply({ embeds: [aborted], components: [disabledRow] });
+        await i.update({ embeds: [aborted], components: [disabledRow] });
       }
     });
   } else {
-    const userAPIData = await SQLiteWrapper.getUser({
+    const userAPIData = await SQLiteWrapper.getUser<RawUserAPIData, UserAPIData>({
       discordID: userData.discordID,
       table: 'api',
       columns: ['*'],
+      allowUndefined: true,
     }) as UserAPIData;
 
     const allUserData = {

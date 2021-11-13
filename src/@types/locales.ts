@@ -88,6 +88,41 @@ export interface Language {
 }
 
 export interface Modules {
+  defender: {
+    title: string;
+    description: string;
+    menuPlaceholder: string;
+    menu: {
+      toggle: {
+        enableButton: string;
+        disableButton: string;
+      } & AssetModule;
+    }
+  };
+  friend: {
+    title: string;
+    description: string;
+    menuPlaceholder: string;
+    menu: {
+      toggle: {
+        enableButton: string;
+        disableButton: string;
+      } & AssetModule;
+      channel: AssetModule;
+    }
+  };
+  rewards: {
+    title: string;
+    description: string;
+    menuPlaceholder: string;
+    menu: {
+      toggle: {
+        enableButton: string;
+        disableButton: string;
+      } & AssetModule;
+      grace: AssetModule;
+    }
+  };
   title: string;
   description: string;
   moduleField: Field;

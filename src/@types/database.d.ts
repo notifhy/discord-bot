@@ -1,3 +1,7 @@
+export interface BaseUserData {
+  discordID: string;
+}
+
 export interface HistoryData {
   firstLogin?: number;
   lastLogin?: number;
@@ -16,7 +20,7 @@ export interface History extends HistoryData {
   date: number;
 }
 
-export interface DatabaseConfig {
+export interface RawConfig {
   baseURL: string;
   blockedUsers: string;
   devMode: number;
@@ -24,8 +28,7 @@ export interface DatabaseConfig {
   uses: number;
 }
 
-export interface RawUserData {
-  discordID: string;
+export interface RawUserData extends BaseUserData {
   language: string;
 }
 
@@ -48,13 +51,11 @@ export interface RawUserAPIData {
   history: string;
 }
 
-export interface UserData {
-  discordID: string;
+export interface UserData extends BaseUserData {
   language: string;
 }
 
-export interface UserAPIData {
-  discordID: string;
+export interface UserAPIData extends BaseUserData{
   uuid: string;
   modules: string[];
   lastUpdated: number;
@@ -75,8 +76,12 @@ export interface UserAPIData {
 export interface UserDataUpdate extends Partial<UserData> {}
 export interface UserAPIDataUpdate extends Partial<UserAPIData> {}
 
-export interface FriendModule {
-  date: number;
-  lastLogin?: number | null;
-  lastLogout?: number | null;
+/*
+Module Specifics
+*/
+export interface FriendModule extends BaseUserData {
+  enabled: number;
+  channel: string;
 }
+
+export interface FriendModuleUpdate extends Partial<FriendModule> {}

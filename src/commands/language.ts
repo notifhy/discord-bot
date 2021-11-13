@@ -2,12 +2,13 @@ import type { CommandExecute, CommandProperties } from '../@types/client';
 import { CommandInteraction } from 'discord.js';
 import { BetterEmbed } from '../util/utility';
 import { SQLiteWrapper } from '../database';
+import { RawUserAPIData, UserAPIData, UserDataUpdate } from '../@types/database';
 
 export const properties: CommandProperties = {
   name: 'language',
   description: 'Set a language for this bot',
   usage: '/language [language]',
-  cooldown: 5000,
+  cooldown: 10_000,
   ephemeral: true,
   noDM: false,
   ownerOnly: false,
@@ -48,7 +49,7 @@ export const execute: CommandExecute = async (interaction: CommandInteraction, {
     return;
   }
 
-  await SQLiteWrapper.updateUser({
+  await SQLiteWrapper.updateUser<UserDataUpdate, RawUserAPIData, UserAPIData>({
     discordID: interaction.user.id,
     table: 'users',
     data: {

@@ -21,5 +21,6 @@ export const execute = async ({
     discordID: discordID,
     table: 'users',
     columns: ['language'],
+    allowUndefined: false,
   }) as UserData;
 };

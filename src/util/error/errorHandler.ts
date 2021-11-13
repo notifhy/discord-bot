@@ -45,10 +45,16 @@ export default async ({
       });
     }
   } else if (moduleDataResolver) {
-    console.error(`${formattedUnix({ date: true, utc: true })} | An error has occurred on incident ${incidentID} | Priority: Medium |`, error);
-    if (isAbortError(error)) moduleDataResolver.abort.reportAbortError(moduleDataResolver);
-    else if (error instanceof RateLimitError) moduleDataResolver.rateLimit.reportRateLimitError(moduleDataResolver, error?.json?.global);
-    else moduleDataResolver.unusual.reportUnusualError(moduleDataResolver);
+    if (isAbortError(error)) {
+      console.error(`${formattedUnix({ date: true, utc: true })} | An error has occurred on incident ${incidentID} | Priority: Low |`, error);
+      moduleDataResolver.abort.reportAbortError(moduleDataResolver);
+    } else if (error instanceof RateLimitError) {
+      console.error(`${formattedUnix({ date: true, utc: true })} | An error has occurred on incident ${incidentID} | Priority: Medium |`, error);
+      moduleDataResolver.rateLimit.reportRateLimitError(moduleDataResolver, error?.json?.global);
+    } else {
+      console.error(`${formattedUnix({ date: true, utc: true })} | An error has occurred on incident ${incidentID} | Priority: High |`, error);
+      moduleDataResolver.unusual.reportUnusualError(moduleDataResolver);
+    }
 
     incidentPayload.unshift(new HypixelAPIEmbed({
       moduleDataResolver: moduleDataResolver,
@@ -56,8 +62,7 @@ export default async ({
       incidentID: incidentID,
     }));
 
-    const isAbortTimeout: boolean = moduleDataResolver.abort.timeoutLength < moduleDataResolver.abort.baseTimeout;
-    shouldPing = isAbortError(error) === false || isAbortTimeout;
+    shouldPing = isAbortError(error) === false || moduleDataResolver.instance.resumeAfter > Date.now();
   } else {
     console.error(`${formattedUnix({ date: true, utc: true })} | An error has occurred on incident ${incidentID} | Priority: High |`, error);
     const knownInfo = new BetterEmbed({ color: '#AA0000', interaction: null, footer: [`Incident ${incidentID}`] })

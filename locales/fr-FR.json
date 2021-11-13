@@ -96,6 +96,63 @@
       "description": "Votre langue a été changée en `%{language}%`! Veuillez noter que les traductions ne sont pas parfaites, mais que cela devrait être plus facile que de traduire soi-même."
     },
     "modules": {
+      "defender": {
+        "title": "Defender Module",
+        "description": "You can add or remove modules here. See more about a module by selecting it. Then, press the button to remove or add it. If you want to delete some or all of your data used by or associated with this bot, you can request it with /deletedata.",
+        "menuPlaceholder": "Defender Settings",
+        "menu": {
+          "toggle": {
+            "label": "Toggle",
+            "description": "Toggle whether this module is active",
+            "longDescription": "Enable or disable this module. However, this module will not be activated if you have not configured it.",
+            "value": "toggle",
+            "enableButton": "Enable",
+            "disableButton": "Disable"
+          }
+        }
+      },
+      "friend": {
+        "title": "Friend Module",
+        "description": "placeholder",
+        "menuPlaceholder": "Select a module",
+        "menu": {
+          "toggle": {
+            "label": "Toggle",
+            "description": "Toggle whether this module is active",
+            "longDescription": "Enable or disable this module. However, this module will not be activated if you have not configured it.",
+            "value": "toggle",
+            "enableButton": "Enable",
+            "disableButton": "Disable"
+          },
+          "channel": {
+            "label": "Channel",
+            "description": "Set a channel to send logins and logouts to",
+            "longDescription": "Due to limitations, you need to set a channel with /channel",
+            "value": "channel"
+          }
+        }
+      },
+      "rewards": {
+        "title": "Modules",
+        "description": "This module ",
+        "menuPlaceholder": "Select a module",
+        "menu": {
+          "toggle": {
+            "label": "Toggle",
+            "description": "Toggle whether this module is active",
+            "longDescription": "Enable or disable this module. However, this module will not be activated if you have not configured it.",
+            "value": "toggle",
+            "enableButton": "Enable",
+            "disableButton": "Disable"
+          },
+          "grace": {
+            "label": "Grace Period",
+            "description": "Set when the bot should start alerting you",
+            "longDescription": "Set the amount of hours ahead of the daily reward reset for when the bot should start pinging you",
+            "value": "grace"
+          }
+        }
+      },
       "title": "Modules",
       "description": "Vous pouvez ajouter ou supprimer des modules ici. Pour en savoir plus sur un module, sélectionnez-le. Ensuite, appuyez sur le bouton pour le supprimer ou l'ajouter. Si vous souhaitez supprimer tout ou partie de vos données utilisées par ou associées à ce bot, vous pouvez le demander avec /deletedata.",
       "menuPlaceholder": "Sélectionnez un module",
@@ -155,7 +212,7 @@
       },
       "embed2": {
         "title": "🏓 Ping !",
-        "description": "Le battement de cœur de la websocket est de %{wsPing}%ms. Cette interaction a pris %{rtPing}%ms entre l'enregistrement de la commande slash et l'affichage du message initial."
+        "description": "Le battement de cœur de la websocket est de %{wsPing}%ms. La latence aller-retour est de %{rtPing}%ms."
       }
     },
     "register": {
