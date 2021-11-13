@@ -2,7 +2,7 @@
 **/logs
 
 # ignore the database
-# **.db
+**.db
 
 # ignore files with secrets
 config.json
