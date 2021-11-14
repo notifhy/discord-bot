@@ -9,7 +9,7 @@ export const properties: CommandProperties = {
   description: 'View and/or delete all data stored or used by this bot',
   usage: '/data',
   cooldown: 30_000,
-  ephemeral: false, //Temporary, file preview fails with this on. MessageAttachment is also bugged, completely broken. Doesn't attach ID.
+  ephemeral: true, //Temporary, file preview fails with this on. MessageAttachment is also bugged, completely broken. Doesn't attach ID.
   noDM: false,
   ownerOnly: false,
   structure: {
