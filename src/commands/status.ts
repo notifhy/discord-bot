@@ -36,7 +36,7 @@ export const properties: CommandProperties = {
 };
 
 export const execute: CommandExecute = async (interaction: CommandInteraction): Promise<void> => {
-  const responseEmbed = new BetterEmbed({ color: '#7289DA', interaction: interaction, footer: null });
+  const responseEmbed = new BetterEmbed({ color: '#7289DA', footer: interaction });
 
   if (interaction.options.getSubcommand() === 'set') {
     const status = interaction.options.getString('string') as string;

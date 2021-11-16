@@ -1,4 +1,4 @@
-import type { CleanHypixelPlayerData } from './hypixel';
+import type { CleanHypixelPlayerData, CleanHypixelStatusData } from './hypixel';
 
 export interface BaseUserData {
   discordID: string;
@@ -20,22 +20,11 @@ export interface RawUserData extends BaseUserData {
   language: string;
 }
 
-export interface RawUserAPIData {
+export interface RawUserAPIData extends CleanHypixelPlayerData {
   discordID: string;
   uuid: string;
-  modules: string | null;
+  modules: string;
   lastUpdated: number;
-  firstLogin: number | null;
-  lastLogin: number | null;
-  lastLogout: number | null;
-  version: string | null;
-  language: string | null;
-  gameType: string | null;
-  lastClaimedReward: number | null;
-  rewardScore: number | null;
-  rewardHighScore: number | null;
-  totalRewards: number | null;
-  totalDailyRewards: number | null;
   history: string;
 }
 
@@ -43,21 +32,10 @@ export interface UserData extends BaseUserData {
   language: string;
 }
 
-export interface UserAPIData extends BaseUserData{
+export interface UserAPIData extends BaseUserData, CleanHypixelPlayerData, CleanHypixelStatusData {
   uuid: string;
   modules: string[];
   lastUpdated: number;
-  firstLogin: number | null;
-  lastLogin: number | null;
-  lastLogout: number | null;
-  version: string | null;
-  language: string | null;
-  gameType: string | null;
-  lastClaimedReward: number | null;
-  rewardScore: number | null;
-  rewardHighScore: number | null;
-  totalRewards: number | null;
-  totalDailyRewards: number | null;
   history: History[];
 }
 

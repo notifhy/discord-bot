@@ -1,26 +1,25 @@
-import { HistoryData, UserData } from '../@types/database';
+import type { FriendModule, UserAPIData, UserData } from '../@types/database';
+import { CleanHypixelPlayerData } from '../@types/hypixel';
 import { SQLiteWrapper } from '../database';
-import { SanitizedHypixelPlayerData } from '../@types/hypixel';
 
 export const properties = {
   name: 'defenderEvent',
 };
 
 export const execute = async ({
-  date,
-  discordID,
   differences,
-  hypixelPlayerData,
+  userAPIData,
 }: {
-  date: number,
-  differences: HistoryData,
-  discordID: string,
-  hypixelPlayerData: SanitizedHypixelPlayerData
+  differences: Partial<CleanHypixelPlayerData>,
+  userAPIData: UserAPIData
 }): Promise<void> => {
-  const userData: UserData = await SQLiteWrapper.getUser({
-    discordID: discordID,
-    table: 'users',
-    columns: ['language'],
+  const friendModule = await SQLiteWrapper.getUser<FriendModule, FriendModule>({
+    discordID: userAPIData.discordID,
+    table: 'friend',
     allowUndefined: false,
-  }) as UserData;
+    columns: ['enabled', 'channel'],
+  }) as FriendModule;
+
+  if (friendModule.enabled === false) return;
+  console.log('placeholder');
 };

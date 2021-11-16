@@ -40,7 +40,7 @@ export const execute: CommandExecute = async (interaction: CommandInteraction, {
   const replace = interaction.client.regionLocales.replace;
 
   if (language === userData.language) {
-    const alreadySetEmbed = new BetterEmbed({ color: '#FF5555', interaction: interaction, footer: null })
+    const alreadySetEmbed = new BetterEmbed({ color: '#FF5555', footer: interaction })
       .setTitle(locale.alreadySet.title)
       .setDescription(replace(locale.alreadySet.description, {
         language: language,
@@ -57,7 +57,7 @@ export const execute: CommandExecute = async (interaction: CommandInteraction, {
     },
   });
 
-  const languageEmbed = new BetterEmbed({ color: '#7289DA', interaction: interaction, footer: null })
+  const languageEmbed = new BetterEmbed({ color: '#7289DA', footer: interaction })
     .setTitle(locale.title)
     .setDescription(replace(locale.description, {
       language: language,

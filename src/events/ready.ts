@@ -1,9 +1,7 @@
 import type { EventProperties } from '../@types/client';
 import type { Client } from 'discord.js';
-import { fatalWebhook, ownerID } from '../../config.json';
 import { SQLiteWrapper } from '../database';
-import { ErrorStackEmbed } from '../util/error/helper';
-import { formattedUnix, sendWebHook } from '../util/utility';
+import errorHandler from '../util/error/errorHandler';
 
 export const properties: EventProperties = {
   name: 'ready',
@@ -28,15 +26,7 @@ export const execute = async (client: Client) => {
         });
       }
     } catch (error) {
-      console.error(`${formattedUnix({ date: true, utc: true })} | An error has occurred |`, error);
-      const incidentID = Math.random().toString(36).substring(2, 10).toUpperCase();
-      const stackEmbed = new ErrorStackEmbed({ error: error, incidentID: incidentID });
-      await sendWebHook({
-        content: `<@${ownerID.join('><@')}>`,
-        embeds: [stackEmbed],
-        webhook: fatalWebhook,
-        suppressError: true,
-      });
+      errorHandler({ error: error });
     }
   }, 30_000);
 

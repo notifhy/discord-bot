@@ -46,7 +46,7 @@ export const execute: CommandExecute = async (interaction: CommandInteraction, {
 
 async function friend(interaction: CommandInteraction, { userData }: { userData: UserData }) {
   const locale = interaction.client.regionLocales.locale(userData.language).commands.modules.friend;
-  const mainEmbed = new BetterEmbed({ color: '#7289DA', interaction: interaction, footer: null })
+  const mainEmbed = new BetterEmbed({ color: '#7289DA', footer: interaction })
     .setTitle(locale.title)
     .setDescription(locale.description);
 
@@ -101,7 +101,7 @@ async function friend(interaction: CommandInteraction, { userData }: { userData:
     if (i.isSelectMenu()) {
       selected = i.values[0];
 
-      const updatedEmbed = new BetterEmbed({ color: '#7289DA', interaction: interaction, footer: null })
+      const updatedEmbed = new BetterEmbed({ color: '#7289DA', footer: interaction })
         .setTitle(locale.title)
         .setDescription(locale.description) //Add explanation for unable to toggle
         .addField(locale.menu[selected as keyof typeof locale['menu']].label,

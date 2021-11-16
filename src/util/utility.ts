@@ -36,39 +36,44 @@ export function formattedUnix({
   return `${utc === true ? `UTC${createOffset()} ` : ''}${newDate.toLocaleTimeString('en-IN', { hour12: true })}${date === true ? `, ${cleanDate(ms)}` : ''}`;
 }
 
+type Footer = {
+  name: string,
+  imageURL?: string,
+} | CommandInteraction;
+
 export class BetterEmbed extends MessageEmbed {
   constructor({
     color,
-    interaction,
     footer,
   }: {
     color: ColorResolvable,
-    interaction: CommandInteraction | null,
-    footer: string[] | null,
+    footer: Footer,
   }) {
     super();
     super.setColor(color);
     super.setTimestamp();
 
-    if (interaction !== null) {
-      const avatar = interaction.user.displayAvatarURL({ dynamic: true });
-      super.setFooter(`/${interaction.commandName}`, avatar);
-    } else if (footer !== null) {
-      super.setFooter(footer[0], footer[1]);
+    if (footer instanceof CommandInteraction) {
+      const avatar = footer.user.displayAvatarURL({ dynamic: true });
+      super.setFooter(`/${footer.commandName}`, avatar);
+    } else {
+      super.setFooter(footer.name, footer.name); //Footer should be turned into an object
     }
   }
 }
 
 export function compare<Primary, Secondary extends Primary>(primary: Primary, secondary: Secondary) {
-  const differences: Primary = {} as Primary;
+  const primaryDifferences: Partial<Primary> = {} as Partial<Primary>;
+  const secondaryDifferences: Partial<Secondary> = {} as Partial<Secondary>;
   for (const key in primary) {
     if (Object.prototype.hasOwnProperty.call(primary, key) === true) {
       if (primary[key] !== secondary[key]) {
-        differences[key] = primary[key];
+        primaryDifferences[key] = primary[key];
+        secondaryDifferences[key] = secondary[key];
       }
     }
   }
-  return differences;
+  return { primary: primaryDifferences, secondary: secondaryDifferences };
 }
 
 export function cleanDate(ms: number | Date): string | null {

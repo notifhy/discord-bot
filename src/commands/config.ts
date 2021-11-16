@@ -43,7 +43,7 @@ export const properties: CommandProperties = {
 };
 
 export const execute: CommandExecute = async (interaction: CommandInteraction): Promise<void> => {
-  const responseEmbed = new BetterEmbed({ color: '#7289DA', interaction: interaction, footer: null });
+  const responseEmbed = new BetterEmbed({ color: '#7289DA', footer: interaction });
   const rawConfig = await SQLiteWrapper.queryGet<RawConfig>({
     query: 'SELECT blockedUsers, devMode, enabled FROM config WHERE rowid = 1',
   });

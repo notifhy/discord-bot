@@ -18,7 +18,7 @@ process.on('uncaughtException', error => {
 const client = new Client({
   intents: [Intents.FLAGS.GUILDS],
   allowedMentions: {
-    parse: ['users', 'roles'],
+    parse: ['users'],
     repliedUser: true,
   },
   presence: {

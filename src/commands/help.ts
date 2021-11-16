@@ -43,7 +43,7 @@ export const execute: CommandExecute = async (interaction: CommandInteraction, {
 
 async function information(interaction: CommandInteraction, userData: UserData) {
   const locale = interaction.client.regionLocales.locale(userData.language).commands.help;
-  const informationEmbed = new BetterEmbed({ color: '#7289DA', interaction: interaction, footer: null })
+  const informationEmbed = new BetterEmbed({ color: '#7289DA', footer: interaction })
     .setTitle(locale.information.title)
     .setDescription(locale.information.description);
 
@@ -55,7 +55,7 @@ async function specific(interaction: CommandInteraction, userData: UserData) {
   const replace = interaction.client.regionLocales.replace;
   const commandArg: string = interaction.options.getString('command') as string;
   const command: SlashCommand | undefined = interaction.client.commands.get(commandArg);
-  const commandSearchEmbed = new BetterEmbed({ color: '#7289DA', interaction: interaction, footer: null });
+  const commandSearchEmbed = new BetterEmbed({ color: '#7289DA', footer: interaction });
 
   if (command === undefined) {
     commandSearchEmbed
@@ -105,7 +105,7 @@ async function commands(interaction: CommandInteraction, userData: UserData) {
   const locale = interaction.client.regionLocales.locale(userData.language).commands.help;
   const replace = interaction.client.regionLocales.replace;
   const commandsCollection = interaction.client.commands.filter(command => command.properties.ownerOnly === false);
-  const allCommandsEmbed = new BetterEmbed({ color: '#7289DA', interaction: interaction, footer: null })
+  const allCommandsEmbed = new BetterEmbed({ color: '#7289DA', footer: interaction })
     .setTitle(locale.all.title)
     .setDescription(locale.all.description);
 

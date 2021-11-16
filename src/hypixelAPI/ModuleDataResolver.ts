@@ -59,20 +59,20 @@ export class ModuleDataResolver {
                   allowUndefined: false,
                 }) as UserAPIData;
 
-                const differences: Partial<CleanHypixelPlayerData> = compare(hypixelData, oldUserAPIData);
+                const differences = compare(hypixelData, oldUserAPIData);
+
+                const newUserAPIData = Object.assign(oldUserAPIData, differences, { lastUpdated: now });
 
                 await this.updateDatabase({
-                  differences,
-                  now,
-                  oldUserAPIData,
-                  user,
+                  differences: differences.primary,
+                  now: now,
+                  oldUserAPIData: oldUserAPIData,
                 });
 
                 const payLoad = {
-                  date: now,
+                  client: this.client,
                   differences: differences,
-                  discordID: user.discordID,
-                  hypixelPlayerData: hypixelData,
+                  userAPIData: newUserAPIData,
                 };
 
                 const modules = [];
@@ -112,12 +112,10 @@ export class ModuleDataResolver {
     differences,
     now,
     oldUserAPIData,
-    user,
   }: {
     differences: Partial<CleanHypixelPlayerData>,
     now: number,
     oldUserAPIData: UserAPIData,
-    user: UserAPIData
   }) {
     const userAPIDataUpdate: UserAPIDataUpdate = Object.assign({ lastUpdated: now }, differences);
 
@@ -130,7 +128,7 @@ export class ModuleDataResolver {
     }
 
     await SQLiteWrapper.updateUser<UserAPIDataUpdate, RawUserAPIData>({
-      discordID: user.discordID,
+      discordID: oldUserAPIData.discordID,
       table: 'api',
       data: userAPIDataUpdate,
     });

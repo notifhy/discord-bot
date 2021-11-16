@@ -18,7 +18,7 @@ export class ConstraintEmbed extends BetterEmbed {
     error: Error,
     interaction: CommandInteraction,
   }) {
-    super({ color: '#AA0000', interaction: interaction, footer: null });
+    super({ color: '#AA0000', footer: interaction });
     super.setTitle('User Failed Constraints')
       .addField('Constraint Type', error.message)
       .addField('User', `Tag: ${interaction.user.tag}\nID: ${interaction.user.id}`)
@@ -38,7 +38,7 @@ export class CommandErrorEmbed extends BetterEmbed {
     incidentID: string,
   }) {
     const stack = error.stack ?? (error.message || '\u200B');
-    super({ color: '#AA0000', interaction: null, footer: [`Incident ${incidentID}`] });
+    super({ color: '#AA0000', footer: { name: `Incident ${incidentID}` } });
     super.setTitle('Unexpected Error')
       .addField('User', `Tag: ${interaction.user.tag}\nID: ${interaction.user.id}`)
       .addField('Interaction', interaction.id)
@@ -56,7 +56,7 @@ export class UserCommandErrorEmbed extends BetterEmbed {
     interaction: CommandInteraction,
     incidentID: string,
   }) {
-    super({ color: '#AA0000', interaction: null, footer: [`Incident ${incidentID}`, interaction.user.displayAvatarURL({ dynamic: true })] });
+    super({ color: '#AA0000', footer: { name: `Incident ${incidentID}`, imageURL: interaction.user.displayAvatarURL({ dynamic: true }) } });
     super
       .setTitle('Oops!')
       .setDescription(`An error occurred while executing the command /${interaction.commandName}! This error has been automatically forwarded for review. It should be resolved within a reasonable amount of time. Sorry.`);
@@ -89,7 +89,7 @@ export class UserHTTPErrorEmbed extends BetterEmbed {
     interaction: CommandInteraction,
     incidentID: string,
   }) {
-    super({ color: '#AA0000', interaction: null, footer: [`Incident ${incidentID}`, interaction.user.displayAvatarURL({ dynamic: true })] });
+    super({ color: '#AA0000', footer: { name: `Incident ${incidentID}`, imageURL: interaction.user.displayAvatarURL({ dynamic: true }) } });
     super
       .setTitle('Oops!')
       .setDescription('An error has occurred while fetching data from Hypixel or its respective wrappers. This issue should resolve itself; check back later!')
@@ -110,7 +110,7 @@ export class HypixelAPIEmbed extends BetterEmbed {
     const { instanceUses, resumeAfter, keyPercentage } = moduleDataResolver.instance;
     const timeout = cleanLength(resumeAfter - Date.now());
 
-    super({ color: '#AA0000', interaction: null, footer: [`Incident ${incidentID}`] });
+    super({ color: '#AA0000', footer: { name: `Incident ${incidentID}` } });
 
     if (timeout !== null) super.setDescription('A timeout has been automatically applied.');
 
@@ -169,7 +169,7 @@ export class ErrorStackEmbed extends BetterEmbed {
     error: unknown,
     incidentID: string,
   }) {
-    super({ color: '#AA0000', interaction: null, footer: [`Incident ${incidentID}`] });
+    super({ color: '#AA0000', footer: { name: `Incident ${incidentID}` } });
     if (error instanceof Error && error.stack) {
       const nonStackLenth = `${error.name}: ${error.message}`.length;
       const stack = error.stack.slice(nonStackLenth, 1024 + nonStackLenth);

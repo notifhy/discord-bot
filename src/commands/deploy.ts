@@ -99,7 +99,7 @@ export const execute: CommandExecute = async (interaction: CommandInteraction): 
     );
   }
 
-  const successEmbed = new BetterEmbed({ color: '#7289DA', interaction: interaction, footer: null })
+  const successEmbed = new BetterEmbed({ color: '#7289DA', footer: interaction })
     .setTitle('Success!')
     .setDescription(JSON.stringify(commands).slice(0, 4096) ?? 'None');
 

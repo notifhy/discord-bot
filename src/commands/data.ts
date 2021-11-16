@@ -33,7 +33,7 @@ export const properties: CommandProperties = {
 export const execute: CommandExecute = async (interaction: CommandInteraction, { userData: userData }): Promise<void> => {
   const locale = interaction.client.regionLocales.locale(userData.language).commands.data;
   if (interaction.options.getSubcommand() === 'delete') {
-    const confirmEmbed = new BetterEmbed({ color: '#7289DA', interaction: interaction, footer: null })
+    const confirmEmbed = new BetterEmbed({ color: '#7289DA', footer: interaction })
       .setTitle(locale.delete.confirm.title)
       .setDescription(locale.delete.confirm.description);
 
@@ -72,12 +72,12 @@ export const execute: CommandExecute = async (interaction: CommandInteraction, {
       if (i.customId === 'true') {
         await SQLiteWrapper.deleteUser({ discordID: userData.discordID, table: 'users' });
         await SQLiteWrapper.deleteUser({ discordID: userData.discordID, table: 'api' });
-        const aborted = new BetterEmbed({ color: '#7289DA', interaction: interaction, footer: null })
+        const aborted = new BetterEmbed({ color: '#7289DA', footer: interaction })
           .setTitle(locale.delete.deleted.title)
           .setDescription(locale.delete.deleted.description);
         await i.update({ embeds: [aborted], components: [disabledRow] });
       } else {
-        const aborted = new BetterEmbed({ color: '#7289DA', interaction: interaction, footer: null })
+        const aborted = new BetterEmbed({ color: '#7289DA', footer: interaction })
           .setTitle(locale.delete.aborted.title)
           .setDescription(locale.delete.aborted.description);
         await i.update({ embeds: [aborted], components: [disabledRow] });

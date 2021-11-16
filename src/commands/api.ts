@@ -178,7 +178,7 @@ export const execute: CommandExecute = async (interaction: CommandInteraction): 
 async function stats(interaction: CommandInteraction) {
   const requestCreate = interaction.client.hypixelAPI;
   const { instanceUses, resumeAfter, keyPercentage } = requestCreate.instance;
-  const statsEmbed = new BetterEmbed({ color: '#7289DA', interaction: interaction, footer: null })
+  const statsEmbed = new BetterEmbed({ color: '#7289DA', footer: interaction })
     .addField('Enabled', interaction.client.config.enabled === true ? 'Yes' : 'No')
     .addField('Resuming In', cleanLength(resumeAfter - Date.now()) ?? 'Not applicable')
     .addField('Global Rate Limit', requestCreate.rateLimit.isGlobal === true ? 'Yes' : 'No')
@@ -197,7 +197,7 @@ async function stats(interaction: CommandInteraction) {
 async function set(interaction: CommandInteraction, category: string, type: string, value: number | null) {
   if (type === 'keyPercentage' && value !== null && value > 1) throw new Error('Too high, must be below 1');
   interaction.client.hypixelAPI[category as keyof ModuleDataResolver][type] = type === 'isGlobal' ? Boolean(value) : value;
-  const setEmbed = new BetterEmbed({ color: '#7289DA', interaction: interaction, footer: null })
+  const setEmbed = new BetterEmbed({ color: '#7289DA', footer: interaction })
     .setTitle('Updated Value!')
     .setDescription(`<RequestCreate>.${category}.${type} is now ${value}.`);
   await interaction.editReply({ embeds: [setEmbed] });
@@ -210,7 +210,7 @@ async function call(interaction: CommandInteraction, category: string, type: str
   } else {
     requestCreate[category][type](requestCreate, value ?? false); //value is used for reportAbortError's global field
   }
-  const callEmbed = new BetterEmbed({ color: '#7289DA', interaction: interaction, footer: null })
+  const callEmbed = new BetterEmbed({ color: '#7289DA', footer: interaction })
     .setTitle('Executed!')
     .setDescription(`Executed <RequestCreate>.${category}.${type}`);
   await stats(interaction);

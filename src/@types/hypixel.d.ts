@@ -51,16 +51,16 @@ export type HypixelAPIOk =
   | RawHypixelStatus
 
 export interface CleanHypixelPlayerData {
-  firstLogin: number | null | undefined;
-  lastLogin: number | null | undefined;
-  lastLogout: number | null | undefined;
-  version: string | null | undefined;
-  language: string | null | undefined;
-  lastClaimedReward: number | null | undefined;
-  rewardScore: number | null | undefined;
-  rewardHighScore: number | null | undefined;
-  totalDailyRewards: number | null | undefined;
-  totalRewards: number | null | undefined;
+  firstLogin: number | null;
+  lastLogin: number | null;
+  lastLogout: number | null;
+  version: string | null ;
+  language: string | null;
+  lastClaimedReward: number | null;
+  rewardScore: number | null;
+  rewardHighScore: number | null ;
+  totalDailyRewards: number | null;
+  totalRewards: number | null;
 }
 
 export interface CleanHypixelStatusData extends Required<RawHypixelStatusData> {}
@@ -87,7 +87,6 @@ interface Links {
 
 export interface Slothpixel {
   uuid: string;
-  username: string;
   'mc_version': string | null;
   'first_login': number | null;
   'last_login': number | null;

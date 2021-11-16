@@ -65,7 +65,7 @@ export default async ({
     shouldPing = isAbortError(error) === false || moduleDataResolver.instance.resumeAfter > Date.now();
   } else {
     console.error(`${formattedUnix({ date: true, utc: true })} | An error has occurred on incident ${incidentID} | Priority: High |`, error);
-    const knownInfo = new BetterEmbed({ color: '#AA0000', interaction: null, footer: [`Incident ${incidentID}`] })
+    const knownInfo = new BetterEmbed({ color: '#AA0000', footer: { name: `Incident ${incidentID}` } })
       .setDescription(JSON.stringify(error));
     incidentPayload.unshift(knownInfo);
   }

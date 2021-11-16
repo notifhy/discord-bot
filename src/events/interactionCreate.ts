@@ -69,7 +69,7 @@ export const execute = async (interaction: CommandInteraction): Promise<void> =>
 async function blockedConstraint(interaction: CommandInteraction, userData: UserData, blockedUsers: string[]) {
   const locale = interaction.client.regionLocales.locale(userData.language).constraints;
   if (blockedUsers.includes(interaction.user.id)) {
-    const blockedEmbed = new BetterEmbed({ color: '#AA0000', interaction: interaction, footer: null })
+    const blockedEmbed = new BetterEmbed({ color: '#AA0000', footer: interaction })
 			.setTitle(locale.blockedUsers.title)
 			.setDescription(locale.blockedUsers.description);
 		await interaction.editReply({ embeds: [blockedEmbed] });
@@ -80,7 +80,7 @@ async function blockedConstraint(interaction: CommandInteraction, userData: User
 async function devConstraint(interaction: CommandInteraction, userData: UserData, devMode: boolean) {
   const locale = interaction.client.regionLocales.locale(userData.language).constraints;
   if (devMode === true && ownerID.includes(interaction.user.id) === false) {
-    const devModeEmbed = new BetterEmbed({ color: '#AA0000', interaction: interaction, footer: null })
+    const devModeEmbed = new BetterEmbed({ color: '#AA0000', footer: interaction })
 			.setTitle(locale.devMode.title)
 			.setDescription(locale.devMode.description);
 		await interaction.editReply({ embeds: [devModeEmbed] });
@@ -91,7 +91,7 @@ async function devConstraint(interaction: CommandInteraction, userData: UserData
 async function ownerConstraint(interaction: CommandInteraction, userData: UserData, command: SlashCommand) {
   const locale = interaction.client.regionLocales.locale(userData.language).constraints;
   if (command.properties.ownerOnly === true && ownerID.includes(interaction.user.id) === false) {
-    const ownerEmbed = new BetterEmbed({ color: '#AA0000', interaction: interaction, footer: null })
+    const ownerEmbed = new BetterEmbed({ color: '#AA0000', footer: interaction })
       .setTitle(locale.owner.title)
      .setDescription(locale.owner.description);
    await interaction.editReply({ embeds: [ownerEmbed] });
@@ -102,7 +102,7 @@ async function ownerConstraint(interaction: CommandInteraction, userData: UserDa
 async function dmConstraint(interaction: CommandInteraction, userData: UserData, command: SlashCommand) {
   const locale = interaction.client.regionLocales.locale(userData.language).constraints;
   if (command.properties.noDM === true && interaction.guild === null) {
-    const dmEmbed = new BetterEmbed({ color: '#AA0000', interaction: interaction, footer: null })
+    const dmEmbed = new BetterEmbed({ color: '#AA0000', footer: interaction })
       .setTitle(locale.dm.title)
       .setDescription(locale.dm.description);
     await interaction.editReply({ embeds: [dmEmbed] });
@@ -125,7 +125,7 @@ async function cooldownConstraint(interaction: CommandInteraction, userData: Use
   //Adding 2500 milliseconds forces a minimum cooldown time of 2.5 seconds
   if (expirationTime && Date.now() + 2500 < expirationTime) {
     const timeLeft = expirationTime - Date.now();
-    const cooldownEmbed = new BetterEmbed({ color: '#AA0000', interaction: interaction, footer: null })
+    const cooldownEmbed = new BetterEmbed({ color: '#AA0000', footer: interaction })
       .setTitle(locale.cooldown.embed1.title)
       .setDescription(replace(locale.cooldown.embed1.description, {
         cooldown: command.properties.cooldown / 1000,
@@ -135,7 +135,7 @@ async function cooldownConstraint(interaction: CommandInteraction, userData: Use
     await interaction.editReply({ embeds: [cooldownEmbed] });
     await timeout(timeLeft);
 
-    const cooldownOverEmbed = new BetterEmbed({ color: '#00AA00', interaction: interaction, footer: null })
+    const cooldownOverEmbed = new BetterEmbed({ color: '#00AA00', footer: interaction })
       .setTitle(locale.cooldown.embed2.title)
       .setDescription(replace(locale.cooldown.embed2.description, {
         commandName: command.properties.name,
