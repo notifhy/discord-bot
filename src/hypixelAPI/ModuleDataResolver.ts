@@ -1,8 +1,8 @@
 import { Client } from 'discord.js';
-import { History, HistoryData, RawUserAPIData, UserAPIData, UserAPIDataUpdate } from '../@types/database';
+import { History, RawUserAPIData, UserAPIData, UserAPIDataUpdate } from '../@types/database';
 import { CleanHypixelPlayerData, CleanHypixelStatusData, HypixelAPIOk, RawHypixelPlayer, RawHypixelPlayerData, RawHypixelStatus, RawHypixelStatusData } from '../@types/hypixel';
 import { SQLiteWrapper } from '../database';
-import { timeout } from '../util/utility';
+import { compare, timeout } from '../util/utility';
 import { keyLimit } from '../../config.json';
 import { Abort, Instance, RateLimit, Unusual } from './ModuleRequestHelper';
 import { HypixelRequestCall } from './HypixelRequestCall';
@@ -59,15 +59,7 @@ export class ModuleDataResolver {
                   allowUndefined: false,
                 }) as UserAPIData;
 
-                const differences: HistoryData = {};
-
-                for (const key in hypixelData) {
-                  if (Object.prototype.hasOwnProperty.call(hypixelData, key) === true) {
-                    if (hypixelData[key as keyof typeof hypixelData] !== oldUserAPIData[key as keyof UserAPIData]) {
-                      (differences[key as keyof HistoryData] as unknown) = hypixelData[key as keyof typeof hypixelData];
-                    }
-                  }
-                }
+                const differences: Partial<CleanHypixelPlayerData> = compare(hypixelData, oldUserAPIData);
 
                 await this.updateDatabase({
                   differences,
@@ -122,25 +114,25 @@ export class ModuleDataResolver {
     oldUserAPIData,
     user,
   }: {
-    differences: HistoryData,
+    differences: Partial<CleanHypixelPlayerData>,
     now: number,
     oldUserAPIData: UserAPIData,
     user: UserAPIData
   }) {
-    const newUserAPIData: UserAPIDataUpdate = Object.assign({ lastUpdated: now }, differences);
+    const userAPIDataUpdate: UserAPIDataUpdate = Object.assign({ lastUpdated: now }, differences);
 
     if (Object.keys(differences).length > 0) {
       const historyUpdate: History = Object.assign({ date: now }, differences);
       const history: History[] = oldUserAPIData.history;
       history.unshift(historyUpdate);
       history.splice(250);
-      Object.assign(newUserAPIData, { history: history });
+      Object.assign(userAPIDataUpdate, { history: history });
     }
 
-    await SQLiteWrapper.updateUser<UserAPIDataUpdate, RawUserAPIData, UserAPIData>({
+    await SQLiteWrapper.updateUser<UserAPIDataUpdate, RawUserAPIData>({
       discordID: user.discordID,
       table: 'api',
-      data: newUserAPIData,
+      data: userAPIDataUpdate,
     });
   }
 

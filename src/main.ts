@@ -1,4 +1,4 @@
-import type { ClientEvents, SlashCommand } from './@types/client';
+import type { ClientEvents, Config, SlashCommand } from './@types/client';
 import { Client, Collection, Intents } from 'discord.js';
 import { discordAPIkey as token } from '../config.json';
 import * as fs from 'fs/promises';
@@ -59,15 +59,19 @@ client.regionLocales = new RegionLocales();
     else client.once(name, parameters => callExecute(parameters));
   }
 
-  const config = await SQLiteWrapper.queryGet({
+  const rawConfig = await SQLiteWrapper.queryGet<RawConfig>({
     query: 'SELECT * FROM config WHERE rowid = 1',
-  }) as RawConfig;
+  });
+
+  const config = SQLiteWrapper.JSONize<RawConfig, Config>({
+    input: rawConfig,
+  });
 
   client.config = {
     baseURL: config.baseURL,
-    blockedUsers: JSON.parse(config.blockedUsers),
-    devMode: Boolean(config.devMode),
-    enabled: Boolean(config.enabled),
+    blockedUsers: config.blockedUsers,
+    devMode: config.devMode,
+    enabled: config.enabled,
     uses: config.uses,
   };
 

@@ -1,30 +1,18 @@
+import type { CleanHypixelPlayerData } from './hypixel';
+
 export interface BaseUserData {
   discordID: string;
 }
 
-export interface HistoryData {
-  firstLogin?: number;
-  lastLogin?: number;
-  lastLogout?: number;
-  version?: string;
-  language?: string;
-  mostRecentGameType?: string;
-  lastClaimedReward?: number;
-  rewardScore?: number;
-  rewardHighScore?: number;
-  totalRewards?: number;
-  totalDailyRewards?: number;
-}
-
-export interface History extends HistoryData {
+export interface History extends Partial<CleanHypixelPlayerData> {
   date: number;
 }
 
 export interface RawConfig {
   baseURL: string;
   blockedUsers: string;
-  devMode: number;
-  enabled: number;
+  devMode: string;
+  enabled: string;
   uses: number;
 }
 
@@ -73,15 +61,24 @@ export interface UserAPIData extends BaseUserData{
   history: History[];
 }
 
+export interface RawUserDataUpdate extends Partial<RawUserData> {}
+export interface RawUserAPIDataUpdate extends Partial<RawUserAPIData> {}
+
 export interface UserDataUpdate extends Partial<UserData> {}
 export interface UserAPIDataUpdate extends Partial<UserAPIData> {}
 
 /*
 Module Specifics
 */
-export interface FriendModule extends BaseUserData {
-  enabled: number;
+export interface RawFriendModule extends BaseUserData {
+  enabled: string;
   channel: string;
 }
 
+export interface FriendModule extends BaseUserData {
+  enabled: boolean;
+  channel: string;
+}
+
+export interface RawFriendModuleUpdate extends Partial<RawFriendModule> {}
 export interface FriendModuleUpdate extends Partial<FriendModule> {}

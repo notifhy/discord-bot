@@ -1,4 +1,4 @@
-import type { FriendModule, HistoryData, UserAPIData, UserData } from '../@types/database';
+import type { FriendModule, UserAPIData, UserData } from '../@types/database';
 import { CleanHypixelPlayerData } from '../@types/hypixel';
 import { SQLiteWrapper } from '../database';
 
@@ -13,7 +13,7 @@ export const execute = async ({
   hypixelPlayerData,
 }: {
   date: number,
-  differences: HistoryData,
+  differences: Partial<CleanHypixelPlayerData>,
   discordID: string,
   hypixelPlayerData: CleanHypixelPlayerData
 }): Promise<void> => {

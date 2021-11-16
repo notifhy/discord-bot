@@ -7,41 +7,41 @@ import { formattedUnix } from './util/utility';
 //TODO: Fix "any" after the rest is done
 
 export class SQLiteWrapper {
-  static queryGet({
+  static queryGet<Output>({
     query,
     allowUndefined = false,
   }: {
     query: string,
     allowUndefined?: boolean,
-  }): Promise<unknown> {
+  }): Promise<Output> {
     /*
     const string = '2';
     const output = await queryGet(`SELECT tests FROM test WHERE tests = '${string}' `);
     SELECT * FROM ${table}
     */
-    return new Promise<unknown>(resolve => {
+    return new Promise<Output>(resolve => {
       const db = new Database('../database.db');
-      const data: unknown = db.prepare(query).get();
+      const data: Output = db.prepare(query).get() as Output;
       db.close();
       if (allowUndefined === false && data === undefined) {
         throw new SQLiteError(`The query ${query} returned an undefined value`);
       }
-      return resolve(data);
+      return resolve(data as Output);
     });
   }
 
-  static queryGetAll({
+  static queryGetAll<Output>({
     query,
   }: {
     query: string,
-  }): Promise<unknown> {
+  }): Promise<Output[]> {
     /*
     const string = '2';
     const output = await queryGetAll(`SELECT tests FROM test WHERE tests = '${string}' `);
     */
-    return new Promise<unknown>(resolve => {
+    return new Promise<Output[]>(resolve => {
       const db = new Database('../database.db');
-      const data: unknown = db.prepare(query).all();
+      const data: Output[] = db.prepare(query).all() as Output[];
       db.close();
       return resolve(data);
     });
@@ -72,68 +72,62 @@ export class SQLiteWrapper {
     discordID,
     table,
     allowUndefined,
-    autoJSON = true,
     columns,
   }: {
     discordID: string,
     table: string,
     allowUndefined: boolean,
-    autoJSON?: boolean,
     columns: string[],
   }): Promise<RawData | CleanData | undefined> {
     const query = `SELECT ${columns?.join(', ') ?? '*'} FROM ${table} WHERE discordID = '${discordID}'`;
-    const data = await this.queryGet({ query: query, allowUndefined: allowUndefined }) as RawData | undefined;
+    const data = await this.queryGet<RawData | undefined>({ query: query, allowUndefined: allowUndefined });
     if (data === undefined) return undefined;
-    return autoJSON === true ? this.databaseToJSON({ input: data }) as CleanData : data as unknown as RawData;
+
+    return this.JSONize<RawData, CleanData>({ input: data });
   }
 
   static async getAllUsers<RawData, CleanData>({
     table,
     columns,
-    autoJSON = true,
   }: {
     table: string
     columns: string[]
-    autoJSON?: boolean,
-  }): Promise<RawData[] | CleanData[]> {
+  }): Promise<CleanData[]> {
     const query = `SELECT ${columns?.join(', ') ?? '*'} FROM ${table}`;
-    const userData = await this.queryGetAll({ query: query }) as RawData[];
-    if (autoJSON === true) userData.map(data => this.databaseToJSON({ input: data }));
+    const userData = await this.queryGetAll<RawData | undefined>({ query: query });
+    userData.map(data => this.JSONize<RawData | undefined, CleanData>({ input: data }));
     return userData as unknown as CleanData[];
   }
 
-  static async newUser<Input extends BaseUserData, RawData = void, CleanData = void>({
+  static async newUser<Input extends BaseUserData, RawData, CleanData = void>({
     table,
-    autoJSON = true,
     returnNew = false,
     data,
   }: {
     table: string,
-    autoJSON?: boolean,
     returnNew?: boolean,
     data: Input,
   }): Promise<void | RawData | CleanData> {
     const values = [];
     for (let i = 0; i < Object.values(data).length; i += 1) values.push('?');
-    const dataArray = Object.values(data).map(value => value !== null && typeof value === 'object' ? JSON.stringify(value) : value);
-    await this.queryRun({ query: `INSERT INTO ${table} VALUES(${values})`, data: dataArray });
+    const dataArray = this.unJSONize<Input, RawData>({ input: data });
+    await this.queryRun({ query: `INSERT INTO ${table} VALUES(${values})`, data: Object.values(dataArray) });
     if (returnNew === false) return;
+
     const returnQuery = `SELECT * FROM ${table} WHERE discordID = '${data.discordID}'`;
-    const newUserData = await this.queryGet({ query: returnQuery, allowUndefined: false }) as RawData;
+    const newUserData = await this.queryGet<RawData>({ query: returnQuery, allowUndefined: false });
     console.log(`${formattedUnix({ date: true, utc: true })} | ${data.discordID} added to ${table}`);
-    return autoJSON === true ? this.databaseToJSON({ input: newUserData }) as CleanData : newUserData as RawData; //eslint-disable-line consistent-return
+    return this.JSONize<RawData, CleanData>({ input: newUserData }); //eslint-disable-line consistent-return
   }
 
-  static async updateUser<Input, RawData = void, CleanData = void>({
+  static async updateUser<Input, RawData, CleanData = void>({
     discordID,
     table,
-    autoJSON,
     returnNew,
     data,
   }: {
     discordID: string,
     table: string,
-    autoJSON?: boolean,
     returnNew?: boolean,
     data: Input,
   }): Promise<void | RawData | CleanData | undefined> {
@@ -143,12 +137,14 @@ export class SQLiteWrapper {
         setQuery.push(`${key} = ?`);
       }
     }
-    const dataArray = Object.values(data).map(value => value !== null && typeof value === 'object' ? JSON.stringify(value) : value);
-    await this.queryRun({ query: `UPDATE ${table} SET ${setQuery.join(', ')} WHERE discordID = '${discordID}'`, data: dataArray });
+
+    const dataArray = this.unJSONize<Input, RawData>({ input: data });
+    await this.queryRun({ query: `UPDATE ${table} SET ${setQuery.join(', ')} WHERE discordID = '${discordID}'`, data: Object.values(dataArray) });
     if (returnNew === false) return;
+
     const returnQuery = `SELECT * FROM ${table} WHERE discordID = '${discordID}'`;
-    const newUserData = await this.queryGet({ query: returnQuery, allowUndefined: false }) as RawData;
-    return autoJSON === true ? this.databaseToJSON({ input: newUserData }) as CleanData : newUserData as RawData; //eslint-disable-line consistent-return
+    const newUserData = await this.queryGet<RawData>({ query: returnQuery, allowUndefined: false });
+    return this.JSONize<RawData, CleanData>({ input: newUserData }); //eslint-disable-line consistent-return
   }
 
   static async deleteUser({
@@ -163,31 +159,47 @@ export class SQLiteWrapper {
     //console.log(`${formattedUnix({ date: true, utc: true })} | ${discordID} data deleted from ${table}`);
   }
 
-  //Note that this only checks one level deep
-  static databaseToJSON<rawInput, output>({
+  //Taken from https://stackoverflow.com/a/52799327 under CC BY-SA 4.0
+  //Takes an input and tests for a JSON structure (excluding primitives)
+  static JSONize<RawInput, Output>({
     input,
   }: {
-    input: rawInput,
-  }): output {
+    input: RawInput,
+  }): Output {
     for (const key in input) {
-      (input[key as keyof rawInput] as unknown) = this.tryJSON<rawInput, output>(input[key as keyof rawInput]);
+      if (typeof input[key] !== 'string') continue;
+      try {
+        const JSONized = JSON.parse(String(input[key])) as Output[keyof Output];
+        const type = Object.prototype.toString.call(JSONized);
+        if (type === '[object Object]' ||
+          type === '[object Array]' ||
+          type === '[object Boolean]') {
+          (input[key as keyof RawInput] as unknown) = JSONized;
+        }
+      } catch {}
     }
-    return input as unknown as output;
+
+    return input as unknown as Output;
   }
 
   //Taken from https://stackoverflow.com/a/52799327 under CC BY-SA 4.0
   //Takes an input and tests for a JSON structure (excluding primitives)
-  static tryJSON<Input, Output>(input: Input[keyof Input]): typeof input | Output[keyof Output] {
-    if (typeof input !== 'string') return input;
-    try {
-        const JSONized = JSON.parse(input) as Input[keyof Input];
-        const type = Object.prototype.toString.call(JSONized);
-        return type === '[object Object]' ||
-          type === '[object Array]' ?
-          JSONized as unknown as Output[keyof Output] :
-          input as unknown as Output[keyof Output];
-    } catch (err) {
-        return input;
+  static unJSONize<Input, RawOutput>({
+    input,
+  }: {
+    input: Input,
+  }): RawOutput {
+    for (const key in input) {
+      try {
+        const type = Object.prototype.toString.call(input[key]);
+      if (type === '[object Object]' ||
+        type === '[object Array]' ||
+        type === '[object Boolean]') {
+          (input[key as keyof Input] as unknown) = JSON.stringify(input[key]);
+        }
+      } catch {}
     }
+
+    return input as unknown as RawOutput;
   }
 }

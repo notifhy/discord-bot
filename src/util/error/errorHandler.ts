@@ -1,4 +1,4 @@
-import { Interaction, MessageEmbed, MessageEmbedOptions } from 'discord.js';
+import { Interaction, MessageEmbed } from 'discord.js';
 import { fatalWebhook, hypixelAPIWebhook, nonFatalWebhook, ownerID } from '../../../config.json';
 import { ModuleDataResolver } from '../../hypixelAPI/ModuleDataResolver';
 import { BetterEmbed, formattedUnix, sendWebHook } from '../utility';

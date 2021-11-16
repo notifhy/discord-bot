@@ -92,7 +92,7 @@ export const execute: CommandExecute = async (interaction: CommandInteraction, {
     return;
   }
 
-  await SQLiteWrapper.newUser<UserAPIData, RawUserAPIData, UserAPIData>({
+  await SQLiteWrapper.newUser<UserAPIData, RawUserAPIData>({
     table: 'api',
     data: {
       discordID: interaction.user.id,

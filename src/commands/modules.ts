@@ -1,10 +1,11 @@
 import type { CommandExecute, CommandProperties } from '../@types/client';
-import { ButtonInteraction, CommandInteraction, Message, MessageActionRow, MessageActionRowComponentResolvable, MessageButton, MessageButtonStyleResolvable, MessageComponentInteraction, MessageSelectMenu, MessageSelectOptionData, SelectMenuInteraction } from 'discord.js';
+import { ButtonInteraction, CommandInteraction, Message, MessageActionRow, MessageButton, MessageComponentInteraction, MessageSelectMenu, SelectMenuInteraction } from 'discord.js';
 import { BetterEmbed } from '../util/utility';
-import type { FriendModule, FriendModuleUpdate, UserAPIData, UserData } from '../@types/database';
+import type { FriendModule, FriendModuleUpdate, RawFriendModuleUpdate, UserData } from '../@types/database';
 import { SQLiteWrapper } from '../database';
 import { AssetModules } from '../@types/modules';
 import { Locale, ModuleButtons } from '../@types/locales';
+import { ToggleButtons } from '../util/structures';
 
 export const properties: CommandProperties = {
   name: 'modules',
@@ -87,6 +88,8 @@ async function friend(interaction: CommandInteraction, { userData }: { userData:
   });
 
   let selected: string;
+  let component: MessageActionRow;
+
   collector.on('collect', async (i: SelectMenuInteraction | ButtonInteraction) => {
     const userFriendData = await SQLiteWrapper.getUser<FriendModule, FriendModule>({
       discordID: userData.discordID,
@@ -104,21 +107,14 @@ async function friend(interaction: CommandInteraction, { userData }: { userData:
         .addField(locale.menu[selected as keyof typeof locale['menu']].label,
           locale.menu[selected as keyof typeof locale['menu']].longDescription);
 
-      let component: MessageActionRow;
-
       switch (selected) {
         case 'toggle': {
-          const enableButton = new MessageButton()
-            .setCustomId('enable')
-            .setStyle('SUCCESS')
-            .setLabel(locale.menu.toggle.enableButton)
-            .setDisabled(Boolean(userFriendData.channel) === false || Boolean(userFriendData.enabled));
-          const disableButton = new MessageButton()
-            .setCustomId('disable')
-            .setStyle('DANGER')
-            .setLabel(locale.menu.toggle.disableButton)
-            .setDisabled(Boolean(userFriendData.enabled) === false); //Flips boolean
-          component = new MessageActionRow().setComponents(enableButton, disableButton);
+          component = new ToggleButtons({
+            allDisabled: !userFriendData.channel,
+            enabled: userFriendData.enabled,
+            enabledLabel: locale.menu.toggle.enableButton,
+            disabledLabel: locale.menu.toggle.disableButton,
+          });
           break;
         }
         case 'channel': {
@@ -140,15 +136,32 @@ async function friend(interaction: CommandInteraction, { userData }: { userData:
     } else {
       // eslint-disable-next-line no-lonely-if
       if (i.customId === 'enable' || i.customId === 'disable') {
-        userFriendData.enabled = Number(Boolean(userFriendData.enabled) === false);
-        await SQLiteWrapper.updateUser<FriendModuleUpdate>({
+        userFriendData.enabled = userFriendData.enabled === false;
+        component = new ToggleButtons({
+          enabled: userFriendData.enabled,
+          enabledLabel: locale.menu.toggle.enableButton,
+          disabledLabel: locale.menu.toggle.disableButton,
+        });
+        await SQLiteWrapper.updateUser<FriendModuleUpdate, RawFriendModuleUpdate>({
           discordID: userFriendData.discordID,
           table: 'friend',
           data: {
             enabled: userFriendData.enabled,
           },
         });
+        await i.update({ components: [mainMenu({ defaultV: selected }), component!] });
       }
     }
+  });
+
+  collector.on('end', async (_collected, _reason) => {
+    const fetchedReply = await interaction.fetchReply() as Message;
+    fetchedReply.components.forEach(value0 => {
+      value0.components.forEach((_value1, index1, array1) => {
+        array1[index1].disabled = true;
+      });
+    });
+
+    await interaction.editReply({ components: fetchedReply.components });
   });
 };

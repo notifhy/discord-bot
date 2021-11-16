@@ -2,7 +2,6 @@ import { CommandInteraction, MessageEmbed } from 'discord.js';
 import type { AbortError } from '../../@types/error';
 import { BetterEmbed, cleanLength, cleanRound, formattedUnix, sendWebHook } from '../utility';
 import { fatalWebhook, keyLimit, ownerID } from '../../../config.json';
-import { HypixelRequestCall } from '../../hypixelAPI/HypixelRequestCall';
 import { RateLimitError } from './RateLimitError';
 import { HTTPError } from './HTTPError';
 import { FetchError } from 'node-fetch';

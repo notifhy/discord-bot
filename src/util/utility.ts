@@ -59,6 +59,18 @@ export class BetterEmbed extends MessageEmbed {
   }
 }
 
+export function compare<Primary, Secondary extends Primary>(primary: Primary, secondary: Secondary) {
+  const differences: Primary = {} as Primary;
+  for (const key in primary) {
+    if (Object.prototype.hasOwnProperty.call(primary, key) === true) {
+      if (primary[key] !== secondary[key]) {
+        differences[key] = primary[key];
+      }
+    }
+  }
+  return differences;
+}
+
 export function cleanDate(ms: number | Date): string | null {
   const newDate = new Date(ms);
   if (!ms || ms < 0 || Object.prototype.toString.call(newDate) !== '[object Date]') return null;

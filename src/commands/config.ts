@@ -44,45 +44,46 @@ export const properties: CommandProperties = {
 
 export const execute: CommandExecute = async (interaction: CommandInteraction): Promise<void> => {
   const responseEmbed = new BetterEmbed({ color: '#7289DA', interaction: interaction, footer: null });
-  const config = await SQLiteWrapper.queryGet({
+  const rawConfig = await SQLiteWrapper.queryGet<RawConfig>({
     query: 'SELECT blockedUsers, devMode, enabled FROM config WHERE rowid = 1',
-    allowUndefined: false,
-  }) as RawConfig;
+  });
+
+  const config = SQLiteWrapper.JSONize<RawConfig, Config>({
+    input: rawConfig,
+  });
 
   if (interaction.options.getSubcommand() === 'api') { //Persists across restarts
-    config.enabled = Number(!Boolean(config.enabled));
+    config.enabled = !config.enabled;
     interaction.client.config.enabled = Boolean(config.enabled);
     responseEmbed.setTitle(`API State Updated!`);
-    responseEmbed.setDescription(`API commands and functions are now ${Boolean(config.enabled) === true ? 'on' : 'off'}!`);
+    responseEmbed.setDescription(`API commands and functions are now ${config.enabled === true ? 'on' : 'off'}!`);
   } else if (interaction.options.getSubcommand() === 'block') {
     const user = interaction.options.getString('user') as string;
-    const blockedUsers = JSON.parse(config.blockedUsers) as string[];
-    const blockedUserIndex = blockedUsers.indexOf(user);
+    const blockedUserIndex = config.blockedUsers.indexOf(user);
     if (blockedUserIndex === -1) {
-      blockedUsers.push(user);
+      config.blockedUsers.push(user);
       responseEmbed.setTitle(`User Added`);
       responseEmbed.setDescription(`${user} was added to the blacklist!`);
     } else {
-      blockedUsers.splice(blockedUserIndex, 1);
+      config.blockedUsers.splice(blockedUserIndex, 1);
       responseEmbed.setTitle(`User Removed`);
       responseEmbed.setDescription(`${user} was removed from the blacklist!`);
     }
-    config.blockedUsers = JSON.stringify(blockedUsers);
-    interaction.client.config.blockedUsers = blockedUsers;
+    interaction.client.config.blockedUsers = config.blockedUsers;
   } else if (interaction.options.getSubcommand() === 'devmode') {
-    config.devMode = Number(!Boolean(config.devMode));
-    interaction.client.config.devMode = Boolean(config.devMode);
+    config.devMode = !config.devMode;
+    interaction.client.config.devMode = !config.devMode;
     responseEmbed.setTitle(`Developer Mode Updated`);
     responseEmbed.setDescription(`Developer Mode is now ${Boolean(config.devMode) === true ? 'on' : 'off'}!`);
   }
 
+  const newRawConfig = SQLiteWrapper.unJSONize<Config, RawConfig>({
+    input: config,
+  });
+
   await SQLiteWrapper.queryRun({
     query: 'UPDATE config set blockedUsers = ?, devMode = ?, enabled = ? WHERE rowid = 1',
-    data: [
-      config.blockedUsers,
-      config.devMode,
-      config.enabled,
-    ],
+    data: Object.values(newRawConfig),
   });
   await interaction.editReply({ embeds: [responseEmbed] });
 };
