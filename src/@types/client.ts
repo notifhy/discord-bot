@@ -1,6 +1,6 @@
 import type { Collection, CommandInteraction, Client as DiscordClient } from 'discord.js';
-import { RegionLocales } from '../../locales/localesHandler';
 import { ModuleDataResolver } from '../hypixelAPI/ModuleDataResolver';
+import { RegionLocales } from '../../locales/localesHandler';
 import { UserAPIData, UserData } from './database';
 
 export interface WebHookConfig {

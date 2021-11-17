@@ -1,10 +1,16 @@
-import Database from 'better-sqlite3';
-import { BaseUserData, RawUserAPIData, RawUserData, UserAPIData, UserAPIDataUpdate, UserData, UserDataUpdate } from './@types/database';
-import { SQLiteError } from './util/error/SQLiteError';
+import { BaseUserData } from './@types/database';
 import { formattedUnix } from './util/utility';
+import { SQLiteError } from './util/error/SQLiteError';
+import Database from 'better-sqlite3';
 
 // eslint-disable-next-line no-warning-comments
 //TODO: Fix "any" after the rest is done
+
+type Table =
+   | 'users'
+   | 'api'
+   | 'friends'
+   | 'rewards'
 
 export class SQLiteWrapper {
   static queryGet<Output>({
@@ -75,7 +81,7 @@ export class SQLiteWrapper {
     columns,
   }: {
     discordID: string,
-    table: string,
+    table: Table,
     allowUndefined: boolean,
     columns: string[],
   }): Promise<RawData | CleanData | undefined> {
@@ -90,7 +96,7 @@ export class SQLiteWrapper {
     table,
     columns,
   }: {
-    table: string
+    table: Table
     columns: string[]
   }): Promise<CleanData[]> {
     const query = `SELECT ${columns?.join(', ') ?? '*'} FROM ${table}`;
@@ -104,7 +110,7 @@ export class SQLiteWrapper {
     returnNew = false,
     data,
   }: {
-    table: string,
+    table: Table,
     returnNew?: boolean,
     data: Input,
   }): Promise<void | RawData | CleanData> {
@@ -127,7 +133,7 @@ export class SQLiteWrapper {
     data,
   }: {
     discordID: string,
-    table: string,
+    table: Table,
     returnNew?: boolean,
     data: Input,
   }): Promise<void | RawData | CleanData | undefined> {
@@ -152,7 +158,7 @@ export class SQLiteWrapper {
     table,
   }: {
     discordID: string,
-    table: string,
+    table: Table,
   }): Promise<void> {
     const query = `DELETE FROM ${table} WHERE discordID = ?`;
     await this.queryRun({ query: query, data: [discordID] });

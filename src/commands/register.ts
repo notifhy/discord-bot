@@ -1,11 +1,11 @@
 import type { CommandExecute, CommandProperties } from '../@types/client';
-import { ColorResolvable, CommandInteraction, Message } from 'discord.js';
 import { BetterEmbed } from '../util/utility';
-import { Request } from '../hypixelAPI/Request';
+import { CommandInteraction } from 'discord.js';
 import { HTTPError } from '../util/error/HTTPError';
+import { RawUserAPIData, UserAPIData } from '../@types/database';
+import { Request } from '../hypixelAPI/Request';
 import { Slothpixel } from '../@types/hypixel';
 import { SQLiteWrapper } from '../database';
-import { RawUserAPIData, UserAPIData } from '../@types/database';
 
 export const properties: CommandProperties = {
   name: 'register',

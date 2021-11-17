@@ -1,7 +1,7 @@
 import type { SlashCommand } from './@types/client';
-import { clientID, discordAPIkey as token } from '../config.json';
-import { Routes } from 'discord-api-types/v9';
+import { clientID, discordAPIkey } from '../config.json';
 import { REST } from '@discordjs/rest';
+import { Routes } from 'discord-api-types/v9';
 import fs from 'fs';
 
 const commands: any = [];
@@ -17,7 +17,7 @@ const commandFiles = fs.readdirSync('./commands').filter(file => file.endsWith('
 
 		console.log('Started refreshing application (/) commands.');
 
-		await new REST({ version: '9' }).setToken(token).put(
+		await new REST({ version: '9' }).setToken(discordAPIkey).put(
 			Routes.applicationGuildCommands(clientID, '873000534955667496'),
 			{ body: commands },
 		);

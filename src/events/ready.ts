@@ -1,5 +1,5 @@
-import type { EventProperties } from '../@types/client';
 import type { Client } from 'discord.js';
+import type { EventProperties } from '../@types/client';
 import { SQLiteWrapper } from '../database';
 import errorHandler from '../util/error/errorHandler';
 

@@ -57,8 +57,8 @@
       "sort-imports": ["error", {
         "ignoreCase": true,
         "ignoreDeclarationSort": true,
-        "ignoreMemberSort": false,
-        "memberSyntaxSortOrder": ["none", "multiple", "single", "all"],
+        "ignoreMemberSort": true,
+        "memberSyntaxSortOrder": ["multiple", "single", "all", "none"],
         "allowSeparatedGroups": true
       }],
       "no-nested-ternary": "off",

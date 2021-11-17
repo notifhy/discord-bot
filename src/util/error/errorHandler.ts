@@ -1,10 +1,10 @@
-import { Interaction, MessageEmbed } from 'discord.js';
-import { fatalWebhook, hypixelAPIWebhook, nonFatalWebhook, ownerID } from '../../../config.json';
-import { ModuleDataResolver } from '../../hypixelAPI/ModuleDataResolver';
 import { BetterEmbed, formattedUnix, sendWebHook } from '../utility';
-import { ConstraintError } from './ConstraintError';
 import { CommandErrorEmbed, ConstraintEmbed, ErrorStackEmbed, HTTPErrorEmbed, HypixelAPIEmbed, isAbortError, replyToError, UserCommandErrorEmbed, UserHTTPErrorEmbed } from './helper';
+import { ConstraintError } from './ConstraintError';
+import { fatalWebhook, hypixelAPIWebhook, nonFatalWebhook, ownerID } from '../../../config.json';
 import { HTTPError } from './HTTPError';
+import { Interaction, MessageEmbed } from 'discord.js';
+import { ModuleDataResolver } from '../../hypixelAPI/ModuleDataResolver';
 import { RateLimitError } from './RateLimitError';
 
 export default async ({

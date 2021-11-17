@@ -1,14 +1,14 @@
-import { Client } from 'discord.js';
-import { History, RawUserAPIData, UserAPIData, UserAPIDataUpdate } from '../@types/database';
-import { CleanHypixelPlayerData, CleanHypixelStatusData, HypixelAPIOk, RawHypixelPlayer, RawHypixelPlayerData, RawHypixelStatus, RawHypixelStatusData } from '../@types/hypixel';
-import { SQLiteWrapper } from '../database';
-import { compare, timeout } from '../util/utility';
-import { keyLimit } from '../../config.json';
 import { Abort, Instance, RateLimit, Unusual } from './ModuleRequestHelper';
+import { Client } from 'discord.js';
+import { CleanHypixelPlayerData, CleanHypixelStatusData, HypixelAPIOk, RawHypixelPlayer, RawHypixelPlayerData, RawHypixelStatus, RawHypixelStatusData } from '../@types/hypixel';
+import { compare, timeout } from '../util/utility';
+import { History, RawUserAPIData, UserAPIData, UserAPIDataUpdate } from '../@types/database';
 import { HypixelRequestCall } from './HypixelRequestCall';
-import * as friendModule from '../modules/friend';
-import * as defenderModule from '../modules/defender';
+import { keyLimit } from '../../config.json';
+import { SQLiteWrapper } from '../database';
 import errorHandler from '../util/error/errorHandler';
+import * as friendModule from '../modules/friends';
+import * as defenderModule from '../modules/defender';
 
 export class ModuleDataResolver {
   [key: string]: any; //Not ideal, but I couldn't get anything else to work

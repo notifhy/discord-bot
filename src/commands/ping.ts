@@ -1,6 +1,6 @@
 import type { CommandExecute, CommandProperties } from '../@types/client';
-import { ColorResolvable, CommandInteraction, Message } from 'discord.js';
 import { BetterEmbed } from '../util/utility';
+import { ColorResolvable, CommandInteraction, Message } from 'discord.js';
 
 export const properties: CommandProperties = {
   name: 'ping',

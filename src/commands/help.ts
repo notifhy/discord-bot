@@ -1,6 +1,6 @@
 import type { CommandExecute, CommandProperties, SlashCommand } from '../@types/client';
-import { CommandInteraction } from 'discord.js';
 import { BetterEmbed } from '../util/utility';
+import { CommandInteraction } from 'discord.js';
 import { UserData } from '../@types/database';
 
 export const properties: CommandProperties = {

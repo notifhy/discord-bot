@@ -20,8 +20,7 @@ export interface RawUserData extends BaseUserData {
   language: string;
 }
 
-export interface RawUserAPIData extends CleanHypixelPlayerData {
-  discordID: string;
+export interface RawUserAPIData extends BaseUserData, CleanHypixelPlayerData {
   uuid: string;
   modules: string;
   lastUpdated: number;
@@ -48,15 +47,30 @@ export interface UserAPIDataUpdate extends Partial<UserAPIData> {}
 /*
 Module Specifics
 */
-export interface RawFriendModule extends BaseUserData {
+export interface RawFriendsModule extends BaseUserData {
   enabled: string;
   channel: string;
 }
 
-export interface FriendModule extends BaseUserData {
+export interface FriendsModule extends BaseUserData {
   enabled: boolean;
   channel: string;
 }
 
-export interface RawFriendModuleUpdate extends Partial<RawFriendModule> {}
-export interface FriendModuleUpdate extends Partial<FriendModule> {}
+export interface RawFriendsModuleUpdate extends Partial<RawFriendsModule> {}
+export interface FriendsModuleUpdate extends Partial<FriendsModule> {}
+
+export interface RawRewardsModule extends BaseUserData {
+  enabled: string;
+  alertTime: number;
+  claimBefore: number;
+}
+
+export interface RewardsModule extends BaseUserData {
+  enabled: boolean;
+  alertTime: number;
+  claimBefore: number;
+}
+
+export interface RawRewardsModuleUpdate extends Partial<RawRewardsModule> {}
+export interface RewardsModuleUpdate extends Partial<RewardsModule> {}

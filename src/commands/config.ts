@@ -1,9 +1,8 @@
 import type { CommandExecute, CommandProperties, Config } from '../@types/client';
-import { CommandInteraction } from 'discord.js';
 import { BetterEmbed } from '../util/utility';
-import * as fs from 'fs/promises';
-import { SQLiteWrapper } from '../database';
+import { CommandInteraction } from 'discord.js';
 import { RawConfig } from '../@types/database';
+import { SQLiteWrapper } from '../database';
 
 export const properties: CommandProperties = {
   name: 'config',

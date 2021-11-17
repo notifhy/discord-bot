@@ -1,12 +1,12 @@
-import { CommandInteraction, MessageEmbed } from 'discord.js';
 import type { AbortError } from '../../@types/error';
 import { BetterEmbed, cleanLength, cleanRound, formattedUnix, sendWebHook } from '../utility';
+import { CommandInteraction, MessageEmbed } from 'discord.js';
 import { fatalWebhook, keyLimit, ownerID } from '../../../config.json';
-import { RateLimitError } from './RateLimitError';
-import { HTTPError } from './HTTPError';
 import { FetchError } from 'node-fetch';
-import { ModuleDataResolver } from '../../hypixelAPI/ModuleDataResolver';
+import { HTTPError } from './HTTPError';
 import { HypixelAPIError } from '../../@types/hypixel';
+import { ModuleDataResolver } from '../../hypixelAPI/ModuleDataResolver';
+import { RateLimitError } from './RateLimitError';
 
 export const isAbortError = (error: any): error is AbortError => error?.name === 'AbortError';
 

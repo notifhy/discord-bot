@@ -1,8 +1,8 @@
 import type { CommandExecute, CommandProperties } from '../@types/client';
-import { ButtonInteraction, ColorResolvable, CommandInteraction, Message, MessageActionRow, MessageButton, MessageComponentInteraction } from 'discord.js';
-import { SQLiteWrapper } from '../database';
-import { RawUserAPIData, UserAPIData } from '../@types/database';
 import { BetterEmbed } from '../util/utility';
+import { ButtonInteraction, CommandInteraction, Message, MessageActionRow, MessageButton, MessageComponentInteraction } from 'discord.js';
+import { FriendsModule, RawFriendsModule, RawRewardsModule, RawUserAPIData, RewardsModule, UserAPIData } from '../@types/database';
+import { SQLiteWrapper } from '../database';
 
 export const properties: CommandProperties = {
   name: 'data',
@@ -91,9 +91,25 @@ export const execute: CommandExecute = async (interaction: CommandInteraction, {
       allowUndefined: true,
     }) as UserAPIData;
 
+    const friends = await SQLiteWrapper.getUser<RawFriendsModule, FriendsModule>({
+      discordID: userData.discordID,
+      table: 'friends',
+      columns: ['*'],
+      allowUndefined: true,
+    }) as FriendsModule;
+
+    const rewards = await SQLiteWrapper.getUser<RawRewardsModule, RewardsModule>({
+      discordID: userData.discordID,
+      table: 'rewards',
+      columns: ['*'],
+      allowUndefined: true,
+    }) as RewardsModule;
+
     const allUserData = {
       userData: userData,
       userAPIData: userAPIData,
+      friends: friends,
+      rewards: rewards,
     };
 
     await interaction.editReply({ files: [{

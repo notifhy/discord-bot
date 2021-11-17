@@ -1,4 +1,3 @@
-import type { HypixelAPIError } from '../../@types/hypixel';
 import type { Response } from 'node-fetch';
 
 export class HTTPError<JSON> extends Error {

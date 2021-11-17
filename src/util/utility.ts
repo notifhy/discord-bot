@@ -54,10 +54,11 @@ export class BetterEmbed extends MessageEmbed {
     super.setTimestamp();
 
     if (footer instanceof CommandInteraction) {
-      const avatar = footer.user.displayAvatarURL({ dynamic: true });
-      super.setFooter(`/${footer.commandName}`, avatar);
+      const interaction = footer;
+      const avatar = interaction.user.displayAvatarURL({ dynamic: true });
+      super.setFooter(`/${interaction.commandName}`, avatar);
     } else {
-      super.setFooter(footer.name, footer.name); //Footer should be turned into an object
+      super.setFooter(footer.name, footer.imageURL);
     }
   }
 }

@@ -1,10 +1,8 @@
 import type { CommandExecute, CommandProperties } from '../@types/client';
-import { ButtonInteraction, CommandInteraction, Message, MessageActionRow, MessageButton, MessageComponentInteraction, MessageSelectMenu, SelectMenuInteraction } from 'discord.js';
+import type { FriendsModule, FriendsModuleUpdate, RawFriendsModuleUpdate, UserData } from '../@types/database';
 import { BetterEmbed } from '../util/utility';
-import type { FriendModule, FriendModuleUpdate, RawFriendModuleUpdate, UserData } from '../@types/database';
+import { ButtonInteraction, CommandInteraction, Message, MessageActionRow, MessageComponentInteraction, MessageSelectMenu, SelectMenuInteraction } from 'discord.js';
 import { SQLiteWrapper } from '../database';
-import { AssetModules } from '../@types/modules';
-import { Locale, ModuleButtons } from '../@types/locales';
 import { ToggleButtons } from '../util/structures';
 
 export const properties: CommandProperties = {
@@ -91,12 +89,12 @@ async function friend(interaction: CommandInteraction, { userData }: { userData:
   let component: MessageActionRow;
 
   collector.on('collect', async (i: SelectMenuInteraction | ButtonInteraction) => {
-    const userFriendData = await SQLiteWrapper.getUser<FriendModule, FriendModule>({
+    const userFriendData = await SQLiteWrapper.getUser<FriendsModule, FriendsModule>({
       discordID: userData.discordID,
-      table: 'friend',
+      table: 'friends',
       columns: ['discordID', 'enabled', 'channel'],
       allowUndefined: false,
-    }) as FriendModule;
+    }) as FriendsModule;
 
     if (i.isSelectMenu()) {
       selected = i.values[0];
@@ -142,9 +140,9 @@ async function friend(interaction: CommandInteraction, { userData }: { userData:
           enabledLabel: locale.menu.toggle.enableButton,
           disabledLabel: locale.menu.toggle.disableButton,
         });
-        await SQLiteWrapper.updateUser<FriendModuleUpdate, RawFriendModuleUpdate>({
+        await SQLiteWrapper.updateUser<FriendsModuleUpdate, RawFriendsModuleUpdate>({
           discordID: userFriendData.discordID,
-          table: 'friend',
+          table: 'friends',
           data: {
             enabled: userFriendData.enabled,
           },

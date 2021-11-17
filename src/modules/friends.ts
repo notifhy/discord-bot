@@ -1,8 +1,8 @@
-import { Client, MessageEmbed, TextChannel } from 'discord.js';
-import type { FriendModule, UserAPIData } from '../@types/database';
-import { CleanHypixelPlayerData } from '../@types/hypixel';
-import { SQLiteWrapper } from '../database';
+import type { FriendsModule, RawFriendsModule, UserAPIData } from '../@types/database';
 import { BetterEmbed } from '../util/utility';
+import { CleanHypixelPlayerData } from '../@types/hypixel';
+import { Client, MessageEmbed, TextChannel } from 'discord.js';
+import { SQLiteWrapper } from '../database';
 
 export const properties = {
   name: 'friendsEvent',
@@ -22,39 +22,47 @@ export const execute = async ({
   differences: Differences,
   userAPIData: UserAPIData
 }): Promise<void> => {
-  const friendModule = await SQLiteWrapper.getUser<FriendModule, FriendModule>({
+  const friendModules = await SQLiteWrapper.getUser<RawFriendsModule, FriendsModule>({
     discordID: userAPIData.discordID,
-    table: 'friend',
+    table: 'friends',
     allowUndefined: false,
     columns: ['enabled', 'channel'],
-  }) as FriendModule;
+  }) as FriendsModule;
 
-  if (Object.keys(differences.primary).length < 1 || friendModule.enabled === false) return;
+  if (Object.keys(differences.primary).length < 1 || friendModules.enabled === false) return;
   if (differences.primary.lastLogin === undefined && differences.primary.lastLogout === undefined) return;
 
-  if (differences.primary.lastLogin === null || differences.primary.lastLogout === null) { //Remove?
+  if (differences.primary.lastLogin === null || differences.primary.lastLogout === null) {
     const user = await client.users.fetch(userAPIData.discordID);
-    const undefinedData = new BetterEmbed({ color: '#AA0000', footer: { name: 'Notification' } }) //Transparent NotifHy Icon
+    const undefinedData = new BetterEmbed({ color: '#AA0000', footer: { name: 'Notification' } })
       .setTitle('Missing Data')
-      .setDescription(`Your last login or last logout data returned undefined for the Friend module. This may be a result of disabling the \`Online\` API option on Hypixel or setting your social status to offline.`);
+      .setDescription('Your last login and/or last logout data returned undefined for the Friend module. Login and logout notifications are now disabled. This may be a result of disabling the `Online` API option on Hypixel or setting your social status to offline. Notifications will resume and you will receive another DM once this data is no longer missing.');
     await user.send({ embeds: [undefinedData] });
     return;
   }
 
-  const channel = await client.channels.fetch(friendModule.channel) as TextChannel;
+  if ((differences.primary.lastLogin && differences.secondary.lastLogin === null) ||
+  (differences.primary.lastLogout && differences.secondary.lastLogout === null)) {
+    const user = await client.users.fetch(userAPIData.discordID);
+    const undefinedData = new BetterEmbed({ color: '#00AA00', footer: { name: 'Notification' } })
+      .setTitle('Received Data')
+      .setDescription('Your last login and/or last logout data is no longer undefined for the Friend module. Login and logout notifications will now resume.');
+    await user.send({ embeds: [undefinedData] });
+    return;
+  }
+
+  const channel = await client.channels.fetch(friendModules.channel) as TextChannel;
   const notifications: MessageEmbed[] = [];
 
   if (differences.primary.lastLogin &&
-    differences.secondary.lastLogin !== null &&
     differences.primary.lastLogin + 60_000 >= Date.now()) {
-    const login = new BetterEmbed({ color: '#00AA00', footer: { name: 'Notification' } }) //Transparent NotifHy Icon
+    const login = new BetterEmbed({ color: '#00AA00', footer: { name: 'Notification' } })
       .setTitle('Login')
       .setDescription(`<@!${userAPIData.discordID}> logged in <t:${Math.round(differences.primary.lastLogin / 1000)}:R> at <t:${Math.round(differences.primary.lastLogin / 1000)}:T>!`);
     notifications.push(login);
   }
 
   if (differences.primary.lastLogout &&
-    differences.secondary.lastLogin !== null &&
     differences.primary.lastLogout + 60_000 >= Date.now()) {
     const logout = new BetterEmbed({ color: '#555555', footer: { name: 'Notification' } }) //Transparent NotifHy Icon
       .setTitle('Logout')

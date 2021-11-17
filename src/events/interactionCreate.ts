@@ -1,10 +1,10 @@
 import type { EventProperties, SlashCommand } from '../@types/client';
 import { BetterEmbed, cleanRound, formattedUnix, timeout } from '../util/utility';
-import { ownerID } from '../../config.json';
 import { Collection, CommandInteraction } from 'discord.js';
 import { ConstraintError } from '../util/error/ConstraintError';
-import { SQLiteWrapper } from '../database';
+import { ownerID } from '../../config.json';
 import { RawUserData, UserAPIData, UserData } from '../@types/database';
+import { SQLiteWrapper } from '../database';
 import errorHandler from '../util/error/errorHandler';
 
 

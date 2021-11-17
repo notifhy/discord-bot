@@ -1,7 +1,6 @@
-import type { CommandExecute, CommandProperties, Config } from '../@types/client';
-import { CommandInteraction } from 'discord.js';
+import type { CommandExecute, CommandProperties } from '../@types/client';
 import { BetterEmbed } from '../util/utility';
-import * as fs from 'fs/promises';
+import { CommandInteraction } from 'discord.js';
 
 export const properties: CommandProperties = {
   name: 'status',

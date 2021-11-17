@@ -1,9 +1,9 @@
 import type { CommandExecute, CommandProperties, SlashCommand } from '../@types/client';
+import { BetterEmbed } from '../util/utility';
 import { clientID, discordAPIkey as token } from '../../config.json';
 import { CommandInteraction } from 'discord.js';
-import { BetterEmbed } from '../util/utility';
-import { Routes } from 'discord-api-types/v9';
 import { REST } from '@discordjs/rest';
+import { Routes } from 'discord-api-types/v9';
 import fs from 'fs';
 
 export const properties: CommandProperties = {

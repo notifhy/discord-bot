@@ -1,11 +1,11 @@
 import type { ClientEvents, Config, SlashCommand } from './@types/client';
 import { Client, Collection, Intents } from 'discord.js';
-import { discordAPIkey as token } from '../config.json';
-import * as fs from 'fs/promises';
+import { discordAPIkey } from '../config.json';
+import { ModuleDataResolver } from './hypixelAPI/ModuleDataResolver';
+import { RawConfig } from './@types/database';
 import { RegionLocales } from '../locales/localesHandler';
 import { SQLiteWrapper } from './database';
-import { RawConfig } from './@types/database';
-import { ModuleDataResolver } from './hypixelAPI/ModuleDataResolver';
+import * as fs from 'fs/promises';
 
 process.on('unhandledRejection', error => {
   console.log('unhandledRejection', error);
@@ -75,5 +75,5 @@ client.regionLocales = new RegionLocales();
     uses: config.uses,
   };
 
-  await client.login(token);
+  await client.login(discordAPIkey);
 })();
