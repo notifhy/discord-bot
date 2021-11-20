@@ -6,6 +6,7 @@ import { HTTPError } from './HTTPError';
 import { Interaction, MessageEmbed } from 'discord.js';
 import { ModuleDataResolver } from '../../hypixelAPI/ModuleDataResolver';
 import { RateLimitError } from './RateLimitError';
+import { ModuleError } from './ModuleError';
 
 export default async ({
   error,
@@ -63,6 +64,8 @@ export default async ({
     }));
 
     shouldPing = isAbortError(error) === false || moduleDataResolver.instance.resumeAfter > Date.now();
+  } else if (error instanceof ModuleError) {
+
   } else {
     console.error(`${formattedUnix({ date: true, utc: true })} | An error has occurred on incident ${incidentID} | Priority: High |`, error);
     const knownInfo = new BetterEmbed({ color: '#AA0000', footer: { name: `Incident ${incidentID}` } })
@@ -73,10 +76,11 @@ export default async ({
   await sendWebHook({
     content: shouldPing === true ? `<@${ownerID.join('><@')}>` : undefined,
     embeds: incidentPayload,
-    webhook: moduleDataResolver ?
+    webhook: error instanceof ConstraintError ?
+      nonFatalWebhook :
+      moduleDataResolver ?
       hypixelAPIWebhook :
-      error instanceof ConstraintError ?
-      nonFatalWebhook : fatalWebhook,
+      fatalWebhook,
     suppressError: true,
   });
 };

@@ -1,5 +1,5 @@
 import type { WebHookConfig } from '../@types/client';
-import { ColorResolvable, CommandInteraction, MessageEmbed, WebhookClient } from 'discord.js';
+import { ColorResolvable, CommandInteraction, MessageEmbed, PermissionResolvable, Permissions, PermissionString, WebhookClient } from 'discord.js';
 
 export async function sendWebHook({
   content,
@@ -47,7 +47,7 @@ export class BetterEmbed extends MessageEmbed {
     footer,
   }: {
     color: ColorResolvable,
-    footer: Footer,
+    footer?: Footer,
   }) {
     super();
     super.setColor(color);
@@ -57,7 +57,7 @@ export class BetterEmbed extends MessageEmbed {
       const interaction = footer;
       const avatar = interaction.user.displayAvatarURL({ dynamic: true });
       super.setFooter(`/${interaction.commandName}`, avatar);
-    } else {
+    } else if (footer !== undefined) {
       super.setFooter(footer.name, footer.imageURL);
     }
   }
@@ -75,6 +75,11 @@ export function compare<Primary, Secondary extends Primary>(primary: Primary, se
     }
   }
   return { primary: primaryDifferences, secondary: secondaryDifferences };
+}
+
+export function matchPermissions(required: PermissionResolvable, subject: Permissions): PermissionString[] {
+  const missing = subject.missing(required);
+  return missing;
 }
 
 export function cleanDate(ms: number | Date): string | null {

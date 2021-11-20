@@ -1,7 +1,8 @@
 import type { CommandExecute, CommandProperties } from '../@types/client';
-import type { FriendsModule, FriendsModuleUpdate, RawFriendsModuleUpdate, UserData } from '../@types/database';
+import type { FriendsModule, RawFriendsModule, RawUserAPIData, UserAPIData, UserData } from '../@types/database';
 import { BetterEmbed } from '../util/utility';
 import { ButtonInteraction, CommandInteraction, Message, MessageActionRow, MessageComponentInteraction, MessageSelectMenu, SelectMenuInteraction } from 'discord.js';
+import { mainMenu, mainMenuUpdateEmbed } from '../structures/modules';
 import { SQLiteWrapper } from '../database';
 import { ToggleButtons } from '../util/structures';
 
@@ -23,7 +24,7 @@ export const properties: CommandProperties = {
         description: 'placeholder',
       },
       {
-        name: 'friend',
+        name: 'friends',
         description: 'placeholder',
         type: '1',
       },
@@ -37,42 +38,18 @@ export const properties: CommandProperties = {
 };
 
 export const execute: CommandExecute = async (interaction: CommandInteraction, { userData }): Promise<void> => {
-  if (interaction.options.getSubcommand() === 'friend') {
-    await friend(interaction, { userData });
-  }
-};
-
-async function friend(interaction: CommandInteraction, { userData }: { userData: UserData }) {
+  const subCommand = interaction.options.getSubcommand();
   const locale = interaction.client.regionLocales.locale(userData.language).commands.modules.friend;
   const mainEmbed = new BetterEmbed({ color: '#7289DA', footer: interaction })
     .setTitle(locale.title)
     .setDescription(locale.description);
 
-  const mainMenu = ({
-    defaultV, disabled,
-  }: {
-    defaultV?: string, disabled?: boolean,
-  }) => {
-    const menu = new MessageSelectMenu()
-      .setCustomId('main')
-      .setPlaceholder(locale.menuPlaceholder)
-      .setDisabled(disabled ?? false);
-    const menuData = locale.menu;
-    for (const item in menuData) {
-      if (Object.prototype.hasOwnProperty.call(menuData, item)) {
-        const itemData = menuData[item as keyof typeof menuData];
-        menu.addOptions([{
-          label: itemData.label,
-          value: itemData.value,
-          description: itemData.description,
-          default: Boolean(defaultV === itemData.value),
-        }]);
-      }
-    }
-    return new MessageActionRow().addComponents(menu);
-  };
-
-  const reply = await interaction.editReply({ embeds: [mainEmbed], components: [mainMenu({})] });
+  const reply = await interaction.editReply({
+    embeds: [mainEmbed],
+    components: [mainMenu({
+      locale: locale,
+    })],
+  });
 
   await interaction.client.channels.fetch(interaction.channelId);
 
@@ -80,7 +57,7 @@ async function friend(interaction: CommandInteraction, { userData }: { userData:
   const filter = (i: MessageComponentInteraction) =>
     interaction.user.id === i.user.id && i.message.id === reply.id && customIDs.includes(i.customId);
 
-  const collector = interaction!.channel!.createMessageComponentCollector({
+  const collector = interaction.channel!.createMessageComponentCollector({
     filter: filter,
     idle: 150_000,
   });
@@ -89,27 +66,28 @@ async function friend(interaction: CommandInteraction, { userData }: { userData:
   let component: MessageActionRow;
 
   collector.on('collect', async (i: SelectMenuInteraction | ButtonInteraction) => {
+    const userAPIData = await SQLiteWrapper.getUser<UserAPIData, RawUserAPIData>({
+      discordID: userData.discordID,
+      table: 'api',
+      columns: ['discordID', 'modules'],
+      allowUndefined: false,
+    }) as UserAPIData;
+
     const userFriendData = await SQLiteWrapper.getUser<FriendsModule, FriendsModule>({
       discordID: userData.discordID,
       table: 'friends',
-      columns: ['discordID', 'enabled', 'channel'],
+      columns: ['discordID', 'channel'],
       allowUndefined: false,
     }) as FriendsModule;
 
     if (i.isSelectMenu()) {
       selected = i.values[0];
 
-      const updatedEmbed = new BetterEmbed({ color: '#7289DA', footer: interaction })
-        .setTitle(locale.title)
-        .setDescription(locale.description) //Add explanation for unable to toggle
-        .addField(locale.menu[selected as keyof typeof locale['menu']].label,
-          locale.menu[selected as keyof typeof locale['menu']].longDescription);
-
       switch (selected) {
         case 'toggle': {
           component = new ToggleButtons({
             allDisabled: !userFriendData.channel,
-            enabled: userFriendData.enabled,
+            enabled: userAPIData.modules.includes(subCommand),
             enabledLabel: locale.menu.toggle.enableButton,
             disabledLabel: locale.menu.toggle.disableButton,
           });
@@ -130,24 +108,53 @@ async function friend(interaction: CommandInteraction, { userData }: { userData:
         }
       }
 
-      await i.update({ embeds: [updatedEmbed], components: [mainMenu({ defaultV: selected }), component!] });
+      await i.update({
+        embeds: [mainMenuUpdateEmbed({
+          interaction: interaction,
+          locale: locale,
+          selected: selected,
+        })],
+        components: [
+          mainMenu({
+            defaultV: selected,
+            locale: locale,
+          }),
+          component!,
+        ],
+      });
     } else {
-      // eslint-disable-next-line no-lonely-if
-      if (i.customId === 'enable' || i.customId === 'disable') {
-        userFriendData.enabled = userFriendData.enabled === false;
-        component = new ToggleButtons({
-          enabled: userFriendData.enabled,
-          enabledLabel: locale.menu.toggle.enableButton,
-          disabledLabel: locale.menu.toggle.disableButton,
-        });
-        await SQLiteWrapper.updateUser<FriendsModuleUpdate, RawFriendsModuleUpdate>({
-          discordID: userFriendData.discordID,
-          table: 'friends',
-          data: {
-            enabled: userFriendData.enabled,
-          },
-        });
-        await i.update({ components: [mainMenu({ defaultV: selected }), component!] });
+      switch (i.customId) {
+        case 'enable':
+        case 'disable': {
+          if (userAPIData.modules.includes(subCommand)) {
+            userAPIData.modules.splice(userAPIData.modules.indexOf(subCommand), 1);
+          } else {
+            userAPIData.modules.push(subCommand);
+          }
+
+          component = new ToggleButtons({
+            enabled: userAPIData.modules.includes(subCommand),
+            enabledLabel: locale.menu.toggle.enableButton,
+            disabledLabel: locale.menu.toggle.disableButton,
+          });
+
+          await SQLiteWrapper.updateUser<Partial<UserAPIData>, Partial<UserAPIData>>({
+            discordID: userAPIData.discordID,
+            table: 'api',
+            data: { modules: userAPIData.modules },
+          });
+
+          await i.update({
+            components: [
+              mainMenu({
+                defaultV: selected,
+                locale: locale,
+              }),
+              component!,
+            ],
+          });
+          break;
+        }
       }
     }
   });
@@ -160,6 +167,8 @@ async function friend(interaction: CommandInteraction, { userData }: { userData:
       });
     });
 
-    await interaction.editReply({ components: fetchedReply.components });
+    await interaction.editReply({
+      components: fetchedReply.components,
+    });
   });
 };

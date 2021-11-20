@@ -2,13 +2,15 @@ import { Abort, Instance, RateLimit, Unusual } from './ModuleRequestHelper';
 import { Client } from 'discord.js';
 import { CleanHypixelPlayerData, CleanHypixelStatusData, HypixelAPIOk, RawHypixelPlayer, RawHypixelPlayerData, RawHypixelStatus, RawHypixelStatusData } from '../@types/hypixel';
 import { compare, timeout } from '../util/utility';
-import { History, RawUserAPIData, UserAPIData, UserAPIDataUpdate } from '../@types/database';
+import { History, RawUserAPIData, UserAPIData } from '../@types/database';
 import { HypixelRequestCall } from './HypixelRequestCall';
 import { keyLimit } from '../../config.json';
 import { SQLiteWrapper } from '../database';
 import errorHandler from '../util/error/errorHandler';
-import * as friendModule from '../modules/friends';
 import * as defenderModule from '../modules/defender';
+import * as friendsModule from '../modules/friends';
+import * as rewardsModule from '../modules/rewards';
+import { ModuleError } from '../util/error/ModuleError';
 
 export class ModuleDataResolver {
   [key: string]: any; //Not ideal, but I couldn't get anything else to work
@@ -76,8 +78,8 @@ export class ModuleDataResolver {
                 };
 
                 const modules = [];
-                //if (user.modules?.includes('defender')) modules.push(defenderModule.execute(payLoad));
-                if (user.modules.includes('friend')) modules.push(friendModule.execute(payLoad));
+                if (user.modules?.includes('rewards')) modules.push(rewardsModule.execute(payLoad));
+                if (user.modules.includes('friend')) modules.push(friendsModule.execute(payLoad));
                 await Promise.all(modules);
               } catch (error) {
                 await errorHandler({ error: error, moduleDataResolver: this });
@@ -117,7 +119,7 @@ export class ModuleDataResolver {
     now: number,
     oldUserAPIData: UserAPIData,
   }) {
-    const userAPIDataUpdate: UserAPIDataUpdate = Object.assign({ lastUpdated: now }, differences);
+    const userAPIDataUpdate: Partial<UserAPIData> = Object.assign({ lastUpdated: now }, differences);
 
     if (Object.keys(differences).length > 0) {
       const historyUpdate: History = Object.assign({ date: now }, differences);
@@ -127,7 +129,7 @@ export class ModuleDataResolver {
       Object.assign(userAPIDataUpdate, { history: history });
     }
 
-    await SQLiteWrapper.updateUser<UserAPIDataUpdate, RawUserAPIData>({
+    await SQLiteWrapper.updateUser<Partial<UserAPIData>, RawUserAPIData>({
       discordID: oldUserAPIData.discordID,
       table: 'api',
       data: userAPIDataUpdate,

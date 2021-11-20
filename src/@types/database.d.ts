@@ -38,39 +38,27 @@ export interface UserAPIData extends BaseUserData, CleanHypixelPlayerData, Clean
   history: History[];
 }
 
-export interface RawUserDataUpdate extends Partial<RawUserData> {}
-export interface RawUserAPIDataUpdate extends Partial<RawUserAPIData> {}
-
-export interface UserDataUpdate extends Partial<UserData> {}
-export interface UserAPIDataUpdate extends Partial<UserAPIData> {}
-
 /*
 Module Specifics
 */
 export interface RawFriendsModule extends BaseUserData {
-  enabled: string;
-  channel: string;
+  channel: string | null;
+  suppressNext: string;
 }
 
 export interface FriendsModule extends BaseUserData {
-  enabled: boolean;
-  channel: string;
+  channel: string | null;
+  suppressNext: boolean;
 }
 
-export interface RawFriendsModuleUpdate extends Partial<RawFriendsModule> {}
-export interface FriendsModuleUpdate extends Partial<FriendsModule> {}
-
 export interface RawRewardsModule extends BaseUserData {
-  enabled: string;
-  alertTime: number;
-  claimBefore: number;
+  alertTime: number | null;
+  lastNotified: number;
+  notificationInterval: number | null;
 }
 
 export interface RewardsModule extends BaseUserData {
-  enabled: boolean;
-  alertTime: number;
-  claimBefore: number;
+  alertTime: number | null;
+  lastNotified: number;
+  notificationInterval: number | null;
 }
-
-export interface RawRewardsModuleUpdate extends Partial<RawRewardsModule> {}
-export interface RewardsModuleUpdate extends Partial<RewardsModule> {}

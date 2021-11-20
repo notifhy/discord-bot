@@ -71,7 +71,7 @@
       "defender": {
         "title": "Defender Module",
         "description": "You can add or remove modules here. See more about a module by selecting it. Then, press the button to remove or add it. If you want to delete some or all of your data used by or associated with this bot, you can request it with /deletedata.",
-        "menuPlaceholder": "Defender Settings",
+        "menuPlaceholder": "Defender Module Settings",
         "menu": {
           "toggle": {
             "label": "Toggle",
@@ -86,7 +86,7 @@
       "friend": {
         "title": "Friend Module",
         "description": "placeholder",
-        "menuPlaceholder": "Select a module",
+        "menuPlaceholder": "Friend Module Settings",
         "menu": {
           "toggle": {
             "label": "Toggle",
@@ -107,7 +107,7 @@
       "rewards": {
         "title": "Modules",
         "description": "This module ",
-        "menuPlaceholder": "Select a module",
+        "menuPlaceholder": "Reward Module Settings",
         "menu": {
           "toggle": {
             "label": "Toggle",
@@ -123,38 +123,6 @@
             "longDescription": "Set the amount of hours ahead of the daily reward reset for when the bot should start pinging you",
             "value": "grace"
           }
-        }
-      },
-      "title": "Modules",
-      "description": "You can add or remove modules here. See more about a module by selecting it. Then, press the button to remove or add it. If you want to delete some or all of your data used by or associated with this bot, you can request it with /deletedata.",
-      "menuPlaceholder": "Select a module",
-      "moduleField": {
-        "name": "%{moduleName}% Module",
-        "value": "%{moduleDescription}%"
-      },
-      "statusField": {
-        "name": "Status",
-        "added": "This module is enabled. Click \"Disable\" to disable it. Your data will be left intact.",
-        "removed": "This module is disabled. Click \"Enable\" to enable it."
-      },
-      "modules": {
-        "defender": {
-          "label": "Defender",
-          "description": "Get notified on unusual activity on your account",
-          "longDescription": "This module is the replacement for HyGuard. It features most of the same checks, although it has been slightly simplified for a better user experience.",
-          "value": "defender"
-        },
-        "friend": {
-          "label": "Friend Notifier",
-          "description": "Get notified whenever a friend logs on or out",
-          "longDescription": "This module will send you a notification when your friends log on or out. This can be sent in a channel or DM'd. You can only get notifications for people who have approved you on this bot for privacy reasons.",
-          "value": "friend"
-        },
-        "rewards": {
-          "label": "Daily Rewards",
-          "description": "Get notified whenever you are about to miss your daily reward",
-          "longDescription": "This module will send you a DM whenever you are about to miss your daily reward. You can customize the threshold and the alert intervals, including the minimum hours ahead of the reset to begin notifying you.",
-          "value": "rewards"
         }
       },
       "buttons": {

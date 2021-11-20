@@ -70,8 +70,13 @@ export const execute: CommandExecute = async (interaction: CommandInteraction, {
         .setComponents(yesButton, noButton);
 
       if (i.customId === 'true') {
-        await SQLiteWrapper.deleteUser({ discordID: userData.discordID, table: 'users' });
-        await SQLiteWrapper.deleteUser({ discordID: userData.discordID, table: 'api' });
+        Promise.all([
+          SQLiteWrapper.deleteUser({ discordID: userData.discordID, table: 'users' }),
+          SQLiteWrapper.deleteUser({ discordID: userData.discordID, table: 'api' }),
+          SQLiteWrapper.deleteUser({ discordID: userData.discordID, table: 'friends' }),
+          SQLiteWrapper.deleteUser({ discordID: userData.discordID, table: 'rewards' }),
+        ]);
+
         const aborted = new BetterEmbed({ color: '#7289DA', footer: interaction })
           .setTitle(locale.delete.deleted.title)
           .setDescription(locale.delete.deleted.description);
@@ -83,33 +88,43 @@ export const execute: CommandExecute = async (interaction: CommandInteraction, {
         await i.update({ embeds: [aborted], components: [disabledRow] });
       }
     });
+
+    collector.on('end', async (_collected, reason) => {
+      if (reason === 'idle') {
+        yesButton.setDisabled();
+        noButton.setDisabled();
+        const disabledRow = new MessageActionRow()
+          .setComponents(yesButton, noButton);
+        await interaction.editReply({ components: [disabledRow] });
+      }
+    });
   } else {
-    const userAPIData = await SQLiteWrapper.getUser<RawUserAPIData, UserAPIData>({
-      discordID: userData.discordID,
-      table: 'api',
-      columns: ['*'],
-      allowUndefined: true,
-    }) as UserAPIData;
-
-    const friends = await SQLiteWrapper.getUser<RawFriendsModule, FriendsModule>({
-      discordID: userData.discordID,
-      table: 'friends',
-      columns: ['*'],
-      allowUndefined: true,
-    }) as FriendsModule;
-
-    const rewards = await SQLiteWrapper.getUser<RawRewardsModule, RewardsModule>({
-      discordID: userData.discordID,
-      table: 'rewards',
-      columns: ['*'],
-      allowUndefined: true,
-    }) as RewardsModule;
+    const data = await Promise.all([
+      SQLiteWrapper.getUser<RawUserAPIData, UserAPIData>({
+        discordID: userData.discordID,
+        table: 'api',
+        columns: ['*'],
+        allowUndefined: true,
+      }) as Promise<UserAPIData>,
+      SQLiteWrapper.getUser<RawFriendsModule, FriendsModule>({
+        discordID: userData.discordID,
+        table: 'friends',
+        columns: ['*'],
+        allowUndefined: true,
+      }) as Promise<FriendsModule>,
+      SQLiteWrapper.getUser<RawRewardsModule, RewardsModule>({
+        discordID: userData.discordID,
+        table: 'rewards',
+        columns: ['*'],
+        allowUndefined: true,
+      }) as Promise<RewardsModule>,
+    ]);
 
     const allUserData = {
       userData: userData,
-      userAPIData: userAPIData,
-      friends: friends,
-      rewards: rewards,
+      userAPIData: data[0],
+      friends: data[1],
+      rewards: data[2],
     };
 
     await interaction.editReply({ files: [{

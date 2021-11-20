@@ -129,7 +129,7 @@ async function cooldownConstraint(interaction: CommandInteraction, userData: Use
       .setTitle(locale.cooldown.embed1.title)
       .setDescription(replace(locale.cooldown.embed1.description, {
         cooldown: command.properties.cooldown / 1000,
-        timeLeft: cleanRound(timeLeft / 1000),
+        timeLeft: cleanRound(timeLeft / 1000, 1),
       }));
 
     await interaction.editReply({ embeds: [cooldownEmbed] });

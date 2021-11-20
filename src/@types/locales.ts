@@ -123,21 +123,6 @@ export interface Modules {
       grace: AssetModule;
     }
   };
-  title: string;
-  description: string;
-  moduleField: Field;
-  menuPlaceholder: string;
-  statusField: {
-    name: string,
-    added: string;
-    removed: string;
-  }
-  modules: {
-    defender: AssetModule;
-    friend: AssetModule;
-    rewards: AssetModule;
-  }
-  buttons: ModuleButtons;
 }
 
 export interface Ping {

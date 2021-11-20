@@ -1,4 +1,4 @@
-import type { FriendModule, UserAPIData, UserData } from '../@types/database';
+import type { FriendsModule, UserAPIData, UserData } from '../@types/database';
 import { CleanHypixelPlayerData } from '../@types/hypixel';
 import { SQLiteWrapper } from '../database';
 
@@ -13,13 +13,10 @@ export const execute = async ({
   differences: Partial<CleanHypixelPlayerData>,
   userAPIData: UserAPIData
 }): Promise<void> => {
-  const friendModule = await SQLiteWrapper.getUser<FriendModule, FriendModule>({
+  const friendModule = await SQLiteWrapper.getUser<FriendsModule, FriendsModule>({
     discordID: userAPIData.discordID,
-    table: 'friend',
+    table: 'friends',
     allowUndefined: false,
     columns: ['enabled', 'channel'],
-  }) as FriendModule;
-
-  if (friendModule.enabled === false) return;
-  console.log('placeholder');
+  }) as FriendsModule;
 };

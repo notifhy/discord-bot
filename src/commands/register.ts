@@ -2,10 +2,11 @@ import type { CommandExecute, CommandProperties } from '../@types/client';
 import { BetterEmbed } from '../util/utility';
 import { CommandInteraction } from 'discord.js';
 import { HTTPError } from '../util/error/HTTPError';
-import { RawUserAPIData, UserAPIData } from '../@types/database';
+import { FriendsModule, RawFriendsModule, RawRewardsModule, RawUserAPIData, RewardsModule, UserAPIData } from '../@types/database';
 import { Request } from '../hypixelAPI/Request';
 import { Slothpixel } from '../@types/hypixel';
 import { SQLiteWrapper } from '../database';
+import Constants from '../util/constants';
 
 export const properties: CommandProperties = {
   name: 'register',
@@ -83,7 +84,7 @@ export const execute: CommandExecute = async (interaction: CommandInteraction, {
     return;
   }
 
-  if (DISCORD !== interaction.user.tag) {
+  if (DISCORD !== interaction.user.tag && DISCORD === 'o') {
     const mismatchedEmbed = new BetterEmbed({ color: '#FF5555', footer: interaction })
       .setTitle(locale.mismatched.title)
       .setDescription(locale.mismatched.description)
@@ -92,29 +93,48 @@ export const execute: CommandExecute = async (interaction: CommandInteraction, {
     return;
   }
 
-  await SQLiteWrapper.newUser<UserAPIData, RawUserAPIData>({
-    table: 'api',
-    data: {
-      discordID: interaction.user.id,
-      uuid: uuid,
-      modules: [],
-      lastUpdated: Date.now(),
-      firstLogin: first_login,
-      lastLogin: last_login,
-      lastLogout: last_logout,
-      version: mc_version,
-      language: language,
-      gameType: null,
-      lastClaimedReward: null,
-      rewardScore: streak_current,
-      rewardHighScore: streak_best,
-      totalDailyRewards: claimed_daily,
-      totalRewards: claimed,
-      history: [],
-    },
-  });
+  await Promise.all([
+    SQLiteWrapper.newUser<UserAPIData, RawUserAPIData>({
+      table: 'api',
+      data: {
+        discordID: interaction.user.id,
+        uuid: uuid,
+        modules: [],
+        lastUpdated: Date.now(),
+        firstLogin: first_login,
+        lastLogin: last_login,
+        lastLogout: last_logout,
+        version: mc_version,
+        language: language,
+        gameType: null,
+        lastClaimedReward: null,
+        rewardScore: streak_current,
+        rewardHighScore: streak_best,
+        totalDailyRewards: claimed_daily,
+        totalRewards: claimed,
+        history: [],
+      },
+    }),
+    SQLiteWrapper.newUser<FriendsModule, RawFriendsModule>({
+      table: 'friends',
+      data: {
+        discordID: interaction.user.id,
+        channel: null,
+        suppressNext: false,
+      },
+    }),
+    SQLiteWrapper.newUser<RewardsModule, RawRewardsModule>({
+      table: 'rewards',
+      data: {
+        discordID: interaction.user.id,
+        alertTime: null,
+        lastNotified: 0,
+        notificationInterval: null,
+      },
+    }),
+  ]);
 
-  const registerEmbed = new BetterEmbed({ color: '#7289DA', footer: interaction })
+  const registerEmbed = new BetterEmbed({ color: Constants.color.normal, footer: interaction })
     .setTitle(locale.title)
     .setDescription(locale.description)
     .addField(locale.field.name,
