@@ -7,6 +7,7 @@ import { HTTPError } from './HTTPError';
 import { HypixelAPIError } from '../../@types/hypixel';
 import { ModuleDataResolver } from '../../hypixelAPI/ModuleDataResolver';
 import { RateLimitError } from './RateLimitError';
+import Constants from '../../util/constants';
 
 export const isAbortError = (error: any): error is AbortError => error?.name === 'AbortError';
 
@@ -18,7 +19,11 @@ export class ConstraintEmbed extends BetterEmbed {
     error: Error,
     interaction: CommandInteraction,
   }) {
-    super({ color: '#AA0000', footer: interaction });
+    super({
+      color: Constants.color.warning,
+      footer: interaction,
+    });
+
     super.setTitle('User Failed Constraints')
       .addField('Constraint Type', error.message)
       .addField('User', `Tag: ${interaction.user.tag}\nID: ${interaction.user.id}`)
@@ -38,7 +43,13 @@ export class CommandErrorEmbed extends BetterEmbed {
     incidentID: string,
   }) {
     const stack = error.stack ?? (error.message || '\u200B');
-    super({ color: '#AA0000', footer: { name: `Incident ${incidentID}` } });
+    super({
+      color: Constants.color.error,
+      footer: {
+        name: `Incident ${incidentID}`,
+      },
+    });
+
     super.setTitle('Unexpected Error')
       .addField('User', `Tag: ${interaction.user.tag}\nID: ${interaction.user.id}`)
       .addField('Interaction', interaction.id)
@@ -56,7 +67,16 @@ export class UserCommandErrorEmbed extends BetterEmbed {
     interaction: CommandInteraction,
     incidentID: string,
   }) {
-    super({ color: '#AA0000', footer: { name: `Incident ${incidentID}`, imageURL: interaction.user.displayAvatarURL({ dynamic: true }) } });
+    super({
+      color: Constants.color.error,
+      footer: {
+        name: `Incident ${incidentID}`,
+        imageURL: interaction.user.displayAvatarURL({
+          dynamic: true,
+        }),
+      },
+    });
+
     super
       .setTitle('Oops!')
       .setDescription(`An error occurred while executing the command /${interaction.commandName}! This error has been automatically forwarded for review. It should be resolved soon. Sorry.`);
@@ -74,7 +94,11 @@ export class HTTPErrorEmbed extends CommandErrorEmbed {
     interaction: CommandInteraction,
     incidentID: string,
   }) {
-    super({ error, interaction, incidentID });
+    super({
+      error,
+      interaction,
+      incidentID,
+    });
     super.setTitle('Unexpected HTTP Error');
   }
 }
@@ -89,7 +113,16 @@ export class UserHTTPErrorEmbed extends BetterEmbed {
     interaction: CommandInteraction,
     incidentID: string,
   }) {
-    super({ color: '#AA0000', footer: { name: `Incident ${incidentID}`, imageURL: interaction.user.displayAvatarURL({ dynamic: true }) } });
+    super({
+      color: Constants.color.error,
+      footer: {
+        name: `Incident ${incidentID}`,
+        imageURL: interaction.user.displayAvatarURL({
+          dynamic: true,
+        }),
+      },
+    });
+
     super
       .setTitle('Oops!')
       .setDescription('An error has occurred while fetching data from Hypixel or its respective wrappers. This issue should resolve itself; check back later!')
@@ -110,7 +143,12 @@ export class HypixelAPIEmbed extends BetterEmbed {
     const { instanceUses, resumeAfter, keyPercentage } = moduleDataResolver.instance;
     const timeout = cleanLength(resumeAfter - Date.now());
 
-    super({ color: '#AA0000', footer: { name: `Incident ${incidentID}` } });
+    super({
+      color: Constants.color.error,
+      footer: {
+        name: `Incident ${incidentID}`,
+      },
+    });
 
     if (timeout !== null) super.setDescription('A timeout has been automatically applied.');
 
@@ -169,7 +207,13 @@ export class ErrorStackEmbed extends BetterEmbed {
     error: unknown,
     incidentID: string,
   }) {
-    super({ color: '#AA0000', footer: { name: `Incident ${incidentID}` } });
+    super({
+      color: Constants.color.error,
+      footer: {
+        name: `Incident ${incidentID}`,
+      },
+    });
+
     if (error instanceof Error && error.stack) {
       const nonStackLenth = `${error.name}: ${error.message}`.length;
       const stack = error.stack.slice(nonStackLenth, 1024 + nonStackLenth);
@@ -200,8 +244,17 @@ export async function replyToError({
   } catch (err) {
     if (!(err instanceof Error)) return;
     console.error(`${formattedUnix({ date: true, utc: true })} | An error has occurred and also failed to notify the user | ${err.stack ?? err.message}`);
-    const failedNotify = new CommandErrorEmbed({ error: err, interaction: interaction, incidentID: incidentID });
-    const stackEmbed = new ErrorStackEmbed({ error: err, incidentID: incidentID });
+    const failedNotify = new CommandErrorEmbed({
+      error: err, interaction:
+      interaction,
+      incidentID: incidentID,
+    });
+
+    const stackEmbed = new ErrorStackEmbed({
+      error: err,
+      incidentID: incidentID,
+    });
+
     await sendWebHook({
       content: `<@${ownerID.join('><@')}>`,
       embeds: [failedNotify, stackEmbed],

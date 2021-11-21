@@ -1,16 +1,15 @@
 import { BaseUserData } from './@types/database';
 import { formattedUnix } from './util/utility';
-import { SQLiteError } from './util/error/SQLiteError';
 import Database from 'better-sqlite3';
 
 // eslint-disable-next-line no-warning-comments
 //TODO: Fix "any" after the rest is done
 
 type Table =
-   | 'users'
-   | 'api'
-   | 'friends'
-   | 'rewards'
+  | 'users'
+  | 'api'
+  | 'friends'
+  | 'rewards'
 
 export class SQLiteWrapper {
   static queryGet<Output>({
@@ -30,7 +29,7 @@ export class SQLiteWrapper {
       const data: Output = db.prepare(query).get() as Output;
       db.close();
       if (allowUndefined === false && data === undefined) {
-        throw new SQLiteError(`The query ${query} returned an undefined value`);
+        throw new RangeError(`The query ${query} returned an undefined value`);
       }
       return resolve(data as Output);
     });

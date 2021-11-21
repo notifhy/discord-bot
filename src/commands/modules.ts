@@ -2,9 +2,9 @@ import type { CommandExecute, CommandProperties } from '../@types/client';
 import type { FriendsModule, RawFriendsModule, RawUserAPIData, UserAPIData, UserData } from '../@types/database';
 import { BetterEmbed } from '../util/utility';
 import { ButtonInteraction, CommandInteraction, Message, MessageActionRow, MessageComponentInteraction, MessageSelectMenu, SelectMenuInteraction } from 'discord.js';
-import { mainMenu, mainMenuUpdateEmbed } from '../structures/modules';
 import { SQLiteWrapper } from '../database';
 import { ToggleButtons } from '../util/structures';
+import Constants from '../util/constants';
 
 export const properties: CommandProperties = {
   name: 'modules',
@@ -40,15 +40,40 @@ export const properties: CommandProperties = {
 export const execute: CommandExecute = async (interaction: CommandInteraction, { userData }): Promise<void> => {
   const subCommand = interaction.options.getSubcommand();
   const locale = interaction.client.regionLocales.locale(userData.language).commands.modules.friend;
-  const mainEmbed = new BetterEmbed({ color: '#7289DA', footer: interaction })
+  const mainEmbed = new BetterEmbed({ color: Constants.color.normal, footer: interaction })
     .setTitle(locale.title)
     .setDescription(locale.description);
 
+  const mainMenu = ({
+    defaultV,
+    disabled,
+  }: {
+    defaultV?: string,
+    disabled?: boolean,
+  }) => {
+    const menu = new MessageSelectMenu()
+      .setCustomId('main')
+      .setPlaceholder(locale.menuPlaceholder)
+      .setDisabled(disabled ?? false);
+
+    const menuData = locale.menu;
+    for (const item in menuData) {
+      if (Object.prototype.hasOwnProperty.call(menuData, item)) {
+        const itemData = menuData[item as keyof typeof menuData];
+        menu.addOptions([{
+          label: itemData.label,
+          value: itemData.value,
+          description: itemData.description,
+          default: Boolean(defaultV === itemData.value),
+        }]);
+      }
+    }
+    return new MessageActionRow().addComponents(menu);
+  };
+
   const reply = await interaction.editReply({
     embeds: [mainEmbed],
-    components: [mainMenu({
-      locale: locale,
-    })],
+    components: [mainMenu({ })],
   });
 
   await interaction.client.channels.fetch(interaction.channelId);
@@ -108,16 +133,20 @@ export const execute: CommandExecute = async (interaction: CommandInteraction, {
         }
       }
 
+      const mainMenuUpdateEmbed = new BetterEmbed({
+        color: Constants.color.normal,
+        footer: interaction,
+      })
+        .setTitle(locale.title)
+        .setDescription(locale.description) //Add explanation for unable to toggle
+        .addField(locale.menu[selected as keyof typeof locale['menu']].label,
+          locale.menu[selected as keyof typeof locale['menu']].longDescription);
+
       await i.update({
-        embeds: [mainMenuUpdateEmbed({
-          interaction: interaction,
-          locale: locale,
-          selected: selected,
-        })],
+        embeds: [mainMenuUpdateEmbed],
         components: [
           mainMenu({
             defaultV: selected,
-            locale: locale,
           }),
           component!,
         ],
@@ -148,7 +177,6 @@ export const execute: CommandExecute = async (interaction: CommandInteraction, {
             components: [
               mainMenu({
                 defaultV: selected,
-                locale: locale,
               }),
               component!,
             ],

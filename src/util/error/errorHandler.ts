@@ -7,6 +7,7 @@ import { Interaction, MessageEmbed } from 'discord.js';
 import { ModuleDataResolver } from '../../hypixelAPI/ModuleDataResolver';
 import { RateLimitError } from './RateLimitError';
 import { ModuleError } from './ModuleError';
+import Constants from '../../util/constants';
 
 export default async ({
   error,
@@ -68,8 +69,13 @@ export default async ({
 
   } else {
     console.error(`${formattedUnix({ date: true, utc: true })} | An error has occurred on incident ${incidentID} | Priority: High |`, error);
-    const knownInfo = new BetterEmbed({ color: '#AA0000', footer: { name: `Incident ${incidentID}` } })
-      .setDescription(JSON.stringify(error));
+    const knownInfo = new BetterEmbed({
+      color: Constants.color.error,
+      footer: {
+        name: `Incident ${incidentID}`,
+      },
+    }).setDescription(JSON.stringify(error));
+
     incidentPayload.unshift(knownInfo);
   }
 

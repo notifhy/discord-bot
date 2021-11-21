@@ -1,5 +1,6 @@
 import type { WebHookConfig } from '../@types/client';
 import { ColorResolvable, CommandInteraction, MessageEmbed, PermissionResolvable, Permissions, PermissionString, WebhookClient } from 'discord.js';
+import Constants from '../util/constants';
 
 export async function sendWebHook({
   content,
@@ -43,7 +44,7 @@ type Footer = {
 
 export class BetterEmbed extends MessageEmbed {
   constructor({
-    color,
+    color, //Remove color as it doesn't really fit
     footer,
   }: {
     color: ColorResolvable,
@@ -74,6 +75,7 @@ export function compare<Primary, Secondary extends Primary>(primary: Primary, se
       }
     }
   }
+
   return { primary: primaryDifferences, secondary: secondaryDifferences };
 }
 
@@ -110,13 +112,14 @@ export function timeAgo(ms: number): number | null {
 
 export function cleanLength(ms: number | null): string | null {
   if (ms === null || ms < 0 || isNaN(ms)) return null;
-  let seconds = Math.round(ms / 1000);
-  const days = Math.floor(seconds / (24 * 60 * 60));
-  seconds -= days * 24 * 60 * 60;
-  const hours = Math.floor(seconds / (60 * 60));
-  seconds -= hours * 60 * 60;
-  const minutes = Math.floor(seconds / 60);
-  seconds -= minutes * 60;
+  let newMS = ms;
+  const days = Math.floor(newMS / Constants.ms.day);
+  newMS -= days * Constants.ms.day;
+  const hours = Math.floor(newMS / Constants.ms.hour);
+  newMS -= hours * Constants.ms.hour;
+  const minutes = Math.floor(newMS / Constants.ms.minute);
+  newMS -= minutes * Constants.ms.minute;
+  const seconds = Math.floor(newMS / Constants.ms.second);
   return days > 0
     ? `${days}d ${hours}h ${minutes}m ${seconds}s`
     : hours > 0

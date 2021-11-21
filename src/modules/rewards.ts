@@ -1,7 +1,7 @@
 import type { RawRewardsModule, RewardsModule, UserAPIData } from '../@types/database';
-import { BetterEmbed } from '../util/utility';
+import { BetterEmbed, cleanLength } from '../util/utility';
 import { CleanHypixelPlayerData } from '../@types/hypixel';
-import { Client, MessageEmbed, TextChannel } from 'discord.js';
+import { Client } from 'discord.js';
 import { ModuleError } from '../util/error/ModuleError';
 import { SQLiteWrapper } from '../database';
 import Constants from '../util/constants';
@@ -33,26 +33,38 @@ export const execute = async ({
 
     const date = Date.now();
 
-    const chicagoMS = new Date(new Date(date).toLocaleString('en-US', { timeZone: 'EST5EDT' })).getTime();
-    const clientChicagoOffset = chicagoMS - date;
+    //Not ideal parsing a string but it should be fine
+    const hypixelTime = new Date(
+      new Date(date).toLocaleString('en-US', {
+        timeZone: 'EST5EDT',
+      },
+    )).getTime();
+
+    const hypixelToClientOffset = hypixelTime - date;
+    const nextResetTime = new Date().setHours(24, 0, 0, 0) - hypixelToClientOffset;
 
     const alertOffset = rewardsModule.alertTime!;
     const lastClaimedReward = userAPIData.lastClaimedReward!;
     const notificationInterval = rewardsModule.notificationInterval!;
 
-    const hasClaimed = Boolean(chicagoMS + clientChicagoOffset - Constants.ms.day < lastClaimedReward);
+    //Is the user's last claimed reward between the past midnight and the coming midnight
+    const hasClaimed = nextResetTime - Constants.ms.day < lastClaimedReward;
 
     if (
       hasClaimed === false &&
-      chicagoMS - alertOffset < Date.now() &&
+      hypixelTime - alertOffset < Date.now() &&
       rewardsModule.lastNotified + notificationInterval < Date.now()
     ) {
       const user = await client.users.fetch(userAPIData.discordID);
-      const rewardNotification = new BetterEmbed({ color: Constants.color.normal, footer: { name: 'Issue' } })
-        .setTitle('Reward Reminder')
+      const rewardNotification = new BetterEmbed({
+        color: Constants.color.normal,
+        footer: {
+          name: 'Notification',
+        },
+      })
+        .setTitle('Daily Reward Reminder')
         .setDescription('You haven\'t claimed your daily reward yet!');
 
-      await user.send({ embeds: [rewardNotification] });
       await SQLiteWrapper.updateUser<Partial<RewardsModule>, Partial<RewardsModule>>({
         discordID: userAPIData.discordID,
         table: 'rewards',
@@ -60,9 +72,15 @@ export const execute = async ({
           lastNotified: Date.now(),
         },
       });
+
+      await user.send({
+        embeds: [rewardNotification],
+      });
       return;
     }
   } catch (error) {
-    await errorHandler({ error: new ModuleError((error as Error).message) });
+    await errorHandler({
+      error: new ModuleError((error as Error).message),
+    });
   }
 };
