@@ -1,6 +1,9 @@
 {
   "cSpell.words": [
     "aborterror",
+    "autoleave",
+    "blockguild",
+    "blockuser",
     "cooldown",
     "cooldowns",
     "deletedata",
@@ -11,6 +14,7 @@
     "jsonized",
     "lclzlr",
     "lclzr",
+    "leaveguild",
     "Minecraft",
     "Nize",
     "Notif",

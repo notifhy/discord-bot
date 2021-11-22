@@ -9,7 +9,7 @@ export interface History extends Partial<CleanHypixelPlayerData> {
 }
 
 export interface RawConfig {
-  baseURL: string;
+  blockedGuilds: string;
   blockedUsers: string;
   devMode: string;
   enabled: string;

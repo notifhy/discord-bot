@@ -9,7 +9,7 @@ export interface WebHookConfig {
 }
 
 export interface Config {
-  baseURL: string;
+  blockedGuilds: string[];
   blockedUsers: string[];
   devMode: boolean;
   enabled: boolean

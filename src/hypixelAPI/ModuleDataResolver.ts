@@ -78,8 +78,8 @@ export class ModuleDataResolver {
                 };
 
                 const modules = [];
-                if (user.modules?.includes('rewards')) modules.push(rewardsModule.execute(payLoad));
-                if (user.modules.includes('friend')) modules.push(friendsModule.execute(payLoad));
+                if (user.modules.includes('rewards')) modules.push(rewardsModule.execute(payLoad));
+                if (user.modules.includes('friends')) modules.push(friendsModule.execute(payLoad));
                 await Promise.all(modules);
               } catch (error) {
                 await errorHandler({ error: error, moduleDataResolver: this });

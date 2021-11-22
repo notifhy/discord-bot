@@ -94,11 +94,13 @@ export const execute = async ({
         .setTitle('Missing Permissions')
         .setDescription(`This bot is missing the following permissions in the channel <#${friendModule.channel}>: ${missingPermissions.join(', ')}. The Friends Module has been toggled off due to this issue.`);
 
+      userAPIData.modules.splice(userAPIData.modules.indexOf('friends'), 1);
+
       await SQLiteWrapper.updateUser<Partial<UserAPIData>, Partial<UserAPIData>>({
         discordID: userAPIData.discordID,
         table: 'api',
         data: {
-          modules: userAPIData.modules.splice(userAPIData.modules.indexOf('friends'), 1),
+          modules: userAPIData.modules,
         },
       });
 

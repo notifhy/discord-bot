@@ -8,5 +8,10 @@ export const properties: EventProperties = {
 };
 
 export const execute = (error: Error): void => {
-  console.log(`${formattedUnix({ date: true, utc: true })} | Discord.js Error:`, error);
+  const time = formattedUnix({
+    date: true,
+    utc: true,
+  });
+
+  console.log(`${time} | discord.js Error:`, error);
 };

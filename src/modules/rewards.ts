@@ -41,7 +41,7 @@ export const execute = async ({
     )).getTime();
 
     const hypixelToClientOffset = hypixelTime - date;
-    const nextResetTime = new Date().setHours(24, 0, 0, 0) - hypixelToClientOffset;
+    const nextResetTime = new Date(hypixelTime).setHours(24, 0, 0, 0) - hypixelToClientOffset;
 
     const alertOffset = rewardsModule.alertTime!;
     const lastClaimedReward = userAPIData.lastClaimedReward!;
@@ -52,7 +52,7 @@ export const execute = async ({
 
     if (
       hasClaimed === false &&
-      hypixelTime - alertOffset < Date.now() &&
+      nextResetTime - alertOffset < Date.now() &&
       rewardsModule.lastNotified + notificationInterval < Date.now()
     ) {
       const user = await client.users.fetch(userAPIData.discordID);

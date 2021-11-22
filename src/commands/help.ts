@@ -111,7 +111,7 @@ async function commands(interaction: CommandInteraction, userData: UserData) {
 
   for (const command of commandsCollection.values()) {
     allCommandsEmbed.addField(replace(locale.all.field.name, {
-      commandUsage: `/${command.properties.name}`,
+      commandUsage: command.properties.usage,
     }),
       replace(locale.all.field.value, {
         commandDescription: command.properties.description,

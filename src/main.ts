@@ -68,7 +68,7 @@ client.regionLocales = new RegionLocales();
   });
 
   client.config = {
-    baseURL: config.baseURL,
+    blockedGuilds: config.blockedGuilds,
     blockedUsers: config.blockedUsers,
     devMode: config.devMode,
     enabled: config.enabled,

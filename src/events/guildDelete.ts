@@ -10,5 +10,17 @@ export const properties: EventProperties = {
 
 export const execute = (guild: Guild): void => {
   if (guild.available === false || !guild.client.isReady()) return;
-  console.log(`${formattedUnix({ date: true, utc: true })} | Bot has left a guild; joined ${formattedUnix({ ms: guild.joinedTimestamp, date: true, utc: true })}. Guild: ${guild.name} | ${guild.id} Guild Owner: ${guild.ownerId} Guild Member Count: ${guild.memberCount - 1} (new count)`);
+
+  const time = formattedUnix({
+    date: true,
+    utc: true,
+  });
+
+  const joinedAt = formattedUnix({
+    ms: guild.joinedTimestamp,
+    date: true,
+    utc: true,
+  });
+
+  console.log(`${time} | Bot has left a guild; joined ${joinedAt}. Guild: ${guild.name} | ${guild.id} Guild Owner: ${guild.ownerId} Guild Member Count: ${guild.memberCount - 1} (new count)`);
 };

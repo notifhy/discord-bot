@@ -13,6 +13,26 @@ export const properties: CommandProperties = {
   structure: {
     name: 'test',
     description: 'does stuff',
+    options: [
+      {
+        name: 'delete',
+        type: '2',
+        description: 'Delete all of your data',
+        options: [
+          {
+            name: 'view',
+            description: 'Returns a file with all of your data',
+            type: '1',
+            options: [{
+              name: 'command',
+              type: '3',
+              description: 'A command to get info about. This parameter is completely optional',
+              required: false,
+            }],
+          },
+        ],
+      },
+    ],
   },
 };
 

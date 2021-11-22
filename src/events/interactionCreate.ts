@@ -7,6 +7,7 @@ import { RawUserData, UserAPIData, UserData } from '../@types/database';
 import { SQLiteWrapper } from '../database';
 import Constants from '../util/constants';
 import errorHandler from '../util/error/errorHandler';
+import { slashCommandOptionString } from '../util/structures';
 
 
 export const properties: EventProperties = {
@@ -21,9 +22,9 @@ export const execute = async (interaction: CommandInteraction): Promise<void> =>
       const command: SlashCommand | undefined = interaction.client.commands.get(interaction.commandName);
       if (command === undefined) return;
 
-      console.log(`${formattedUnix({ date: true, utc: true })} | Slash Command from ${interaction.user.tag} (${interaction.user.id}) for the command ${interaction.commandName}`);
+      const commandData = [`/${interaction.commandName}`, ...slashCommandOptionString(interaction)].join(' ');
 
-      console.log(interaction.options.data);
+      console.log(`${formattedUnix({ date: true, utc: true })} | Slash Command from ${interaction.user.tag} (${interaction.user.id}) | ${commandData}`);
 
       await interaction.deferReply({
         ephemeral: command.properties.ephemeral,

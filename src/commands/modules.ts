@@ -1,15 +1,15 @@
 import type { CommandExecute, CommandProperties } from '../@types/client';
 import type { FriendsModule, RawFriendsModule, RawUserAPIData, UserAPIData, UserData } from '../@types/database';
 import { BetterEmbed } from '../util/utility';
-import { ButtonInteraction, CommandInteraction, Message, MessageActionRow, MessageComponentInteraction, MessageSelectMenu, SelectMenuInteraction } from 'discord.js';
+import { ButtonInteraction, CommandInteraction, Message, MessageActionRow, MessageComponentInteraction, MessageSelectMenu, SelectMenuInteraction, TextChannel } from 'discord.js';
 import { SQLiteWrapper } from '../database';
 import { ToggleButtons } from '../util/structures';
 import Constants from '../util/constants';
 
 export const properties: CommandProperties = {
   name: 'modules',
-  description: 'placeholder',
-  usage: '/modules',
+  description: 'Add or remove modules for your Minecraft account',
+  usage: '/modules [defender/friends/rewards]',
   cooldown: 15_000,
   ephemeral: true,
   noDM: false,
@@ -119,15 +119,17 @@ export const execute: CommandExecute = async (interaction: CommandInteraction, {
           break;
         }
         case 'channel': {
-          const channelMenu = new MessageSelectMenu()
-            .setCustomId('channel')
-            .setPlaceholder('Currently Unavailable')
-            .setDisabled(true)
-            .setOptions({
+          const channelMenu = new MessageSelectMenu({
+            custom_id: 'channel',
+            placeholder: 'Currently Unavailable',
+            disabled: true,
+            options: [{
               label: 'Unavailable',
               value: 'unavailable',
-              description: 'This is unavailable',
-            });
+              description: 'description',
+            }],
+          });
+
           component = new MessageActionRow().setComponents(channelMenu);
           break;
         }
