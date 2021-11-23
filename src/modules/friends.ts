@@ -55,6 +55,7 @@ export const execute = async ({
       await user.send({
         embeds: [undefinedData],
       });
+
       return;
     }
 
@@ -66,7 +67,7 @@ export const execute = async ({
       const undefinedData = new BetterEmbed({
         color: Constants.color.on,
         footer: {
-          name: 'Issue',
+          name: 'Notification',
         },
       })
         .setTitle('Received Data')
@@ -75,6 +76,7 @@ export const execute = async ({
       await user.send({
         embeds: [undefinedData],
       });
+
       return;
     }
 
@@ -106,6 +108,32 @@ export const execute = async ({
 
       await user.send({
         embeds: [missingEmbed],
+      });
+
+      return;
+    }
+
+    if (friendModule.suppressNext === true) {
+      const user = await client.users.fetch(userAPIData.discordID);
+      const suppressedEmbed = new BetterEmbed({
+        color: Constants.color.normal,
+        footer: {
+          name: 'Notification',
+        },
+      })
+        .setTitle('Alert Suppressed')
+        .setDescription(`Your latest alert for the Friend Module has been suppressed, and login/logout notifications will now resume.`);
+
+      await SQLiteWrapper.updateUser<Partial<FriendsModule>, Partial<RawFriendsModule>>({
+        discordID: userAPIData.discordID,
+        table: 'api',
+        data: {
+          suppressNext: false,
+        },
+      });
+
+      await user.send({
+        embeds: [suppressedEmbed],
       });
 
       return;
