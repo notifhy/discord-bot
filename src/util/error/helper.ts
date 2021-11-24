@@ -3,11 +3,11 @@ import { BetterEmbed, cleanLength, cleanRound, formattedUnix, sendWebHook } from
 import { CommandInteraction, MessageEmbed } from 'discord.js';
 import { fatalWebhook, keyLimit, ownerID } from '../../../config.json';
 import { FetchError } from 'node-fetch';
-import { HTTPError } from './HTTPError';
 import { HypixelAPIError } from '../../@types/hypixel';
 import { ModuleDataResolver } from '../../hypixelAPI/ModuleDataResolver';
-import { RateLimitError } from './RateLimitError';
 import Constants from '../../util/constants';
+import HTTPError from './HTTPError';
+import RateLimitError from './RateLimitError';
 
 export const isAbortError = (error: any): error is AbortError => error?.name === 'AbortError';
 

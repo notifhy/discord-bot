@@ -59,12 +59,8 @@ client.regionLocales = new RegionLocales();
     else client.once(name, parameters => callExecute(parameters));
   }
 
-  const rawConfig = await SQLiteWrapper.queryGet<RawConfig>({
+  const config = await SQLiteWrapper.queryGet<RawConfig, Config>({
     query: 'SELECT * FROM config WHERE rowid = 1',
-  });
-
-  const config = SQLiteWrapper.JSONize<RawConfig, Config>({
-    input: rawConfig,
   });
 
   client.config = {

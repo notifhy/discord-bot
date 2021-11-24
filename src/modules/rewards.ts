@@ -2,13 +2,13 @@ import type { RawRewardsModule, RewardsModule, UserAPIData } from '../@types/dat
 import { BetterEmbed, cleanLength } from '../util/utility';
 import { CleanHypixelPlayerData } from '../@types/hypixel';
 import { Client } from 'discord.js';
-import { ModuleError } from '../util/error/ModuleError';
 import { SQLiteWrapper } from '../database';
 import Constants from '../util/constants';
 import errorHandler from '../util/error/errorHandler';
+import ModuleError from '../util/error/ModuleError';
 
 export const properties = {
-  name: 'friendsEvent',
+  name: 'rewards',
 };
 
 type Differences = {
@@ -80,7 +80,10 @@ export const execute = async ({
     }
   } catch (error) {
     await errorHandler({
-      error: new ModuleError((error as Error).message),
+      error: new ModuleError({
+        message: (error as Error).message,
+        module: properties.name,
+      }),
     });
   }
 };

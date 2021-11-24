@@ -1,10 +1,10 @@
 import type { Hypixel400_403_422, Hypixel429, HypixelAPIError, HypixelAPIOk } from '../@types/hypixel';
 import type { Response } from 'node-fetch';
-import { HTTPError } from '../util/error/HTTPError';
 import { hypixelAPIkey } from '../../config.json';
 import { ModuleDataResolver } from './ModuleDataResolver';
-import { RateLimitError } from '../util/error/RateLimitError';
 import { Request } from './Request';
+import HTTPError from '../util/error/HTTPError';
+import RateLimitError from '../util/error/RateLimitError';
 
 export class HypixelRequestCall {
   async call(url: string, moduleDataResolver: ModuleDataResolver): Promise<HypixelAPIOk> {

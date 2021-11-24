@@ -1,12 +1,12 @@
 import type { CommandExecute, CommandProperties } from '../@types/client';
 import { BetterEmbed } from '../util/utility';
 import { CommandInteraction } from 'discord.js';
-import { HTTPError } from '../util/error/HTTPError';
 import { FriendsModule, RawFriendsModule, RawRewardsModule, RawUserAPIData, RewardsModule, UserAPIData } from '../@types/database';
 import { Request } from '../hypixelAPI/Request';
 import { Slothpixel } from '../@types/hypixel';
 import { SQLiteWrapper } from '../database';
 import Constants from '../util/constants';
+import HTTPError from '../util/error/HTTPError';
 
 export const properties: CommandProperties = {
   name: 'register',

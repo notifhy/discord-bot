@@ -1,13 +1,13 @@
 import type { EventProperties, SlashCommand } from '../@types/client';
 import { BetterEmbed, cleanRound, formattedUnix, timeout } from '../util/utility';
 import { Collection, CommandInteraction } from 'discord.js';
-import { ConstraintError } from '../util/error/ConstraintError';
 import { ownerID } from '../../config.json';
 import { RawUserData, UserAPIData, UserData } from '../@types/database';
+import { slashCommandOptionString } from '../util/structures';
 import { SQLiteWrapper } from '../database';
 import Constants from '../util/constants';
+import ConstraintError from '../util/error/ConstraintError';
 import errorHandler from '../util/error/errorHandler';
-import { slashCommandOptionString } from '../util/structures';
 
 
 export const properties: EventProperties = {

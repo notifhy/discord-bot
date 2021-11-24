@@ -54,12 +54,8 @@ export const properties: CommandProperties = {
 
 export const execute: CommandExecute = async (interaction: CommandInteraction): Promise<void> => {
   const responseEmbed = new BetterEmbed({ color: '#7289DA', footer: interaction });
-  const rawConfig = await SQLiteWrapper.queryGet<RawConfig>({
+  const config = await SQLiteWrapper.queryGet<RawConfig, Config>({
     query: 'SELECT blockedGuilds, blockedUsers, devMode, enabled FROM config WHERE rowid = 1',
-  });
-
-  const config = SQLiteWrapper.JSONize<RawConfig, Config>({
-    input: rawConfig,
   });
 
   const payload: WebhookEditMessageOptions = {};

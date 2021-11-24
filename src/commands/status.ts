@@ -41,10 +41,10 @@ export const execute: CommandExecute = async (interaction: CommandInteraction): 
     const status = interaction.options.getString('string') as string;
     interaction.client.user?.setActivity({ type: 'WATCHING', name: status });
     interaction.client.customStatus = true;
-    responseEmbed.setTitle(`Status Set`);
+    responseEmbed.setTitle('Status Set');
     responseEmbed.setDescription(`The status is now set to ${status}!`);
   } else {
-    responseEmbed.setTitle(`Status Cleared`);
+    responseEmbed.setTitle('Status Cleared');
     responseEmbed.setDescription(`The status is now automatic!`);
     interaction.client.customStatus = false;
   }

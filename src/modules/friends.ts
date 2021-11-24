@@ -2,13 +2,13 @@ import type { FriendsModule, RawFriendsModule, UserAPIData } from '../@types/dat
 import { BetterEmbed, matchPermissions } from '../util/utility';
 import { CleanHypixelPlayerData } from '../@types/hypixel';
 import { Client, GuildMember, MessageEmbed, TextChannel } from 'discord.js';
-import { ModuleError } from '../util/error/ModuleError';
 import { SQLiteWrapper } from '../database';
 import Constants from '../util/constants';
 import errorHandler from '../util/error/errorHandler';
+import ModuleError from '../util/error/ModuleError';
 
 export const properties = {
-  name: 'friendsEvent',
+  name: 'friends',
 };
 
 type Differences = {
@@ -162,8 +162,14 @@ export const execute = async ({
       })
         .setDescription(`<@!${userAPIData.discordID}> logged out <t:${Math.round(differences.primary.lastLogout / 1000)}:R> at <t:${Math.round(differences.primary.lastLogout / 1000)}:T>`);
 
-      if (differences.primary.lastLogout > (differences.primary.lastLogin ?? 0)) notifications.push(logout);
-      else notifications.unshift(logout);
+      //lastLogout seems to change twice sometimes on a single logout, this is a fix for that
+      const lastEvent = userAPIData.history[1]; //First item in array is this event, so it checks the second item
+      const duplicationCheck = 'lastLogout' in lastEvent;
+
+      if (duplicationCheck === false) {
+        if (differences.primary.lastLogout > (differences.primary.lastLogin ?? 0)) notifications.push(logout);
+        else notifications.unshift(logout);
+      }
     }
 
     if (notifications.length > 0) {
@@ -176,7 +182,10 @@ export const execute = async ({
     }
   } catch (error) {
     await errorHandler({
-      error: new ModuleError((error as Error).message),
+      error: new ModuleError({
+        message: (error as Error).message,
+        module: properties.name,
+      }),
     });
   }
 };

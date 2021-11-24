@@ -7,10 +7,10 @@ import { HypixelRequestCall } from './HypixelRequestCall';
 import { keyLimit } from '../../config.json';
 import { SQLiteWrapper } from '../database';
 import errorHandler from '../util/error/errorHandler';
+import ModuleError from '../util/error/ModuleError';
 import * as defenderModule from '../modules/defender';
 import * as friendsModule from '../modules/friends';
 import * as rewardsModule from '../modules/rewards';
-import { ModuleError } from '../util/error/ModuleError';
 
 export class ModuleDataResolver {
   [key: string]: any; //Not ideal, but I couldn't get anything else to work
