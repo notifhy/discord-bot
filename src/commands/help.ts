@@ -1,4 +1,4 @@
-import type { CommandExecute, CommandProperties, SlashCommand } from '../@types/client';
+import type { CommandExecute, CommandProperties, ClientCommand } from '../@types/client';
 import { BetterEmbed } from '../util/utility';
 import { CommandInteraction } from 'discord.js';
 import { UserData } from '../@types/database';
@@ -54,7 +54,7 @@ async function specific(interaction: CommandInteraction, userData: UserData) {
   const locale = interaction.client.regionLocales.locale(userData.language).commands.help;
   const replace = interaction.client.regionLocales.replace;
   const commandArg: string = interaction.options.getString('command') as string;
-  const command: SlashCommand | undefined = interaction.client.commands.get(commandArg);
+  const command: ClientCommand | undefined = interaction.client.commands.get(commandArg);
   const commandSearchEmbed = new BetterEmbed({ color: '#7289DA', footer: interaction });
 
   if (command === undefined) {

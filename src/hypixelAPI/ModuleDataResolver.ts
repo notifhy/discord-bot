@@ -1,16 +1,13 @@
+import type { Client } from 'discord.js';
+import type { History, RawUserAPIData, UserAPIData } from '../@types/database';
 import { Abort, Instance, RateLimit, Unusual } from './ModuleRequestHelper';
-import { Client } from 'discord.js';
 import { CleanHypixelPlayerData, CleanHypixelStatusData, HypixelAPIOk, RawHypixelPlayer, RawHypixelPlayerData, RawHypixelStatus, RawHypixelStatusData } from '../@types/hypixel';
-import { compare, timeout } from '../util/utility';
-import { History, RawUserAPIData, UserAPIData } from '../@types/database';
+import { compare } from '../util/utility';
 import { HypixelRequestCall } from './HypixelRequestCall';
 import { keyLimit } from '../../config.json';
+import { setTimeout } from 'timers/promises';
 import { SQLiteWrapper } from '../database';
 import errorHandler from '../util/error/errorHandler';
-import ModuleError from '../util/error/ModuleError';
-import * as defenderModule from '../modules/defender';
-import * as friendsModule from '../modules/friends';
-import * as rewardsModule from '../modules/rewards';
 
 export class ModuleDataResolver {
   [key: string]: any; //Not ideal, but I couldn't get anything else to work
@@ -23,17 +20,18 @@ export class ModuleDataResolver {
 
   constructor(client: Client) {
     this.abort = new Abort();
-    this.client = client;
-    this.hypixelRequestCall = new HypixelRequestCall();
     this.instance = new Instance();
     this.rateLimit = new RateLimit();
     this.unusual = new Unusual();
+
+    this.client = client;
+    this.hypixelRequestCall = new HypixelRequestCall(this);
   }
 
   async cycle() {
     try {
       if (this.instance.resumeAfter > Date.now()) {
-        await timeout(this.instance.resumeAfter - Date.now());
+        await setTimeout(this.instance.resumeAfter - Date.now());
       }
 
       const users = await SQLiteWrapper.getAllUsers<RawUserAPIData, UserAPIData>({
@@ -78,15 +76,16 @@ export class ModuleDataResolver {
                 };
 
                 const modules = [];
-                if (user.modules.includes('rewards')) modules.push(rewardsModule.execute(payLoad));
-                if (user.modules.includes('friends')) modules.push(friendsModule.execute(payLoad));
+                //I want it to yell at me if it is undefined rather than silent fail
+                if (user.modules.includes('rewards')) modules.push(this.client.modules.get('rewards')!.execute(payLoad));
+                if (user.modules.includes('friends')) modules.push(this.client.modules.get('friends')!.execute(payLoad));
                 await Promise.all(modules);
               } catch (error) {
                 await errorHandler({ error: error, moduleDataResolver: this });
               }
             })();
           }
-          await timeout(intervalBetweenRequests * urls.length); //eslint-disable-line no-await-in-loop
+          await setTimeout(intervalBetweenRequests * urls.length); //eslint-disable-line no-await-in-loop
         }
       }
     } catch (error) {
@@ -102,7 +101,7 @@ export class ModuleDataResolver {
   }
 
   private async fetch(user: UserAPIData, urls: string[]): Promise<[CleanHypixelPlayerData, CleanHypixelStatusData | undefined]> {
-    const urlPromises: Promise<HypixelAPIOk>[] = urls.map(url => this.hypixelRequestCall.call(url, this), user);
+    const urlPromises: Promise<HypixelAPIOk>[] = urls.map(url => this.hypixelRequestCall.call(url), user);
     const hypixelAPIOk: HypixelAPIOk[] = await Promise.all(urlPromises);
 
     const hypixelPlayerData: CleanHypixelPlayerData = this.cleanPlayerData(hypixelAPIOk[0] as RawHypixelPlayer, user);

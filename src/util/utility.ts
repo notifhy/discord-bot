@@ -133,5 +133,3 @@ export function cleanRound(number: number, decimals?: number) {
   const decimalsFactor = 10 ** (decimals ?? 2);
   return Math.round(number * decimalsFactor) / decimalsFactor;
 }
-
-export const timeout = (ms: number) => new Promise(res => setTimeout(res, ms));

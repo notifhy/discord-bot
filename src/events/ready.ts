@@ -10,23 +10,28 @@ export const properties: EventProperties = {
 };
 
 export const execute = async (client: Client) => {
-  console.log(`Logged in as ${client!.user!.tag}!`);
+  console.log(`Logged in as ${client?.user?.tag}!`);
 
   setInterval(async () => {
     try {
-      if (client.customStatus === false) {
+      let label: string;
+      if (client.customStatus) {
+        label = client.customStatus;
+      } else {
         const users = (await SQLiteWrapper.getAllUsers({
           table: 'api',
           columns: ['discordID'],
         })).length;
 
-        client.user?.setActivity({
-          type: 'WATCHING',
-          name: `${users} accounts | /register /help | ${client.guilds.cache.size} servers`,
-        });
+        label = `${users} accounts | /register /help | ${client.guilds.cache.size} servers`; //Move to locales etc?
       }
+
+      client.user?.setActivity({
+        type: 'WATCHING',
+        name: label,
+      });
     } catch (error) {
-      errorHandler({ error: error });
+      await errorHandler({ error: error });
     }
   }, 30_000);
 

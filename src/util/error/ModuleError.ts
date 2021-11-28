@@ -15,4 +15,4 @@ export default class ModuleError extends Error {
     Object.setPrototypeOf(this, ModuleError.prototype);
     Error.captureStackTrace(this, this.constructor);
   }
-};
+}

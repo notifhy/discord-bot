@@ -1,53 +1,64 @@
 import type { CommandExecute, CommandProperties } from '../@types/client';
-import { BetterEmbed } from '../util/utility';
+import { BetterEmbed, cleanLength } from '../util/utility';
 import { CommandInteraction } from 'discord.js';
+import { keyLimit } from '../../config.json';
+import { SQLiteWrapper } from '../database';
 
 export const properties: CommandProperties = {
   name: 'status',
-  description: 'Set a custom status',
-  usage: '/status [set/clear] <string>',
-  cooldown: 0,
+  description: 'View the bot\'s status',
+  usage: '/status',
+  cooldown: 10000,
   ephemeral: true,
   noDM: false,
-  ownerOnly: true,
+  ownerOnly: false,
   structure: {
     name: 'status',
-    description: 'Set a custom for the bot',
-    options: [
-      {
-        name: 'clear',
-        type: '1',
-        description: 'Clear the custom status',
-      },
-      {
-        name: 'set',
-        description: 'Set a custom status',
-        type: '1',
-        options: [{
-          name: 'string',
-          type: '3',
-          description: 'The status to display',
-          required: false,
-        }],
-      },
-    ],
+    description: 'View the bot\'s status',
   },
 };
 
 export const execute: CommandExecute = async (interaction: CommandInteraction): Promise<void> => {
-  const responseEmbed = new BetterEmbed({ color: '#7289DA', footer: interaction });
+  const keyQueryLimit = keyLimit * interaction.client.hypixelAPI.instance.keyPercentage;
+  const intervalBetweenRequests = 60 / keyQueryLimit * 1000;
 
-  if (interaction.options.getSubcommand() === 'set') {
-    const status = interaction.options.getString('string') as string;
-    interaction.client.user?.setActivity({ type: 'WATCHING', name: status });
-    interaction.client.customStatus = true;
-    responseEmbed.setTitle('Status Set');
-    responseEmbed.setDescription(`The status is now set to ${status}!`);
-  } else {
-    responseEmbed.setTitle('Status Cleared');
-    responseEmbed.setDescription(`The status is now automatic!`);
-    interaction.client.customStatus = false;
-  }
+  const userCount = (await SQLiteWrapper.getAllUsers({
+    table: 'api',
+    columns: ['discordID'],
+  })).length;
 
-  await interaction.editReply({ embeds: [responseEmbed] });
+  const updateInterval = userCount * intervalBetweenRequests;
+
+  const responseEmbed = new BetterEmbed({
+    color: '#7289DA',
+    footer: interaction,
+  })
+    .setTitle('Status')
+    .addFields([
+      {
+        name: 'Uptime',
+        value: String(cleanLength(interaction.client.uptime ?? 0)),
+      },
+      {
+        name: 'Servers',
+        value: String(interaction.client.guilds.cache.size),
+      },
+      {
+        name: 'Users',
+        value: String(interaction.client.guilds.cache.reduce((acc, guild) => acc + guild.memberCount, 0)),
+      },
+      {
+        name: 'Hypixel API',
+        value: `Refresh Interval: ${cleanLength(updateInterval)}\nInstance Requests: ${interaction.client.hypixelAPI.instance.instanceUses}`,
+      },
+      {
+        name: 'Registered Users',
+        value: String(userCount),
+      },
+    ]);
+
+
+  await interaction.editReply({
+    embeds: [responseEmbed],
+  });
 };

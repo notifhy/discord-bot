@@ -1,17 +1,17 @@
-import type { SlashCommand } from './@types/client';
+import type { ClientCommand } from './@types/client';
 import { clientID, discordAPIkey } from '../config.json';
 import { REST } from '@discordjs/rest';
 import { Routes } from 'discord-api-types/v9';
 import fs from 'fs';
 
-const commands: any = [];
+const commands: ClientCommand['properties']['structure'][] = [];
 const commandFiles = fs.readdirSync('./commands').filter(file => file.endsWith('.ts'));
 
 (async () => {
 	try {
     for (const file of commandFiles) {
       // eslint-disable-next-line no-await-in-loop
-      const { properties: { structure } }: SlashCommand = await import(`./commands/${file}`);
+      const { properties: { structure } }: ClientCommand = await import(`./commands/${file}`);
       commands.push(structure);
     }
 

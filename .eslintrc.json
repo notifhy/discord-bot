@@ -9,7 +9,21 @@
 		"ecmaVersion": 2021,
     "sourceType": "module"
 	},
+  "extends": [
+    "eslint:recommended",
+    "plugin:@typescript-eslint/eslint-recommended",
+    "plugin:@typescript-eslint/recommended"
+  ],
   "rules": {
+      "@typescript-eslint/no-non-null-assertion": "off",
+      "require-atomic-updates": "off",
+      "lines-between-class-members": "off",
+      "no-constant-condition": ["error", { "checkLoops": false }],
+      "no-undefined": "off",
+      "line-comment-position": "off",
+      "no-unused-vars": ["error", { "args": "after-used", "ignoreRestSiblings": true }],
+      "array-bracket-newline": ["error", "consistent"],
+      "implicit-arrow-linebreak": "off",
       "no-param-reassign": "error",
       "prefer-const": "error",
       "no-var": "error",
@@ -160,6 +174,7 @@
         "ignoreRegExpLiterals": true
       }],
       "max-nested-callbacks": ["error", { "max": 4 }],
+      "max-statements": "off",
       "max-statements-per-line": ["error", { "max": 2 }],
       "new-cap": "off",
       "newline-per-chained-call": ["error", { "ignoreChainWithDepth": 5 }],

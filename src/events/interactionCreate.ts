@@ -1,9 +1,10 @@
-import type { EventProperties, SlashCommand } from '../@types/client';
-import { BetterEmbed, cleanRound, formattedUnix, timeout } from '../util/utility';
+import type { EventProperties, ClientCommand } from '../@types/client';
+import { BetterEmbed, cleanRound, formattedUnix } from '../util/utility';
 import { Collection, CommandInteraction } from 'discord.js';
 import { ownerID } from '../../config.json';
 import { RawUserData, UserAPIData, UserData } from '../@types/database';
 import { slashCommandOptionString } from '../util/structures';
+import { setTimeout } from 'timers/promises';
 import { SQLiteWrapper } from '../database';
 import Constants from '../util/constants';
 import ConstraintError from '../util/error/ConstraintError';
@@ -19,7 +20,7 @@ export const properties: EventProperties = {
 export const execute = async (interaction: CommandInteraction): Promise<void> => {
   try {
     if (interaction.isCommand()) {
-      const command: SlashCommand | undefined = interaction.client.commands.get(interaction.commandName);
+      const command: ClientCommand | undefined = interaction.client.commands.get(interaction.commandName);
       if (command === undefined) return;
 
       const commandData = [`/${interaction.commandName}`, ...slashCommandOptionString(interaction)].join(' ');
@@ -80,10 +81,10 @@ async function blockedConstraint(interaction: CommandInteraction, userData: User
       color: Constants.color.warning,
       footer: interaction,
     })
-			.setTitle(locale.blockedUsers.title)
-			.setDescription(locale.blockedUsers.description);
+      .setTitle(locale.blockedUsers.title)
+      .setDescription(locale.blockedUsers.description);
 
-		await interaction.editReply({
+    await interaction.editReply({
       embeds: [blockedEmbed],
     });
 
@@ -98,10 +99,10 @@ async function devConstraint(interaction: CommandInteraction, userData: UserData
       color: Constants.color.warning,
       footer: interaction,
     })
-			.setTitle(locale.devMode.title)
-			.setDescription(locale.devMode.description);
+      .setTitle(locale.devMode.title)
+      .setDescription(locale.devMode.description);
 
-		await interaction.editReply({
+    await interaction.editReply({
       embeds: [devModeEmbed],
     });
 
@@ -109,7 +110,7 @@ async function devConstraint(interaction: CommandInteraction, userData: UserData
   }
 }
 
-async function ownerConstraint(interaction: CommandInteraction, userData: UserData, command: SlashCommand) {
+async function ownerConstraint(interaction: CommandInteraction, userData: UserData, command: ClientCommand) {
   const locale = interaction.client.regionLocales.locale(userData.language).constraints;
   if (command.properties.ownerOnly === true && ownerID.includes(interaction.user.id) === false) {
     const ownerEmbed = new BetterEmbed({
@@ -127,7 +128,7 @@ async function ownerConstraint(interaction: CommandInteraction, userData: UserDa
  }
 }
 
-async function dmConstraint(interaction: CommandInteraction, userData: UserData, command: SlashCommand) {
+async function dmConstraint(interaction: CommandInteraction, userData: UserData, command: ClientCommand) {
   const locale = interaction.client.regionLocales.locale(userData.language).constraints;
   if (command.properties.noDM === true && !interaction.inGuild()) {
     const dmEmbed = new BetterEmbed({
@@ -145,9 +146,9 @@ async function dmConstraint(interaction: CommandInteraction, userData: UserData,
   }
 }
 
-async function cooldownConstraint(interaction: CommandInteraction, userData: UserData, command: SlashCommand) {
+async function cooldownConstraint(interaction: CommandInteraction, userData: UserData, command: ClientCommand) {
   const locale = interaction.client.regionLocales.locale(userData.language).constraints;
-  const replace = interaction.client.regionLocales.replace;
+  const { replace } = interaction.client.regionLocales;
   const { cooldowns } = interaction.client;
 
   if (cooldowns.has(command.properties.name) === false) cooldowns.set(command.properties.name, new Collection());
@@ -176,7 +177,7 @@ async function cooldownConstraint(interaction: CommandInteraction, userData: Use
       embeds: [cooldownEmbed],
     });
 
-    await timeout(timeLeft);
+    await setTimeout(timeLeft);
 
     const cooldownOverEmbed = new BetterEmbed({
       color: Constants.color.on,

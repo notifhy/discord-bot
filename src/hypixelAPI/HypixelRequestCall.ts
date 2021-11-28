@@ -6,13 +6,22 @@ import { Request } from './Request';
 import HTTPError from '../util/error/HTTPError';
 import RateLimitError from '../util/error/RateLimitError';
 
-export class HypixelRequestCall {
-  async call(url: string, moduleDataResolver: ModuleDataResolver): Promise<HypixelAPIOk> {
-    moduleDataResolver.instance.instanceUses += 1;
-    const response: Response = await new Request({
+export class HypixelRequestCall extends Request {
+  moduleDataResolver: ModuleDataResolver;
+
+  constructor(moduleDataResolver: ModuleDataResolver) {
+    super({
       maxAborts: 1,
       abortThreshold: moduleDataResolver.instance.abortThreshold,
-    }).request(url, {
+    });
+
+    this.moduleDataResolver = moduleDataResolver;
+  }
+
+  async call(url: string): Promise<HypixelAPIOk> {
+    this.moduleDataResolver.instance.instanceUses += 1;
+
+    const response: Response = await this.request(url, {
       headers: { 'API-Key': hypixelAPIkey },
     }) as Response;
 

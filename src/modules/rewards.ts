@@ -1,26 +1,23 @@
 import type { RawRewardsModule, RewardsModule, UserAPIData } from '../@types/database';
-import { BetterEmbed, cleanLength } from '../util/utility';
-import { CleanHypixelPlayerData } from '../@types/hypixel';
+import { BetterEmbed } from '../util/utility';
 import { Client } from 'discord.js';
 import { SQLiteWrapper } from '../database';
 import Constants from '../util/constants';
 import errorHandler from '../util/error/errorHandler';
 import ModuleError from '../util/error/ModuleError';
+import { Differences } from '../@types/modules';
 
 export const properties = {
   name: 'rewards',
 };
 
-type Differences = {
-  primary: Partial<CleanHypixelPlayerData>,
-  secondary: Partial<UserAPIData>,
-};
-
 export const execute = async ({
   client,
+  differences,
   userAPIData,
 }: {
   client: Client,
+  differences: Differences,
   userAPIData: UserAPIData
 }): Promise<void> => {
   try {
@@ -76,7 +73,32 @@ export const execute = async ({
       await user.send({
         embeds: [rewardNotification],
       });
+    }
+
+    if (
+      differences.primary.rewardScore === undefined ||
+      rewardsModule.milestones === false
+    ) {
       return;
+    }
+
+    const milestones = [7, 30, 60, 90, 100, 150, 200, 250, 300, 350, 365, 500, 1000];
+    const milestone = milestones.find(item => item === differences.primary.rewardScore);
+
+    if (milestone) {
+      const user = await client.users.fetch(userAPIData.discordID);
+      const milestoneNotification = new BetterEmbed({
+        color: Constants.color.normal,
+        footer: {
+          name: 'Notification',
+        },
+      })
+        .setTitle('Congratulations')
+        .setDescription(`You have reached a daily streak of \`${milestone}\`! To opt oit of future milestone messages, uae /modules`);
+
+      await user.send({
+        embeds: [milestoneNotification],
+      });
     }
   } catch (error) {
     await errorHandler({

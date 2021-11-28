@@ -1,9 +1,11 @@
+/* eslint-disable no-unused-vars */
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import type { FriendsModule, UserAPIData, UserData } from '../@types/database';
 import { CleanHypixelPlayerData } from '../@types/hypixel';
 import { SQLiteWrapper } from '../database';
 
 export const properties = {
-  name: 'defenderEvent',
+  name: 'defender',
 };
 
 export const execute = async ({

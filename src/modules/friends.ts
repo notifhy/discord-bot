@@ -1,6 +1,6 @@
+import type { Differences } from '../@types/modules';
 import type { FriendsModule, RawFriendsModule, UserAPIData } from '../@types/database';
-import { BetterEmbed, matchPermissions } from '../util/utility';
-import { CleanHypixelPlayerData } from '../@types/hypixel';
+import { BetterEmbed } from '../util/utility';
 import { Client, GuildMember, MessageEmbed, TextChannel } from 'discord.js';
 import { SQLiteWrapper } from '../database';
 import Constants from '../util/constants';
@@ -9,11 +9,6 @@ import ModuleError from '../util/error/ModuleError';
 
 export const properties = {
   name: 'friends',
-};
-
-type Differences = {
-  primary: Partial<CleanHypixelPlayerData>,
-  secondary: Partial<UserAPIData>,
 };
 
 export const execute = async ({

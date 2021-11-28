@@ -1,7 +1,7 @@
 import type { CommandExecute, CommandProperties } from '../@types/client';
-import type { FriendsModule, RawFriendsModule, RawUserAPIData, UserAPIData, UserData } from '../@types/database';
+import type { FriendsModule, RawUserAPIData, UserAPIData } from '../@types/database';
 import { BetterEmbed } from '../util/utility';
-import { ButtonInteraction, CommandInteraction, Message, MessageActionRow, MessageComponentInteraction, MessageSelectMenu, SelectMenuInteraction, TextChannel } from 'discord.js';
+import { ButtonInteraction, CommandInteraction, Message, MessageActionRow, MessageComponentInteraction, MessageSelectMenu, SelectMenuInteraction } from 'discord.js';
 import { SQLiteWrapper } from '../database';
 import { ToggleButtons } from '../util/structures';
 import Constants from '../util/constants';
@@ -16,7 +16,7 @@ export const properties: CommandProperties = {
   ownerOnly: false,
   structure: {
     name: 'modules',
-    description: 'Add or remove modules for your Minecraft account',
+    description: 'Add, remove, and configure modules for your Minecraft account',
     options: [
       {
         name: 'defender',
@@ -106,7 +106,7 @@ export const execute: CommandExecute = async (interaction: CommandInteraction, {
     }) as FriendsModule;
 
     if (i.isSelectMenu()) {
-      selected = i.values[0];
+      [selected] = i.values;
 
       switch (selected) {
         case 'toggle': {
@@ -133,6 +133,7 @@ export const execute: CommandExecute = async (interaction: CommandInteraction, {
           component = new MessageActionRow().setComponents(channelMenu);
           break;
         }
+        //no default
       }
 
       const mainMenuUpdateEmbed = new BetterEmbed({
@@ -185,11 +186,13 @@ export const execute: CommandExecute = async (interaction: CommandInteraction, {
           });
           break;
         }
+
+        //no default
       }
     }
   });
 
-  collector.on('end', async (_collected, _reason) => {
+  collector.on('end', async () => {
     const fetchedReply = await interaction.fetchReply() as Message;
     fetchedReply.components.forEach(value0 => {
       value0.components.forEach((_value1, index1, array1) => {

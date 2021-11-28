@@ -1,3 +1,4 @@
+/* eslint-disable max-classes-per-file */
 import type { AbortError } from '../../@types/error';
 import { BetterEmbed, cleanLength, cleanRound, formattedUnix, sendWebHook } from '../utility';
 import { CommandInteraction, MessageEmbed } from 'discord.js';
@@ -9,7 +10,7 @@ import Constants from '../../util/constants';
 import HTTPError from './HTTPError';
 import RateLimitError from './RateLimitError';
 
-export const isAbortError = (error: any): error is AbortError => error?.name === 'AbortError';
+export const isAbortError = (error: unknown): error is AbortError => error instanceof Error && error?.name === 'AbortError';
 
 export class ConstraintEmbed extends BetterEmbed {
   constructor({
@@ -20,7 +21,7 @@ export class ConstraintEmbed extends BetterEmbed {
     interaction: CommandInteraction,
   }) {
     super({
-      color: Constants.color.warning,
+      color: Constants.color.error,
       footer: interaction,
     });
 
@@ -55,7 +56,7 @@ export class CommandErrorEmbed extends BetterEmbed {
       .addField('Interaction', interaction.id)
       .addField('Source', `Command: ${interaction.commandName}\nChannel Type: ${interaction.channel?.type}\nGuild Name: ${interaction.guild?.name}\nGuild ID: ${interaction.guild?.id}\nOwner ID: ${interaction.guild?.ownerId ?? 'None'}\nGuild Member Count: ${interaction.guild?.memberCount}`)
       .addField('Extra', `Websocket Ping: ${interaction.client.ws.ping}\nCreated At: ${formattedUnix({ ms: interaction.createdTimestamp, date: true, utc: true })}`);
-    if (stack.length >= 4096 === true) super.addField('Over Max Length', 'The stack is over 4096 characters long and was cut short');
+    if ((stack.length >= 4096) === true) super.addField('Over Max Length', 'The stack is over 4096 characters long and was cut short');
   }
 }
 
@@ -220,7 +221,7 @@ export class ErrorStackEmbed extends BetterEmbed {
       super
         .addField(error.name, error.message)
         .addField('Trace', stack);
-      if (nonStackLenth >= 4096 === true) super.addField('Over Max Length', 'The stack is over 4096 characters long and was cut short');
+      if ((nonStackLenth >= 4096) === true) super.addField('Over Max Length', 'The stack is over 4096 characters long and was cut short');
     } else {
       super.setDescription(JSON.stringify(error, null, 2).slice(0, 4096));
     }

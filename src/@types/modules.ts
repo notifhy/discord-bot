@@ -1,4 +1,16 @@
-import { UserAPIData } from './database';
+import type { CleanHypixelPlayerData } from './hypixel';
+import type { Client } from 'discord.js';
+import type { UserAPIData } from './database';
+
+export type ModuleNames =
+  | 'defender'
+  | 'friend'
+  | 'rewards'
+
+export type Differences = {
+  primary: Partial<CleanHypixelPlayerData>,
+  secondary: Partial<UserAPIData>,
+};
 
 export interface AssetModule {
   [key: string]: string;
@@ -15,9 +27,17 @@ export interface AssetModules {
   rewards: AssetModule;
 }
 
-export interface ModuleEvents {
+export interface ClientModule {
   properties: {
     name: string;
   }
-  execute(discordID: string, date: number, data: UserAPIData): Promise<void>;
+  execute({
+    client,
+    differences,
+    userAPIData,
+  }: {
+    client: Client,
+    differences: Differences,
+    userAPIData: UserAPIData,
+  }): Promise<void>;
 }

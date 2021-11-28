@@ -1,5 +1,7 @@
+/* eslint-disable no-unused-vars */
 import type { Collection, CommandInteraction, Client as DiscordClient } from 'discord.js';
 import { ModuleDataResolver } from '../hypixelAPI/ModuleDataResolver';
+import { ClientModule } from './modules';
 import { RegionLocales } from '../../locales/localesHandler';
 import { UserAPIData, UserData } from './database';
 
@@ -22,9 +24,9 @@ export interface EventProperties {
   hasParameter: boolean;
 }
 
-export interface ClientEvents {
+export interface ClientEvent {
   properties: EventProperties;
-  execute(client?: DiscordClient, ...hasParameter: unknown[]): Promise<void> | void;
+  execute(client?: DiscordClient, ...parameters: unknown[]): Promise<void> | void;
 }
 
 export interface CommandProperties {
@@ -47,18 +49,20 @@ export interface CommandExecute {
   (interaction: CommandInteraction, user: CommandExecuteUserData): Promise<void>
 }
 
-export interface SlashCommand {
+export interface ClientCommand {
   properties: CommandProperties;
   execute: CommandExecute;
 }
 
 declare module 'discord.js' {
   interface Client {
-    commands: Collection<string, SlashCommand>;
+    commands: Collection<string, ClientCommand>;
     cooldowns: Collection<string, Collection<string, number>>;
     config: Config,
-    customStatus: boolean;
+    customStatus: string | null;
+    events: Collection<string, ClientEvent>;
     hypixelAPI: ModuleDataResolver;
+    modules: Collection<string, ClientModule>;
     regionLocales: RegionLocales;
   }
 }

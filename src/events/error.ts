@@ -13,5 +13,5 @@ export const execute = (error: Error): void => {
     utc: true,
   });
 
-  console.log(`${time} | discord.js Error:`, error);
+  console.error(`${time} | discord.js Error:`, error);
 };

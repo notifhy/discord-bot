@@ -18,7 +18,7 @@ export class RegionLocales {
     let replaced: string = input;
     for (const parameter in parameters) {
       if (Object.prototype.hasOwnProperty.call(parameters, parameter)) {
-        const regex: RegExp = new RegExp(`%{${parameter}}%`);
+        const regex = new RegExp(`%{${parameter}}%`);
         replaced = replaced.replace(regex, String(parameters[parameter]));
       }
     }

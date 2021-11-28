@@ -7,4 +7,4 @@ export default class ConstraintError extends Error {
     Object.setPrototypeOf(this, ConstraintError.prototype);
     Error.captureStackTrace(this, this.constructor);
   }
-};
+}

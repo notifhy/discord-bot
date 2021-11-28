@@ -233,7 +233,7 @@ export class SQLiteWrapper {
         ) {
           (input[key as keyof RawInput] as unknown) = JSONized;
         }
-      } catch {}
+      } catch {} //eslint-disable-line no-empty
     }
 
     return input as unknown as Output;
@@ -257,7 +257,7 @@ export class SQLiteWrapper {
         ) {
           (input[key as keyof Input] as unknown) = JSON.stringify(input[key]);
         }
-      } catch {}
+      } catch {} //eslint-disable-line no-empty
     }
 
     return input as unknown as RawOutput;

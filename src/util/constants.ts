@@ -1,5 +1,4 @@
 import { ColorResolvable } from 'discord.js';
-import { getEnabledCategories } from 'trace_events';
 
 export default {
   ms: {

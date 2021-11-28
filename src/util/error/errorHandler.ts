@@ -22,7 +22,7 @@ export default async ({
   const userPayload: MessageEmbed[] = [];
   const incidentPayload: MessageEmbed[] = [];
 
-  let shouldPing: boolean = true;
+  let shouldPing = true;
 
   if (interaction?.isCommand()) {
     if (error instanceof ConstraintError) {
@@ -56,10 +56,13 @@ export default async ({
       }));
 
       incidentPayload.push(...[
-        new CommandErrorEmbed({
-          error: error,
-          interaction: interaction,
-          incidentID: incidentID }),
+        new CommandErrorEmbed(
+          {
+            error: error,
+            interaction: interaction,
+            incidentID: incidentID,
+          },
+        ),
         new ErrorStackEmbed({
           error: error,
           incidentID: incidentID,
@@ -76,7 +79,7 @@ export default async ({
     }
   } else if (moduleDataResolver) {
     if (isAbortError(error)) {
-      console.error(`${formattedUnix({ date: true, utc: true })} | An error has occurred on incident ${incidentID} | Priority: Low |`, error);
+      console.error(`${formattedUnix({ date: true, utc: true })} | An error has occurred on incident ${incidentID} | Priority: Low |`, error.message);
       moduleDataResolver.abort.reportAbortError(moduleDataResolver);
     } else if (error instanceof RateLimitError) {
       console.error(`${formattedUnix({ date: true, utc: true })} | An error has occurred on incident ${incidentID} | Priority: Medium |`, error);
@@ -110,7 +113,7 @@ export default async ({
       footer: {
         name: `Incident ${incidentID}`,
       },
-    }).setDescription(JSON.stringify(error));
+    }).setDescription(JSON.stringify(error, Object.getOwnPropertyNames(error), 2));
 
     incidentPayload.push(...[
       knownInfo,
@@ -124,11 +127,11 @@ export default async ({
   await sendWebHook({
     content: shouldPing === true ? `<@${ownerID.join('><@')}>` : undefined,
     embeds: incidentPayload,
-    webhook: error instanceof ConstraintError ?
-      nonFatalWebhook :
-      moduleDataResolver ?
-      hypixelAPIWebhook :
-      fatalWebhook,
+    webhook: error instanceof ConstraintError
+      ? nonFatalWebhook
+      : moduleDataResolver
+      ? hypixelAPIWebhook
+      : fatalWebhook,
     suppressError: true,
   });
 };

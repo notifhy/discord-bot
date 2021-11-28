@@ -1,4 +1,4 @@
-import type { CommandExecute, CommandProperties, SlashCommand } from '../@types/client';
+import type { CommandExecute, CommandProperties, ClientCommand } from '../@types/client';
 import { BetterEmbed } from '../util/utility';
 import { clientID, discordAPIkey as token } from '../../config.json';
 import { CommandInteraction } from 'discord.js';
@@ -75,7 +75,7 @@ export const execute: CommandExecute = async (interaction: CommandInteraction): 
 
   for (const file of commandFiles) {
     // eslint-disable-next-line no-await-in-loop
-    const { properties: { ownerOnly, structure } }: SlashCommand = await import(`../commands/${file}`);
+    const { properties: { ownerOnly, structure } }: ClientCommand = await import(`../commands/${file}`);
     if (ownerOnly === false) userCommands.push(structure);
     else if (ownerOnly === true) ownerCommands.push(structure);
   }

@@ -129,6 +129,7 @@ export const execute: CommandExecute = async (interaction: CommandInteraction, {
         discordID: interaction.user.id,
         alertTime: null,
         lastNotified: 0,
+        milestones: true,
         notificationInterval: null,
       },
     }),
