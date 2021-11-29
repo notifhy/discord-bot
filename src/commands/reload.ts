@@ -109,19 +109,19 @@ export const execute: CommandExecute = async (interaction: CommandInteraction): 
 };
 
 function commandRefresh(interaction: CommandInteraction, item: string) {
-  delete require.cache[require.resolve(`./${item}.ts`)];
-  const refreshed: ClientCommand = require(`./${item}.ts`); //eslint-disable-line @typescript-eslint/no-var-requires
+  delete require.cache[require.resolve(`${__dirname}/${item}.ts`)];
+  const refreshed: ClientCommand = require(`${__dirname}/${item}.ts`); //eslint-disable-line @typescript-eslint/no-var-requires
   interaction.client.commands.set(refreshed.properties.name, refreshed);
 }
 
 function eventRefresh(interaction: CommandInteraction, item: string) {
-  delete require.cache[require.resolve(`../events/${item}.ts`)];
-  const refreshed: ClientEvent = require(`../events/${item}.ts`); //eslint-disable-line @typescript-eslint/no-var-requires
+  delete require.cache[require.resolve(`${__dirname}/../events/${item}.ts`)];
+  const refreshed: ClientEvent = require(`${__dirname}/../events/${item}.ts`); //eslint-disable-line @typescript-eslint/no-var-requires
   interaction.client.events.set(refreshed.properties.name, refreshed);
 }
 
 function moduleRefresh(interaction: CommandInteraction, item: string) {
-  delete require.cache[require.resolve(`../modules/${item}.ts`)];
-  const refreshed: ClientModule = require(`../modules/${item}.ts`); //eslint-disable-line @typescript-eslint/no-var-requires
+  delete require.cache[require.resolve(`${__dirname}/../modules/${item}.ts`)];
+  const refreshed: ClientModule = require(`${__dirname}/../modules/${item}.ts`); //eslint-disable-line @typescript-eslint/no-var-requires
   interaction.client.modules.set(refreshed.properties.name, refreshed);
 }

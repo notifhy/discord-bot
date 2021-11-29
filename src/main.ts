@@ -11,12 +11,12 @@ import * as fs from 'fs/promises';
 
 process.on('unhandledRejection', async error => {
   await errorHandler({ error: error });
-  throw error;
+  process.exit(0);
 });
 
 process.on('uncaughtException', async error => {
   await errorHandler({ error: error });
-  throw error;
+  process.exit(0);
 });
 
 const client = new Client({
@@ -44,18 +44,18 @@ client.regionLocales = new RegionLocales();
 
 (async () => {
   const folders = (await Promise.all([
-    fs.readdir('./commands'),
-    fs.readdir('./events'),
-    fs.readdir('./modules'),
+    fs.readdir(`${__dirname}/commands`),
+    fs.readdir(`${__dirname}/events`),
+    fs.readdir(`${__dirname}/modules`),
   ])).map(file => file.filter(file1 => file1.endsWith('.ts')));
 
   const commandPromises: Promise<ClientCommand>[] = [];
   const eventPromises: Promise<ClientEvent>[] = [];
   const modulePromises: Promise<ClientModule>[] = [];
 
-  for (const file of folders[0]) commandPromises.push(import(`./commands/${file}`));
-  for (const file of folders[1]) eventPromises.push(import(`./events/${file}`));
-  for (const file of folders[2]) modulePromises.push(import(`./modules/${file}`));
+  for (const file of folders[0]) commandPromises.push(import(`${__dirname}/commands/${file}`));
+  for (const file of folders[1]) eventPromises.push(import(`${__dirname}/events/${file}`));
+  for (const file of folders[2]) modulePromises.push(import(`${__dirname}/modules/${file}`));
 
   const resolvedPromises = await Promise.all([
     Promise.all(commandPromises),
@@ -75,15 +75,14 @@ client.regionLocales = new RegionLocales();
     client.modules.set(module.properties.name, module);
   }
 
-  for (const { properties: { name, once, hasParameter } } of client.events.values()) {
-    const execute = (...parameters: unknown[]) => {
-      if (hasParameter === true) client.events.get(name)!.execute(...parameters);
-      else client.events.get(name)!.execute(client, ...parameters);
-    };
+  for (const { properties: { name, once } } of client.events.values()) {
+    const execute = (...parameters: unknown[]) => client.events.get(name)!.execute(...parameters);
 
     if (once === false) client.on(name, execute);
     else client.once(name, execute);
   }
+
+  await SQLiteWrapper.createTablesIfNotExists();
 
   const config = await SQLiteWrapper.queryGet<RawConfig, Config>({
     query: 'SELECT * FROM config WHERE rowid = 1',

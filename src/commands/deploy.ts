@@ -75,7 +75,7 @@ export const execute: CommandExecute = async (interaction: CommandInteraction): 
 
   for (const file of commandFiles) {
     // eslint-disable-next-line no-await-in-loop
-    const { properties: { ownerOnly, structure } }: ClientCommand = await import(`../commands/${file}`);
+    const { properties: { ownerOnly, structure } }: ClientCommand = await import(`${__dirname}/${file}`);
     if (ownerOnly === false) userCommands.push(structure);
     else if (ownerOnly === true) ownerCommands.push(structure);
   }
@@ -83,7 +83,13 @@ export const execute: CommandExecute = async (interaction: CommandInteraction): 
   const scope = interaction.options.getString('scope');
   const type = interaction.options.getString('type');
   const guildID = interaction.options.getString('guild') ?? interaction.guildId!;
-  const commands = type === 'both' ? ownerCommands.concat(userCommands) : type === 'none' ? [] : type === 'owner' ? ownerCommands : userCommands;
+  const commands = type === 'both'
+    ? ownerCommands.concat(userCommands)
+    : type === 'none'
+    ? []
+    : type === 'owner'
+    ? ownerCommands
+    : userCommands;
 
   const rest = new REST({ version: '9' }).setToken(token);
 
@@ -101,7 +107,7 @@ export const execute: CommandExecute = async (interaction: CommandInteraction): 
 
   const successEmbed = new BetterEmbed({ color: '#7289DA', footer: interaction })
     .setTitle('Success!')
-    .setDescription(JSON.stringify(commands).slice(0, 4096) ?? 'None');
+    .setDescription(JSON.stringify(commands, null, 2).slice(0, 4096) ?? 'None');
 
   await interaction.editReply({ embeds: [successEmbed] });
 };

@@ -4,7 +4,6 @@ import { formattedUnix } from '../util/utility';
 export const properties: EventProperties = {
   name: 'error',
   once: false,
-  hasParameter: true,
 };
 
 export const execute = (error: Error): void => {

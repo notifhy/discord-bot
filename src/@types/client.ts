@@ -21,12 +21,11 @@ export interface Config {
 export interface EventProperties {
   name: string;
   once: boolean;
-  hasParameter: boolean;
 }
 
 export interface ClientEvent {
   properties: EventProperties;
-  execute(client?: DiscordClient, ...parameters: unknown[]): Promise<void> | void;
+  execute(...parameters: unknown[]): Promise<void> | void;
 }
 
 export interface CommandProperties {

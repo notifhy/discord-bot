@@ -5,7 +5,6 @@ import { formattedUnix } from '../util/utility';
 export const properties: EventProperties = {
   name: 'guildCreate',
   once: false,
-  hasParameter: true,
 };
 
 export const execute = async (guild: Guild): Promise<void> => {

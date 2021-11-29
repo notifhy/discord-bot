@@ -1,4 +1,4 @@
-import { BaseUserData } from './@types/database';
+import { BaseUserData, RawConfig } from './@types/database';
 import { formattedUnix } from './util/utility';
 import Database from 'better-sqlite3';
 
@@ -12,6 +12,31 @@ type Table =
   | 'rewards'
 
 export class SQLiteWrapper {
+  static createTablesIfNotExists(): Promise<void> {
+    return new Promise<void>(resolve => {
+      const db = new Database(`${__dirname}/../database.db`);
+      const tables = [
+        'CREATE TABLE IF NOT EXISTS "api" ("discordID" TEXT NOT NULL UNIQUE, "uuid" TEXT NOT NULL UNIQUE, "modules" TEXT NOT NULL, "lastUpdated" INTEGER NOT NULL, "firstLogin" INTEGER, "lastLogin" INTEGER, "lastLogout" INTEGER, "version" TEXT, "language" TEXT NOT NULL, "gameType" TEXT, "lastClaimedReward" INTEGER, "rewardScore" INTEGER, "rewardHighScore" INTEGER, "totalDailyRewards" INTEGER, "totalRewards" INTEGER, "history" TEXT NOT NULL)',
+        'CREATE TABLE IF NOT EXISTS "config" ("blockedGuilds" TEXT NOT NULL, "blockedUsers" TEXT NOT NULL, "devMode" TEXT NOT NULL, "enabled" TEXT NOT NULL, "uses" INTEGER NOT NULL)',
+        'CREATE TABLE IF NOT EXISTS "friends" ("discordID" TEXT NOT NULL UNIQUE, "channel" TEXT, "suppressNext" TEXT NOT NULL)',
+        'CREATE TABLE IF NOT EXISTS "rewards" ("discordID" TEXT NOT NULL UNIQUE, "alertTime" INTEGER, "lastNotified" INTEGER, "milestones" TEXT, "notificationInterval" INTEGER)',
+        'CREATE TABLE IF NOT EXISTS "users" ("discordID" TEXT NOT NULL UNIQUE, "language" TEXT)',
+      ].map(value => db.prepare(value));
+
+      const config = db.prepare('SELECT * FROM config WHERE rowid = 1').get() as RawConfig | undefined;
+
+      db.transaction(() => {
+        for (const table of tables) table.run();
+        if (config === undefined) {
+          db.prepare('INSERT INTO config DEFAULT VALUES').run();
+        }
+      });
+
+      db.close();
+      resolve();
+    });
+  }
+
   static queryGet<RawOutput, CleanOutput>({
     query,
     allowUndefined = false,
@@ -25,7 +50,7 @@ export class SQLiteWrapper {
     SELECT * FROM ${table}
     */
     return new Promise<CleanOutput>(resolve => {
-      const db = new Database('../database.db');
+      const db = new Database(`${__dirname}/../database.db`);
       const rawData: RawOutput = db.prepare(query).get() as RawOutput;
       db.close();
       if (allowUndefined === false && rawData === undefined) {
@@ -50,7 +75,7 @@ export class SQLiteWrapper {
     const output = await queryGetAll(`SELECT tests FROM test WHERE tests = '${string}' `);
     */
     return new Promise<CleanOutput[]>(resolve => {
-      const db = new Database('../database.db');
+      const db = new Database(`${__dirname}/../database.db`);
       const rawData: RawOutput[] = db.prepare(query).all() as RawOutput[];
       db.close();
 
@@ -78,7 +103,7 @@ export class SQLiteWrapper {
     'DELETE FROM users WHERE id=(?)'
     */
     return new Promise<void>(resolve => {
-      const db = new Database('../database.db');
+      const db = new Database(`${__dirname}/../database.db`);
       db.prepare(query).run(data);
       db.close();
       resolve();

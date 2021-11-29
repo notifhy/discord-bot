@@ -120,7 +120,7 @@ export const execute: CommandExecute = async (interaction: CommandInteraction, {
         }
         case 'channel': {
           const channelMenu = new MessageSelectMenu({
-            custom_id: 'channel',
+            customId: 'channel',
             placeholder: 'Currently Unavailable',
             disabled: true,
             options: [{

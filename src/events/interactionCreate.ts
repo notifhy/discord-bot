@@ -14,7 +14,6 @@ import errorHandler from '../util/error/errorHandler';
 export const properties: EventProperties = {
   name: 'interactionCreate',
   once: false,
-  hasParameter: true,
 };
 
 export const execute = async (interaction: CommandInteraction): Promise<void> => {

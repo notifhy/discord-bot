@@ -6,7 +6,6 @@ import errorHandler from '../util/error/errorHandler';
 export const properties: EventProperties = {
   name: 'ready',
   once: true,
-  hasParameter: false,
 };
 
 export const execute = async (client: Client) => {
