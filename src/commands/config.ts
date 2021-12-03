@@ -1,7 +1,7 @@
 import type { CommandExecute, CommandProperties, Config } from '../@types/client';
 import { BetterEmbed } from '../util/utility';
 import { CommandInteraction, WebhookEditMessageOptions } from 'discord.js';
-import { RawConfig } from '../@types/database';
+import type { RawConfig } from '../@types/database';
 import { SQLiteWrapper } from '../database';
 
 export const properties: CommandProperties = {

@@ -110,9 +110,20 @@ export function timeAgo(ms: number): number | null {
   return Date.now() - ms;
 }
 
-export function cleanLength(ms: number | null): string | null {
-  if (ms === null || ms < 0 || isNaN(ms)) return null;
-  let newMS = ms;
+export function cleanLength(ms: number | null, rejectZero?: boolean): string | null {
+  if (
+    ms === null ||
+    isNaN(ms)
+  ) return null;
+
+  let newMS = Math.floor(ms / 1000) * 1000;
+
+  if (
+    rejectZero
+      ? newMS <= 0
+      : newMS < 0
+  ) return null;
+
   const days = Math.floor(newMS / Constants.ms.day);
   newMS -= days * Constants.ms.day;
   const hours = Math.floor(newMS / Constants.ms.hour);

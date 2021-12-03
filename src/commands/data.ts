@@ -1,7 +1,7 @@
 import type { CommandExecute, CommandProperties } from '../@types/client';
 import { BetterEmbed } from '../util/utility';
 import { ButtonInteraction, CommandInteraction, Message, MessageActionRow, MessageButton, MessageComponentInteraction } from 'discord.js';
-import { FriendsModule, RawFriendsModule, RawRewardsModule, RawUserAPIData, RewardsModule, UserAPIData } from '../@types/database';
+import type { FriendsModule, RawFriendsModule, RawRewardsModule, RawUserAPIData, RewardsModule, UserAPIData } from '../@types/database';
 import { SQLiteWrapper } from '../database';
 
 export const properties: CommandProperties = {

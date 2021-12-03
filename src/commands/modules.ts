@@ -3,7 +3,7 @@ import type { FriendsModule, RawUserAPIData, UserAPIData } from '../@types/datab
 import { BetterEmbed } from '../util/utility';
 import { ButtonInteraction, CommandInteraction, Message, MessageActionRow, MessageComponentInteraction, MessageSelectMenu, SelectMenuInteraction } from 'discord.js';
 import { SQLiteWrapper } from '../database';
-import { ToggleButtons } from '../util/structures';
+import { ToggleButtons } from '../util/ToggleButtons';
 import Constants from '../util/constants';
 
 export const properties: CommandProperties = {

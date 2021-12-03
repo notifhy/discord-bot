@@ -1,7 +1,7 @@
 import type { CommandExecute, CommandProperties, ClientCommand } from '../@types/client';
 import { BetterEmbed } from '../util/utility';
 import { CommandInteraction } from 'discord.js';
-import { UserData } from '../@types/database';
+import type { UserData } from '../@types/database';
 
 export const properties: CommandProperties = {
   name: 'help',

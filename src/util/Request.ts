@@ -1,11 +1,13 @@
 import fetch, { RequestInit, Response } from 'node-fetch';
-import { isAbortError } from '../util/error/helper';
+import { isAbortError } from './error/helper';
 
 export class Request {
   aborts: number;
   abortThreshold: number;
+  maxAborts: number;
 
   constructor({
+    maxAborts,
     abortThreshold,
   }: {
     maxAborts?: number;
@@ -13,6 +15,7 @@ export class Request {
   }) {
     this.aborts = 0;
     this.abortThreshold = abortThreshold ?? 2500;
+    this.maxAborts = maxAborts ?? 1;
   }
 
   async request(url: string, fetchOptions?: RequestInit): Promise<Response> {
@@ -26,11 +29,12 @@ export class Request {
       });
       return response;
     } catch (err) {
-      if (isAbortError(err) && this.aborts < 1) {
+      if (isAbortError(err) && this.aborts < this.maxAborts) {
         this.aborts += 1;
         const retry = await this.request(url, fetchOptions);
         return retry;
       }
+
       throw err;
     } finally {
       clearTimeout(abortTimeout);

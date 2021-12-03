@@ -1,9 +1,9 @@
 /* eslint-disable no-unused-vars */
-import type { Collection, CommandInteraction, Client as DiscordClient } from 'discord.js';
-import { ModuleDataResolver } from '../hypixelAPI/ModuleDataResolver';
-import { ClientModule } from './modules';
-import { RegionLocales } from '../../locales/localesHandler';
-import { UserAPIData, UserData } from './database';
+import type { Collection, CommandInteraction } from 'discord.js';
+import type { HypixelModuleManager } from '../hypixelAPI/HypixelModuleManager';
+import type { ClientModule } from './modules';
+import type { RegionLocales } from '../../locales/localesHandler';
+import type { UserAPIData, UserData } from './database';
 
 export interface WebHookConfig {
   id: string;
@@ -60,7 +60,7 @@ declare module 'discord.js' {
     config: Config,
     customStatus: string | null;
     events: Collection<string, ClientEvent>;
-    hypixelAPI: ModuleDataResolver;
+    hypixelAPI: HypixelModuleManager;
     modules: Collection<string, ClientModule>;
     regionLocales: RegionLocales;
   }

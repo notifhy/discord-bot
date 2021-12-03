@@ -2,19 +2,25 @@ import type { ClientCommand, ClientEvent, Config } from './@types/client';
 import type { ClientModule } from './@types/modules';
 import { Client, Collection, Intents } from 'discord.js';
 import { discordAPIkey } from '../config.json';
-import { ModuleDataResolver } from './hypixelAPI/ModuleDataResolver';
+import { HypixelModuleManager } from './hypixelAPI/HypixelModuleManager';
 import { RawConfig } from './@types/database';
 import { RegionLocales } from '../locales/localesHandler';
 import { SQLiteWrapper } from './database';
 import errorHandler from './util/error/errorHandler';
-import * as fs from 'fs/promises';
+import * as fs from 'node:fs/promises';
+
+process.on('exit', code => {
+  console.warn(`Exiting with code ${code}`);
+});
 
 process.on('unhandledRejection', async error => {
+  console.error('unhandledRejection', error);
   await errorHandler({ error: error });
   process.exit(0);
 });
 
 process.on('uncaughtException', async error => {
+  console.error('uncaughtException', error);
   await errorHandler({ error: error });
   process.exit(0);
 });
@@ -38,7 +44,7 @@ client.commands = new Collection();
 client.cooldowns = new Collection();
 client.customStatus = null;
 client.events = new Collection();
-client.hypixelAPI = new ModuleDataResolver(client);
+client.hypixelAPI = new HypixelModuleManager(client);
 client.modules = new Collection();
 client.regionLocales = new RegionLocales();
 

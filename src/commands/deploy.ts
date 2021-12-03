@@ -4,7 +4,7 @@ import { clientID, discordAPIkey as token } from '../../config.json';
 import { CommandInteraction } from 'discord.js';
 import { REST } from '@discordjs/rest';
 import { Routes } from 'discord-api-types/v9';
-import fs from 'fs';
+import fs from 'node:fs/promises';
 
 export const properties: CommandProperties = {
   name: 'deploy',
@@ -69,7 +69,7 @@ export const properties: CommandProperties = {
 };
 
 export const execute: CommandExecute = async (interaction: CommandInteraction): Promise<void> => {
-  const commandFiles = fs.readdirSync(__dirname).filter(file => file.endsWith('.ts'));
+  const commandFiles = (await fs.readdir(__dirname)).filter(file => file.endsWith('.ts'));
   const userCommands: object[] = [];
   const ownerCommands: object[] = [];
 

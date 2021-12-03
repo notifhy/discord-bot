@@ -1,4 +1,4 @@
-import { AssetModule } from './modules';
+import type { AssetModule } from './modules';
 
 /*
 Misc. Interfaces

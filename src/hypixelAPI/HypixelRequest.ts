@@ -1,27 +1,25 @@
 import type { Hypixel400_403_422, Hypixel429, HypixelAPIError, HypixelAPIOk } from '../@types/hypixel';
 import type { Response } from 'node-fetch';
 import { hypixelAPIkey } from '../../config.json';
-import { ModuleDataResolver } from './ModuleDataResolver';
-import { Request } from './Request';
+import { Request } from '../util/Request';
 import HTTPError from '../util/error/HTTPError';
 import RateLimitError from '../util/error/RateLimitError';
+import { HypixelModuleInstance } from './HypixelModuleInstance';
 
-export class HypixelRequestCall extends Request {
-  moduleDataResolver: ModuleDataResolver;
+export class HypixelRequest {
+  instance: HypixelModuleInstance;
 
-  constructor(moduleDataResolver: ModuleDataResolver) {
-    super({
-      maxAborts: 1,
-      abortThreshold: moduleDataResolver.instance.abortThreshold,
-    });
-
-    this.moduleDataResolver = moduleDataResolver;
+  constructor(instance: HypixelModuleInstance) {
+    this.instance = instance;
   }
 
   async call(url: string): Promise<HypixelAPIOk> {
-    this.moduleDataResolver.instance.instanceUses += 1;
+    this.instance.instanceUses += 1;
 
-    const response: Response = await this.request(url, {
+    const response: Response = await new Request({
+      maxAborts: this.instance.maxAborts,
+      abortThreshold: this.instance.abortThreshold,
+    }).request(url, {
       headers: { 'API-Key': hypixelAPIkey },
     }) as Response;
 

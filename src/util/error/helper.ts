@@ -4,8 +4,8 @@ import { BetterEmbed, cleanLength, cleanRound, formattedUnix, sendWebHook } from
 import { CommandInteraction, MessageEmbed } from 'discord.js';
 import { fatalWebhook, keyLimit, ownerID } from '../../../config.json';
 import { FetchError } from 'node-fetch';
-import { HypixelAPIError } from '../../@types/hypixel';
-import { ModuleDataResolver } from '../../hypixelAPI/ModuleDataResolver';
+import type { HypixelAPIError } from '../../@types/hypixel';
+import { HypixelModuleManager } from '../../hypixelAPI/HypixelModuleManager';
 import Constants from '../../util/constants';
 import HTTPError from './HTTPError';
 import RateLimitError from './RateLimitError';
@@ -133,16 +133,16 @@ export class UserHTTPErrorEmbed extends BetterEmbed {
 
 export class HypixelAPIEmbed extends BetterEmbed {
   constructor({
-    moduleDataResolver,
+    hypixelModuleManager,
     error,
     incidentID,
   }: {
-    moduleDataResolver: ModuleDataResolver,
+    hypixelModuleManager: HypixelModuleManager,
     error: unknown,
     incidentID: string,
   }) {
-    const { instanceUses, resumeAfter, keyPercentage } = moduleDataResolver.instance;
-    const timeout = cleanLength(resumeAfter - Date.now());
+    const { instanceUses, resumeAfter, keyPercentage } = hypixelModuleManager.instance;
+    const timeout = cleanLength(resumeAfter - Date.now(), true);
 
     super({
       color: Constants.color.error,
@@ -156,45 +156,51 @@ export class HypixelAPIEmbed extends BetterEmbed {
     if (isAbortError(error)) {
       super
         .setTitle('Degraded Performance')
+        .addField('Type', error.name)
         .addField('Resuming In', timeout ?? 'Not applicable');
     } else if (error instanceof RateLimitError) {
       super
         .setTitle('Degraded Performance')
+        .addField('Type', error.name)
         .setDescription('The usable percentage of the key has been dropped by 5%. A timeout has also been applied.')
         .addField('Resuming In', timeout ?? 'Not applicable')
         .addField('Listed Cause', error.message || 'Unknown')
         .addField('Request', `Status: ${error.status}\nStatus Text: ${error.statusText}\nPath: ${error.url}`)
-        .addField('Global Rate Limit', moduleDataResolver.rateLimit.isGlobal === true ? 'Yes' : 'No');
+        .addField('Global Rate Limit', hypixelModuleManager.errors.rateLimit.isGlobal === true ? 'Yes' : 'No');
     } else if (error instanceof HTTPError) {
       super
         .setTitle('Degraded Performance')
+        .addField('Type', error.name)
         .addField('Resuming In', timeout ?? 'Not applicable')
         .addField('Listed Cause', error.message || 'Unknown')
         .addField('Request', `Status: ${error.status}\nStatus Text: ${error.statusText}\nPath: ${error.url}`);
     } else if (error instanceof FetchError) {
       super
         .setTitle('Degraded Performance')
+        .addField('Type', error.name)
         .addField('Resuming In', timeout ?? 'Not applicable')
         .addField('Listed Cause', error.message || 'Unknown');
     } else if (error instanceof Error) {
       super
         .setTitle('Unexpected Incident')
+        .addField('Type', error.name)
         .addField('Resuming In', timeout ?? 'Not applicable')
         .addField('Listed Cause', error.message || 'Unknown');
     } else {
       super
         .setTitle('Unexpected Incident')
+        .addField('Type', 'Unknown')
         .setDescription(JSON.stringify(error, null, 2));
     }
 
     super
-      .addField('Last Minute Statistics', `Abort Errors: ${moduleDataResolver.abort.abortsLastMinute}
-        Rate Limit Hits: ${moduleDataResolver.rateLimit.rateLimitErrorsLastMinute}
-        Other Errors: ${moduleDataResolver.unusual.unusualErrorsLastMinute}`)
+      .addField('Last Minute Statistics', `Abort Errors: ${hypixelModuleManager.errors.abort.lastMinute}
+        Rate Limit Hits: ${hypixelModuleManager.errors.rateLimit.lastMinute}
+        Other Errors: ${hypixelModuleManager.errors.error.lastMinute}`)
       .addField('Next Timeout Lengths', `May not be accurate
-        Abort Errors: ${cleanLength(moduleDataResolver.abort.timeoutLength)}
-        Rate Limit Errors: ${cleanLength(moduleDataResolver.rateLimit.timeoutLength)}
-        Other Errors: ${cleanLength(moduleDataResolver.unusual.timeoutLength)}`)
+        Abort Errors: ${cleanLength(hypixelModuleManager.errors.abort.timeout)}
+        Rate Limit Errors: ${cleanLength(hypixelModuleManager.errors.rateLimit.timeout)}
+        Other Errors: ${cleanLength(hypixelModuleManager.errors.error.timeout)}`)
       .addField('API Key', `Dedicated Queries: ${cleanRound(keyPercentage * keyLimit)} or ${cleanRound(keyPercentage * 100)}%
         Instance Queries: ${instanceUses}`);
   }
@@ -219,7 +225,7 @@ export class ErrorStackEmbed extends BetterEmbed {
       const nonStackLenth = `${error.name}: ${error.message}`.length;
       const stack = error.stack.slice(nonStackLenth, 1024 + nonStackLenth);
       super
-        .addField(error.name, error.message)
+        .addField(error.name, error.message.slice(0, 1024))
         .addField('Trace', stack);
       if ((nonStackLenth >= 4096) === true) super.addField('Over Max Length', 'The stack is over 4096 characters long and was cut short');
     } else {

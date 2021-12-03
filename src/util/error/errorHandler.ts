@@ -2,7 +2,7 @@ import { BetterEmbed, formattedUnix, sendWebHook } from '../utility';
 import { CommandErrorEmbed, ConstraintEmbed, ErrorStackEmbed, HTTPErrorEmbed, HypixelAPIEmbed, isAbortError, replyToError, UserCommandErrorEmbed, UserHTTPErrorEmbed } from './helper';
 import { fatalWebhook, hypixelAPIWebhook, nonFatalWebhook, ownerID } from '../../../config.json';
 import { Interaction, MessageEmbed } from 'discord.js';
-import { ModuleDataResolver } from '../../hypixelAPI/ModuleDataResolver';
+import { HypixelModuleManager } from '../../hypixelAPI/HypixelModuleManager';
 import Constants from '../../util/constants';
 import ConstraintError from './ConstraintError';
 import HTTPError from './HTTPError';
@@ -12,11 +12,11 @@ import ModuleError from './ModuleError';
 export default async ({
   error,
   interaction,
-  moduleDataResolver,
+  hypixelModuleManager,
 }: {
   error: Error | unknown,
   interaction?: Interaction,
-  moduleDataResolver?: ModuleDataResolver
+  hypixelModuleManager?: HypixelModuleManager
 }): Promise<void> => {
   const incidentID = Math.random().toString(36).substring(2, 10).toUpperCase();
   const userPayload: MessageEmbed[] = [];
@@ -77,16 +77,16 @@ export default async ({
         incidentID: incidentID,
       });
     }
-  } else if (moduleDataResolver) {
+  } else if (hypixelModuleManager) {
     if (isAbortError(error)) {
       console.error(`${formattedUnix({ date: true, utc: true })} | An error has occurred on incident ${incidentID} | Priority: Low |`, error.message);
-      moduleDataResolver.abort.reportAbortError(moduleDataResolver);
+      hypixelModuleManager.errors.addAbort();
     } else if (error instanceof RateLimitError) {
       console.error(`${formattedUnix({ date: true, utc: true })} | An error has occurred on incident ${incidentID} | Priority: Medium |`, error);
-      moduleDataResolver.rateLimit.reportRateLimitError(moduleDataResolver, error?.json?.global);
+      hypixelModuleManager.errors.addRateLimit(error.json?.global);
     } else {
       console.error(`${formattedUnix({ date: true, utc: true })} | An error has occurred on incident ${incidentID} | Priority: High |`, error);
-      moduleDataResolver.unusual.reportUnusualError(moduleDataResolver);
+      hypixelModuleManager.errors.addError();
       incidentPayload.push(new ErrorStackEmbed({
         error: error,
         incidentID: incidentID,
@@ -94,13 +94,13 @@ export default async ({
     }
 
     incidentPayload.unshift(new HypixelAPIEmbed({
-      moduleDataResolver: moduleDataResolver,
+      hypixelModuleManager: hypixelModuleManager,
       error: error,
       incidentID: incidentID,
     }));
 
     shouldPing = isAbortError(error) === false ||
-      moduleDataResolver.instance.resumeAfter > Date.now();
+      hypixelModuleManager.instance.resumeAfter > Date.now();
   } else if (error instanceof ModuleError) {
     incidentPayload.push(new ErrorStackEmbed({
       error: error,
@@ -113,7 +113,7 @@ export default async ({
       footer: {
         name: `Incident ${incidentID}`,
       },
-    }).setDescription(JSON.stringify(error, Object.getOwnPropertyNames(error), 2));
+    }).setDescription(JSON.stringify(error, Object.getOwnPropertyNames(error), 2).slice(0, 4096));
 
     incidentPayload.push(...[
       knownInfo,
@@ -129,7 +129,7 @@ export default async ({
     embeds: incidentPayload,
     webhook: error instanceof ConstraintError
       ? nonFatalWebhook
-      : moduleDataResolver
+      : hypixelModuleManager
       ? hypixelAPIWebhook
       : fatalWebhook,
     suppressError: true,

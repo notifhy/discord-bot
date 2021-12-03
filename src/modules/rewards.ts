@@ -5,7 +5,7 @@ import { SQLiteWrapper } from '../database';
 import Constants from '../util/constants';
 import errorHandler from '../util/error/errorHandler';
 import ModuleError from '../util/error/ModuleError';
-import { Differences } from '../@types/modules';
+import type { Differences } from '../@types/modules';
 
 export const properties = {
   name: 'rewards',

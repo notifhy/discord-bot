@@ -37,7 +37,7 @@ export const execute: CommandExecute = async (interaction: CommandInteraction): 
     .addFields([
       {
         name: 'Uptime',
-        value: String(cleanLength(interaction.client.uptime ?? 0)),
+        value: String(cleanLength(process.uptime() * 1000)),
       },
       {
         name: 'Servers',
@@ -48,12 +48,12 @@ export const execute: CommandExecute = async (interaction: CommandInteraction): 
         value: String(interaction.client.guilds.cache.reduce((acc, guild) => acc + guild.memberCount, 0)),
       },
       {
-        name: 'Hypixel API',
-        value: `Refresh Interval: ${cleanLength(updateInterval)}\nInstance Requests: ${interaction.client.hypixelAPI.instance.instanceUses}`,
-      },
-      {
         name: 'Registered Users',
         value: String(userCount),
+      },
+      {
+        name: 'Hypixel API',
+        value: `Refresh Interval: ${cleanLength(updateInterval)}\nInstance Queries: ${interaction.client.hypixelAPI.instance.instanceUses}`,
       },
     ]);
 
