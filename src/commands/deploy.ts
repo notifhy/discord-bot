@@ -80,8 +80,8 @@ export const execute: CommandExecute = async (interaction: CommandInteraction): 
     else if (ownerOnly === true) ownerCommands.push(structure);
   }
 
-  const scope = interaction.options.getString('scope');
-  const type = interaction.options.getString('type');
+  const scope = interaction.options.getString('scope', true);
+  const type = interaction.options.getString('type', true);
   const guildID = interaction.options.getString('guild') ?? interaction.guildId!;
   const commands = type === 'both'
     ? ownerCommands.concat(userCommands)

@@ -22,12 +22,14 @@ export class HypixelModuleRequest extends HypixelRequest {
     const urlPromises: Promise<HypixelAPIOk>[] = urls.map(url => this.call(url));
     const hypixelAPIOk: HypixelAPIOk[] = await Promise.all(urlPromises);
 
-    const hypixelPlayerData: CleanHypixelPlayerData = this.cleanPlayerData(hypixelAPIOk[0] as RawHypixelPlayer, user);
-    const hypixelStatusData: CleanHypixelStatusData | undefined = this.cleanStatusData(hypixelAPIOk[1] as RawHypixelStatus | undefined);
+    const thisRequest = HypixelModuleRequest;
+
+    const hypixelPlayerData: CleanHypixelPlayerData = thisRequest.cleanPlayerData(hypixelAPIOk[0] as RawHypixelPlayer, user);
+    const hypixelStatusData: CleanHypixelStatusData | undefined = thisRequest.cleanStatusData(hypixelAPIOk[1] as RawHypixelStatus | undefined);
     return [hypixelPlayerData, hypixelStatusData];
   }
 
-  private cleanPlayerData(rawHypixelPlayer: RawHypixelPlayer, userAPIData: UserAPIData) {
+  static cleanPlayerData(rawHypixelPlayer: RawHypixelPlayer, userAPIData: UserAPIData) {
     const rawHypixelPlayerData: RawHypixelPlayerData = rawHypixelPlayer.player;
     return {
       firstLogin: rawHypixelPlayerData.firstLogin ?? null,
@@ -43,7 +45,7 @@ export class HypixelModuleRequest extends HypixelRequest {
     } as CleanHypixelPlayerData;
   }
 
-  private cleanStatusData(rawHypixelStatus: RawHypixelStatus | undefined) {
+  static cleanStatusData(rawHypixelStatus: RawHypixelStatus | undefined) {
     if (rawHypixelStatus === undefined) return undefined;
     const rawHypixelStatusData: RawHypixelStatusData = rawHypixelStatus.session;
     return {

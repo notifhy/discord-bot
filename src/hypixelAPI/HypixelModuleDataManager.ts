@@ -28,11 +28,11 @@ export class HypixelModuleDataManager {
   }
 
   async updateUserAPIData() {
-    const userAPIDataUpdate: Partial<UserAPIData> = Object.assign({ lastUpdated: this.now }, this.differences.primary);
+    const userAPIDataUpdate: Partial<UserAPIData> = Object.assign(this.differences.primary, { lastUpdated: this.now });
 
     if (Object.keys(this.differences.primary).length > 0) {
-      const historyUpdate: History = Object.assign({ date: this.now }, this.differences.primary);
-      const history: History[] = this.oldUserAPIData.history;
+      const historyUpdate: History = Object.assign(this.differences.primary, { date: this.now });
+      const { history }: { history: History[] } = this.oldUserAPIData;
       history.unshift(historyUpdate);
       history.splice(250);
       Object.assign(userAPIDataUpdate, { history: history });

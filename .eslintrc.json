@@ -10,11 +10,16 @@
     "sourceType": "module"
 	},
   "extends": [
-    "eslint:recommended",
+    "eslint:all",
     "plugin:@typescript-eslint/eslint-recommended",
     "plugin:@typescript-eslint/recommended"
   ],
   "rules": {
+      "no-continue": "off",
+      "multiline-comment-style":"off",
+      "lines-around-comment": "off",
+      "max-params": ["error", 5],
+      "object-curly-newline": ["error", { "consistent": true }],
       "@typescript-eslint/no-non-null-assertion": "off",
       "require-atomic-updates": "off",
       "lines-between-class-members": "off",

@@ -1,7 +1,7 @@
 import { CommandInteraction } from 'discord.js';
 
 export const slashCommandOptionString = (interaction: CommandInteraction) => {
-  let option = interaction.options.data[0];
+  let [option] = interaction.options.data;
 
   const commandOptions: (string | number | boolean)[] = [];
 
@@ -11,7 +11,7 @@ export const slashCommandOptionString = (interaction: CommandInteraction) => {
     } else {
       if (option.type === 'SUB_COMMAND_GROUP') {
         commandOptions.push(option.name);
-        option = option.options![0];
+        [option] = option.options!;
       }
 
       if (option.type === 'SUB_COMMAND') {

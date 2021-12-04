@@ -38,7 +38,7 @@ export const properties: CommandProperties = {
 export const execute: CommandExecute = async (interaction: CommandInteraction, { userData }): Promise<void> => {
   if (interaction.options.getSubcommand() === 'information') await information(interaction, userData);
   else if (interaction.options.getString('command')) await specific(interaction, userData);
-	else await commands(interaction, userData);
+  else await commands(interaction, userData);
 };
 
 async function information(interaction: CommandInteraction, userData: UserData) {
@@ -52,7 +52,7 @@ async function information(interaction: CommandInteraction, userData: UserData) 
 
 async function specific(interaction: CommandInteraction, userData: UserData) {
   const locale = interaction.client.regionLocales.locale(userData.language).commands.help;
-  const replace = interaction.client.regionLocales.replace;
+  const { replace } = interaction.client.regionLocales;
   const commandArg: string = interaction.options.getString('command') as string;
   const command: ClientCommand | undefined = interaction.client.commands.get(commandArg);
   const commandSearchEmbed = new BetterEmbed({ color: '#7289DA', footer: interaction });
@@ -103,7 +103,7 @@ async function specific(interaction: CommandInteraction, userData: UserData) {
 
 async function commands(interaction: CommandInteraction, userData: UserData) {
   const locale = interaction.client.regionLocales.locale(userData.language).commands.help;
-  const replace = interaction.client.regionLocales.replace;
+  const { replace } = interaction.client.regionLocales;
   const commandsCollection = interaction.client.commands.filter(command => command.properties.ownerOnly === false);
   const allCommandsEmbed = new BetterEmbed({ color: '#7289DA', footer: interaction })
     .setTitle(locale.all.title)

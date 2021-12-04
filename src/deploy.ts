@@ -2,28 +2,22 @@ import type { ClientCommand } from './@types/client';
 import { clientID, discordAPIkey } from '../config.json';
 import { REST } from '@discordjs/rest';
 import { Routes } from 'discord-api-types/v9';
-import fs from 'fs';
-
-const commands: ClientCommand['properties']['structure'][] = [];
-const commandFiles = fs.readdirSync('./commands').filter(file => file.endsWith('.ts'));
 
 (async () => {
-	try {
-    for (const file of commandFiles) {
-      // eslint-disable-next-line no-await-in-loop
-      const { properties: { structure } }: ClientCommand = await import(`./commands/${file}`);
-      commands.push(structure);
-    }
+  try {
+    console.log('Starting deployment of the deploy command.');
 
-		console.log('Started refreshing application (/) commands.');
+    const deployCommand = (await import(`${__dirname}/commands/deploy.ts`) as ClientCommand).properties.structure;
 
-		await new REST({ version: '9' }).setToken(discordAPIkey).put(
-			Routes.applicationGuildCommands(clientID, '873000534955667496'),
-			{ body: commands },
-		);
+    await new REST({ version: '9' }).setToken(discordAPIkey).put(
+      Routes.applicationCommands(clientID),
+      {
+        body: [deployCommand],
+      },
+    );
 
-		console.log('Successfully reloaded application (/) commands.');
-	} catch (error) {
-		console.error(error);
-	}
+    console.log('Successfully deployed the deploy command.');
+  } catch (error) {
+    console.error(error);
+  }
 })();

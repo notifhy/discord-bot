@@ -23,11 +23,11 @@ export const properties: CommandProperties = {
 };
 
 export const execute: CommandExecute = async (interaction: CommandInteraction): Promise<void> => {
-  const input = interaction.options.getString('string') as string;
+  const input = interaction.options.getString('string', true);
 
   try {
     const start = Date.now();
-    const output = await eval(input);
+    const output = await eval(input); //eslint-disable-line no-eval
     const end = Date.now();
     const timeTaken = end - start;
     const outputMaxLength = Boolean(output?.length >= 1024);

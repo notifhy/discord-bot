@@ -75,7 +75,7 @@ export const execute: CommandExecute = async (interaction: CommandInteraction): 
       break;
     }
     case 'blockguild': {
-      const guildID = interaction.options.getString('guild') as string;
+      const guildID = interaction.options.getString('guild', true);
       const blockedGuildIndex = config.blockedGuilds.indexOf(guildID);
 
       if (blockedGuildIndex === -1) {
@@ -114,7 +114,7 @@ export const execute: CommandExecute = async (interaction: CommandInteraction): 
       break;
     }
     case 'blockuser': {
-      const user = interaction.options.getString('user') as string;
+      const user = interaction.options.getString('user', true);
       const blockedUserIndex = config.blockedUsers.indexOf(user);
 
       if (blockedUserIndex === -1) {
@@ -158,6 +158,7 @@ export const execute: CommandExecute = async (interaction: CommandInteraction): 
       payload.embeds = [devmodeEmbed];
       break;
     }
+    //no default
   }
 
   const newRawConfig = SQLiteWrapper.unJSONize<Config, RawConfig>({

@@ -158,7 +158,7 @@ export const execute = async ({
         .setDescription(`<@!${userAPIData.discordID}> logged out <t:${Math.round(differences.primary.lastLogout / 1000)}:R> at <t:${Math.round(differences.primary.lastLogout / 1000)}:T>`);
 
       //lastLogout seems to change twice sometimes on a single logout, this is a fix for that
-      const lastEvent = userAPIData.history[1]; //First item in array is this event, so it checks the second item
+      const [lastEvent] = userAPIData.history; //First item in array is this event, so it checks the second item
       const duplicationCheck = 'lastLogout' in lastEvent;
 
       if (duplicationCheck === false) {

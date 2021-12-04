@@ -38,7 +38,7 @@ export const execute: CommandExecute = async (interaction: CommandInteraction): 
   const responseEmbed = new BetterEmbed({ color: '#7289DA', footer: interaction });
 
   if (interaction.options.getSubcommand() === 'set') {
-    const status = interaction.options.getString('string') as string;
+    const status = interaction.options.getString('string', true);
     interaction.client.customStatus = status;
 
     interaction.client.user?.setActivity({
@@ -50,7 +50,7 @@ export const execute: CommandExecute = async (interaction: CommandInteraction): 
     responseEmbed.setDescription(`The status is now set to ${status}!`);
   } else {
     responseEmbed.setTitle('Status Cleared');
-    responseEmbed.setDescription(`The status is now automatic!`);
+    responseEmbed.setDescription('The status is now automatic!');
     interaction.client.customStatus = null;
   }
 

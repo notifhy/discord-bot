@@ -45,10 +45,11 @@ export class SQLiteWrapper {
     allowUndefined?: boolean,
   }): Promise<CleanOutput> {
     /*
-    const string = '2';
-    const output = await queryGet(`SELECT tests FROM test WHERE tests = '${string}' `);
-    SELECT * FROM ${table}
+     *const string = '2';
+     *const output = await queryGet(`SELECT tests FROM test WHERE tests = '${string}' `);
+     *SELECT * FROM ${table}
     */
+
     return new Promise<CleanOutput>(resolve => {
       const db = new Database(`${__dirname}/../database.db`);
       const rawData: RawOutput = db.prepare(query).get() as RawOutput;
@@ -61,7 +62,7 @@ export class SQLiteWrapper {
         input: rawData,
       });
 
-      return resolve(data as CleanOutput);
+      resolve(data as CleanOutput);
     });
   }
 
@@ -71,9 +72,9 @@ export class SQLiteWrapper {
     query: string,
   }): Promise<CleanOutput[]> {
     /*
-    const string = '2';
-    const output = await queryGetAll(`SELECT tests FROM test WHERE tests = '${string}' `);
-    */
+     *const string = '2';
+     *const output = await queryGetAll(`SELECT tests FROM test WHERE tests = '${string}' `);
+     */
     return new Promise<CleanOutput[]>(resolve => {
       const db = new Database(`${__dirname}/../database.db`);
       const rawData: RawOutput[] = db.prepare(query).all() as RawOutput[];
@@ -85,7 +86,7 @@ export class SQLiteWrapper {
         }),
       );
 
-      return resolve(data);
+      resolve(data);
     });
   }
 
@@ -97,11 +98,11 @@ export class SQLiteWrapper {
     data?: (string | number | null)[]
   }): Promise<void> {
     /*
-    'CREATE TABLE IF NOT EXISTS servers(tests TEXT NOT NULL)'
-    'UPDATE table SET offline = ? WHERE id = ?'
-    'INSERT INTO servers VALUES(?,?,?)'
-    'DELETE FROM users WHERE id=(?)'
-    */
+     *'CREATE TABLE IF NOT EXISTS servers(tests TEXT NOT NULL)'
+     *'UPDATE table SET offline = ? WHERE id = ?'
+     *'INSERT INTO servers VALUES(?,?,?)'
+     *'DELETE FROM users WHERE id=(?)'
+     */
     return new Promise<void>(resolve => {
       const db = new Database(`${__dirname}/../database.db`);
       db.prepare(query).run(data);
@@ -238,8 +239,10 @@ export class SQLiteWrapper {
     //console.log(`${formattedUnix({ date: true, utc: true })} | ${discordID} data deleted from ${table}`);
   }
 
-  //Taken from https://stackoverflow.com/a/52799327 under CC BY-SA 4.0
-  //Takes an input and tests for a JSON structure (excluding primitives)
+  /*
+   * Taken from https://stackoverflow.com/a/52799327 under CC BY-SA 4.0
+   * Takes an input and tests for a JSON structure (excluding primitives)
+   */
   static JSONize<RawInput, Output>({
     input,
   }: {
@@ -264,25 +267,29 @@ export class SQLiteWrapper {
     return input as unknown as Output;
   }
 
-  //Taken from https://stackoverflow.com/a/52799327 under CC BY-SA 4.0
-  //Takes an input and tests for a JSON structure (excluding primitives)
+  /*
+   * Taken from https://stackoverflow.com/a/52799327 under CC BY-SA 4.0
+   * Takes an input and tests for a JSON structure (excluding primitives)
+   */
   static unJSONize<Input, RawOutput>({
     input,
   }: {
     input: Input,
   }): RawOutput {
     for (const key in input) {
-      try {
-        const type = Object.prototype.toString.call(input[key]);
+      if (Object.prototype.hasOwnProperty.call(input, key)) {
+        try {
+          const type = Object.prototype.toString.call(input[key]);
 
-        if (
-          type === '[object Object]' ||
-          type === '[object Array]' ||
-          type === '[object Boolean]'
-        ) {
-          (input[key as keyof Input] as unknown) = JSON.stringify(input[key]);
-        }
-      } catch {} //eslint-disable-line no-empty
+          if (
+            type === '[object Object]' ||
+            type === '[object Array]' ||
+            type === '[object Boolean]'
+          ) {
+            (input[key as keyof Input] as unknown) = JSON.stringify(input[key]);
+          }
+        } catch {} //eslint-disable-line no-empty
+      }
     }
 
     return input as unknown as RawOutput;

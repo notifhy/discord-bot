@@ -30,7 +30,7 @@ export const properties: CommandProperties = {
   },
 };
 
-export const execute: CommandExecute = async (interaction: CommandInteraction, { userData: userData }): Promise<void> => {
+export const execute: CommandExecute = async (interaction: CommandInteraction, { userData }): Promise<void> => {
   const locale = interaction.client.regionLocales.locale(userData.language).commands.data;
   if (interaction.options.getSubcommand() === 'delete') {
     const confirmEmbed = new BetterEmbed({ color: '#7289DA', footer: interaction })
@@ -127,9 +127,13 @@ export const execute: CommandExecute = async (interaction: CommandInteraction, {
       rewards: data[2],
     };
 
-    await interaction.editReply({ files: [{
-      attachment: Buffer.from(JSON.stringify(allUserData, null, 2)),
-      name: 'userData.json' }],
+    await interaction.editReply({
+      files: [
+        {
+          attachment: Buffer.from(JSON.stringify(allUserData, null, 2)),
+          name: 'userData.json',
+        },
+      ],
     });
   }
 };

@@ -28,14 +28,14 @@ export class Request {
         ...fetchOptions,
       });
       return response;
-    } catch (err) {
-      if (isAbortError(err) && this.aborts < this.maxAborts) {
+    } catch (error) {
+      if (isAbortError(error) && this.aborts < this.maxAborts) {
         this.aborts += 1;
         const retry = await this.request(url, fetchOptions);
         return retry;
       }
 
-      throw err;
+      throw error;
     } finally {
       clearTimeout(abortTimeout);
     }

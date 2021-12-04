@@ -3,7 +3,7 @@ import { CommandErrorEmbed, ConstraintEmbed, ErrorStackEmbed, HTTPErrorEmbed, Hy
 import { fatalWebhook, hypixelAPIWebhook, nonFatalWebhook, ownerID } from '../../../config.json';
 import { Interaction, MessageEmbed } from 'discord.js';
 import { HypixelModuleManager } from '../../hypixelAPI/HypixelModuleManager';
-import Constants from '../../util/constants';
+import Constants from '../Constants';
 import ConstraintError from './ConstraintError';
 import HTTPError from './HTTPError';
 import RateLimitError from './RateLimitError';

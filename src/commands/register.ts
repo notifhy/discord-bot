@@ -5,7 +5,7 @@ import { FriendsModule, RawFriendsModule, RawRewardsModule, RawUserAPIData, Rewa
 import { Request } from '../util/Request';
 import type { Slothpixel } from '../@types/hypixel';
 import { SQLiteWrapper } from '../database';
-import Constants from '../util/constants';
+import Constants from '../util/Constants';
 import HTTPError from '../util/error/HTTPError';
 
 export const properties: CommandProperties = {
@@ -30,7 +30,7 @@ export const properties: CommandProperties = {
 
 export const execute: CommandExecute = async (interaction: CommandInteraction, { userData }): Promise<void> => {
   const locale = interaction.client.regionLocales.locale(userData.language).commands.register;
-  const replace = interaction.client.regionLocales.replace;
+  const { replace } = interaction.client.regionLocales;
   const inputUUID = /^[0-9a-f]{8}(-?)[0-9a-f]{4}(-?)[1-5][0-9a-f]{3}(-?)[89AB][0-9a-f]{3}(-?)[0-9a-f]{12}$/i;
   const inputUsername = /^[a-zA-Z0-9_-]{1,24}$/g;
   const input: string = interaction.options.getString('player') as string;
@@ -73,7 +73,8 @@ export const execute: CommandExecute = async (interaction: CommandInteraction, {
     },
     links: {
       DISCORD,
-    } } = await response.json() as Slothpixel;
+    },
+  } = await response.json() as Slothpixel;
 
   if (DISCORD === null) {
     const unlinkedEmbed = new BetterEmbed({ color: '#FF5555', footer: interaction })
@@ -141,5 +142,5 @@ export const execute: CommandExecute = async (interaction: CommandInteraction, {
     .addField(locale.field.name,
       locale.field.value);
 
-	await interaction.editReply({ embeds: [registerEmbed] });
+  await interaction.editReply({ embeds: [registerEmbed] });
 };

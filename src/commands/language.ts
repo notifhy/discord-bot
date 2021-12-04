@@ -34,10 +34,10 @@ export const properties: CommandProperties = {
   },
 };
 
-export const execute: CommandExecute = async (interaction: CommandInteraction, { userData: userData }): Promise<void> => {
-  const language = interaction.options.getString('language') as string;
+export const execute: CommandExecute = async (interaction: CommandInteraction, { userData }): Promise<void> => {
+  const language = interaction.options.getString('language', true);
   const locale = interaction.client.regionLocales.locale(language).commands.language;
-  const replace = interaction.client.regionLocales.replace;
+  const { replace } = interaction.client.regionLocales;
 
   if (language === userData.language) {
     const alreadySetEmbed = new BetterEmbed({ color: '#FF5555', footer: interaction })
@@ -63,5 +63,5 @@ export const execute: CommandExecute = async (interaction: CommandInteraction, {
       language: language,
     }));
 
-	await interaction.editReply({ embeds: [languageEmbed] });
+  await interaction.editReply({ embeds: [languageEmbed] });
 };
