@@ -2,27 +2,31 @@ import type { Response } from 'node-fetch';
 
 export default class HTTPError<JSON> extends Error {
   json: JSON | null;
-  response: Response;
+  response: Response | undefined;
   status: number;
-  statusText: string;
+  statusText: string | undefined;
   url: string;
 
   constructor({
+    name,
     message,
     json,
     response,
+    url,
   }: {
-    message?: string | undefined,
+    name: string,
+    message: string,
     json?: JSON | null,
-    response: Response,
+    response?: Response,
+    url: string,
   }) {
-    super(message ?? response.statusText);
-    this.name = 'HTTPError';
-    this.json = json ?? null;
+    super(message ?? response?.statusText);
+    this.name = `HTTPError [${name}]`;
+    this.json = json ?? (response?.json().catch(() => null) as JSON | undefined) ?? null;
     this.response = response;
-    this.status = response?.status;
+    this.status = response?.status ?? 500;
     this.statusText = response?.statusText;
-    this.url = response?.url;
+    this.url = url;
 
     Object.setPrototypeOf(this, HTTPError.prototype);
     Error.captureStackTrace(this, this.constructor);

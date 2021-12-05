@@ -4,7 +4,7 @@ import { HypixelModuleInstance } from './HypixelModuleInstance';
 import { setTimeout } from 'node:timers/promises';
 import { keyLimit } from '../../config.json';
 import type { RawUserAPIData, UserAPIData } from '../@types/database';
-import errorHandler from '../util/error/errorHandler';
+import ErrorHandler from '../util/error/errorHandler';
 import { SQLiteWrapper } from '../database';
 import { HypixelModuleRequest } from './HypixelModuleRequest';
 import { HypixelModuleDataManager } from './HypixelModuleDataManager';
@@ -85,13 +85,13 @@ export class HypixelModuleManager {
             if (user.modules.includes('friends')) modules.push(this.client.modules.get('friends')!.execute(payLoad));
             await Promise.all(modules);
           } catch (error) {
-            await errorHandler({ error: error, hypixelModuleManager: this });
+            await new ErrorHandler({ error: error, hypixelModuleManager: this }); 1 //fix
           }
         })();
         await setTimeout(intervalBetweenRequests * urls.length); //eslint-disable-line no-await-in-loop
       }
     } catch (error) {
-      await errorHandler({ error: error, hypixelModuleManager: this });
+      await new ErrorHandler({ error: error, hypixelModuleManager: this }); 1 //fix
     }
   }
 }

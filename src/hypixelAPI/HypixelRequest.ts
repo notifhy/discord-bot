@@ -33,8 +33,10 @@ export class HypixelRequest {
 
     if (isHypixelAPIError(JSON)) { //typescript.
       const errorData = {
+        name: response.statusText,
         message: JSON?.cause,
         response: response,
+        url: url,
       };
       if (isRateLimit(JSON)) throw new RateLimitError(Object.assign(errorData, { json: JSON }));
       else throw new HTTPError<Hypixel400_403_422>(Object.assign(errorData, { json: JSON }));

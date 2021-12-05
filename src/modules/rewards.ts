@@ -3,7 +3,7 @@ import { BetterEmbed } from '../util/utility';
 import { Client } from 'discord.js';
 import { SQLiteWrapper } from '../database';
 import Constants from '../util/constants';
-import errorHandler from '../util/error/errorHandler';
+import ErrorHandler from '../util/error/errorHandler';
 import ModuleError from '../util/error/ModuleError';
 import type { Differences } from '../@types/modules';
 
@@ -101,11 +101,12 @@ export const execute = async ({
       });
     }
   } catch (error) {
-    await errorHandler({
+    await new ErrorHandler({
       error: new ModuleError({
         message: (error as Error).message,
         module: properties.name,
+        user: userAPIData,
       }),
-    });
+    }); 1 //fix
   }
 };

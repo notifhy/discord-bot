@@ -1,5 +1,6 @@
 import fetch, { RequestInit, Response } from 'node-fetch';
 import { isAbortError } from './error/helper';
+import HTTPError from './error/HTTPError';
 
 export class Request {
   aborts: number;
@@ -35,7 +36,11 @@ export class Request {
         return retry;
       }
 
-      throw error;
+      throw new HTTPError({
+        name: (error as Error).name,
+        message: (error as Error).message,
+        url: url,
+      });
     } finally {
       clearTimeout(abortTimeout);
     }

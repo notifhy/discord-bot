@@ -6,7 +6,7 @@ import { HypixelModuleManager } from './hypixelAPI/HypixelModuleManager';
 import { RawConfig } from './@types/database';
 import { RegionLocales } from '../locales/localesHandler';
 import { SQLiteWrapper } from './database';
-import errorHandler from './util/error/errorHandler';
+import ErrorHandler from './util/error/errorHandler';
 import * as fs from 'node:fs/promises';
 
 process.on('exit', code => {
@@ -15,13 +15,13 @@ process.on('exit', code => {
 
 process.on('unhandledRejection', async error => {
   console.error('unhandledRejection', error);
-  await errorHandler({ error: error });
+  await new ErrorHandler({ error: error });1 //fix
   process.exit(0);
 });
 
 process.on('uncaughtException', async error => {
   console.error('uncaughtException', error);
-  await errorHandler({ error: error });
+  await new ErrorHandler({ error: error });1 //fix
   process.exit(0);
 });
 
