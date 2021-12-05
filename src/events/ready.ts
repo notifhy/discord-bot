@@ -1,7 +1,7 @@
 import type { Client } from 'discord.js';
 import type { EventProperties } from '../@types/client';
 import { SQLiteWrapper } from '../database';
-import errorHandler from '../util/error/errorHandler';
+import ErrorHandler from '../util/error/errorHandler';
 
 export const properties: EventProperties = {
   name: 'ready',
@@ -30,7 +30,7 @@ export const execute = async (client: Client) => {
         name: label,
       });
     } catch (error) {
-      await errorHandler({ error: error });
+      await new ErrorHandler({ error: error }).systemNotify();
     }
   }, 30_000);
 

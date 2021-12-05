@@ -2,7 +2,6 @@
 import type { Collection, CommandInteraction } from 'discord.js';
 import type { HypixelModuleManager } from '../hypixelAPI/HypixelModuleManager';
 import type { ClientModule } from './modules';
-import type { RegionLocales } from '../../locales/localesHandler';
 import type { UserAPIData, UserData } from './database';
 
 export interface WebHookConfig {
@@ -62,6 +61,5 @@ declare module 'discord.js' {
     events: Collection<string, ClientEvent>;
     hypixelAPI: HypixelModuleManager;
     modules: Collection<string, ClientModule>;
-    regionLocales: RegionLocales;
   }
 }

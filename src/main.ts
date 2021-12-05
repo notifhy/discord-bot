@@ -4,7 +4,6 @@ import { Client, Collection, Intents } from 'discord.js';
 import { discordAPIkey } from '../config.json';
 import { HypixelModuleManager } from './hypixelAPI/HypixelModuleManager';
 import { RawConfig } from './@types/database';
-import { RegionLocales } from '../locales/localesHandler';
 import { SQLiteWrapper } from './database';
 import ErrorHandler from './util/error/errorHandler';
 import * as fs from 'node:fs/promises';
@@ -15,13 +14,13 @@ process.on('exit', code => {
 
 process.on('unhandledRejection', async error => {
   console.error('unhandledRejection', error);
-  await new ErrorHandler({ error: error });1 //fix
+  await new ErrorHandler({ error: error }).systemNotify();
   process.exit(0);
 });
 
 process.on('uncaughtException', async error => {
   console.error('uncaughtException', error);
-  await new ErrorHandler({ error: error });1 //fix
+  await new ErrorHandler({ error: error }).systemNotify();
   process.exit(0);
 });
 
@@ -46,7 +45,6 @@ client.customStatus = null;
 client.events = new Collection();
 client.hypixelAPI = new HypixelModuleManager(client);
 client.modules = new Collection();
-client.regionLocales = new RegionLocales();
 
 (async () => {
   const folders = (await Promise.all([

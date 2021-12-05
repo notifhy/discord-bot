@@ -33,7 +33,6 @@ export class HypixelRequest {
 
     if (isHypixelAPIError(JSON)) { //typescript.
       const errorData = {
-        name: response.statusText,
         message: JSON?.cause,
         response: response,
         url: url,

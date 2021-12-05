@@ -1,7 +1,8 @@
 import type { CommandExecute, CommandProperties } from '../@types/client';
+import type { FriendsModule, RawFriendsModule, RawRewardsModule, RawUserAPIData, RewardsModule, UserAPIData } from '../@types/database';
 import { BetterEmbed } from '../util/utility';
 import { ButtonInteraction, CommandInteraction, Message, MessageActionRow, MessageButton, MessageComponentInteraction } from 'discord.js';
-import type { FriendsModule, RawFriendsModule, RawRewardsModule, RawUserAPIData, RewardsModule, UserAPIData } from '../@types/database';
+import { RegionLocales } from '../../locales/localesHandler';
 import { SQLiteWrapper } from '../database';
 
 export const properties: CommandProperties = {
@@ -31,7 +32,7 @@ export const properties: CommandProperties = {
 };
 
 export const execute: CommandExecute = async (interaction: CommandInteraction, { userData }): Promise<void> => {
-  const locale = interaction.client.regionLocales.locale(userData.language).commands.data;
+  const locale = RegionLocales.locale(userData.language).commands.data;
   if (interaction.options.getSubcommand() === 'delete') {
     const confirmEmbed = new BetterEmbed({ color: '#7289DA', footer: interaction })
       .setTitle(locale.delete.confirm.title)

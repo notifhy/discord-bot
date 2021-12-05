@@ -1,6 +1,7 @@
 import type { Response } from 'node-fetch';
 
 export default class HTTPError<JSON> extends Error {
+  baseName: string |null;
   json: JSON | null;
   response: Response | undefined;
   status: number;
@@ -8,21 +9,24 @@ export default class HTTPError<JSON> extends Error {
   url: string;
 
   constructor({
-    name,
-    message,
+    baseName,
+    inherited,
     json,
+    message,
     response,
     url,
   }: {
-    name: string,
-    message: string,
+    baseName?: string,
+    inherited?: string,
     json?: JSON | null,
+    message?: string,
     response?: Response,
     url: string,
   }) {
     super(message ?? response?.statusText);
-    this.name = `HTTPError [${name}]`;
+    this.baseName = baseName ?? null;
     this.json = json ?? (response?.json().catch(() => null) as JSON | undefined) ?? null;
+    this.name = inherited ? `HTTPError [${inherited}]` : 'HTTPError';
     this.response = response;
     this.status = response?.status ?? 500;
     this.statusText = response?.statusText;

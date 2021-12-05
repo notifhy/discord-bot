@@ -2,6 +2,7 @@ import type { CommandExecute, CommandProperties } from '../@types/client';
 import { BetterEmbed } from '../util/utility';
 import { CommandInteraction } from 'discord.js';
 import { FriendsModule, RawFriendsModule, RawRewardsModule, RawUserAPIData, RewardsModule, UserAPIData } from '../@types/database';
+import { RegionLocales } from '../../locales/localesHandler';
 import { Request } from '../util/Request';
 import type { Slothpixel } from '../@types/hypixel';
 import { SQLiteWrapper } from '../database';
@@ -29,8 +30,8 @@ export const properties: CommandProperties = {
 };
 
 export const execute: CommandExecute = async (interaction: CommandInteraction, { userData }): Promise<void> => {
-  const locale = interaction.client.regionLocales.locale(userData.language).commands.register;
-  const { replace } = interaction.client.regionLocales;
+  const locale = RegionLocales.locale(userData.language).commands.register;
+  const { replace } = RegionLocales;
   const inputUUID = /^[0-9a-f]{8}(-?)[0-9a-f]{4}(-?)[1-5][0-9a-f]{3}(-?)[89AB][0-9a-f]{3}(-?)[0-9a-f]{12}$/i;
   const inputUsername = /^[a-zA-Z0-9_-]{1,24}$/g;
   const input: string = interaction.options.getString('player') as string;
@@ -44,7 +45,8 @@ export const execute: CommandExecute = async (interaction: CommandInteraction, {
     return;
   }
 
-  const response = await new Request({}).request(`https://api.slothpixel.me/api/players/${input}`);
+  const url = `https://api.slothpixel.me/api/players/${input}`;
+  const response = await new Request({}).request(url);
 
   if (response.status === 404) {
     const notFoundEmbed = new BetterEmbed({ color: '#FF5555', footer: interaction })
@@ -56,7 +58,13 @@ export const execute: CommandExecute = async (interaction: CommandInteraction, {
     return;
   }
 
-  if (response.ok === false) throw new HTTPError({ response: response });
+  if (response.ok === false) {
+    throw new HTTPError({
+      message: response.statusText,
+      response: response,
+      url: url,
+    });
+  }
 
   const {
     uuid,

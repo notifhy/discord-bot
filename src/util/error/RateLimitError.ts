@@ -12,7 +12,13 @@ export default class RateLimitError extends HTTPError<Hypixel429> {
     json: Hypixel429 | null,
     response: Response,
   }) {
-    super({ message, json, response });
+    super({
+      message: message,
+      json: json,
+      response: response,
+      url: response.url,
+    });
+
     this.name = 'RateLimitError';
 
     Object.setPrototypeOf(this, RateLimitError.prototype);

@@ -1,14 +1,15 @@
 import type { EventProperties, ClientCommand } from '../@types/client';
+import type { RawUserData, UserAPIData, UserData } from '../@types/database';
 import { BetterEmbed, cleanRound, formattedUnix } from '../util/utility';
 import { Collection, CommandInteraction } from 'discord.js';
 import { ownerID } from '../../config.json';
-import type { RawUserData, UserAPIData, UserData } from '../@types/database';
+import { RegionLocales } from '../../locales/localesHandler';
 import { slashCommandOptionString } from '../util/structures';
 import { setTimeout } from 'node:timers/promises';
 import { SQLiteWrapper } from '../database';
 import Constants from '../util/constants';
 import ConstraintError from '../util/error/ConstraintError';
-import errorHandler from '../util/error/errorHandler';
+import ErrorHandler from '../util/error/errorHandler';
 
 
 export const properties: EventProperties = {
@@ -66,15 +67,18 @@ export const execute = async (interaction: CommandInteraction): Promise<void> =>
       });
     }
   } catch (error) {
-    await errorHandler({
+    const handler = new ErrorHandler({
       error: error,
       interaction: interaction,
     });
+
+    await handler.systemNotify();
+    await handler.userNotify();
   }
 };
 
 async function blockedConstraint(interaction: CommandInteraction, userData: UserData, blockedUsers: string[]) {
-  const locale = interaction.client.regionLocales.locale(userData.language).constraints;
+  const locale = RegionLocales.locale(userData.language).constraints;
   if (blockedUsers.includes(interaction.user.id)) {
     const blockedEmbed = new BetterEmbed({
       color: Constants.color.warning,
@@ -92,7 +96,7 @@ async function blockedConstraint(interaction: CommandInteraction, userData: User
 }
 
 async function devConstraint(interaction: CommandInteraction, userData: UserData, devMode: boolean) {
-  const locale = interaction.client.regionLocales.locale(userData.language).constraints;
+  const locale = RegionLocales.locale(userData.language).constraints;
   if (devMode === true && ownerID.includes(interaction.user.id) === false) {
     const devModeEmbed = new BetterEmbed({
       color: Constants.color.warning,
@@ -110,7 +114,7 @@ async function devConstraint(interaction: CommandInteraction, userData: UserData
 }
 
 async function ownerConstraint(interaction: CommandInteraction, userData: UserData, command: ClientCommand) {
-  const locale = interaction.client.regionLocales.locale(userData.language).constraints;
+  const locale = RegionLocales.locale(userData.language).constraints;
   if (command.properties.ownerOnly === true && ownerID.includes(interaction.user.id) === false) {
     const ownerEmbed = new BetterEmbed({
       color: Constants.color.warning,
@@ -128,7 +132,7 @@ async function ownerConstraint(interaction: CommandInteraction, userData: UserDa
 }
 
 async function dmConstraint(interaction: CommandInteraction, userData: UserData, command: ClientCommand) {
-  const locale = interaction.client.regionLocales.locale(userData.language).constraints;
+  const locale = RegionLocales.locale(userData.language).constraints;
   if (command.properties.noDM === true && !interaction.inGuild()) {
     const dmEmbed = new BetterEmbed({
       color: Constants.color.warning,
@@ -146,8 +150,8 @@ async function dmConstraint(interaction: CommandInteraction, userData: UserData,
 }
 
 async function cooldownConstraint(interaction: CommandInteraction, userData: UserData, command: ClientCommand) {
-  const locale = interaction.client.regionLocales.locale(userData.language).constraints;
-  const { replace } = interaction.client.regionLocales;
+  const locale = RegionLocales.locale(userData.language).constraints;
+  const { replace } = RegionLocales;
   const { cooldowns } = interaction.client;
 
   if (cooldowns.has(command.properties.name) === false) cooldowns.set(command.properties.name, new Collection());

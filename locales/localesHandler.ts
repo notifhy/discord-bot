@@ -8,13 +8,13 @@ const locales: Locales = {
 };
 
 export class RegionLocales {
-  locale(locale?: string): Locale {
+  static locale(locale?: string): Locale {
     if (!Object.keys(locales).includes(locale ?? 'en-us')) throw new RangeError('Invalid Locale');
     const fetched: Locale = locales[(locale ?? 'en-us') as keyof Locales];
     return fetched;
   }
 
-  replace(input: string, parameters?: Parameters): string {
+  static replace(input: string, parameters?: Parameters): string {
     let replaced: string = input;
     for (const parameter in parameters) {
       if (Object.prototype.hasOwnProperty.call(parameters, parameter)) {
@@ -26,7 +26,7 @@ export class RegionLocales {
     return replaced;
   }
 
-  get(path: string, locale?: string): LocaleTree | string {
+  static get(path: string, locale?: string): LocaleTree | string {
     const pathArray: string[] = path.split('.');
     let fetched: LocaleTree | string = (locales as Locales)[(locale ?? 'en-us') as keyof Locales];
     for (const pathCommand of pathArray) {

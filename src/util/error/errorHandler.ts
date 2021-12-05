@@ -1,6 +1,6 @@
 /* eslint-disable max-classes-per-file */
 import { BetterEmbed, cleanLength, cleanRound, formattedUnix, sendWebHook } from '../utility';
-import { ErrorStackEmbed } from './helper';
+import { ErrorStackEmbed, replyToError } from './helper';
 import { fatalWebhook, hypixelAPIWebhook, keyLimit, nonFatalWebhook, ownerID } from '../../../config.json';
 import { CommandInteraction, Interaction } from 'discord.js';
 import { HypixelModuleManager } from '../../hypixelAPI/HypixelModuleManager';
@@ -35,6 +35,8 @@ export default class ErrorHandler {
     this.hypixelModuleManager = hypixelModuleManager;
     this.moduleUser = moduleUser;
     this.incidentID = Math.random().toString(36).substring(2, 10).toUpperCase();
+
+    this.log();
   }
 
   private baseGuildEmbed() {
@@ -60,19 +62,65 @@ export default class ErrorHandler {
     });
   }
 
-  private shouldPing() {
-    return (
-      (this.error as Error)?.name === 'AbortError' ||
-      this.error instanceof ConstraintError ||
-      this.error instanceof ModuleError
-    ) === false;
+  private getPriority() { //Lower is higher priority
+    if (
+      this.error instanceof HTTPError &&
+      this.error.baseName === 'AbortError'
+    ) return 4;
+    if (this.error instanceof ConstraintError) return 3;
+    if (this.error instanceof ModuleError) return 2;
+    return 1;
+  }
+
+  private log() {
+    const time = formattedUnix({ date: true, utc: true });
+    const base = `${time} | Incident ${this.incidentID} | Priority: ${this.getPriority()} | `;
+    if (
+      this.interaction?.isCommand() &&
+      (
+        this.error instanceof ConstraintError ||
+        this.error instanceof HTTPError
+      )
+    ) {
+      console.error(base, `${this.interaction.user.tag} failed the constraint ${this.error.message}`);
+    } else if (
+      this.error instanceof HTTPError &&
+      this.error.baseName === 'AbortError'
+    ) {
+      console.error(base, this.error.message);
+    } else {
+      console.error(base, this.error);
+    }
+  }
+
+  async userNotify() {
+    const embeds = [];
+
+    if (this.interaction?.isCommand()) {
+      const embed = this.errorEmbed();
+      const { commandName, id } = this.interaction;
+      if (this.error instanceof ConstraintError) return;
+
+      embed
+        .setTitle('Oops')
+        .setDescription(`An error occurred while executing the command /${commandName}! This error has been automatically forwarded for review. It should be resolved soon. Sorry.`)
+        .addField('Interaction ID', id);
+      embeds.push(embed);
+
+      if (embeds.length > 0) {
+        await replyToError({
+          embeds: embeds,
+          interaction: this.interaction,
+          incidentID: this.incidentID,
+        });
+      }
+    }
   }
 
   async systemNotify() {
     const embeds = [];
 
     if (this.interaction?.isCommand()) {
-      console.log(`${formattedUnix({ date: true, utc: true })} | ${this.interaction.user.tag} failed the constraint ${this.error.message} in interaction ${this.interaction.id} | Priority: Low`);
       const embed = this.baseGuildEmbed();
       if (this.error instanceof ConstraintError) {
         embed
@@ -138,7 +186,7 @@ export default class ErrorHandler {
     }
 
     await sendWebHook({
-      content: this.shouldPing()
+      content: this.getPriority() <= 2
         ? `<@${ownerID.join('><@')}>`
         : undefined,
       embeds: embeds,

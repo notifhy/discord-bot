@@ -85,13 +85,19 @@ export class HypixelModuleManager {
             if (user.modules.includes('friends')) modules.push(this.client.modules.get('friends')!.execute(payLoad));
             await Promise.all(modules);
           } catch (error) {
-            await new ErrorHandler({ error: error, hypixelModuleManager: this }); 1 //fix
+            await new ErrorHandler({
+              error: error,
+              hypixelModuleManager: this,
+            }).systemNotify();
           }
         })();
         await setTimeout(intervalBetweenRequests * urls.length); //eslint-disable-line no-await-in-loop
       }
     } catch (error) {
-      await new ErrorHandler({ error: error, hypixelModuleManager: this }); 1 //fix
+      await new ErrorHandler({
+        error: error,
+        hypixelModuleManager: this,
+      }).systemNotify();
     }
   }
 }

@@ -37,8 +37,9 @@ export class Request {
       }
 
       throw new HTTPError({
-        name: (error as Error).name,
-        message: (error as Error).message,
+        baseName: (error as Error)?.name,
+        message: (error as Error)?.message,
+        inherited: (error as Error)?.name,
         url: url,
       });
     } finally {

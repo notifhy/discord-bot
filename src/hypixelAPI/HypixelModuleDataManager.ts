@@ -31,7 +31,7 @@ export class HypixelModuleDataManager {
     const userAPIDataUpdate: Partial<UserAPIData> = Object.assign(this.differences.primary, { lastUpdated: this.now });
 
     if (Object.keys(this.differences.primary).length > 0) {
-      const historyUpdate: History = Object.assign(this.differences.primary, { date: this.now });
+      const historyUpdate: History = { date: this.now, ...this.differences.primary };
       const { history }: { history: History[] } = this.oldUserAPIData;
       history.unshift(historyUpdate);
       history.splice(250);

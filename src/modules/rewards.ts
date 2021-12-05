@@ -101,12 +101,15 @@ export const execute = async ({
       });
     }
   } catch (error) {
-    await new ErrorHandler({
+    const handler = new ErrorHandler({
       error: new ModuleError({
         message: (error as Error).message,
         module: properties.name,
         user: userAPIData,
       }),
-    }); 1 //fix
+      moduleUser: userAPIData,
+    });
+
+    await handler.systemNotify();
   }
 };

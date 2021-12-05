@@ -1,6 +1,7 @@
 import type { CommandExecute, CommandProperties } from '../@types/client';
 import { BetterEmbed } from '../util/utility';
 import { ColorResolvable, CommandInteraction, Message } from 'discord.js';
+import { RegionLocales } from '../../locales/localesHandler';
 
 export const properties: CommandProperties = {
   name: 'ping',
@@ -17,8 +18,8 @@ export const properties: CommandProperties = {
 };
 
 export const execute: CommandExecute = async (interaction: CommandInteraction, { userData }): Promise<void> => {
-  const locale = interaction.client.regionLocales.locale(userData.language).commands.ping;
-  const { replace } = interaction.client.regionLocales;
+  const locale = RegionLocales.locale(userData.language).commands.ping;
+  const { replace } = RegionLocales;
   const initialPingEmbed = new BetterEmbed({ color: '#7289DA', footer: interaction })
     .setTitle(locale.embed1.title);
 

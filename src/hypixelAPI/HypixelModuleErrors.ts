@@ -27,16 +27,16 @@ export class HypixelModuleErrors { //extend instance
     };
 
     this.rateLimit = {
-      baseTimeout: 60_000,
-      timeout: 60_000,
+      baseTimeout: Constants.ms.minute,
+      timeout: Constants.ms.minute,
       resetTimeout: undefined,
       lastMinute: 0,
       isGlobal: false,
     };
 
     this.error = {
-      baseTimeout: 30_000,
-      timeout: 30_000,
+      baseTimeout: Constants.ms.minute / 2,
+      timeout: Constants.ms.minute / 2,
       resetTimeout: undefined,
       lastMinute: 0,
     };

@@ -1,11 +1,10 @@
 /* eslint-disable max-classes-per-file */
-import type { AbortError } from '../../@types/error';
 import { BetterEmbed, formattedUnix, sendWebHook } from '../utility';
 import { CommandInteraction, MessageEmbed } from 'discord.js';
 import { fatalWebhook, ownerID } from '../../../config.json';
 import Constants from '../../util/constants';
 
-export const isAbortError = (error: unknown): error is AbortError => error instanceof Error && error?.name === 'AbortError';
+export const isAbortError = (error: unknown): error is DOMException => error instanceof Error && error?.name === 'AbortError';
 
 export class UserCommandErrorEmbed extends BetterEmbed {
   constructor({
@@ -69,13 +68,16 @@ export async function replyToError({
     if (interaction.replied === true || interaction.deferred === true) await interaction.followUp(payLoad);
     else await interaction.reply(payLoad);
   } catch (err) {
-    if (!(err instanceof Error)) return; //fix
-    console.error(`${formattedUnix({ date: true, utc: true })} | An error has occurred and also failed to notify the user | ${err.stack ?? err.message}`);
-    const failedNotify = new CommandErrorEmbed({ //fix
-      error: err, interaction:
-      interaction,
-      incidentID: incidentID,
-    });
+    const base = `${formattedUnix({ date: true, utc: true })} | Incident ${incidentID} | Priority: 2`;
+    console.error(`${base} | An error has occurred and also failed to notify the user`, err);
+    const failedNotify = new BetterEmbed({
+      color: Constants.color.error,
+      footer: {
+        name: incidentID,
+      },
+    })
+      .setTitle('Failed to Resolve')
+      .setDescription('The error handling system failed to notify the user.');
 
     const stackEmbed = new ErrorStackEmbed(err, incidentID);
 

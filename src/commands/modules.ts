@@ -2,6 +2,7 @@ import type { CommandExecute, CommandProperties } from '../@types/client';
 import type { FriendsModule, RawUserAPIData, UserAPIData } from '../@types/database';
 import { BetterEmbed } from '../util/utility';
 import { ButtonInteraction, CommandInteraction, Message, MessageActionRow, MessageComponentInteraction, MessageSelectMenu, SelectMenuInteraction } from 'discord.js';
+import { RegionLocales } from '../../locales/localesHandler';
 import { SQLiteWrapper } from '../database';
 import { ToggleButtons } from '../util/ToggleButtons';
 import Constants from '../util/constants';
@@ -39,7 +40,7 @@ export const properties: CommandProperties = {
 
 export const execute: CommandExecute = async (interaction: CommandInteraction, { userData }): Promise<void> => {
   const subCommand = interaction.options.getSubcommand();
-  const locale = interaction.client.regionLocales.locale(userData.language).commands.modules.friend;
+  const locale = RegionLocales.locale(userData.language).commands.modules.friend;
   const mainEmbed = new BetterEmbed({ color: Constants.color.normal, footer: interaction })
     .setTitle(locale.title)
     .setDescription(locale.description);
