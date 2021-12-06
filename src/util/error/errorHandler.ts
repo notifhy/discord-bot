@@ -75,14 +75,12 @@ export default class ErrorHandler {
   private log() {
     const time = formattedUnix({ date: true, utc: true });
     const base = `${time} | Incident ${this.incidentID} | Priority: ${this.getPriority()} | `;
-    if (
-      this.interaction?.isCommand() &&
-      (
-        this.error instanceof ConstraintError ||
-        this.error instanceof HTTPError
-      )
-    ) {
-      console.error(base, `${this.interaction.user.tag} failed the constraint ${this.error.message}`);
+    if (this.interaction?.isCommand()) {
+      if (this.error instanceof ConstraintError) {
+        console.error(base, `${this.interaction.user.tag} failed the constraint ${this.error.message}`);
+      } else {
+        console.error(base, this.error);
+      }
     } else if (
       this.error instanceof HTTPError &&
       this.error.baseName === 'AbortError'

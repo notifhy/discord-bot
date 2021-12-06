@@ -193,7 +193,6 @@ async function stats(interaction: CommandInteraction) {
 }
 
 async function instance(interaction: CommandInteraction, type: string, value: number) {
-  console.log(interaction.options.getNumber('value'));
     if (type === 'keyPercentage' && value > 1) throw new Error('Too high, must be below 1');
   interaction.client.hypixelAPI.instance[type as keyof Omit<HypixelModuleManager['instance'], 'baseURL'>] = value;
   const setEmbed = new BetterEmbed({ color: Constants.color.normal, footer: interaction })

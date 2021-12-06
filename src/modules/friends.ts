@@ -1,7 +1,7 @@
 import type { Differences } from '../@types/modules';
 import type { FriendsModule, RawFriendsModule, UserAPIData } from '../@types/database';
 import { BetterEmbed } from '../util/utility';
-import { Client, GuildMember, MessageEmbed, TextChannel } from 'discord.js';
+import { Client, GuildMember, MessageEmbed, Permissions, TextChannel } from 'discord.js';
 import { SQLiteWrapper } from '../database';
 import Constants from '../util/constants';
 import ErrorHandler from '../util/error/errorHandler';
@@ -78,7 +78,11 @@ export const execute = async ({
     const channel = await client.channels.fetch(friendModule.channel!) as TextChannel;
     const missingPermissions = channel
       .permissionsFor(channel.guild.me as GuildMember)
-      .missing(['EMBED_LINKS', 'SEND_MESSAGES', 'VIEW_CHANNEL']);
+      .missing([
+        Permissions.FLAGS.EMBED_LINKS,
+        Permissions.FLAGS.SEND_MESSAGES,
+        Permissions.FLAGS.VIEW_CHANNEL,
+      ]);
 
     if (missingPermissions.length !== 0) {
       const user = await client.users.fetch(userAPIData.discordID);
@@ -158,7 +162,7 @@ export const execute = async ({
         .setDescription(`<@!${userAPIData.discordID}> logged out <t:${Math.round(differences.primary.lastLogout / 1000)}:R> at <t:${Math.round(differences.primary.lastLogout / 1000)}:T>`);
 
       //lastLogout seems to change twice sometimes on a single logout, this is a fix for that
-      const [lastEvent] = userAPIData.history; //First item in array is this event, so it checks the second item
+      const [, lastEvent] = userAPIData.history; //First item in array is this event, so it checks the second item
       const duplicationCheck = 'lastLogout' in lastEvent;
 
       if (duplicationCheck === false) {

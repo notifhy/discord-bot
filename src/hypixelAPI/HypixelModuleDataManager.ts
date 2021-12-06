@@ -28,7 +28,7 @@ export class HypixelModuleDataManager {
   }
 
   async updateUserAPIData() {
-    const userAPIDataUpdate: Partial<UserAPIData> = Object.assign(this.differences.primary, { lastUpdated: this.now });
+    const userAPIDataUpdate: Partial<UserAPIData> = { lastUpdated: this.now, ...this.differences.primary };
 
     if (Object.keys(this.differences.primary).length > 0) {
       const historyUpdate: History = { date: this.now, ...this.differences.primary };
