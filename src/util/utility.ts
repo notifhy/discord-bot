@@ -62,11 +62,16 @@ export class BetterEmbed extends MessageEmbed {
       super.setFooter(footer.name, footer.imageURL);
     }
   }
+
+  addFieldStart(name: string, value: string, inline?: boolean | undefined) {
+    super.setFields({ name: name, value: value, inline: inline }, ...this.fields);
+    return this;
+  }
 }
 
 export function compare<Primary, Secondary extends Primary>(primary: Primary, secondary: Secondary) {
-  const primaryDifferences: Partial<Primary> = {} as Partial<Primary>;
-  const secondaryDifferences: Partial<Secondary> = {} as Partial<Secondary>;
+  const primaryDifferences = {} as Partial<Primary>;
+  const secondaryDifferences = {} as Partial<Secondary>;
   for (const key in primary) {
     if (Object.prototype.hasOwnProperty.call(primary, key) === true) {
       if (primary[key] !== secondary[key]) {

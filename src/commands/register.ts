@@ -7,7 +7,7 @@ import { Request } from '../util/Request';
 import type { Slothpixel } from '../@types/hypixel';
 import { SQLiteWrapper } from '../database';
 import Constants from '../util/Constants';
-import HTTPError from '../util/error/HTTPError';
+import HTTPError from '../util/errors/HTTPError';
 
 export const properties: CommandProperties = {
   name: 'register',

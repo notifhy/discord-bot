@@ -11,6 +11,7 @@ import RateLimitError from './RateLimitError';
 import ModuleError from './ModuleError';
 import { slashCommandOptionString } from '../structures';
 import { UserAPIData } from '../../@types/database';
+import AbortError from './AbortError';
 
 export default class ErrorHandler {
   error: Error | unknown;
@@ -63,10 +64,12 @@ export default class ErrorHandler {
   }
 
   private getPriority() { //Lower is higher priority
-    if (
-      this.error instanceof HTTPError &&
-      this.error.baseName === 'AbortError'
-    ) return 4;
+    if (this.error instanceof AbortError) {
+      console.log((this.hypixelModuleManager?.instance?.resumeAfter ?? 0) < Date.now());
+      if ((this.hypixelModuleManager?.instance?.resumeAfter ?? 0) < Date.now()) return 4;
+      return 2;
+    }
+
     if (this.error instanceof ConstraintError) return 3;
     if (this.error instanceof ModuleError) return 2;
     return 1;
@@ -81,10 +84,7 @@ export default class ErrorHandler {
       } else {
         console.error(base, this.error);
       }
-    } else if (
-      this.error instanceof HTTPError &&
-      this.error.baseName === 'AbortError'
-    ) {
+    } else if (this.error instanceof AbortError) {
       console.error(base, this.error.message);
     } else {
       console.error(base, this.error);
@@ -115,7 +115,7 @@ export default class ErrorHandler {
     }
   }
 
-  async systemNotify() {
+  async systemNotify() { //I hate it, but it works. Refactor needed asap
     const embeds = [];
 
     if (this.interaction?.isCommand()) {
@@ -131,12 +131,20 @@ export default class ErrorHandler {
         embeds.push(embed, new ErrorStackEmbed(this.error, this.incidentID));
       }
     } else if (this.hypixelModuleManager) {
+      const { errors } = this.hypixelModuleManager;
+
+      if (this.error instanceof AbortError) errors.addAbort();
+      else if (this.error instanceof RateLimitError) errors.addRateLimit(this.error.json?.global);
+      else errors.addError();
+
       const { instanceUses, resumeAfter, keyPercentage } = this.hypixelModuleManager.instance;
+
       const timeout = cleanLength(resumeAfter - Date.now(), true);
       const embed = this.errorEmbed()
         .setTitle('Degraded Performance')
         .addFields([
           { name: 'Type', value: this.error instanceof Error ? this.error.name : 'Unknown' },
+          { name: 'Resuming In', value: timeout ?? 'Not applicable' },
           { name: 'Listed Cause', value: this.error instanceof Error ? this.error.message : 'Unknown' },
           { name: 'Global Rate Limit', value: this.hypixelModuleManager.errors.rateLimit.isGlobal === true ? 'Yes' : 'No' },
           { name: 'Last Minute Statistics', value: `Abort Errors: ${this.hypixelModuleManager.errors.abort.lastMinute} 
@@ -150,26 +158,21 @@ export default class ErrorHandler {
           Instance Queries: ${instanceUses}` },
         ]);
 
-      if (this.error instanceof RateLimitError) {
-        embed.setDescription('A timeout has been applied. Dedicated queries have been dropped by 5%.');
-      } else if (timeout !== null) {
+      if (this.error instanceof AbortError) {
         embed.setDescription('A timeout has been applied.');
-      }
-
-      if (this.error instanceof HTTPError) {
-        embed.addField('Request', `Status: ${this.error.status}
+      } else if (this.error instanceof RateLimitError) {
+        embed.setDescription('A timeout has been applied. Dedicated queries have been dropped by 5%.');
+      } else if (this.error instanceof HTTPError) {
+        embed
+          .setDescription('A timeout has been applied.')
+          .addField('Request', `Status: ${this.error.status}
           Status Text: ${this.error.statusText}
-          Path: ${this.error.url}`,
-        );
-      }
-
-      embeds.push(embed);
-      if (
-        (this.error instanceof RateLimitError) === false &&
-        (this.error instanceof HTTPError) === false
-      ) {
+          Path: ${this.error.url}`);
+      } else {
         embeds.push(new ErrorStackEmbed(this.error, this.incidentID));
       }
+
+      embeds.unshift(embed);
     } else if (this.error instanceof ModuleError) {
       const embed = this.errorEmbed()
         .setTitle('Module Error')

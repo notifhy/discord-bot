@@ -4,7 +4,7 @@ import { HypixelModuleInstance } from './HypixelModuleInstance';
 import { setTimeout } from 'node:timers/promises';
 import { keyLimit } from '../../config.json';
 import type { RawUserAPIData, UserAPIData } from '../@types/database';
-import ErrorHandler from '../util/error/errorHandler';
+import ErrorHandler from '../util/errors/errorHandler';
 import { SQLiteWrapper } from '../database';
 import { HypixelModuleRequest } from './HypixelModuleRequest';
 import { HypixelModuleDataManager } from './HypixelModuleDataManager';
@@ -56,7 +56,7 @@ export class HypixelModuleManager {
 
             console.log(formattedUnix({ date: true, utc: false }), user.uuid);
 
-            const [cleanHypixelPlayerData, cleanHypixelStatusData] = await this.request.executeRequest(user, urls);
+            const [cleanHypixelPlayer, cleanHypixelStatusData] = await this.request.executeRequest(user, urls);
 
             const oldUserAPIData = await SQLiteWrapper.getUser<RawUserAPIData, UserAPIData>({
               discordID: user.discordID,
@@ -67,7 +67,7 @@ export class HypixelModuleManager {
 
             const hypixelModuleDataManager = new HypixelModuleDataManager({
               oldUserAPIData,
-              cleanHypixelPlayerData,
+              cleanHypixelPlayer,
               cleanHypixelStatusData,
             });
 
@@ -80,7 +80,6 @@ export class HypixelModuleManager {
             };
 
             const modules = [];
-            //I want it to yell at me if it is undefined rather than having a silent fail
             if (user.modules.includes('rewards')) modules.push(this.client.modules.get('rewards')!.execute(payLoad));
             if (user.modules.includes('friends')) modules.push(this.client.modules.get('friends')!.execute(payLoad));
             await Promise.all(modules);

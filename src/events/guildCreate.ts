@@ -1,7 +1,7 @@
 import type { EventProperties } from '../@types/client';
 import type { Guild } from 'discord.js';
 import { formattedUnix } from '../util/utility';
-import ErrorHandler from '../util/error/errorHandler';
+import ErrorHandler from '../util/errors/errorHandler';
 
 export const properties: EventProperties = {
   name: 'guildCreate',

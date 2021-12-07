@@ -1,10 +1,10 @@
-import type { CleanHypixelPlayerData, CleanHypixelStatusData } from './hypixel';
+import type { CleanHypixelPlayer, CleanHypixelStatus } from './hypixel';
 
 export interface BaseUserData {
   discordID: string;
 }
 
-export interface History extends Partial<CleanHypixelPlayerData> {
+export interface History extends Partial<CleanHypixelPlayer> {
   date: number;
 }
 
@@ -20,7 +20,7 @@ export interface RawUserData extends BaseUserData {
   language: string;
 }
 
-export interface RawUserAPIData extends BaseUserData, CleanHypixelPlayerData {
+export interface RawUserAPIData extends BaseUserData, CleanHypixelPlayer {
   uuid: string;
   modules: string;
   lastUpdated: number;
@@ -31,7 +31,7 @@ export interface UserData extends BaseUserData {
   language: string;
 }
 
-export interface UserAPIData extends BaseUserData, CleanHypixelPlayerData, CleanHypixelStatusData {
+export interface UserAPIData extends BaseUserData, CleanHypixelPlayer, CleanHypixelStatus {
   uuid: string;
   modules: string[];
   lastUpdated: number;

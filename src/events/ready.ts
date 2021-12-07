@@ -1,7 +1,7 @@
 import type { Client } from 'discord.js';
 import type { EventProperties } from '../@types/client';
 import { SQLiteWrapper } from '../database';
-import ErrorHandler from '../util/error/errorHandler';
+import ErrorHandler from '../util/errors/errorHandler';
 
 export const properties: EventProperties = {
   name: 'ready',

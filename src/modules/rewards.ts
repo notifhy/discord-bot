@@ -3,8 +3,8 @@ import { BetterEmbed } from '../util/utility';
 import { Client } from 'discord.js';
 import { SQLiteWrapper } from '../database';
 import Constants from '../util/constants';
-import ErrorHandler from '../util/error/errorHandler';
-import ModuleError from '../util/error/ModuleError';
+import ErrorHandler from '../util/errors/errorHandler';
+import ModuleError from '../util/errors/ModuleError';
 import type { Differences } from '../@types/modules';
 
 export const properties = {
@@ -82,7 +82,7 @@ export const execute = async ({
       return;
     }
 
-    const milestones = [7, 30, 60, 90, 100, 150, 200, 250, 300, 350, 365, 500, 1000];
+    const milestones = [7, 30, 60, 90, 100, 150, 200, 250, 300, 365, 500, 750, 1000];
     const milestone = milestones.find(item => item === differences.primary.rewardScore);
 
     if (milestone) {
@@ -94,7 +94,7 @@ export const execute = async ({
         },
       })
         .setTitle('Congratulations')
-        .setDescription(`You have reached a daily streak of \`${milestone}\`! To opt oit of future milestone messages, uae /modules`);
+        .setDescription(`🎉 You have reached a daily streak of ${milestone}! To opt out of future milestone messages, uae /modules`);
 
       await user.send({
         embeds: [milestoneNotification],

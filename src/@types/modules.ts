@@ -1,4 +1,4 @@
-import type { CleanHypixelPlayerData } from './hypixel';
+import type { CleanHypixelPlayer } from './hypixel';
 import type { Client } from 'discord.js';
 import type { UserAPIData } from './database';
 
@@ -8,7 +8,7 @@ export type ModuleNames =
   | 'rewards'
 
 export type Differences = {
-  primary: Partial<CleanHypixelPlayerData>,
+  primary: Partial<CleanHypixelPlayer>,
   secondary: Partial<UserAPIData>,
 };
 

@@ -1,6 +1,5 @@
 import fetch, { RequestInit, Response } from 'node-fetch';
-import { isAbortError } from './error/helper';
-import HTTPError from './error/HTTPError';
+import AbortError from './errors/AbortError';
 
 export class Request {
   aborts: number;
@@ -28,18 +27,17 @@ export class Request {
         signal: controller.signal,
         ...fetchOptions,
       });
+
       return response;
     } catch (error) {
-      if (isAbortError(error) && this.aborts < this.maxAborts) {
+      if (this.aborts < this.maxAborts) {
         this.aborts += 1;
         const retry = await this.request(url, fetchOptions);
         return retry;
       }
 
-      throw new HTTPError({
-        baseName: (error as Error)?.name,
+      throw new AbortError({
         message: (error as Error)?.message,
-        inherited: (error as Error)?.name,
         url: url,
       });
     } finally {

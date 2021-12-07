@@ -1,5 +1,5 @@
 import type { History, RawUserAPIData, UserAPIData } from '../@types/database';
-import type { CleanHypixelPlayerData, CleanHypixelStatusData } from '../@types/hypixel';
+import type { CleanHypixelPlayer, CleanHypixelStatus } from '../@types/hypixel';
 import type { Differences } from '../@types/modules';
 import { SQLiteWrapper } from '../database';
 import { compare } from '../util/utility';
@@ -12,14 +12,14 @@ export class HypixelModuleDataManager {
 
   constructor({
     oldUserAPIData,
-    cleanHypixelPlayerData,
+    cleanHypixelPlayer,
     cleanHypixelStatusData,
   }: {
     oldUserAPIData: UserAPIData,
-    cleanHypixelPlayerData: CleanHypixelPlayerData,
-    cleanHypixelStatusData: CleanHypixelStatusData | undefined,
+    cleanHypixelPlayer: CleanHypixelPlayer,
+    cleanHypixelStatusData: CleanHypixelStatus | undefined,
   }) {
-    const hypixelData = Object.assign(cleanHypixelPlayerData, cleanHypixelStatusData);
+    const hypixelData = Object.assign(cleanHypixelPlayer, cleanHypixelStatusData);
 
     this.oldUserAPIData = oldUserAPIData;
     this.now = Date.now();

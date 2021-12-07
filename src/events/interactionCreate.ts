@@ -8,8 +8,8 @@ import { slashCommandOptionString } from '../util/structures';
 import { setTimeout } from 'node:timers/promises';
 import { SQLiteWrapper } from '../database';
 import Constants from '../util/constants';
-import ConstraintError from '../util/error/ConstraintError';
-import ErrorHandler from '../util/error/errorHandler';
+import ConstraintError from '../util/errors/ConstraintError';
+import ErrorHandler from '../util/errors/errorHandler';
 
 
 export const properties: EventProperties = {

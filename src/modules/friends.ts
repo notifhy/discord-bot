@@ -4,8 +4,8 @@ import { BetterEmbed } from '../util/utility';
 import { Client, GuildMember, MessageEmbed, Permissions, TextChannel } from 'discord.js';
 import { SQLiteWrapper } from '../database';
 import Constants from '../util/constants';
-import ErrorHandler from '../util/error/errorHandler';
-import ModuleError from '../util/error/ModuleError';
+import ErrorHandler from '../util/errors/errorHandler';
+import ModuleError from '../util/errors/ModuleError';
 
 export const properties = {
   name: 'friends',

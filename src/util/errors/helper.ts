@@ -2,9 +2,7 @@
 import { BetterEmbed, formattedUnix, sendWebHook } from '../utility';
 import { CommandInteraction, MessageEmbed } from 'discord.js';
 import { fatalWebhook, ownerID } from '../../../config.json';
-import Constants from '../../util/constants';
-
-export const isAbortError = (error: unknown): error is DOMException => error instanceof Error && error?.name === 'AbortError';
+import Constants from '../constants';
 
 export class UserCommandErrorEmbed extends BetterEmbed {
   constructor({

@@ -2,8 +2,8 @@ import type { Hypixel400_403_422, Hypixel429, HypixelAPIError, HypixelAPIOk } fr
 import type { Response } from 'node-fetch';
 import { hypixelAPIkey } from '../../config.json';
 import { Request } from '../util/Request';
-import HTTPError from '../util/error/HTTPError';
-import RateLimitError from '../util/error/RateLimitError';
+import HTTPError from '../util/errors/HTTPError';
+import RateLimitError from '../util/errors/RateLimitError';
 import { HypixelModuleInstance } from './HypixelModuleInstance';
 
 export class HypixelRequest {
