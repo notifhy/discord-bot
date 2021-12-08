@@ -3,8 +3,8 @@ import type { FriendsModule, RawFriendsModule, UserAPIData } from '../@types/dat
 import { BetterEmbed } from '../util/utility';
 import { Client, GuildMember, MessageEmbed, Permissions, TextChannel } from 'discord.js';
 import { SQLiteWrapper } from '../database';
-import Constants from '../util/constants';
-import ErrorHandler from '../util/errors/errorHandler';
+import Constants from '../util/Constants';
+import ErrorHandler from '../util/errors/ErrorHandler';
 import ModuleError from '../util/errors/ModuleError';
 
 export const properties = {
@@ -28,7 +28,7 @@ export const execute = async ({
 
     const friendModule = await SQLiteWrapper.getUser<RawFriendsModule, FriendsModule>({
       discordID: userAPIData.discordID,
-      table: 'friends',
+      table: Constants.tables.friends,
       allowUndefined: false,
       columns: ['channel'],
     }) as FriendsModule;
@@ -99,7 +99,7 @@ export const execute = async ({
 
       await SQLiteWrapper.updateUser<Partial<UserAPIData>, Partial<UserAPIData>>({
         discordID: userAPIData.discordID,
-        table: 'api',
+        table: Constants.tables.friends,
         data: {
           modules: userAPIData.modules,
         },
@@ -147,7 +147,7 @@ export const execute = async ({
       const login = new MessageEmbed({
         color: Constants.color.on,
       })
-        .setDescription(`<@!${userAPIData.discordID}> logged in <t:${Math.round(differences.primary.lastLogin / 1000)}:R> at <t:${Math.round(differences.primary.lastLogin / 1000)}:T>`);
+        .setDescription(`<@!${userAPIData.discordID}> logged in <t:${Math.round(differences.primary.lastLogin / Constants.ms.second)}:R> at <t:${Math.round(differences.primary.lastLogin / Constants.ms.second)}:T>`);
 
       notifications.push(login);
     }
@@ -159,7 +159,7 @@ export const execute = async ({
       const logout = new MessageEmbed({
         color: Constants.color.off,
       })
-        .setDescription(`<@!${userAPIData.discordID}> logged out <t:${Math.round(differences.primary.lastLogout / 1000)}:R> at <t:${Math.round(differences.primary.lastLogout / 1000)}:T>`);
+        .setDescription(`<@!${userAPIData.discordID}> logged out <t:${Math.round(differences.primary.lastLogout / Constants.ms.second)}:R> at <t:${Math.round(differences.primary.lastLogout / Constants.ms.second)}:T>`);
 
       //lastLogout seems to change twice sometimes on a single logout, this is a fix for that
       const [, lastEvent] = userAPIData.history; //First item in array is this event, so it checks the second item

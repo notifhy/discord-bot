@@ -1,17 +1,16 @@
-/* eslint-disable max-classes-per-file */
+import type { UserAPIData } from '../../@types/database';
 import { BetterEmbed, cleanLength, cleanRound, formattedUnix, sendWebHook } from '../utility';
+import { CommandInteraction, Interaction } from 'discord.js';
 import { ErrorStackEmbed, replyToError } from './helper';
 import { fatalWebhook, hypixelAPIWebhook, keyLimit, nonFatalWebhook, ownerID } from '../../../config.json';
-import { CommandInteraction, Interaction } from 'discord.js';
 import { HypixelModuleManager } from '../../hypixelAPI/HypixelModuleManager';
+import { slashCommandOptionString } from '../structures';
+import AbortError from './AbortError';
 import Constants from '../Constants';
 import ConstraintError from './ConstraintError';
 import HTTPError from './HTTPError';
-import RateLimitError from './RateLimitError';
 import ModuleError from './ModuleError';
-import { slashCommandOptionString } from '../structures';
-import { UserAPIData } from '../../@types/database';
-import AbortError from './AbortError';
+import RateLimitError from './RateLimitError';
 
 export default class ErrorHandler {
   error: Error | unknown;
@@ -47,7 +46,7 @@ export default class ErrorHandler {
     return this.errorEmbed()
       .addFields([
         { name: 'User', value: `Tag: ${user.tag}\nID: ${user.id}` },
-        { name: 'Interaction', value: `${id}\nCommand: ${command}\nCreated At: <t:${Math.round(createdTimestamp / 1000)}:R` },
+        { name: 'Interaction', value: `${id}\nCommand: ${command}\nCreated At: <t:${Math.round(createdTimestamp / Constants.ms.second)}:R` },
         { name: 'Guild', value: `Guild ID: ${guild?.id}\nGuild Name: ${guild?.name}\nOwner ID: ${guild?.ownerId ?? 'None'}\nGuild Member Count: ${guild?.memberCount}` },
         { name: 'Channel', value: `Channel Name: ${channel?.id}\nChannel Type: ${channel?.type}` },
         { name: 'Other', value: `Websocket Ping: ${client.ws.ping}>` },
@@ -161,13 +160,12 @@ export default class ErrorHandler {
       if (this.error instanceof AbortError) {
         embed.setDescription('A timeout has been applied.');
       } else if (this.error instanceof RateLimitError) {
-        embed.setDescription('A timeout has been applied. Dedicated queries have been dropped by 5%.');
+        embed.setDescription('A timeout has been applied. Dedicated queries have been lowered by 5%.');
       } else if (this.error instanceof HTTPError) {
         embed
           .setDescription('A timeout has been applied.')
           .addField('Request', `Status: ${this.error.status}
-          Status Text: ${this.error.statusText}
-          Path: ${this.error.url}`);
+          Status Text: ${this.error.statusText}`);
       } else {
         embeds.push(new ErrorStackEmbed(this.error, this.incidentID));
       }

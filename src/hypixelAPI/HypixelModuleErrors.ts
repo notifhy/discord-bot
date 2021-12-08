@@ -1,5 +1,5 @@
 import { HypixelModuleInstance } from './HypixelModuleInstance';
-import Constants from '../util/constants';
+import Constants from '../util/Constants';
 
 export class HypixelModuleErrors { //extend instance
   instance: HypixelModuleInstance

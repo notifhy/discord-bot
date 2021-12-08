@@ -1,8 +1,8 @@
-import type { History, RawUserAPIData, UserAPIData } from '../@types/database';
 import type { CleanHypixelPlayer, CleanHypixelStatus } from '../@types/hypixel';
 import type { Differences } from '../@types/modules';
-import { SQLiteWrapper } from '../database';
+import type { History, RawUserAPIData, UserAPIData } from '../@types/database';
 import { compare } from '../util/utility';
+import { SQLiteWrapper } from '../database';
 
 export class HypixelModuleDataManager {
   oldUserAPIData: UserAPIData;

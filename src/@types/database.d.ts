@@ -1,5 +1,11 @@
 import type { CleanHypixelPlayer, CleanHypixelStatus } from './hypixel';
 
+export type Tables =
+  | 'users'
+  | 'api'
+  | 'friends'
+  | 'rewards'
+
 export interface BaseUserData {
   discordID: string;
 }

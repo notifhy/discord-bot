@@ -2,7 +2,7 @@
 import { BetterEmbed, formattedUnix, sendWebHook } from '../utility';
 import { CommandInteraction, MessageEmbed } from 'discord.js';
 import { fatalWebhook, ownerID } from '../../../config.json';
-import Constants from '../constants';
+import Constants from '../Constants';
 
 export class UserCommandErrorEmbed extends BetterEmbed {
   constructor({
@@ -42,11 +42,11 @@ export class ErrorStackEmbed extends BetterEmbed {
       const nonStackLenth = `${error.name}: ${error.message}`.length;
       const stack = error.stack.slice(nonStackLenth, 1024 + nonStackLenth);
       super
-        .addField(error.name, error.message.slice(0, 1024))
+        .addField(error.name, error.message.slice(0, Constants.limits.embedField))
         .addField('Trace', stack);
-      if ((nonStackLenth >= 4096) === true) super.addField('Over Max Length', 'The stack is over 4096 characters long and was cut short');
+      if ((nonStackLenth >= Constants.limits.embedDescription) === true) super.addField('Over Max Length', 'The stack is over 4096 characters long and was cut short');
     } else {
-      super.setDescription(JSON.stringify(error, Object.getOwnPropertyNames(error), 2).slice(0, 4096));
+      super.setDescription(JSON.stringify(error, Object.getOwnPropertyNames(error), 2).slice(0, Constants.limits.embedDescription));
     }
   }
 }

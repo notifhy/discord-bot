@@ -1,6 +1,7 @@
 import type { CommandExecute, CommandProperties } from '../@types/client';
 import { BetterEmbed } from '../util/utility';
 import { CommandInteraction } from 'discord.js';
+import Constants from '../util/Constants';
 
 export const properties: CommandProperties = {
   name: 'eval',
@@ -30,7 +31,7 @@ export const execute: CommandExecute = async (interaction: CommandInteraction): 
     const output = await eval(input); //eslint-disable-line no-eval
     const end = Date.now();
     const timeTaken = end - start;
-    const outputMaxLength = Boolean(output?.length >= 1024);
+    const outputMaxLength = Boolean(output?.length >= Constants.limits.embedField);
     const evalEmbed = new BetterEmbed({ color: '#7289DA', footer: interaction })
       .setTitle('Executed Eval!')
       .addField(`Input`, `\`\`\`javascript\n${input}\n\`\`\``)
@@ -42,11 +43,11 @@ export const execute: CommandExecute = async (interaction: CommandInteraction): 
     await interaction.editReply({ embeds: [evalEmbed] });
   } catch (err) {
     if (!(err instanceof Error)) return;
-    const outputMaxLength = Boolean(err.message.length >= 1024);
+    const outputMaxLength = Boolean(err.message.length >= Constants.limits.embedField);
     const evalEmbed = new BetterEmbed({ color: '#FF5555', footer: interaction })
       .setTitle('Failed Eval!')
       .addField(`Input`, `\`${input}\``)
-      .addField(`${err.name}:`, `${err.message}`);
+      .addField(`${err.name}:`, `${err.message.slice(0, Constants.limits.embedField)}`);
     if (outputMaxLength === true) evalEmbed.addField('Over Max Length', 'The error is over 4096 characters long');
 
     await interaction.editReply({ embeds: [evalEmbed] });

@@ -3,6 +3,7 @@ import type { UserData } from '../@types/database';
 import { BetterEmbed } from '../util/utility';
 import { CommandInteraction } from 'discord.js';
 import { RegionLocales } from '../../locales/localesHandler';
+import Constants from '../util/Constants';
 
 export const properties: CommandProperties = {
   name: 'help',
@@ -87,7 +88,7 @@ async function specific(interaction: CommandInteraction, userData: UserData) {
 
   commandSearchEmbed.addField(locale.specific.cooldown.name,
     replace(locale.specific.cooldown.value, {
-      commandCooldown: command.properties.cooldown / 1000,
+      commandCooldown: command.properties.cooldown / Constants.ms.second,
   }));
 
   if (command.properties.noDM === true) {

@@ -1,6 +1,6 @@
 import type { WebHookConfig } from '../@types/client';
 import { ColorResolvable, CommandInteraction, MessageEmbed, PermissionResolvable, Permissions, PermissionString, WebhookClient } from 'discord.js';
-import Constants from '../util/constants';
+import Constants from './Constants';
 
 export async function sendWebHook({
   content,

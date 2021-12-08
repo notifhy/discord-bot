@@ -1,9 +1,10 @@
 import type { CommandExecute, CommandProperties } from '../@types/client';
 import type { FriendsModule, RawFriendsModule, RawRewardsModule, RawUserAPIData, RewardsModule, UserAPIData } from '../@types/database';
 import { BetterEmbed } from '../util/utility';
-import { ButtonInteraction, CommandInteraction, Message, MessageActionRow, MessageButton, MessageComponentInteraction } from 'discord.js';
+import { ButtonInteraction, CommandInteraction, Constants, Message, MessageActionRow, MessageButton, MessageComponentInteraction } from 'discord.js';
 import { RegionLocales } from '../../locales/localesHandler';
 import { SQLiteWrapper } from '../database';
+import Constants2 from '../util/Constants';
 
 export const properties: CommandProperties = {
   name: 'data',
@@ -41,12 +42,12 @@ export const execute: CommandExecute = async (interaction: CommandInteraction, {
     const yesButton = new MessageButton()
       .setCustomId('true')
       .setLabel(locale.delete.yesButton)
-      .setStyle('SUCCESS');
+      .setStyle(Constants.MessageButtonStyles.SUCCESS);
 
     const noButton = new MessageButton()
       .setCustomId('false')
       .setLabel(locale.delete.noButton)
-      .setStyle('DANGER');
+      .setStyle(Constants.MessageButtonStyles.DANGER);
 
     const buttonRow = new MessageActionRow()
       .addComponents(yesButton, noButton);
@@ -72,10 +73,10 @@ export const execute: CommandExecute = async (interaction: CommandInteraction, {
 
       if (i.customId === 'true') {
         Promise.all([
-          SQLiteWrapper.deleteUser({ discordID: userData.discordID, table: 'users' }),
-          SQLiteWrapper.deleteUser({ discordID: userData.discordID, table: 'api' }),
-          SQLiteWrapper.deleteUser({ discordID: userData.discordID, table: 'friends' }),
-          SQLiteWrapper.deleteUser({ discordID: userData.discordID, table: 'rewards' }),
+          SQLiteWrapper.deleteUser({ discordID: userData.discordID, table: Constants2.tables.users }),
+          SQLiteWrapper.deleteUser({ discordID: userData.discordID, table: Constants2.tables.api }),
+          SQLiteWrapper.deleteUser({ discordID: userData.discordID, table: Constants2.tables.friends }),
+          SQLiteWrapper.deleteUser({ discordID: userData.discordID, table: Constants2.tables.rewards }),
         ]);
 
         const aborted = new BetterEmbed({ color: '#7289DA', footer: interaction })

@@ -5,6 +5,7 @@ import { CommandInteraction } from 'discord.js';
 import { REST } from '@discordjs/rest';
 import { Routes } from 'discord-api-types/v9';
 import fs from 'node:fs/promises';
+import Constants from '../util/Constants';
 
 export const properties: CommandProperties = {
   name: 'deploy',
@@ -107,7 +108,7 @@ export const execute: CommandExecute = async (interaction: CommandInteraction): 
 
   const successEmbed = new BetterEmbed({ color: '#7289DA', footer: interaction })
     .setTitle('Success!')
-    .setDescription(JSON.stringify(commands, null, 2).slice(0, 4096) ?? 'None');
+    .setDescription(JSON.stringify(commands, null, 2).slice(0, Constants.limits.embedDescription) ?? 'None');
 
   await interaction.editReply({ embeds: [successEmbed] });
 };

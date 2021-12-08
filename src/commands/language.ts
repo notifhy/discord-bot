@@ -4,6 +4,7 @@ import { CommandInteraction } from 'discord.js';
 import type { RawUserAPIData, UserAPIData } from '../@types/database';
 import { RegionLocales } from '../../locales/localesHandler';
 import { SQLiteWrapper } from '../database';
+import Constants from '../util/Constants';
 
 export const properties: CommandProperties = {
   name: 'language',
@@ -52,7 +53,7 @@ export const execute: CommandExecute = async (interaction: CommandInteraction, {
 
   await SQLiteWrapper.updateUser<Partial<UserAPIData>, RawUserAPIData>({
     discordID: interaction.user.id,
-    table: 'users',
+    table: Constants.tables.users,
     data: {
       language: language,
     },

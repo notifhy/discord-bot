@@ -7,9 +7,9 @@ import { RegionLocales } from '../../locales/localesHandler';
 import { slashCommandOptionString } from '../util/structures';
 import { setTimeout } from 'node:timers/promises';
 import { SQLiteWrapper } from '../database';
-import Constants from '../util/constants';
+import Constants from '../util/Constants';
 import ConstraintError from '../util/errors/ConstraintError';
-import ErrorHandler from '../util/errors/errorHandler';
+import ErrorHandler from '../util/errors/ErrorHandler';
 
 
 export const properties: EventProperties = {
@@ -42,13 +42,13 @@ export const execute = async (interaction: CommandInteraction): Promise<void> =>
 
       let userData = await SQLiteWrapper.getUser<RawUserData, UserData>({
           discordID: interaction.user.id,
-          table: 'users',
+          table: Constants.tables.users,
           columns: ['*'],
           allowUndefined: true,
       }) as UserData | undefined;
 
       userData ??= await SQLiteWrapper.newUser<UserData, RawUserData, UserData>({
-        table: 'users',
+        table: Constants.tables.users,
         returnNew: true,
         data: {
           discordID: interaction.user.id,

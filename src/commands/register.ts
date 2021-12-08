@@ -104,7 +104,7 @@ export const execute: CommandExecute = async (interaction: CommandInteraction, {
 
   await Promise.all([
     SQLiteWrapper.newUser<UserAPIData, RawUserAPIData>({
-      table: 'api',
+      table: Constants.tables.api,
       data: {
         discordID: interaction.user.id,
         uuid: uuid,
@@ -125,7 +125,7 @@ export const execute: CommandExecute = async (interaction: CommandInteraction, {
       },
     }),
     SQLiteWrapper.newUser<FriendsModule, RawFriendsModule>({
-      table: 'friends',
+      table: Constants.tables.friends,
       data: {
         discordID: interaction.user.id,
         channel: null,
@@ -133,7 +133,7 @@ export const execute: CommandExecute = async (interaction: CommandInteraction, {
       },
     }),
     SQLiteWrapper.newUser<RewardsModule, RawRewardsModule>({
-      table: 'rewards',
+      table: Constants.tables.rewards,
       data: {
         discordID: interaction.user.id,
         alertTime: null,

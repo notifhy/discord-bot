@@ -2,7 +2,7 @@ import type { ClientEvent, CommandExecute, CommandProperties, ClientCommand } fr
 import type { ClientModule } from '../@types/modules';
 import { BetterEmbed } from '../util/utility';
 import { CommandInteraction } from 'discord.js';
-import Constants from '../util/constants';
+import Constants from '../util/Constants';
 
 export const properties: CommandProperties = {
   name: 'reload',
@@ -59,9 +59,9 @@ export const properties: CommandProperties = {
 };
 
 export const execute: CommandExecute = async (interaction: CommandInteraction): Promise<void> => {
-  const now = Date.now();
   switch (interaction.options.getSubcommand()) {
     case 'all': {
+      const now = Date.now();
       interaction.client.commands.forEach((_value, key) => commandRefresh(interaction, key));
       interaction.client.events.forEach((_value, key) => eventRefresh(interaction, key));
       interaction.client.modules.forEach((_value, key) => moduleRefresh(interaction, key));
@@ -74,6 +74,7 @@ export const execute: CommandExecute = async (interaction: CommandInteraction): 
       break;
     }
     case 'single': {
+      const now = Date.now();
       const typeName = interaction.options.getString('type');
       const type = interaction.client[typeName as keyof Pick<typeof interaction.client, 'commands' | 'events' | 'modules'>];
       const item = interaction.options.getString('item')!;

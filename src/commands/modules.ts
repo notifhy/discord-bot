@@ -5,7 +5,7 @@ import { ButtonInteraction, CommandInteraction, Message, MessageActionRow, Messa
 import { RegionLocales } from '../../locales/localesHandler';
 import { SQLiteWrapper } from '../database';
 import { ToggleButtons } from '../util/ToggleButtons';
-import Constants from '../util/constants';
+import Constants from '../util/Constants';
 
 export const properties: CommandProperties = {
   name: 'modules',
@@ -94,14 +94,14 @@ export const execute: CommandExecute = async (interaction: CommandInteraction, {
   collector.on('collect', async (i: SelectMenuInteraction | ButtonInteraction) => {
     const userAPIData = await SQLiteWrapper.getUser<UserAPIData, RawUserAPIData>({
       discordID: userData.discordID,
-      table: 'api',
+      table: Constants.tables.api,
       columns: ['discordID', 'modules'],
       allowUndefined: false,
     }) as UserAPIData;
 
     const userFriendData = await SQLiteWrapper.getUser<FriendsModule, FriendsModule>({
       discordID: userData.discordID,
-      table: 'friends',
+      table: Constants.tables.friends,
       columns: ['discordID', 'channel'],
       allowUndefined: false,
     }) as FriendsModule;
@@ -173,7 +173,7 @@ export const execute: CommandExecute = async (interaction: CommandInteraction, {
 
           await SQLiteWrapper.updateUser<Partial<UserAPIData>, Partial<UserAPIData>>({
             discordID: userAPIData.discordID,
-            table: 'api',
+            table: Constants.tables.api,
             data: { modules: userAPIData.modules },
           });
 

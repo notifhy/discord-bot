@@ -1,14 +1,15 @@
+import type { RawUserAPIData, UserAPIData } from '../@types/database';
 import { Client } from 'discord.js';
+import { formattedUnix } from '../util/utility';
+import { HypixelModuleDataManager } from './HypixelModuleDataManager';
 import { HypixelModuleErrors } from './HypixelModuleErrors';
 import { HypixelModuleInstance } from './HypixelModuleInstance';
-import { setTimeout } from 'node:timers/promises';
-import { keyLimit } from '../../config.json';
-import type { RawUserAPIData, UserAPIData } from '../@types/database';
-import ErrorHandler from '../util/errors/errorHandler';
-import { SQLiteWrapper } from '../database';
 import { HypixelModuleRequest } from './HypixelModuleRequest';
-import { HypixelModuleDataManager } from './HypixelModuleDataManager';
-import { formattedUnix } from '../util/utility';
+import { keyLimit } from '../../config.json';
+import { setTimeout } from 'node:timers/promises';
+import { SQLiteWrapper } from '../database';
+import Constants from '../util/Constants';
+import ErrorHandler from '../util/errors/ErrorHandler';
 
 export class HypixelModuleManager {
   instance: HypixelModuleInstance;
@@ -43,7 +44,7 @@ export class HypixelModuleManager {
       const users = allUsers.filter(user => user.modules.length > 0);
 
       const keyQueryLimit = keyLimit * this.instance.keyPercentage;
-      const intervalBetweenRequests = 60 / keyQueryLimit * 1000;
+      const intervalBetweenRequests = 60 / keyQueryLimit * Constants.ms.second;
 
       for (const user of users) {
         const urls = this.request.generateURLS(user);

@@ -5,7 +5,7 @@ import { discordAPIkey } from '../config.json';
 import { HypixelModuleManager } from './hypixelAPI/HypixelModuleManager';
 import { RawConfig } from './@types/database';
 import { SQLiteWrapper } from './database';
-import ErrorHandler from './util/errors/errorHandler';
+import ErrorHandler from './util/errors/ErrorHandler';
 import * as fs from 'node:fs/promises';
 
 process.on('exit', code => {

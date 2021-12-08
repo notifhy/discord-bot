@@ -1,10 +1,10 @@
 import type { Hypixel400_403_422, Hypixel429, HypixelAPIError, HypixelAPIOk } from '../@types/hypixel';
 import type { Response } from 'node-fetch';
 import { hypixelAPIkey } from '../../config.json';
+import { HypixelModuleInstance } from './HypixelModuleInstance';
 import { Request } from '../util/Request';
 import HTTPError from '../util/errors/HTTPError';
 import RateLimitError from '../util/errors/RateLimitError';
-import { HypixelModuleInstance } from './HypixelModuleInstance';
 
 export class HypixelRequest {
   instance: HypixelModuleInstance;

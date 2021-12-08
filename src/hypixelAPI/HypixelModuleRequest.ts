@@ -1,7 +1,7 @@
-import type { UserAPIData } from '../@types/database';
 import type { CleanHypixelPlayer, CleanHypixelStatus, HypixelAPIOk, RawHypixelPlayer, RawHypixelStatus } from '../@types/hypixel';
-import { HypixelRequest } from './HypixelRequest';
 import type { HypixelModuleInstance } from './HypixelModuleInstance';
+import type { UserAPIData } from '../@types/database';
+import { HypixelRequest } from './HypixelRequest';
 
 export class HypixelModuleRequest extends HypixelRequest {
   instance: HypixelModuleInstance;

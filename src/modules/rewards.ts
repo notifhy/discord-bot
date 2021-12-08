@@ -2,8 +2,8 @@ import type { RawRewardsModule, RewardsModule, UserAPIData } from '../@types/dat
 import { BetterEmbed } from '../util/utility';
 import { Client } from 'discord.js';
 import { SQLiteWrapper } from '../database';
-import Constants from '../util/constants';
-import ErrorHandler from '../util/errors/errorHandler';
+import Constants from '../util/Constants';
+import ErrorHandler from '../util/errors/ErrorHandler';
 import ModuleError from '../util/errors/ModuleError';
 import type { Differences } from '../@types/modules';
 
@@ -23,7 +23,7 @@ export const execute = async ({
   try {
     const rewardsModule = await SQLiteWrapper.getUser<RawRewardsModule, RewardsModule>({
       discordID: userAPIData.discordID,
-      table: 'rewards',
+      table: Constants.tables.rewards,
       allowUndefined: false,
       columns: ['alertTime', 'lastNotified', 'notificationInterval'],
     }) as RewardsModule;
@@ -64,7 +64,7 @@ export const execute = async ({
 
       await SQLiteWrapper.updateUser<Partial<RewardsModule>, Partial<RewardsModule>>({
         discordID: userAPIData.discordID,
-        table: 'rewards',
+        table: Constants.tables.rewards,
         data: {
           lastNotified: Date.now(),
         },
