@@ -5,20 +5,23 @@ import { CleanHypixelPlayer } from '../@types/hypixel';
 import { SQLiteWrapper } from '../database';
 
 export const properties = {
-  name: 'defender',
+    name: 'defender',
 };
 
 export const execute = async ({
-  differences,
-  userAPIData,
+    differences,
+    userAPIData,
 }: {
-  differences: Partial<CleanHypixelPlayer>,
-  userAPIData: UserAPIData
+    differences: Partial<CleanHypixelPlayer>;
+    userAPIData: UserAPIData;
 }): Promise<void> => {
-  const friendModule = await SQLiteWrapper.getUser<FriendsModule, FriendsModule>({
-    discordID: userAPIData.discordID,
-    table: 'friends',
-    allowUndefined: false,
-    columns: ['enabled', 'channel'],
-  }) as FriendsModule;
+    const friendModule = (await SQLiteWrapper.getUser<
+        FriendsModule,
+        FriendsModule
+    >({
+        discordID: userAPIData.discordID,
+        table: 'friends',
+        allowUndefined: false,
+        columns: ['enabled', 'channel'],
+    })) as FriendsModule;
 };

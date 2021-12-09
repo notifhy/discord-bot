@@ -114,7 +114,7 @@
       "accessor-pairs": "warn",
       "array-callback-return": "error",
       "consistent-return": "error",
-      "curly": ["error", "multi-line"],
+      "curly": ["error"],
       "dot-location": ["error", "property"],
       "dot-notation": "error",
       "eqeqeq": "error",

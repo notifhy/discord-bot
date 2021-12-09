@@ -1,21 +1,21 @@
 import HTTPError from './HTTPError';
 
 export default class AbortError extends HTTPError<never> {
-  constructor({
-    message,
-    url,
-  }: {
-    message?: string | undefined,
-    url: string,
-  }) {
-    super({
-      message: message,
-      url: url,
-    });
+    constructor({
+        message,
+        url,
+    }: {
+        message?: string | undefined;
+        url: string;
+    }) {
+        super({
+            message: message,
+            url: url,
+        });
 
-    this.name = 'AbortError';
+        this.name = 'AbortError';
 
-    Object.setPrototypeOf(this, AbortError.prototype);
-    Error.captureStackTrace(this, this.constructor);
-  }
+        Object.setPrototypeOf(this, AbortError.prototype);
+        Error.captureStackTrace(this, this.constructor);
+    }
 }

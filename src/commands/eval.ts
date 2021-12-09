@@ -4,52 +4,87 @@ import { CommandInteraction } from 'discord.js';
 import Constants from '../util/Constants';
 
 export const properties: CommandProperties = {
-  name: 'eval',
-  description: 'Evaluates a string',
-  usage: '/eval [string]',
-  cooldown: 0,
-  ephemeral: true,
-  noDM: false,
-  ownerOnly: true,
-  structure: {
     name: 'eval',
-    description: 'Eval',
-    options: [{
-      name: 'string',
-      type: 3,
-      description: 'Code',
-      required: true,
-    }],
-  },
+    description: 'Evaluates a string',
+    usage: '/eval [string]',
+    cooldown: 0,
+    ephemeral: true,
+    noDM: false,
+    ownerOnly: true,
+    structure: {
+        name: 'eval',
+        description: 'Eval',
+        options: [
+            {
+                name: 'string',
+                type: 3,
+                description: 'Code',
+                required: true,
+            },
+        ],
+    },
 };
 
-export const execute: CommandExecute = async (interaction: CommandInteraction): Promise<void> => {
-  const input = interaction.options.getString('string', true);
+export const execute: CommandExecute = async (
+    interaction: CommandInteraction,
+): Promise<void> => {
+    const input = interaction.options.getString('string', true);
 
-  try {
-    const start = Date.now();
-    const output = await eval(input); //eslint-disable-line no-eval
-    const end = Date.now();
-    const timeTaken = end - start;
-    const outputMaxLength = Boolean(output?.length >= Constants.limits.embedField);
-    const evalEmbed = new BetterEmbed({ color: '#7289DA', footer: interaction })
-      .setTitle('Executed Eval!')
-      .addField(`Input`, `\`\`\`javascript\n${input}\n\`\`\``)
-      .addField(`Output`, `\`\`\`javascript\n${output}\n\`\`\``)
-      .addField('Type', `\`\`\`${typeof output}\`\`\``)
-      .addField('Time Taken', `\`\`\`${timeTaken} millisecond${timeTaken === 1 ? '' : 's'}\`\`\``);
-    if (outputMaxLength === true) evalEmbed.addField('Over Max Length', 'The output is over 4096 characters long');
+    try {
+        const start = Date.now();
+        const output = await eval(input); //eslint-disable-line no-eval
+        const end = Date.now();
+        const timeTaken = end - start;
+        const outputMaxLength = Boolean(
+            output?.length >= Constants.limits.embedField,
+        );
+        const evalEmbed = new BetterEmbed({
+            color: '#7289DA',
+            footer: interaction,
+        })
+            .setTitle('Executed Eval!')
+            .addField(`Input`, `\`\`\`javascript\n${input}\n\`\`\``)
+            .addField(`Output`, `\`\`\`javascript\n${output}\n\`\`\``)
+            .addField('Type', `\`\`\`${typeof output}\`\`\``)
+            .addField(
+                'Time Taken',
+                `\`\`\`${timeTaken} millisecond${
+                    timeTaken === 1 ? '' : 's'
+                }\`\`\``,
+            );
+        if (outputMaxLength === true) {
+            evalEmbed.addField(
+                'Over Max Length',
+                'The output is over 4096 characters long',
+            );
+        }
 
-    await interaction.editReply({ embeds: [evalEmbed] });
-  } catch (err) {
-    if (!(err instanceof Error)) return;
-    const outputMaxLength = Boolean(err.message.length >= Constants.limits.embedField);
-    const evalEmbed = new BetterEmbed({ color: '#FF5555', footer: interaction })
-      .setTitle('Failed Eval!')
-      .addField(`Input`, `\`${input}\``)
-      .addField(`${err.name}:`, `${err.message.slice(0, Constants.limits.embedField)}`);
-    if (outputMaxLength === true) evalEmbed.addField('Over Max Length', 'The error is over 4096 characters long');
+        await interaction.editReply({ embeds: [evalEmbed] });
+    } catch (err) {
+        if (!(err instanceof Error)) {
+            return;
+        }
 
-    await interaction.editReply({ embeds: [evalEmbed] });
-  }
+        const outputMaxLength = Boolean(
+            err.message.length >= Constants.limits.embedField,
+        );
+        const evalEmbed = new BetterEmbed({
+            color: '#FF5555',
+            footer: interaction,
+        })
+            .setTitle('Failed Eval!')
+            .addField(`Input`, `\`${input}\``)
+            .addField(
+                `${err.name}:`,
+                `${err.message.slice(0, Constants.limits.embedField)}`,
+            );
+        if (outputMaxLength === true) {
+            evalEmbed.addField(
+                'Over Max Length',
+                'The error is over 4096 characters long',
+            );
+        }
+
+        await interaction.editReply({ embeds: [evalEmbed] });
+    }
 };
