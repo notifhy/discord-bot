@@ -1,211 +1,263 @@
 {
-  "general": {
-
-  },
-  "commands": {
-    "data": {
-      "delete": {
-        "confirm": {
-          "title": "Confirmation",
-          "description": "Are you absolutely sure that you want to delete all of your data? All data stored in the database will be wiped. This is irreversible. Please confirm with the buttons below. As a side note, you can view all of your data with /data view."
+    "commands": {
+        "data": {
+            "delete": {
+                "confirm": {
+                    "title": "Confirmation",
+                    "description": "Are you absolutely sure that you want to delete all of your data? All data stored in the database will be wiped. This is irreversible. Please confirm with the buttons below. As a side note, you can view all of your data with /data view."
+                },
+                "deleted": {
+                    "title": "Deleted",
+                    "description": "Your data has been deleted."
+                },
+                "aborted": {
+                    "title": "Aborted",
+                    "description": "Deletion Aborted."
+                },
+                "yesButton": "Yes",
+                "noButton": "No"
+            }
         },
-        "deleted": {
-          "title": "Deleted",
-          "description": "Your data has been deleted."
+        "help": {
+            "information": {
+                "title": "Information",
+                "description": "placeholder"
+            },
+            "all": {
+                "title": "Commands",
+                "description": "Arguments in brackets are required. Arguments in arrows are sometimes required based on the previous argument. You can use the command /help [command] [a command] to see more about a specific command.",
+                "field": {
+                    "name": "**%{commandUsage}%**",
+                    "value": "%{commandDescription}%"
+                }
+            },
+            "specific": {
+                "invalid": {
+                    "title": "Invalid Command!",
+                    "description": "/%{command}% isn't a valid command!"
+                },
+                "title": "/%{command}%",
+                "description": "%{commandDescription}%",
+                "usage": {
+                    "name": "Usage",
+                    "value": "%{commandUsage}%"
+                },
+                "cooldown": {
+                    "name": "Command Cooldown",
+                    "value": "%{commandCooldown}% second(s)"
+                },
+                "dm": {
+                    "name": "Direct Messages",
+                    "value": "This command cannot be used in a DM channel"
+                },
+                "owner": {
+                    "name": "Bot Owner",
+                    "value": "Being an owner is required to execute this command"
+                }
+            }
         },
-        "aborted": {
-          "title": "Aborted",
-          "description": "Deletion Aborted."
+        "language": {
+            "alreadySet": {
+                "title": "Already Set",
+                "description": "%{language}% is already your set language!"
+            },
+            "title": "Language Set",
+            "description": "Your language has been changed to `%{language}%`!"
         },
-        "yesButton": "Yes",
-        "noButton": "No"
-      }
-    },
-    "help": {
-      "information": {
-        "title": "Information",
-        "description": "placeholder"
-      },
-      "all": {
-        "title": "Commands",
-        "description": "Arguments in brackets are required. Arguments in arrows are sometimes required based on the previous argument. You can use the command /help [command] [a command] to see more about a specific command.",
-        "field": {
-          "name": "**%{commandUsage}%**",
-          "value": "%{commandDescription}%"
+        "modules": {
+            "defender": {
+                "title": "Defender Module",
+                "description": "You can add or remove modules here. See more about a module by selecting it. Then, press the button to remove or add it. If you want to delete some or all of your data used by or associated with this bot, you can request it with /deletedata.",
+                "menuPlaceholder": "Defender Module Settings",
+                "menu": {
+                    "toggle": {
+                        "label": "Toggle",
+                        "description": "Toggle whether this module is active",
+                        "longDescription": "Enable or disable this module. However, this module will not be activated if you have not configured it.",
+                        "value": "toggle",
+                        "enableButton": "Enable",
+                        "disableButton": "Disable"
+                    }
+                }
+            },
+            "friend": {
+                "title": "Friend Module",
+                "description": "placeholder",
+                "menuPlaceholder": "Friend Module Settings",
+                "menu": {
+                    "toggle": {
+                        "label": "Toggle",
+                        "description": "Toggle whether this module is active",
+                        "longDescription": "Enable or disable this module. However, this module cannot be enabled if you have not configured it.",
+                        "value": "toggle",
+                        "enableButton": "Enable",
+                        "disableButton": "Disable"
+                    },
+                    "channel": {
+                        "label": "Channel",
+                        "description": "Set a channel to send logins and logouts to",
+                        "longDescription": "Due to limitations, you need to set a channel with /channel",
+                        "value": "channel"
+                    }
+                }
+            },
+            "rewards": {
+                "title": "Modules",
+                "description": "This module ",
+                "menuPlaceholder": "Reward Module Settings",
+                "menu": {
+                    "toggle": {
+                        "label": "Toggle",
+                        "description": "Toggle whether this module is active",
+                        "longDescription": "Enable or disable this module. However, this module will not be activated if you have not configured it.",
+                        "value": "toggle",
+                        "enableButton": "Enable",
+                        "disableButton": "Disable"
+                    },
+                    "grace": {
+                        "label": "Grace Period",
+                        "description": "Set when the bot should start alerting you",
+                        "longDescription": "Set the amount of hours ahead of the daily reward reset for when the bot should start pinging you",
+                        "value": "grace"
+                    }
+                }
+            },
+            "buttons": {
+                "enable": {
+                    "label": "Enable",
+                    "id": "enableButton",
+                    "style": "SUCCESS",
+                    "invert": false
+                },
+                "disable": {
+                    "label": "Disable",
+                    "id": "disableButton",
+                    "style": "DANGER",
+                    "invert": true
+                },
+                "settings": {
+                    "label": "Settings",
+                    "id": "modifyButton",
+                    "style": "PRIMARY",
+                    "invert": true
+                }
+            }
+        },
+        "ping": {
+            "embed1": {
+                "title": "Pinging.."
+            },
+            "embed2": {
+                "title": "🏓 Ping!",
+                "description": "Websocket heartbeat is %{wsPing}%ms. Roundtrip latency is %{rtPing}%ms."
+            }
+        },
+        "register": {
+            "invalid": {
+                "title": "Invalid Input",
+                "description": "The username/UUID provided is invalid! The username cannot contain invalid characters. UUIDs must match the following regex: `/^[0-9a-f]{8}[0-9a-f]{4}[1-5][0-9a-f]{3}[89AB][0-9a-f]{3}[0-9a-f]{12}$/i`. You can test this regex with [__this__](https://regex101.com/r/A866mm/1) site."
+            },
+            "notFound": {
+                "title": "Not Found",
+                "description": "That %{inputType}% doesn't seem to be valid. Check to see if you spelt it wrong."
+            },
+            "unlinked": {
+                "title": "Unlinked Account",
+                "description": "You have not linked your Discord account to your Minecraft account on Hypixel! Follow the guide below. If you just linked it, please wait a few minutes and try again."
+            },
+            "mismatched": {
+                "title": "Mismatched Tag",
+                "description": "That Minecraft account currently has a different Discord account linked! If that is your account, follow the guide below to relink it. If you just relinked linked it, please wait a few minutes and try again."
+            },
+            "title": "Registered",
+            "description": "Registered successfully! You can now add modules with /modules.",
+            "field": {
+                "name": "Next Steps",
+                "value": "/help • See information about any command or about this bot\n/language • Set a language for this bot"
+            }
         }
-      },
-      "specific": {
-        "invalid": {
-          "title": "Invalid Command!",
-          "description": "/%{command}% isn't a valid command!"
+    },
+    "constraints": {
+        "blockedUsers": {
+            "title": "Blocked User",
+            "description": "You were blocked form using this bot. You cannot appeal this."
         },
-        "title": "/%{command}%",
-        "description": "%{commandDescription}%",
-        "usage": {
-          "name": "Usage",
-          "value": "%{commandUsage}%"
-        },
-        "cooldown": {
-          "name": "Command Cooldown",
-          "value": "%{commandCooldown}% second(s)"
-        },
-        "dm": {
-          "name": "Direct Messages",
-          "value": "This command cannot be used in a DM channel"
+        "devMode": {
+            "title": "Developer Mode",
+            "description": "This bot is in developer only mode, likely due to a major issue or an upgrade that is taking place. Please check back later!"
         },
         "owner": {
-          "name": "Bot Owner",
-          "value": "Being an owner is required to execute this command"
+            "title": "Insufficient Permissions",
+            "description": "You cannot execute this command without being an owner!"
+        },
+        "dm": {
+            "title": "DM Channel",
+            "description": "You cannot execute this command in the DM channel! Please switch to a server channel!"
+        },
+        "cooldown": {
+            "embed1": {
+                "title": "Cooldown",
+                "description": "You are executing commands too quickly! This cooldown of this command is %{cooldown}% seconds. This message will turn green in %{timeLeft}% seconds once the cooldown expires."
+            },
+            "embed2": {
+                "title": "Cooldown Over",
+                "description": "The cooldown has expired! You can now execute the command /%{commandName}%!"
+            }
         }
-      }
-    },
-    "language": {
-      "alreadySet": {
-        "title": "Already Set",
-        "description": "%{language}% is already your set language!"
-      },
-      "title": "Language Set",
-      "description": "Your language has been changed to `%{language}%`!"
     },
     "modules": {
-      "defender": {
-        "title": "Defender Module",
-        "description": "You can add or remove modules here. See more about a module by selecting it. Then, press the button to remove or add it. If you want to delete some or all of your data used by or associated with this bot, you can request it with /deletedata.",
-        "menuPlaceholder": "Defender Module Settings",
-        "menu": {
-          "toggle": {
-            "label": "Toggle",
-            "description": "Toggle whether this module is active",
-            "longDescription": "Enable or disable this module. However, this module will not be activated if you have not configured it.",
-            "value": "toggle",
-            "enableButton": "Enable",
-            "disableButton": "Disable"
-          }
-        }
-      },
-      "friend": {
-        "title": "Friend Module",
-        "description": "placeholder",
-        "menuPlaceholder": "Friend Module Settings",
-        "menu": {
-          "toggle": {
-            "label": "Toggle",
-            "description": "Toggle whether this module is active",
-            "longDescription": "Enable or disable this module. However, this module cannot be enabled if you have not configured it.",
-            "value": "toggle",
-            "enableButton": "Enable",
-            "disableButton": "Disable"
-          },
-          "channel": {
-            "label": "Channel",
-            "description": "Set a channel to send logins and logouts to",
-            "longDescription": "Due to limitations, you need to set a channel with /channel",
-            "value": "channel"
-          }
-        }
-      },
-      "rewards": {
-        "title": "Modules",
-        "description": "This module ",
-        "menuPlaceholder": "Reward Module Settings",
-        "menu": {
-          "toggle": {
-            "label": "Toggle",
-            "description": "Toggle whether this module is active",
-            "longDescription": "Enable or disable this module. However, this module will not be activated if you have not configured it.",
-            "value": "toggle",
-            "enableButton": "Enable",
-            "disableButton": "Disable"
-          },
-          "grace": {
-            "label": "Grace Period",
-            "description": "Set when the bot should start alerting you",
-            "longDescription": "Set the amount of hours ahead of the daily reward reset for when the bot should start pinging you",
-            "value": "grace"
-          }
-        }
-      },
-      "buttons": {
-        "enable": {
-          "label": "Enable",
-          "id": "enableButton",
-          "style": "SUCCESS",
-          "invert": false
+        "friends": {
+            "missingData": {
+                "title": "Missing Data",
+                "description": "Your last login and/or last logout data returned undefined for the Friend module. Login and logout notifications are now disabled. This may be a result of disabling the `Online` API option on Hypixel or setting your social status to offline. Notifications will resume and you will receive another DM once this data is no longer missing.",
+                "footer": "Issue"
+            },
+            "receivedData": {
+                "title": "Received Data",
+                "description": "Your last login and/or last logout data is no longer undefined for the Friend module. Login and logout notifications will now resume.",
+                "footer": "Notification"
+            },
+            "missingPermissions": {
+                "title": "Missing Permissions",
+                "description": "This bot is missing the following permissions in the channel <#%{channelID}%>: %{missingPermissions}%. The Friends Module has been toggled off due to this issue.",
+                "footer": "Issue"
+            },
+            "suppressNext": {
+                "title": "Alert Suppressed",
+                "description": "Your latest alert for the Friend Module has been suppressed, and login/logout notifications will now resume.",
+                "footer": "Notification"
+            },
+            "login": {
+                "description": "<@!%{discordID}%> logged in <t:%{unixEpoch}%:R> at <t:%{unixEpoch}%:T>"
+            },
+            "logout": {
+                "description": "<@!%{discordID}%> logged out <t:%{unixEpoch}%:R> at <t:%{unixEpoch}%:T>"
+            }
         },
-        "disable": {
-          "label": "Disable",
-          "id": "disableButton",
-          "style": "DANGER",
-          "invert": true
-        },
-        "settings": {
-          "label": "Settings",
-          "id": "modifyButton",
-          "style": "PRIMARY",
-          "invert": true
+        "rewards": {
+            "rewardReminder": {
+                "title": "Daily Reward Reminder",
+                "footer": "Notification",
+                "description": [
+                    "You haven't claimed your daily reward yet!",
+                    "This is a reminder to claim your daily reward as it appears you haven't claimed it!",
+                    "It appears that you have not claimed your daily reward yet!",
+                    "You should go collect your daily reward!",
+                    "Go claim your daily reward!",
+                    "Your daily reward is waiting for you!",
+                    "It is time to go claim your daily reward!",
+                    "d a i l y r e w a r d!",
+                    "Your daily reward awaits collection!",
+                    "Your daily reward is waiting!",
+                    "Arr! We sentence ye t' go claim yer daily reward!",
+                    "This is a remindeth'r to claimeth thy daily reward as t appears thee haven't claim'd t!"
+                ]
+            },
+            "milestone": {
+                "title": "Congratulations",
+                "description": "🎉 You have reached a daily streak of %{milestone}%! To opt out of future milestone messages, uae /modules",
+                "footer": "Notification"
+            }
         }
-      }
-    },
-    "ping": {
-      "embed1": {
-        "title": "Pinging.."
-      },
-      "embed2": {
-        "title": "🏓 Ping!",
-        "description": "Websocket heartbeat is %{wsPing}%ms. Roundtrip latency is %{rtPing}%ms."
-      }
-    },
-    "register": {
-      "invalid": {
-        "title": "Invalid Input",
-        "description": "The username/UUID provided is invalid! The username cannot contain invalid characters. UUIDs must match the following regex: `/^[0-9a-f]{8}[0-9a-f]{4}[1-5][0-9a-f]{3}[89AB][0-9a-f]{3}[0-9a-f]{12}$/i`. You can test this regex with [__this__](https://regex101.com/r/A866mm/1) site."
-      },
-      "notFound": {
-        "title": "Not Found",
-        "description": "That %{inputType}% doesn't seem to be valid. Check to see if you spelt it wrong."
-      },
-      "unlinked": {
-        "title": "Unlinked Account",
-        "description": "You have not linked your Discord account to your Minecraft account on Hypixel! Follow the guide below. If you just linked it, please wait a few minutes and try again."
-      },
-      "mismatched": {
-        "title": "Mismatched Tag",
-        "description": "That Minecraft account currently has a different Discord account linked! If that is your account, follow the guide below to relink it. If you just relinked linked it, please wait a few minutes and try again."
-      },
-      "title": "Registered",
-      "description": "Registered successfully! You can now add modules with /modules.",
-      "field": {
-        "name": "Next Steps",
-        "value": "/help • See information about any command or about this bot\n/language • Set a language for this bot"
-      }
     }
-  },
-  "constraints": {
-    "blockedUsers" :{
-      "title": "Blocked User",
-      "description": "You were blocked form using this bot. You cannot appeal this."
-    },
-    "devMode": {
-      "title": "Developer Mode",
-      "description": "This bot is in developer only mode, likely due to a major issue or an upgrade that is taking place. Please check back later!"
-    },
-    "owner": {
-      "title": "Insufficient Permissions",
-      "description": "You cannot execute this command without being an owner!"
-    },
-    "dm": {
-      "title": "DM Channel",
-      "description": "You cannot execute this command in the DM channel! Please switch to a server channel!"
-    },
-    "cooldown": {
-      "embed1": {
-        "title": "Cooldown",
-      "description": "You are executing commands too quickly! This cooldown of this command is %{cooldown}% seconds. This message will turn green in %{timeLeft}% seconds once the cooldown expires."
-      },
-      "embed2": {
-        "title": "Cooldown Over",
-        "description": "The cooldown has expired! You can now execute the command /%{commandName}%!"
-      }
-    }
-  }
 }

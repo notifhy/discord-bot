@@ -1,15 +1,17 @@
+import type { Differences } from '../@types/modules';
 import type {
     RawRewardsModule,
     RewardsModule,
     UserAPIData,
+    UserData,
 } from '../@types/database';
 import { BetterEmbed } from '../util/utility';
 import { Client } from 'discord.js';
+import { RegionLocales } from '../../locales/localesHandler';
 import { SQLiteWrapper } from '../database';
 import Constants from '../util/Constants';
 import ErrorHandler from '../util/errors/ErrorHandler';
 import ModuleError from '../util/errors/ModuleError';
-import type { Differences } from '../@types/modules';
 
 export const properties = {
     name: 'rewards',
@@ -34,6 +36,16 @@ export const execute = async ({
             allowUndefined: false,
             columns: ['alertTime', 'lastNotified', 'notificationInterval'],
         })) as RewardsModule;
+
+        const userData = (await SQLiteWrapper.getUser<UserData, UserData>({
+            discordID: userAPIData.discordID,
+            table: Constants.tables.users,
+            allowUndefined: false,
+            columns: ['language'],
+        })) as UserData;
+
+        const locale = RegionLocales.locale(userData.language).modules.rewards;
+        const { replace } = RegionLocales;
 
         const date = Date.now();
 
@@ -61,14 +73,21 @@ export const execute = async ({
             rewardsModule.lastNotified + notificationInterval < Date.now()
         ) {
             const user = await client.users.fetch(userAPIData.discordID);
+            const description =
+                locale.rewardReminder.description[
+                    Math.floor(
+                        Math.random() *
+                            locale.rewardReminder.description.length,
+                    )
+                ];
             const rewardNotification = new BetterEmbed({
                 color: Constants.color.normal,
                 footer: {
-                    name: 'Notification',
+                    name: locale.rewardReminder.footer,
                 },
             })
-                .setTitle('Daily Reward Reminder')
-                .setDescription("You haven't claimed your daily reward yet!");
+                .setTitle(locale.rewardReminder.title)
+                .setDescription(description);
 
             await SQLiteWrapper.updateUser<
                 Partial<RewardsModule>,
@@ -105,12 +124,14 @@ export const execute = async ({
             const milestoneNotification = new BetterEmbed({
                 color: Constants.color.normal,
                 footer: {
-                    name: 'Notification',
+                    name: locale.milestone.footer,
                 },
             })
-                .setTitle('Congratulations')
+                .setTitle(locale.milestone.title)
                 .setDescription(
-                    `🎉 You have reached a daily streak of ${milestone}! To opt out of future milestone messages, uae /modules`,
+                    replace(locale.milestone.description, {
+                        milestone: milestone,
+                    }),
                 );
 
             await user.send({
@@ -118,15 +139,13 @@ export const execute = async ({
             });
         }
     } catch (error) {
-        const handler = new ErrorHandler({
+        await new ErrorHandler({
             error: new ModuleError({
                 message: (error as Error).message,
                 module: properties.name,
                 user: userAPIData,
             }),
             moduleUser: userAPIData,
-        });
-
-        await handler.systemNotify();
+        }).systemNotify();
     }
 };

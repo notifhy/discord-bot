@@ -3,6 +3,7 @@ import type {
     FriendsModule,
     RawFriendsModule,
     UserAPIData,
+    UserData,
 } from '../@types/database';
 import { BetterEmbed } from '../util/utility';
 import {
@@ -12,6 +13,7 @@ import {
     Permissions,
     TextChannel,
 } from 'discord.js';
+import { RegionLocales } from '../../locales/localesHandler';
 import { SQLiteWrapper } from '../database';
 import Constants from '../util/Constants';
 import ErrorHandler from '../util/errors/ErrorHandler';
@@ -48,6 +50,19 @@ export const execute = async ({
             columns: ['channel'],
         })) as FriendsModule;
 
+        const userData = (await SQLiteWrapper.getUser<
+            UserData,
+            UserData
+        >({
+            discordID: userAPIData.discordID,
+            table: Constants.tables.users,
+            allowUndefined: false,
+            columns: ['language'],
+        })) as UserData;
+
+        const locale = RegionLocales.locale(userData.language).modules.friends;
+        const { replace } = RegionLocales;
+
         if (
             differences.primary.lastLogin === null ||
             differences.primary.lastLogout === null
@@ -56,13 +71,11 @@ export const execute = async ({
             const undefinedData = new BetterEmbed({
                 color: Constants.color.warning,
                 footer: {
-                    name: 'Issue',
+                    name: locale.missingData.footer,
                 },
             })
-                .setTitle('Missing Data')
-                .setDescription(
-                    'Your last login and/or last logout data returned undefined for the Friend module. Login and logout notifications are now disabled. This may be a result of disabling the `Online` API option on Hypixel or setting your social status to offline. Notifications will resume and you will receive another DM once this data is no longer missing.',
-                );
+                .setTitle(locale.missingData.title)
+                .setDescription(locale.missingData.description);
 
             await user.send({
                 embeds: [undefinedData],
@@ -81,13 +94,11 @@ export const execute = async ({
             const undefinedData = new BetterEmbed({
                 color: Constants.color.on,
                 footer: {
-                    name: 'Notification',
+                    name: locale.receivedData.footer,
                 },
             })
-                .setTitle('Received Data')
-                .setDescription(
-                    'Your last login and/or last logout data is no longer undefined for the Friend module. Login and logout notifications will now resume.',
-                );
+                .setTitle(locale.receivedData.title)
+                .setDescription(locale.receivedData.description);
 
             await user.send({
                 embeds: [undefinedData],
@@ -112,17 +123,14 @@ export const execute = async ({
             const missingEmbed = new BetterEmbed({
                 color: Constants.color.warning,
                 footer: {
-                    name: 'Issue',
+                    name: locale.missingPermissions.footer,
                 },
             })
-                .setTitle('Missing Permissions')
-                .setDescription(
-                    `This bot is missing the following permissions in the channel <#${
-                        friendModule.channel
-                    }>: ${missingPermissions.join(
-                        ', ',
-                    )}. The Friends Module has been toggled off due to this issue.`,
-                );
+                .setTitle(locale.missingPermissions.title)
+                .setDescription(replace(locale.missingPermissions.description, {
+                    channelID: friendModule.channel!,
+                    missingPermissions: missingPermissions.join(', '),
+                }));
 
             userAPIData.modules.splice(
                 userAPIData.modules.indexOf('friends'),
@@ -152,20 +160,18 @@ export const execute = async ({
             const suppressedEmbed = new BetterEmbed({
                 color: Constants.color.normal,
                 footer: {
-                    name: 'Notification',
+                    name: locale.suppressNext.footer,
                 },
             })
-                .setTitle('Alert Suppressed')
-                .setDescription(
-                    `Your latest alert for the Friend Module has been suppressed, and login/logout notifications will now resume.`,
-                );
+                .setTitle(locale.suppressNext.title)
+                .setDescription(locale.suppressNext.description);
 
             await SQLiteWrapper.updateUser<
                 Partial<FriendsModule>,
                 Partial<RawFriendsModule>
             >({
                 discordID: userAPIData.discordID,
-                table: 'api',
+                table: Constants.tables.friends,
                 data: {
                     suppressNext: false,
                 },
@@ -184,15 +190,16 @@ export const execute = async ({
             differences.primary.lastLogin &&
             differences.primary.lastLogin + Constants.ms.minute >= Date.now()
         ) {
+            const unixEpoch = Math.round(
+                differences.primary.lastLogin / Constants.ms.second,
+            );
             const login = new MessageEmbed({
                 color: Constants.color.on,
-            }).setDescription(
-                `<@!${userAPIData.discordID}> logged in <t:${Math.round(
-                    differences.primary.lastLogin / Constants.ms.second,
-                )}:R> at <t:${Math.round(
-                    differences.primary.lastLogin / Constants.ms.second,
-                )}:T>`,
-            );
+            })
+            .setDescription(replace(locale.login.description, {
+                discordID: userAPIData.discordID,
+                unixEpoch: unixEpoch,
+            }));
 
             notifications.push(login);
         }
@@ -201,15 +208,16 @@ export const execute = async ({
             differences.primary.lastLogout &&
             differences.primary.lastLogout + Constants.ms.minute >= Date.now()
         ) {
+            const unixEpoch = Math.round(
+                differences.primary.lastLogout / Constants.ms.second,
+            );
             const logout = new MessageEmbed({
                 color: Constants.color.off,
-            }).setDescription(
-                `<@!${userAPIData.discordID}> logged out <t:${Math.round(
-                    differences.primary.lastLogout / Constants.ms.second,
-                )}:R> at <t:${Math.round(
-                    differences.primary.lastLogout / Constants.ms.second,
-                )}:T>`,
-            );
+            })
+            .setDescription(replace(locale.logout.description, {
+                discordID: userAPIData.discordID,
+                unixEpoch: unixEpoch,
+            }));
 
             //lastLogout seems to change twice sometimes on a single logout, this is a fix for that
             const [, lastEvent] = userAPIData.history; //First item in array is this event, so it checks the second item
@@ -236,15 +244,13 @@ export const execute = async ({
             });
         }
     } catch (error) {
-        const handler = new ErrorHandler({
+        await new ErrorHandler({
             error: new ModuleError({
                 message: (error as Error).message,
                 module: properties.name,
                 user: userAPIData,
             }),
             moduleUser: userAPIData,
-        });
-
-        await handler.systemNotify();
+        }).systemNotify();
     }
 };

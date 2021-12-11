@@ -5,6 +5,7 @@
     "blockguild",
     "blockuser",
     "botstatus",
+    "claimeth",
     "cooldown",
     "cooldowns",
     "deletedata",
@@ -21,10 +22,11 @@
     "Notif",
     "Notificateur",
     "ratelimit",
+    "remindeth'r",
     "roleid",
     "rowid",
     "Slothpixel",
     "tablename",
     "userlimit"
-  ]
+]
 }

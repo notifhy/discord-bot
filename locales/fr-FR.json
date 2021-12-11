@@ -1,243 +1,295 @@
 {
-  "general": {
-
-  },
-  "constraints": {
-    "blockedUsers" :{
-      "title": "Utilisateur bloqué",
-      "description": "On vous a empêché d'utiliser ce robot. Vous ne pouvez pas faire appel de cette décision."
-    },
-    "devMode": {
-      "title": "Mode développeur",
-      "description": "Ce robot est en mode développeur uniquement, probablement en raison d'un problème majeur ou d'une mise à niveau en cours. Revenez nous voir plus tard !"
-    },
-    "owner": {
-      "title": "Permissions insuffisantes",
-      "description": "Vous ne pouvez pas exécuter cette commande sans être propriétaire !"
-    },
-    "dm": {
-      "title": "Chaîne DM",
-      "description": "Vous ne pouvez pas exécuter cette commande dans le chaîne DM ! Veuillez passer à un chaîne de serveur !"
-    },
-    "cooldown": {
-      "embed1": {
-        "title": "Refroidissement",
-      "description": "Vous exécutez les commandes trop rapidement ! Le cooldown de cette commande est de %{cooldown}% secondes. Ce message deviendra vert dans %{timeLeft}% secondes une fois que le cooldown aura expiré."
-      },
-      "embed2": {
-        "title": "Refroidissement terminé",
-        "description": "Le délai d'attente a expiré ! Tu peux maintenant exécuter la commande /%{commandName}% !"
-      }
-    }
-  },
-  "commands": {
-    "data": {
-      "delete": {
-        "confirm": {
-          "title": "Confirmation",
-          "description": "Êtes-vous absolument sûr de vouloir supprimer toutes vos données ? Toutes les données stockées dans la base de données seront effacées. Cette opération est irréversible. Veuillez confirmer avec les boutons ci-dessous. Par ailleurs, vous pouvez visualiser toutes vos données avec /data view."
+    "commands": {
+        "data": {
+            "delete": {
+                "confirm": {
+                    "title": "Confirmation",
+                    "description": "Êtes-vous absolument sûr de vouloir supprimer toutes vos données ? Toutes les données stockées dans la base de données seront effacées. Cette opération est irréversible. Veuillez confirmer avec les boutons ci-dessous. Par ailleurs, vous pouvez visualiser toutes vos données avec /data view."
+                },
+                "deleted": {
+                    "title": "Supprimé",
+                    "description": "Vos données ont été supprimées."
+                },
+                "aborted": {
+                    "title": "Interrompre",
+                    "description": "Suppression interrompue."
+                },
+                "yesButton": "Oui",
+                "noButton": "Non"
+            }
         },
-        "deleted": {
-          "title": "Supprimé",
-          "description": "Vos données ont été supprimées."
+        "help": {
+            "information": {
+                "title": "Information",
+                "description": "placeholder"
+            },
+            "all": {
+                "title": "Commandes",
+                "description": "Les arguments entre parenthèses sont obligatoires. Les arguments entre flèches sont parfois requis en fonction de l'argument précédent. Vous pouvez utiliser la commande /help [commande] [une commande] pour en savoir plus sur une commande spécifique.",
+                "field": {
+                    "name": "**%{commandUsage}%**",
+                    "value": "%{commandDescription}%"
+                }
+            },
+            "specific": {
+                "invalid": {
+                    "title": "Commande non valide",
+                    "description": "/%{command}% n'est pas une commande valide !"
+                },
+                "title": "/%{command}%",
+                "description": "%{commandDescription}%",
+                "usage": {
+                    "name": "Utilisation",
+                    "value": "%{commandUsage}%"
+                },
+                "cooldown": {
+                    "name": "Refroidissement de Commande",
+                    "value": "%{commandCooldown}% seconde(s)"
+                },
+                "dm": {
+                    "name": "MP",
+                    "value": "Cette commande ne peut pas être utilisée dans la chaîne DM"
+                },
+                "owner": {
+                    "name": "Propriétaire de Bot",
+                    "value": "Il faut être propriétaire pour exécuter cette commande."
+                }
+            }
         },
-        "aborted": {
-          "title": "Interrompre",
-          "description": "Suppression interrompue."
+        "language": {
+            "alreadySet": {
+                "title": "Déjà établir",
+                "description": "%{language}% est déjà votre langue de prédilection !"
+            },
+            "title": "Langue établir",
+            "description": "Votre langue a été changée en `%{language}%`! Veuillez noter que les traductions ne sont pas parfaites, mais que cela devrait être plus facile que de traduire soi-même."
         },
-        "yesButton": "Oui",
-        "noButton": "Non"
-      }
-    },
-    "help": {
-      "information": {
-        "title": "Information",
-        "description": "placeholder"
-      },
-      "all": {
-        "title": "Commandes",
-        "description": "Les arguments entre parenthèses sont obligatoires. Les arguments entre flèches sont parfois requis en fonction de l'argument précédent. Vous pouvez utiliser la commande /help [commande] [une commande] pour en savoir plus sur une commande spécifique.",
-        "field": {
-          "name": "**%{commandUsage}%**",
-          "value": "%{commandDescription}%"
+        "modules": {
+            "defender": {
+                "title": "Defender Module",
+                "description": "You can add or remove modules here. See more about a module by selecting it. Then, press the button to remove or add it. If you want to delete some or all of your data used by or associated with this bot, you can request it with /deletedata.",
+                "menuPlaceholder": "Defender Settings",
+                "menu": {
+                    "toggle": {
+                        "label": "Toggle",
+                        "description": "Toggle whether this module is active",
+                        "longDescription": "Enable or disable this module. However, this module will not be activated if you have not configured it.",
+                        "value": "toggle",
+                        "enableButton": "Enable",
+                        "disableButton": "Disable"
+                    }
+                }
+            },
+            "friend": {
+                "title": "Friend Module",
+                "description": "placeholder",
+                "menuPlaceholder": "Select a module",
+                "menu": {
+                    "toggle": {
+                        "label": "Toggle",
+                        "description": "Toggle whether this module is active",
+                        "longDescription": "Enable or disable this module. However, this module will not be activated if you have not configured it.",
+                        "value": "toggle",
+                        "enableButton": "Enable",
+                        "disableButton": "Disable"
+                    },
+                    "channel": {
+                        "label": "Channel",
+                        "description": "Set a channel to send logins and logouts to",
+                        "longDescription": "Due to limitations, you need to set a channel with /channel",
+                        "value": "channel"
+                    }
+                }
+            },
+            "rewards": {
+                "title": "Modules",
+                "description": "This module ",
+                "menuPlaceholder": "Select a module",
+                "menu": {
+                    "toggle": {
+                        "label": "Toggle",
+                        "description": "Toggle whether this module is active",
+                        "longDescription": "Enable or disable this module. However, this module will not be activated if you have not configured it.",
+                        "value": "toggle",
+                        "enableButton": "Enable",
+                        "disableButton": "Disable"
+                    },
+                    "grace": {
+                        "label": "Grace Period",
+                        "description": "Set when the bot should start alerting you",
+                        "longDescription": "Set the amount of hours ahead of the daily reward reset for when the bot should start pinging you",
+                        "value": "grace"
+                    }
+                }
+            },
+            "title": "Modules",
+            "description": "Vous pouvez ajouter ou supprimer des modules ici. Pour en savoir plus sur un module, sélectionnez-le. Ensuite, appuyez sur le bouton pour le supprimer ou l'ajouter. Si vous souhaitez supprimer tout ou partie de vos données utilisées par ou associées à ce bot, vous pouvez le demander avec /deletedata.",
+            "menuPlaceholder": "Sélectionnez un module",
+            "moduleField": {
+                "name": "%{moduleName}% Module",
+                "value": "%{moduleDescription}%"
+            },
+            "statusField": {
+                "name": "État",
+                "added": "Ce module est activé. Cliquez sur \"Désactiver\" pour le désactiver. Vos données resteront intactes.",
+                "removed": "Ce module est désactivé. Cliquez sur \"Enable\" pour l'activer."
+            },
+            "modules": {
+                "defender": {
+                    "label": "Défenseur",
+                    "description": "Soyez informé de toute activité inhabituelle sur votre compte",
+                    "longDescription": "Ce module est le remplacement de HyGuard. Il comporte la plupart des mêmes contrôles, bien qu'il ait été légèrement simplifié pour une meilleure expérience utilisateur.",
+                    "value": "defender"
+                },
+                "friend": {
+                    "label": "Notificateur d'amis",
+                    "description": "Recevez une notification dès qu'un ami se connecte ou se déconnecte.",
+                    "longDescription": "Ce module vous enverra une notification lorsque vos amis se connectent ou se déconnectent. Cette notification peut être envoyée dans la chaîne ou par DM. Vous ne pouvez recevoir des notifications que pour les personnes qui vous ont approuvé sur ce bot pour des raisons de confidentialité.",
+                    "value": "friend"
+                },
+                "rewards": {
+                    "label": "Récompenses quotidiennes",
+                    "description": "Recevez une notification lorsque vous êtes sur le point de manquer votre récompense quotidienne.",
+                    "longDescription": "Ce module vous envoie un DM lorsque vous êtes sur le point de manquer votre récompense quotidienne. Vous pouvez personnaliser le seuil et les intervalles d'alerte, y compris le nombre minimum d'heures avant la réinitialisation pour commencer à vous avertir.",
+                    "value": "rewards"
+                }
+            },
+            "buttons": {
+                "enable": {
+                    "label": "Activer",
+                    "id": "enableButton",
+                    "style": "SUCCESS",
+                    "invert": false
+                },
+                "disable": {
+                    "label": "Désactiver",
+                    "id": "disableButton",
+                    "style": "DANGER",
+                    "invert": true
+                },
+                "settings": {
+                    "label": "Paramètres",
+                    "id": "modifyButton",
+                    "style": "PRIMARY",
+                    "invert": true
+                }
+            }
+        },
+        "ping": {
+            "embed1": {
+                "title": "Pinging.."
+            },
+            "embed2": {
+                "title": "🏓 Ping !",
+                "description": "Le battement de cœur de la websocket est de %{wsPing}%ms. La latence aller-retour est de %{rtPing}%ms."
+            }
+        },
+        "register": {
+            "invalid": {
+                "title": "Entrée invalide",
+                "description": "Le nom d'utilisateur/UUID fourni n'est pas valide ! Le nom d'utilisateur ne peut pas contenir de caractères invalides. Les UUID doivent correspondre à l'expression rationnelle suivante : `/^[0-9a-f]{8}[0-9a-f]{4}[1-5][0-9a-f]{3}[89AB][0-9a-f]{3}[0-9a-f]{12}$/i`. Vous pouvez tester cette regex avec [__ce__](https://regex101.com/r/A866mm/1) site."
+            },
+            "notFound": {
+                "title": "Non trouvé",
+                "description": "Cet/ce %{inputType}% ne semble pas être valide. Vérifiez si vous ne l'avez pas mal orthographié."
+            },
+            "unlinked": {
+                "title": "Compte non lié",
+                "description": "Vous n'avez pas lié votre compte Discord à votre compte Minecraft sur Hypixel ! Suivez le guide ci-dessous. Si vous venez de le lier, veuillez attendre quelques minutes et réessayer."
+            },
+            "mismatched": {
+                "title": "Balise Discord mal assortie",
+                "description": "Ce compte Minecraft est actuellement lié à un autre compte Discord ! Si c'est votre compte, suivez le guide ci-dessous pour le relier à nouveau. Si vous venez de le relier, veuillez attendre quelques minutes et réessayer."
+            },
+            "title": "Enregistré",
+            "description": "Enregistré avec succès ! Vous pouvez maintenant ajouter des modules avec /modules.",
+            "field": {
+                "name": "Next Steps",
+                "value": "/help • Permet d'obtenir des informations sur une commande ou sur ce bot\n/language • Change la langue de ce bot"
+            }
         }
-      },
-      "specific": {
-        "invalid": {
-          "title": "Commande non valide",
-          "description": "/%{command}% n'est pas une commande valide !"
+    },
+    "constraints": {
+        "blockedUsers": {
+            "title": "Utilisateur bloqué",
+            "description": "On vous a empêché d'utiliser ce robot. Vous ne pouvez pas faire appel de cette décision."
         },
-        "title": "/%{command}%",
-        "description": "%{commandDescription}%",
-        "usage": {
-          "name": "Utilisation",
-          "value": "%{commandUsage}%"
-        },
-        "cooldown": {
-          "name": "Refroidissement de Commande",
-          "value": "%{commandCooldown}% seconde(s)"
-        },
-        "dm": {
-          "name": "MP",
-          "value": "Cette commande ne peut pas être utilisée dans la chaîne DM"
+        "devMode": {
+            "title": "Mode développeur",
+            "description": "Ce robot est en mode développeur uniquement, probablement en raison d'un problème majeur ou d'une mise à niveau en cours. Revenez nous voir plus tard !"
         },
         "owner": {
-          "name": "Propriétaire de Bot",
-          "value": "Il faut être propriétaire pour exécuter cette commande."
+            "title": "Permissions insuffisantes",
+            "description": "Vous ne pouvez pas exécuter cette commande sans être propriétaire !"
+        },
+        "dm": {
+            "title": "Chaîne DM",
+            "description": "Vous ne pouvez pas exécuter cette commande dans le chaîne DM ! Veuillez passer à un chaîne de serveur !"
+        },
+        "cooldown": {
+            "embed1": {
+                "title": "Refroidissement",
+                "description": "Vous exécutez les commandes trop rapidement ! Le cooldown de cette commande est de %{cooldown}% secondes. Ce message deviendra vert dans %{timeLeft}% secondes une fois que le cooldown aura expiré."
+            },
+            "embed2": {
+                "title": "Refroidissement terminé",
+                "description": "Le délai d'attente a expiré ! Tu peux maintenant exécuter la commande /%{commandName}% !"
+            }
         }
-      }
-    },
-    "language": {
-      "alreadySet": {
-        "title": "Déjà établir",
-        "description": "%{language}% est déjà votre langue de prédilection !"
-      },
-      "title": "Langue établir",
-      "description": "Votre langue a été changée en `%{language}%`! Veuillez noter que les traductions ne sont pas parfaites, mais que cela devrait être plus facile que de traduire soi-même."
     },
     "modules": {
-      "defender": {
-        "title": "Defender Module",
-        "description": "You can add or remove modules here. See more about a module by selecting it. Then, press the button to remove or add it. If you want to delete some or all of your data used by or associated with this bot, you can request it with /deletedata.",
-        "menuPlaceholder": "Defender Settings",
-        "menu": {
-          "toggle": {
-            "label": "Toggle",
-            "description": "Toggle whether this module is active",
-            "longDescription": "Enable or disable this module. However, this module will not be activated if you have not configured it.",
-            "value": "toggle",
-            "enableButton": "Enable",
-            "disableButton": "Disable"
-          }
-        }
-      },
-      "friend": {
-        "title": "Friend Module",
-        "description": "placeholder",
-        "menuPlaceholder": "Select a module",
-        "menu": {
-          "toggle": {
-            "label": "Toggle",
-            "description": "Toggle whether this module is active",
-            "longDescription": "Enable or disable this module. However, this module will not be activated if you have not configured it.",
-            "value": "toggle",
-            "enableButton": "Enable",
-            "disableButton": "Disable"
-          },
-          "channel": {
-            "label": "Channel",
-            "description": "Set a channel to send logins and logouts to",
-            "longDescription": "Due to limitations, you need to set a channel with /channel",
-            "value": "channel"
-          }
-        }
-      },
-      "rewards": {
-        "title": "Modules",
-        "description": "This module ",
-        "menuPlaceholder": "Select a module",
-        "menu": {
-          "toggle": {
-            "label": "Toggle",
-            "description": "Toggle whether this module is active",
-            "longDescription": "Enable or disable this module. However, this module will not be activated if you have not configured it.",
-            "value": "toggle",
-            "enableButton": "Enable",
-            "disableButton": "Disable"
-          },
-          "grace": {
-            "label": "Grace Period",
-            "description": "Set when the bot should start alerting you",
-            "longDescription": "Set the amount of hours ahead of the daily reward reset for when the bot should start pinging you",
-            "value": "grace"
-          }
-        }
-      },
-      "title": "Modules",
-      "description": "Vous pouvez ajouter ou supprimer des modules ici. Pour en savoir plus sur un module, sélectionnez-le. Ensuite, appuyez sur le bouton pour le supprimer ou l'ajouter. Si vous souhaitez supprimer tout ou partie de vos données utilisées par ou associées à ce bot, vous pouvez le demander avec /deletedata.",
-      "menuPlaceholder": "Sélectionnez un module",
-      "moduleField": {
-        "name": "%{moduleName}% Module",
-        "value": "%{moduleDescription}%"
-      },
-      "statusField": {
-        "name": "État",
-        "added": "Ce module est activé. Cliquez sur \"Désactiver\" pour le désactiver. Vos données resteront intactes.",
-        "removed": "Ce module est désactivé. Cliquez sur \"Enable\" pour l'activer."
-      },
-      "modules": {
-        "defender": {
-          "label": "Défenseur",
-          "description": "Soyez informé de toute activité inhabituelle sur votre compte",
-          "longDescription": "Ce module est le remplacement de HyGuard. Il comporte la plupart des mêmes contrôles, bien qu'il ait été légèrement simplifié pour une meilleure expérience utilisateur.",
-          "value": "defender"
-        },
-        "friend": {
-          "label": "Notificateur d'amis",
-          "description": "Recevez une notification dès qu'un ami se connecte ou se déconnecte.",
-          "longDescription": "Ce module vous enverra une notification lorsque vos amis se connectent ou se déconnectent. Cette notification peut être envoyée dans la chaîne ou par DM. Vous ne pouvez recevoir des notifications que pour les personnes qui vous ont approuvé sur ce bot pour des raisons de confidentialité.",
-          "value": "friend"
+        "friends": {
+            "missingData": {
+                "title": "Missing Data",
+                "description": "Your last login and/or last logout data returned undefined for the Friend module. Login and logout notifications are now disabled. This may be a result of disabling the `Online` API option on Hypixel or setting your social status to offline. Notifications will resume and you will receive another DM once this data is no longer missing.",
+                "footer": "Issue"
+            },
+            "receivedData": {
+                "title": "Received Data",
+                "description": "Your last login and/or last logout data is no longer undefined for the Friend module. Login and logout notifications will now resume.",
+                "footer": "Notification"
+            },
+            "missingPermissions": {
+                "title": "Missing Permissions",
+                "description": "This bot is missing the following permissions in the channel <#%{channelID}%>: %{missingPermissions}%. The Friends Module has been toggled off due to this issue.",
+                "footer": "Issue"
+            },
+            "suppressNext": {
+                "title": "Alert Suppressed",
+                "description": "Your latest alert for the Friend Module has been suppressed, and login/logout notifications will now resume.",
+                "footer": "Notification"
+            },
+            "login": {
+                "description": "<@!${discordID}> logged in <t:${unixEpoch}:R> at <t:${unixEpoch}:T>"
+            },
+            "logout": {
+                "description": "<@!${discordID}> logged out <t:${unixEpoch}:R> at <t:${unixEpoch}:T>"
+            }
         },
         "rewards": {
-          "label": "Récompenses quotidiennes",
-          "description": "Recevez une notification lorsque vous êtes sur le point de manquer votre récompense quotidienne.",
-          "longDescription": "Ce module vous envoie un DM lorsque vous êtes sur le point de manquer votre récompense quotidienne. Vous pouvez personnaliser le seuil et les intervalles d'alerte, y compris le nombre minimum d'heures avant la réinitialisation pour commencer à vous avertir.",
-          "value": "rewards"
+            "rewardReminder": {
+                "title": "Daily Reward Reminder",
+                "footer": "Notification",
+                "description": [
+                    "You haven't claimed your daily reward yet!",
+                    "This is a reminder to claim your daily reward as it appears you haven't claimed it!",
+                    "It appears that you have not claimed your daily reward yet!",
+                    "You should go collect your daily reward!",
+                    "Go claim your daily reward!",
+                    "Your daily reward is waiting for you!",
+                    "It is time to go claim your daily reward!",
+                    "d a i l y r e w a r d!",
+                    "Your daily reward awaits collection!",
+                    "Your daily reward is waiting!",
+                    "Arr! We sentence ye t' go claim yer daily reward!",
+                    "This is a remindeth'r to claimeth thy daily reward as t appears thee haven't claim'd t!"
+                ]
+            },
+            "milestone": {
+                "title": "Congratulations",
+                "description": "🎉 You have reached a daily streak of %{milestone}%! To opt out of future milestone messages, uae /modules",
+                "footer": "Notification"
+            }
         }
-      },
-      "buttons": {
-        "enable": {
-          "label": "Activer",
-          "id": "enableButton",
-          "style": "SUCCESS",
-          "invert": false
-        },
-        "disable": {
-          "label": "Désactiver",
-          "id": "disableButton",
-          "style": "DANGER",
-          "invert": true
-        },
-        "settings": {
-          "label": "Paramètres",
-          "id": "modifyButton",
-          "style": "PRIMARY",
-          "invert": true
-        }
-      }
-    },
-    "ping": {
-      "embed1": {
-        "title": "Pinging.."
-      },
-      "embed2": {
-        "title": "🏓 Ping !",
-        "description": "Le battement de cœur de la websocket est de %{wsPing}%ms. La latence aller-retour est de %{rtPing}%ms."
-      }
-    },
-    "register": {
-      "invalid": {
-        "title": "Entrée invalide",
-        "description": "Le nom d'utilisateur/UUID fourni n'est pas valide ! Le nom d'utilisateur ne peut pas contenir de caractères invalides. Les UUID doivent correspondre à l'expression rationnelle suivante : `/^[0-9a-f]{8}[0-9a-f]{4}[1-5][0-9a-f]{3}[89AB][0-9a-f]{3}[0-9a-f]{12}$/i`. Vous pouvez tester cette regex avec [__ce__](https://regex101.com/r/A866mm/1) site."
-      },
-      "notFound": {
-        "title": "Non trouvé",
-        "description": "Cet/ce %{inputType}% ne semble pas être valide. Vérifiez si vous ne l'avez pas mal orthographié."
-      },
-      "unlinked": {
-        "title": "Compte non lié",
-        "description": "Vous n'avez pas lié votre compte Discord à votre compte Minecraft sur Hypixel ! Suivez le guide ci-dessous. Si vous venez de le lier, veuillez attendre quelques minutes et réessayer."
-      },
-      "mismatched": {
-        "title": "Balise Discord mal assortie",
-        "description": "Ce compte Minecraft est actuellement lié à un autre compte Discord ! Si c'est votre compte, suivez le guide ci-dessous pour le relier à nouveau. Si vous venez de le relier, veuillez attendre quelques minutes et réessayer."
-      },
-      "title": "Enregistré",
-      "description": "Enregistré avec succès ! Vous pouvez maintenant ajouter des modules avec /modules.",
-      "field": {
-        "name": "Next Steps",
-        "value": "/help • Permet d'obtenir des informations sur une commande ou sur ce bot\n/language • Change la langue de ce bot"
-      }
     }
-  }
 }
