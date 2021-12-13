@@ -58,14 +58,16 @@ export interface FriendsModule extends BaseUserData {
 
 export interface RawRewardsModule extends BaseUserData {
     alertTime: number | null;
+    claimNotification: string;
     lastNotified: number;
     milestones: string;
-    notificationInterval: number | null;
+    notificationInterval: number;
 }
 
 export interface RewardsModule extends BaseUserData {
     alertTime: number | null;
+    claimNotification: boolean;
     lastNotified: number;
     milestones: boolean;
-    notificationInterval: number | null;
+    notificationInterval: number;
 }

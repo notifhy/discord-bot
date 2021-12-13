@@ -119,7 +119,7 @@ export const execute: CommandExecute = async (
     }
 
     const successEmbed = new BetterEmbed({
-        color: '#7289DA',
+        color: Constants.colors.normal,
         footer: interaction,
     })
         .setTitle('Success!')

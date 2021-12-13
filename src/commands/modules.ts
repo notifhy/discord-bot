@@ -59,7 +59,7 @@ export const execute: CommandExecute = async (
     const locale = RegionLocales.locale(userData.language).commands.modules
         .friend;
     const mainEmbed = new BetterEmbed({
-        color: Constants.color.normal,
+        color: Constants.colors.normal,
         footer: interaction,
     })
         .setTitle(locale.title)
@@ -174,7 +174,7 @@ export const execute: CommandExecute = async (
                 }
 
                 const mainMenuUpdateEmbed = new BetterEmbed({
-                    color: Constants.color.normal,
+                    color: Constants.colors.normal,
                     footer: interaction,
                 })
                     .setTitle(locale.title)

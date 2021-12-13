@@ -11,8 +11,8 @@ import Constants from '../util/Constants';
 
 export const properties: CommandProperties = {
     name: 'reload',
-    description: 'Reloads all or a command',
-    usage: '/reload [all/single] <command>',
+    description: 'Reloads all imports or a single import',
+    usage: '/reload [all/single] <type>',
     cooldown: 0,
     ephemeral: true,
     noDM: false,
@@ -24,7 +24,7 @@ export const properties: CommandProperties = {
             {
                 name: 'all',
                 type: 1,
-                description: 'Refreshes everything',
+                description: 'Refreshes all imports',
             },
             {
                 name: 'single',
@@ -69,18 +69,24 @@ export const execute: CommandExecute = async (
     switch (interaction.options.getSubcommand()) {
         case 'all': {
             const now = Date.now();
-            interaction.client.commands.forEach((_value, key) =>
-                commandRefresh(interaction, key),
-            );
-            interaction.client.events.forEach((_value, key) =>
-                eventRefresh(interaction, key),
-            );
-            interaction.client.modules.forEach((_value, key) =>
-                moduleRefresh(interaction, key),
-            );
+            const promises: Promise<void>[] = [];
+
+            for (const [command] of interaction.client.commands) {
+                promises.push(commandRefresh(interaction, command));
+            }
+
+            for (const [event] of interaction.client.events) {
+                promises.push(eventRefresh(interaction, event));
+            }
+
+            for (const [module] of interaction.client.modules) {
+                promises.push(moduleRefresh(interaction, module));
+            }
+
+            await Promise.all(promises);
 
             const reloadedEmbed = new BetterEmbed({
-                color: '#7289DA',
+                color: Constants.colors.normal,
                 footer: interaction,
             })
                 .setTitle(`Reloaded Everything`)
@@ -108,10 +114,10 @@ export const execute: CommandExecute = async (
 
             if (selected === undefined) {
                 const undefinedSelected = new BetterEmbed({
-                    color: Constants.color.warning,
+                    color: Constants.colors.warning,
                     footer: interaction,
                 })
-                    .setTitle(`Unknown Item`)
+                    .setTitle('Unknown Item')
                     .setDescription(
                         `There is no item with the structure ${typeName}.${item}!`,
                     );
@@ -129,7 +135,7 @@ export const execute: CommandExecute = async (
             }
 
             const reloadedEmbed = new BetterEmbed({
-                color: '#7289DA',
+                color: Constants.colors.normal,
                 footer: interaction,
             })
                 .setTitle(`Reloaded`)
@@ -147,20 +153,26 @@ export const execute: CommandExecute = async (
     }
 };
 
-function commandRefresh(interaction: CommandInteraction, item: string) {
-    delete require.cache[require.resolve(`${__dirname}/${item}.ts`)];
-    const refreshed: ClientCommand = require(`${__dirname}/${item}.ts`); //eslint-disable-line @typescript-eslint/no-var-requires
+
+async function commandRefresh(interaction: CommandInteraction, item: string) {
+    const refreshed = await reload<ClientCommand>(`${item}.ts`);
     interaction.client.commands.set(refreshed.properties.name, refreshed);
 }
 
-function eventRefresh(interaction: CommandInteraction, item: string) {
-    delete require.cache[require.resolve(`${__dirname}/../events/${item}.ts`)];
-    const refreshed: ClientEvent = require(`${__dirname}/../events/${item}.ts`); //eslint-disable-line @typescript-eslint/no-var-requires
+async function eventRefresh(interaction: CommandInteraction, item: string) {
+    const refreshed = await reload<ClientEvent>(`../events/${item}.ts`);
     interaction.client.events.set(refreshed.properties.name, refreshed);
 }
 
-function moduleRefresh(interaction: CommandInteraction, item: string) {
-    delete require.cache[require.resolve(`${__dirname}/../modules/${item}.ts`)];
-    const refreshed: ClientModule = require(`${__dirname}/../modules/${item}.ts`); //eslint-disable-line @typescript-eslint/no-var-requires
+async function moduleRefresh(interaction: CommandInteraction, item: string) {
+    const refreshed = await reload<ClientModule>(`../modules/${item}.ts`);
     interaction.client.modules.set(refreshed.properties.name, refreshed);
+}
+
+function reload<Type>(path: string) {
+    return new Promise<Type>(resolve => {
+        delete require.cache[require.resolve(`${__dirname}/${path}`)];
+        const refreshed: Type = require(`${__dirname}/${path}`); //eslint-disable-line @typescript-eslint/no-var-requires
+        resolve(refreshed);
+    });
 }

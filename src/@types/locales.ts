@@ -169,14 +169,17 @@ export interface Friends {
 }
 
 export interface Rewards {
+    claimedNotification: {
+        footer: string;
+    } & BaseEmbed;
+    milestone: {
+        footer: string;
+    } & BaseEmbed;
     rewardReminder: {
         title: string;
         footer: string;
         description: string[];
     };
-    milestone: {
-        footer: string;
-    } & BaseEmbed;
 }
 
 export interface Modules {
@@ -196,6 +199,7 @@ export interface Locale {
 export interface Locales {
     'en-us': Locale;
     'fr-FR': Locale;
+    pirate: Locale;
 }
 
 export type LocaleTree =

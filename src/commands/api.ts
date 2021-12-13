@@ -247,7 +247,7 @@ async function instance(
         type as keyof Omit<HypixelModuleManager['instance'], 'baseURL'>
     ] = value;
     const setEmbed = new BetterEmbed({
-        color: Constants.color.normal,
+        color: Constants.colors.normal,
         footer: interaction,
     })
         .setTitle('Updated Value!')
@@ -270,7 +270,7 @@ async function set(
         type as keyof HypixelModuleErrors[errorTypes]
     ] = value;
     const setEmbed = new BetterEmbed({
-        color: Constants.color.normal,
+        color: Constants.colors.normal,
         footer: interaction,
     })
         .setTitle('Updated Value!')
@@ -295,7 +295,7 @@ async function call(
         hypixelModuleErrors[type](value ?? false); //value is used for addRateLimit's isGlobal prop
     }
     const callEmbed = new BetterEmbed({
-        color: Constants.color.normal,
+        color: Constants.colors.normal,
         footer: interaction,
     })
         .setTitle('Executed!')

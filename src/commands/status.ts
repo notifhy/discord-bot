@@ -1,8 +1,10 @@
 import type { CommandExecute, CommandProperties } from '../@types/client';
+import type { RawUserAPIData, UserAPIData } from '../@types/database';
 import { BetterEmbed, cleanLength } from '../util/utility';
 import { CommandInteraction } from 'discord.js';
 import { keyLimit } from '../../config.json';
 import { SQLiteWrapper } from '../database';
+import Constants from '../util/Constants';
 
 export const properties: CommandProperties = {
     name: 'status',
@@ -23,19 +25,21 @@ export const execute: CommandExecute = async (
 ): Promise<void> => {
     const keyQueryLimit =
         keyLimit * interaction.client.hypixelAPI.instance.keyPercentage;
-    const intervalBetweenRequests = (60 / keyQueryLimit) * 1000;
+    const intervalBetweenRequests = (60 / keyQueryLimit) * Constants.ms.second;
 
-    const userCount = (
-        await SQLiteWrapper.getAllUsers({
+    const users = (
+        await SQLiteWrapper.getAllUsers<RawUserAPIData, UserAPIData>({
             table: 'api',
-            columns: ['discordID'],
+            columns: ['discordID', 'modules'],
         })
-    ).length;
+    );
 
-    const updateInterval = userCount * intervalBetweenRequests;
+    const userCount = users.length;
+
+    const updateInterval = users.filter(user => user.modules.length > 0).length * intervalBetweenRequests;
 
     const responseEmbed = new BetterEmbed({
-        color: '#7289DA',
+        color: Constants.colors.normal,
         footer: interaction,
     })
         .setTitle('Status')
@@ -65,9 +69,8 @@ export const execute: CommandExecute = async (
                 name: 'Hypixel API',
                 value: `Refresh Interval: ${cleanLength(
                     updateInterval,
-                )}\nInstance Queries: ${
-                    interaction.client.hypixelAPI.instance.instanceUses
-                }`,
+                )}\nInstance Queries: ${interaction.client.hypixelAPI.instance.instanceUses
+                    }`,
             },
         ]);
 

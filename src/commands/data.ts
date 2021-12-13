@@ -54,7 +54,7 @@ export const execute: CommandExecute = async (
     const locale = RegionLocales.locale(userData.language).commands.data;
     if (interaction.options.getSubcommand() === 'delete') {
         const confirmEmbed = new BetterEmbed({
-            color: '#7289DA',
+            color: Constants2.colors.normal,
             footer: interaction,
         })
             .setTitle(locale.delete.confirm.title)
@@ -122,7 +122,7 @@ export const execute: CommandExecute = async (
                 ]);
 
                 const aborted = new BetterEmbed({
-                    color: '#7289DA',
+                    color: Constants2.colors.normal,
                     footer: interaction,
                 })
                     .setTitle(locale.delete.deleted.title)
@@ -133,7 +133,7 @@ export const execute: CommandExecute = async (
                 });
             } else {
                 const aborted = new BetterEmbed({
-                    color: '#7289DA',
+                    color: Constants2.colors.normal,
                     footer: interaction,
                 })
                     .setTitle(locale.delete.aborted.title)

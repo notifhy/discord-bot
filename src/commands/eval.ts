@@ -39,23 +39,20 @@ export const execute: CommandExecute = async (
             output?.length >= Constants.limits.embedField,
         );
         const evalEmbed = new BetterEmbed({
-            color: '#7289DA',
+            color: Constants.colors.normal,
             footer: interaction,
         })
             .setTitle('Executed Eval!')
-            .addField(`Input`, `\`\`\`javascript\n${input}\n\`\`\``)
-            .addField(`Output`, `\`\`\`javascript\n${output}\n\`\`\``)
-            .addField('Type', `\`\`\`${typeof output}\`\`\``)
-            .addField(
-                'Time Taken',
-                `\`\`\`${timeTaken} millisecond${
-                    timeTaken === 1 ? '' : 's'
-                }\`\`\``,
-            );
+            .addFields([
+                { name: 'Input', value: `\`\`\`javascript\n${input}\n\`\`\`` },
+                { name: 'Output', value: `\`\`\`javascript\n${output.slice(0, Constants.limits.embedField)}\n\`\`\`` },
+                { name: 'Type', value: `\`\`\`${typeof output}\`\`\`` },
+                { name: 'Time Taken', value: `\`\`\`${timeTaken} millisecond${timeTaken === 1 ? '' : 's'}\`\`\`` },
+            ]);
         if (outputMaxLength === true) {
             evalEmbed.addField(
                 'Over Max Length',
-                'The output is over 4096 characters long',
+                'The output is over 1024 characters long',
             );
         }
 
@@ -69,19 +66,18 @@ export const execute: CommandExecute = async (
             err.message.length >= Constants.limits.embedField,
         );
         const evalEmbed = new BetterEmbed({
-            color: '#FF5555',
+            color: Constants.colors.warning,
             footer: interaction,
         })
             .setTitle('Failed Eval!')
-            .addField(`Input`, `\`${input}\``)
-            .addField(
-                `${err.name}:`,
-                `${err.message.slice(0, Constants.limits.embedField)}`,
-            );
+            .addFields([
+                { name: 'Input', value: `\`${input}\`` },
+                { name: `${err.name}:`, value: `${err.message.slice(0, Constants.limits.embedField)}` },
+            ]);
         if (outputMaxLength === true) {
             evalEmbed.addField(
                 'Over Max Length',
-                'The error is over 4096 characters long',
+                'The error is over 1024 characters long',
             );
         }
 

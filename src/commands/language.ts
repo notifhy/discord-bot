@@ -32,6 +32,10 @@ export const properties: CommandProperties = {
                         name: 'fr-FR • Français',
                         value: 'fr-FR',
                     },
+                    {
+                        name: 'pirate • Pirate',
+                        value: 'pirate',
+                    },
                 ],
             },
         ],
@@ -48,7 +52,7 @@ export const execute: CommandExecute = async (
 
     if (language === userData.language) {
         const alreadySetEmbed = new BetterEmbed({
-            color: '#FF5555',
+            color: Constants.colors.warning,
             footer: interaction,
         })
             .setTitle(locale.alreadySet.title)
@@ -70,7 +74,7 @@ export const execute: CommandExecute = async (
     });
 
     const languageEmbed = new BetterEmbed({
-        color: '#7289DA',
+        color: Constants.colors.normal,
         footer: interaction,
     })
         .setTitle(locale.title)

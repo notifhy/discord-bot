@@ -81,7 +81,7 @@ export const execute = async ({
                     )
                 ];
             const rewardNotification = new BetterEmbed({
-                color: Constants.color.normal,
+                color: Constants.colors.normal,
                 footer: {
                     name: locale.rewardReminder.footer,
                 },
@@ -105,38 +105,57 @@ export const execute = async ({
             });
         }
 
-        if (
-            differences.primary.rewardScore === undefined ||
-            rewardsModule.milestones === false
+        if ( //Refactor after BetterEmbed is fixed and updated with a new method
+            differences.primary.rewardScore !== undefined ||
+            rewardsModule.milestones === true
         ) {
-            return;
-        }
-
-        const milestones = [
-            7, 30, 60, 90, 100, 150, 200, 250, 300, 365, 500, 750, 1000,
-        ];
-        const milestone = milestones.find(
-            item => item === differences.primary.rewardScore,
-        );
-
-        if (milestone) {
             const user = await client.users.fetch(userAPIData.discordID);
-            const milestoneNotification = new BetterEmbed({
-                color: Constants.color.normal,
-                footer: {
-                    name: locale.milestone.footer,
-                },
-            })
-                .setTitle(locale.milestone.title)
-                .setDescription(
-                    replace(locale.milestone.description, {
-                        milestone: milestone,
-                    }),
-                );
+            const milestones = [
+                7, 30, 60, 90, 100, 150, 200, 250, 300, 365, 500, 750, 1000,
+            ];
+            const milestone = milestones.find(
+                item => item === differences.primary.rewardScore,
+            );
 
-            await user.send({
-                embeds: [milestoneNotification],
-            });
+            if (
+                rewardsModule.milestones === true &&
+                milestone !== undefined
+            ) {
+                const milestoneNotification = new BetterEmbed({
+                    color: Constants.colors.normal,
+                    footer: {
+                        name: locale.milestone.footer,
+                    },
+                })
+                    .setTitle(locale.milestone.title)
+                    .setDescription(
+                        replace(locale.milestone.description, {
+                            milestone: milestone,
+                        }),
+                    );
+
+                await user.send({
+                    embeds: [milestoneNotification],
+                });
+            } else if (rewardsModule.claimNotification === true) {
+                const claimedNotification = new BetterEmbed({
+                    color: Constants.colors.normal,
+                    footer: {
+                        name: locale.claimedNotification.footer,
+                    },
+                })
+                    .setTitle(locale.claimedNotification.title)
+                    .setDescription(
+                        replace(locale.claimedNotification.description, {
+                            rewardScore: userAPIData.rewardScore ?? 0,
+                            totalDailyRewards: userAPIData.totalDailyRewards ?? 0,
+                        }),
+                    );
+
+                await user.send({
+                    embeds: [claimedNotification],
+                });
+            }
         }
     } catch (error) {
         await new ErrorHandler({

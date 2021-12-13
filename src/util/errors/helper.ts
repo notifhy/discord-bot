@@ -13,7 +13,7 @@ export class UserCommandErrorEmbed extends BetterEmbed {
         incidentID: string;
     }) {
         super({
-            color: Constants.color.error,
+            color: Constants.colors.error,
             footer: {
                 name: `Incident ${incidentID}`,
                 imageURL: interaction.user.displayAvatarURL({
@@ -34,7 +34,7 @@ export class UserCommandErrorEmbed extends BetterEmbed {
 export class ErrorStackEmbed extends BetterEmbed {
     constructor(error: unknown, incidentID: string) {
         super({
-            color: Constants.color.error,
+            color: Constants.colors.error,
             footer: {
                 name: `Incident ${incidentID}`,
             },
@@ -97,7 +97,7 @@ export async function replyToError({
             err,
         );
         const failedNotify = new BetterEmbed({
-            color: Constants.color.error,
+            color: Constants.colors.error,
             footer: {
                 name: incidentID,
             },

@@ -1,3 +1,5 @@
+import Constants from '../util/Constants';
+
 export class HypixelModuleInstance {
     abortThreshold: number;
     readonly baseURL: string;
@@ -8,7 +10,7 @@ export class HypixelModuleInstance {
 
     constructor() {
         this.abortThreshold = 2500;
-        this.baseURL = 'https://api.hypixel.net/%{type}%?uuid=%{uuid}%';
+        this.baseURL = `${Constants.urls.hypixel}%{type}%?uuid=%{uuid}%`;
         this.instanceUses = 0;
         this.keyPercentage = 0.2;
         this.maxAborts = 1;

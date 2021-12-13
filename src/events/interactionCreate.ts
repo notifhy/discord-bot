@@ -107,7 +107,7 @@ async function blockedConstraint(
     const locale = RegionLocales.locale(userData.language).constraints;
     if (blockedUsers.includes(interaction.user.id)) {
         const blockedEmbed = new BetterEmbed({
-            color: Constants.color.warning,
+            color: Constants.colors.warning,
             footer: interaction,
         })
             .setTitle(locale.blockedUsers.title)
@@ -129,7 +129,7 @@ async function devConstraint(
     const locale = RegionLocales.locale(userData.language).constraints;
     if (devMode === true && ownerID.includes(interaction.user.id) === false) {
         const devModeEmbed = new BetterEmbed({
-            color: Constants.color.warning,
+            color: Constants.colors.warning,
             footer: interaction,
         })
             .setTitle(locale.devMode.title)
@@ -154,7 +154,7 @@ async function ownerConstraint(
         ownerID.includes(interaction.user.id) === false
     ) {
         const ownerEmbed = new BetterEmbed({
-            color: Constants.color.warning,
+            color: Constants.colors.warning,
             footer: interaction,
         })
             .setTitle(locale.owner.title)
@@ -176,7 +176,7 @@ async function dmConstraint(
     const locale = RegionLocales.locale(userData.language).constraints;
     if (command.properties.noDM === true && !interaction.inGuild()) {
         const dmEmbed = new BetterEmbed({
-            color: Constants.color.warning,
+            color: Constants.colors.warning,
             footer: interaction,
         })
             .setTitle(locale.dm.title)
@@ -218,7 +218,7 @@ async function cooldownConstraint(
     if (expirationTime && Date.now() + 2500 < expirationTime) {
         const timeLeft = expirationTime - Date.now();
         const cooldownEmbed = new BetterEmbed({
-            color: Constants.color.warning,
+            color: Constants.colors.warning,
             footer: interaction,
         })
             .setTitle(locale.cooldown.embed1.title)
@@ -236,7 +236,7 @@ async function cooldownConstraint(
         await setTimeout(timeLeft);
 
         const cooldownOverEmbed = new BetterEmbed({
-            color: Constants.color.on,
+            color: Constants.colors.on,
             footer: interaction,
         })
             .setTitle(locale.cooldown.embed2.title)

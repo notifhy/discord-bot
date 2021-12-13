@@ -69,7 +69,7 @@ export const execute = async ({
         ) {
             const user = await client.users.fetch(userAPIData.discordID);
             const undefinedData = new BetterEmbed({
-                color: Constants.color.warning,
+                color: Constants.colors.warning,
                 footer: {
                     name: locale.missingData.footer,
                 },
@@ -92,7 +92,7 @@ export const execute = async ({
         ) {
             const user = await client.users.fetch(userAPIData.discordID);
             const undefinedData = new BetterEmbed({
-                color: Constants.color.on,
+                color: Constants.colors.on,
                 footer: {
                     name: locale.receivedData.footer,
                 },
@@ -121,7 +121,7 @@ export const execute = async ({
         if (missingPermissions.length !== 0) {
             const user = await client.users.fetch(userAPIData.discordID);
             const missingEmbed = new BetterEmbed({
-                color: Constants.color.warning,
+                color: Constants.colors.warning,
                 footer: {
                     name: locale.missingPermissions.footer,
                 },
@@ -158,7 +158,7 @@ export const execute = async ({
         if (friendModule.suppressNext === true) {
             const user = await client.users.fetch(userAPIData.discordID);
             const suppressedEmbed = new BetterEmbed({
-                color: Constants.color.normal,
+                color: Constants.colors.normal,
                 footer: {
                     name: locale.suppressNext.footer,
                 },
@@ -194,7 +194,7 @@ export const execute = async ({
                 differences.primary.lastLogin / Constants.ms.second,
             );
             const login = new MessageEmbed({
-                color: Constants.color.on,
+                color: Constants.colors.on,
             })
             .setDescription(replace(locale.login.description, {
                 discordID: userAPIData.discordID,
@@ -212,7 +212,7 @@ export const execute = async ({
                 differences.primary.lastLogout / Constants.ms.second,
             );
             const logout = new MessageEmbed({
-                color: Constants.color.off,
+                color: Constants.colors.off,
             })
             .setDescription(replace(locale.logout.description, {
                 discordID: userAPIData.discordID,

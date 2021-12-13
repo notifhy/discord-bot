@@ -6,10 +6,12 @@ import type {
 } from '../src/@types/locales';
 import * as en from './en-us.json';
 import * as fr from './fr-FR.json';
+import pirate from './pirate';
 
 const locales: Locales = {
     'en-us': en,
     'fr-FR': fr,
+    pirate: pirate,
 };
 
 export class RegionLocales {

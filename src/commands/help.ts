@@ -65,7 +65,7 @@ async function information(
 ) {
     const locale = RegionLocales.locale(userData.language).commands.help;
     const informationEmbed = new BetterEmbed({
-        color: '#7289DA',
+        color: Constants.colors.normal,
         footer: interaction,
     })
         .setTitle(locale.information.title)
@@ -82,13 +82,13 @@ async function specific(interaction: CommandInteraction, userData: UserData) {
     const command: ClientCommand | undefined =
         interaction.client.commands.get(commandArg);
     const commandSearchEmbed = new BetterEmbed({
-        color: '#7289DA',
+        color: Constants.colors.normal,
         footer: interaction,
     });
 
     if (command === undefined) {
         commandSearchEmbed
-            .setColor('#ff5555')
+            .setColor(Constants.colors.warning)
             .setTitle(locale.specific.invalid.title)
             .setDescription(
                 replace(locale.specific.invalid.description, {
@@ -150,7 +150,7 @@ async function commands(interaction: CommandInteraction, userData: UserData) {
         command => command.properties.ownerOnly === false,
     );
     const allCommandsEmbed = new BetterEmbed({
-        color: '#7289DA',
+        color: Constants.colors.normal,
         footer: interaction,
     })
         .setTitle(locale.all.title)

@@ -1,4 +1,5 @@
 import type { CommandExecute, CommandProperties } from '../@types/client';
+import type { Slothpixel } from '../@types/hypixel';
 import { BetterEmbed } from '../util/utility';
 import { CommandInteraction } from 'discord.js';
 import {
@@ -11,7 +12,6 @@ import {
 } from '../@types/database';
 import { RegionLocales } from '../../locales/localesHandler';
 import { Request } from '../util/Request';
-import type { Slothpixel } from '../@types/hypixel';
 import { SQLiteWrapper } from '../database';
 import Constants from '../util/Constants';
 import HTTPError from '../util/errors/HTTPError';
@@ -47,7 +47,7 @@ export const execute: CommandExecute = async (
     const inputUUID =
         /^[0-9a-f]{8}(-?)[0-9a-f]{4}(-?)[1-5][0-9a-f]{3}(-?)[89AB][0-9a-f]{3}(-?)[0-9a-f]{12}$/i;
     const inputUsername = /^[a-zA-Z0-9_-]{1,24}$/g;
-    const input: string = interaction.options.getString('player') as string;
+    const input = interaction.options.getString('player', true);
     const inputType = inputUUID.test(input) === true ? 'UUID' : 'username';
 
     if (
@@ -55,7 +55,7 @@ export const execute: CommandExecute = async (
         inputUsername.test(input) === false
     ) {
         const invalidEmbed = new BetterEmbed({
-            color: '#FF5555',
+            color: Constants.colors.warning,
             footer: interaction,
         })
             .setTitle(locale.invalid.title)
@@ -64,12 +64,12 @@ export const execute: CommandExecute = async (
         return;
     }
 
-    const url = `https://api.slothpixel.me/api/players/${input}`;
+    const url = `${Constants.urls.slothpixel}/players/${input}`;
     const response = await new Request({}).request(url);
 
     if (response.status === 404) {
         const notFoundEmbed = new BetterEmbed({
-            color: '#FF5555',
+            color: Constants.colors.warning,
             footer: interaction,
         })
             .setTitle(locale.notFound.title)
@@ -103,24 +103,24 @@ export const execute: CommandExecute = async (
 
     if (DISCORD === null) {
         const unlinkedEmbed = new BetterEmbed({
-            color: '#FF5555',
+            color: Constants.colors.warning,
             footer: interaction,
         })
             .setTitle(locale.unlinked.title)
             .setDescription(locale.unlinked.description)
-            .setImage('https://i.imgur.com/gGKd2s8.gif');
+            .setImage(Constants.urls.linkDiscord);
         await interaction.editReply({ embeds: [unlinkedEmbed] });
         return;
     }
 
-    if (DISCORD !== interaction.user.tag && DISCORD === 'o') {
+    if (DISCORD !== interaction.user.tag) {
         const mismatchedEmbed = new BetterEmbed({
-            color: '#FF5555',
+            color: Constants.colors.warning,
             footer: interaction,
         })
             .setTitle(locale.mismatched.title)
             .setDescription(locale.mismatched.description)
-            .setImage('https://i.imgur.com/gGKd2s8.gif');
+            .setImage(Constants.urls.linkDiscord);
         await interaction.editReply({ embeds: [mismatchedEmbed] });
         return;
     }
@@ -151,29 +151,25 @@ export const execute: CommandExecute = async (
             table: Constants.tables.friends,
             data: {
                 discordID: interaction.user.id,
-                channel: null,
-                suppressNext: false,
+                ...Constants.defaults.friends,
             },
         }),
         SQLiteWrapper.newUser<RewardsModule, RawRewardsModule>({
             table: Constants.tables.rewards,
             data: {
                 discordID: interaction.user.id,
-                alertTime: null,
-                lastNotified: 0,
-                milestones: true,
-                notificationInterval: null,
+                ...Constants.defaults.rewards,
             },
         }),
     ]);
 
-    const registerEmbed = new BetterEmbed({
-        color: Constants.color.normal,
+    const registeredEmbed = new BetterEmbed({
+        color: Constants.colors.normal,
         footer: interaction,
     })
         .setTitle(locale.title)
         .setDescription(locale.description)
         .addField(locale.field.name, locale.field.value);
 
-    await interaction.editReply({ embeds: [registerEmbed] });
+    await interaction.editReply({ embeds: [registeredEmbed] });
 };

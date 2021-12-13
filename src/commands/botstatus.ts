@@ -1,6 +1,7 @@
 import type { CommandExecute, CommandProperties } from '../@types/client';
 import { BetterEmbed } from '../util/utility';
 import { CommandInteraction } from 'discord.js';
+import Constants from '../util/Constants';
 
 export const properties: CommandProperties = {
     name: 'botstatus',
@@ -40,7 +41,7 @@ export const execute: CommandExecute = async (
     interaction: CommandInteraction,
 ): Promise<void> => {
     const responseEmbed = new BetterEmbed({
-        color: '#7289DA',
+        color: Constants.colors.normal,
         footer: interaction,
     });
 

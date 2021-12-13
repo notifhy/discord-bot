@@ -180,7 +180,7 @@
     "constraints": {
         "blockedUsers": {
             "title": "Blocked User",
-            "description": "You were blocked form using this bot. You cannot appeal this."
+            "description": "You were blocked from using this bot. You cannot appeal this."
         },
         "devMode": {
             "title": "Developer Mode",
@@ -235,6 +235,16 @@
             }
         },
         "rewards": {
+            "claimedNotification": {
+                "title": "Daily Reward Claimed",
+                "description": "You now have a daily streak of %{rewardScore}% with %{totalDailyRewards}% total daily rewards!",
+                "footer": "Notification"
+            },
+            "milestone": {
+                "title": "Congratulations",
+                "description": "🎉 You have reached a daily streak of %{milestone}%! To opt out of future milestone messages, uae /modules",
+                "footer": "Notification"
+            },
             "rewardReminder": {
                 "title": "Daily Reward Reminder",
                 "footer": "Notification",
@@ -252,11 +262,6 @@
                     "Arr! We sentence ye t' go claim yer daily reward!",
                     "This is a remindeth'r to claimeth thy daily reward as t appears thee haven't claim'd t!"
                 ]
-            },
-            "milestone": {
-                "title": "Congratulations",
-                "description": "🎉 You have reached a daily streak of %{milestone}%! To opt out of future milestone messages, uae /modules",
-                "footer": "Notification"
             }
         }
     }

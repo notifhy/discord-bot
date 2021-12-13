@@ -126,6 +126,51 @@ export function compare<Primary, Secondary extends Primary>(
     return { primary: primaryDifferences, secondary: secondaryDifferences };
 }
 
+type Modifier = (x: number | boolean | string) => number | boolean | string | void; //eslint-disable-line no-unused-vars
+
+type GenericObject = {
+    [index: string]:
+        | GenericObject
+        | (string | boolean | number)[]
+        | string
+        | boolean
+        | number
+}
+
+export function nestedIterate(inParam: GenericObject, modify: Modifier): unknown {
+    const modified = inParam;
+    recursive(modified);
+
+    function recursive(input: GenericObject) {
+        for (const index in input) {
+            if (Object.prototype.hasOwnProperty.call(input, index)) {
+                if (
+                    typeof input[index] === 'object' ||
+                    Array.isArray(input[index])
+                ) {
+                    recursive(input[index] as GenericObject);
+                } else if (
+                    typeof input[index] === 'string' ||
+                    typeof input[index] === 'number' ||
+                    typeof input[index] === 'boolean'
+                ) {
+                    input[index] = modify(input[index] as string | number | boolean) ?? input[index];
+                }
+            }
+        }
+    }
+
+    return modified;
+}
+
+//Taken from https://stackoverflow.com/a/1026087
+export function capitalizeFirstLetter(input: string, reverse?: boolean) {
+    if (reverse === true) {
+        return input.charAt(0).toLowerCase() + input.slice(1);
+    }
+    return input.charAt(0).toUpperCase() + input.slice(1);
+  }
+
 export function matchPermissions(
     required: PermissionResolvable,
     subject: Permissions,

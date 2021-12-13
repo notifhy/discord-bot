@@ -7,6 +7,7 @@ import { BetterEmbed } from '../util/utility';
 import { CommandInteraction, WebhookEditMessageOptions } from 'discord.js';
 import type { RawConfig } from '../@types/database';
 import { SQLiteWrapper } from '../database';
+import Constants from '../util/Constants';
 
 export const properties: CommandProperties = {
     name: 'config',
@@ -75,7 +76,7 @@ export const execute: CommandExecute = async (
             interaction.client.config.enabled = Boolean(config.enabled);
 
             const apiEmbed = new BetterEmbed({
-                color: '#7289DA',
+                color: Constants.colors.normal,
                 footer: interaction,
             })
                 .setTitle(`API State Updated!`)
@@ -99,7 +100,7 @@ export const execute: CommandExecute = async (
                 await guild.leave();
 
                 const guildEmbed = new BetterEmbed({
-                    color: '#7289DA',
+                    color: Constants.colors.normal,
                     footer: interaction,
                 })
                     .setTitle(`Guild Added`)
@@ -117,7 +118,7 @@ export const execute: CommandExecute = async (
                 config.blockedGuilds.splice(blockedGuildIndex, 1);
 
                 const guildEmbed = new BetterEmbed({
-                    color: '#7289DA',
+                    color: Constants.colors.normal,
                     footer: interaction,
                 })
                     .setTitle(`Guild Removed`)
@@ -139,7 +140,7 @@ export const execute: CommandExecute = async (
                 config.blockedUsers.push(user);
 
                 const userEmbed = new BetterEmbed({
-                    color: '#7289DA',
+                    color: Constants.colors.normal,
                     footer: interaction,
                 })
                     .setTitle(`User Added`)
@@ -150,7 +151,7 @@ export const execute: CommandExecute = async (
                 config.blockedUsers.splice(blockedUserIndex, 1);
 
                 const userEmbed = new BetterEmbed({
-                    color: '#7289DA',
+                    color: Constants.colors.normal,
                     footer: interaction,
                 })
                     .setTitle(`User Removed`)
@@ -167,7 +168,7 @@ export const execute: CommandExecute = async (
             interaction.client.config.devMode = !config.devMode;
 
             const devmodeEmbed = new BetterEmbed({
-                color: '#7289DA',
+                color: Constants.colors.normal,
                 footer: interaction,
             })
                 .setTitle(`Developer Mode Updated`)

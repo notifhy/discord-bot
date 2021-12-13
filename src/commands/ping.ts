@@ -2,6 +2,7 @@ import type { CommandExecute, CommandProperties } from '../@types/client';
 import { BetterEmbed } from '../util/utility';
 import { ColorResolvable, CommandInteraction, Message } from 'discord.js';
 import { RegionLocales } from '../../locales/localesHandler';
+import Constants from '../util/Constants';
 
 export const properties: CommandProperties = {
     name: 'ping',
@@ -24,7 +25,7 @@ export const execute: CommandExecute = async (
     const locale = RegionLocales.locale(userData.language).commands.ping;
     const { replace } = RegionLocales;
     const initialPingEmbed = new BetterEmbed({
-        color: '#7289DA',
+        color: Constants.colors.normal,
         footer: interaction,
     }).setTitle(locale.embed1.title);
 
@@ -37,21 +38,14 @@ export const execute: CommandExecute = async (
             : Date.parse(sentReply.timestamp)) - interaction.createdTimestamp;
     const embedColor: ColorResolvable =
         interaction.client.ws.ping < 80 && roundTripDelay < 160
-            ? '#00AA00'
+            ? Constants.colors.on
             : interaction.client.ws.ping < 100 && roundTripDelay < 250
-            ? '#FFAA00'
-            : '#FF5555';
+            ? Constants.colors.ok
+            : Constants.colors.warning;
     const pingEmbed = new BetterEmbed({
         color: embedColor,
         footer: interaction,
     })
-        .setColor(
-            interaction.client.ws.ping < 80 && roundTripDelay < 160
-                ? '#00AA00'
-                : interaction.client.ws.ping < 100 && roundTripDelay < 250
-                ? '#FFAA00'
-                : '#FF5555',
-        )
         .setTitle(locale.embed2.title)
         .setDescription(
             replace(locale.embed2.description, {

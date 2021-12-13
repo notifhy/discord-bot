@@ -95,7 +95,7 @@ export default class ErrorHandler {
 
     private errorEmbed() {
         return new BetterEmbed({
-            color: Constants.color.error,
+            color: Constants.colors.error,
             footer: {
                 name: this.incidentID,
             },
