@@ -45,7 +45,7 @@ export const execute: CommandExecute = async (
             .setTitle('Executed Eval!')
             .addFields([
                 { name: 'Input', value: `\`\`\`javascript\n${input}\n\`\`\`` },
-                { name: 'Output', value: `\`\`\`javascript\n${output.slice(0, Constants.limits.embedField)}\n\`\`\`` },
+                { name: 'Output', value: `\`\`\`javascript\n${output?.toString()?.slice(0, Constants.limits.embedField)}\n\`\`\`` },
                 { name: 'Type', value: `\`\`\`${typeof output}\`\`\`` },
                 { name: 'Time Taken', value: `\`\`\`${timeTaken} millisecond${timeTaken === 1 ? '' : 's'}\`\`\`` },
             ]);

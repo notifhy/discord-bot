@@ -1,3 +1,4 @@
+import { setTimeout } from 'node:timers';
 import fetch, { RequestInit, Response } from 'node-fetch';
 import AbortError from './errors/AbortError';
 

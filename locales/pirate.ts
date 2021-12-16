@@ -3,41 +3,47 @@ import { nestedIterate } from '../src/util/utility';
 import { Locale } from '../src/@types/locales';
 
 const translate = {
-    and: '\'n',
+    and: "'n",
     are: 'be',
     before: 'afore',
-    cannot: 'cannaht',
     find: 'come across',
     for: 'fer',
-    have: '\'ave',
+    have: "'ave",
     hello: 'ahoy',
-    however: 'howe\'ver',
+    however: "howe'ver",
     is: 'be',
-    just: 'jus\'',
-    not: 'nah',
+    just: "jus'",
     my: 'me',
-    of: 'o\'',
+    of: "o'",
     remove: 'scuttle',
-    to: 't\'',
+    to: "t'",
     want: 'wants',
-    with: 'wit\'',
+    with: "wit'",
     you: 'ye',
     your: 'yer',
 };
 
-export default nestedIterate(JSON.parse(JSON.stringify(en)), input => {
+export default nestedIterate(en, input => {
     if (typeof input === 'string') {
         return input
             .split(' ')
             .map(value => {
-                const translated = translate[value.match(/(\w+)/ig)?.[0]?.toLowerCase() as keyof typeof translate] ?? value;
+                const translated =
+                    translate[
+                        value
+                            .match(/(\w+)/gi)?.[0]
+                            ?.toLowerCase() as keyof typeof translate
+                    ] ?? value;
                 if (value.charAt(0).toUpperCase() === value.charAt(0)) {
-                    return translated.charAt(0).toUpperCase() + translated.slice(1);
+                    return (
+                        translated.charAt(0).toUpperCase() + translated.slice(1)
+                    );
                 }
                 return translated;
             })
             .join(' ')
-            .replaceAll(/ing\s/gi, 'in\'');
+            .replaceAll(/(\w+ing)/gi, "in'");
+            ///((ing[.!?; ])|(ing$))/gi
     }
 
     return input;

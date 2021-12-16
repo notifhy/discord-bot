@@ -12,7 +12,6 @@ import {
     ButtonInteraction,
     CommandInteraction,
     Constants,
-    Message,
     MessageActionRow,
     MessageButton,
     MessageComponentInteraction,
@@ -79,14 +78,14 @@ export const execute: CommandExecute = async (
             embeds: [confirmEmbed],
             components: [buttonRow],
         });
-        await interaction.channel?.messages.fetch(confirmation.id);
+
+        await interaction.client.channels.fetch(interaction.channelId);
 
         const componentFilter = (i: MessageComponentInteraction) =>
             interaction.user.id === i.user.id &&
             i.message.id === confirmation.id; //temp changes
 
-        const collector =
-            (confirmation as Message)!.createMessageComponentCollector({
+        const collector = interaction.channel!.createMessageComponentCollector({
                 filter: componentFilter,
                 idle: 30_000,
                 componentType: 'BUTTON',

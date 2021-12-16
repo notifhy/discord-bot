@@ -4,7 +4,7 @@
             "delete": {
                 "confirm": {
                     "title": "Confirmation",
-                    "description": "Are you absolutely sure that you want to delete all of your data? All data stored in the database will be wiped. This is irreversible. Please confirm with the buttons below. As a side note, you can view all of your data with /data view."
+                    "description": "Are you absolutely sure that you want to delete all of your data? All your data stored in the database will be wiped. This is irreversible. Please confirm with the buttons below. As a side note, you can view all of your data with /data view."
                 },
                 "deleted": {
                     "title": "Deleted",
@@ -12,7 +12,7 @@
                 },
                 "aborted": {
                     "title": "Aborted",
-                    "description": "Deletion Aborted."
+                    "description": "Deletion aborted."
                 },
                 "yesButton": "Yes",
                 "noButton": "No"
@@ -258,9 +258,7 @@
                     "It is time to go claim your daily reward!",
                     "d a i l y r e w a r d!",
                     "Your daily reward awaits collection!",
-                    "Your daily reward is waiting!",
-                    "Arr! We sentence ye t' go claim yer daily reward!",
-                    "This is a remindeth'r to claimeth thy daily reward as t appears thee haven't claim'd t!"
+                    "Your daily reward is waiting!"
                 ]
             }
         }

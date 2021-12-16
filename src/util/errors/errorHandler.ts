@@ -103,15 +103,15 @@ export default class ErrorHandler {
     }
 
     private getPriority() {
-        //Lower is higher priority
+        //A lower number means a higher priority
         if (this.error instanceof AbortError) {
             if (
                 (this.hypixelModuleManager?.instance?.resumeAfter ?? 0) <
                 Date.now()
             ) {
-                return 2;
+                return 4;
             }
-            return 4;
+            return 2;
         }
 
         if (this.error instanceof ConstraintError) {

@@ -126,19 +126,20 @@ export function compare<Primary, Secondary extends Primary>(
     return { primary: primaryDifferences, secondary: secondaryDifferences };
 }
 
-type Modifier = (x: number | boolean | string) => number | boolean | string | void; //eslint-disable-line no-unused-vars
+type AcceptedValue = string | boolean | number | Date;
 
 type GenericObject = {
-    [index: string]:
-        | GenericObject
-        | (string | boolean | number)[]
-        | string
-        | boolean
-        | number
-}
+    [index: string]: GenericObject | AcceptedValue[] | AcceptedValue;
+};
 
-export function nestedIterate(inParam: GenericObject, modify: Modifier): unknown {
-    const modified = inParam;
+type Modifier = (value: AcceptedValue) => unknown; //eslint-disable-line no-unused-vars
+
+export function nestedIterate(
+    inParam: GenericObject,
+    modify: Modifier,
+): unknown {
+    //@ts-expect-error typings not available yet for structuredClone on @types/node : PR? https://github.com/DefinitelyTyped/DefinitelyTyped/pull/57678
+    const modified = structuredClone(inParam);
     recursive(modified);
 
     function recursive(input: GenericObject) {
@@ -151,10 +152,15 @@ export function nestedIterate(inParam: GenericObject, modify: Modifier): unknown
                     recursive(input[index] as GenericObject);
                 } else if (
                     typeof input[index] === 'string' ||
+                    typeof input[index] === 'boolean' ||
                     typeof input[index] === 'number' ||
-                    typeof input[index] === 'boolean'
+                    typeof input[index] === 'bigint' ||
+                    input[index] instanceof Date
                 ) {
-                    input[index] = modify(input[index] as string | number | boolean) ?? input[index];
+                    input[index] =
+                        (modify(
+                            input[index] as AcceptedValue,
+                        ) as typeof input[typeof index]) ?? input[index];
                 }
             }
         }
@@ -162,14 +168,6 @@ export function nestedIterate(inParam: GenericObject, modify: Modifier): unknown
 
     return modified;
 }
-
-//Taken from https://stackoverflow.com/a/1026087
-export function capitalizeFirstLetter(input: string, reverse?: boolean) {
-    if (reverse === true) {
-        return input.charAt(0).toLowerCase() + input.slice(1);
-    }
-    return input.charAt(0).toUpperCase() + input.slice(1);
-  }
 
 export function matchPermissions(
     required: PermissionResolvable,
