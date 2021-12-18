@@ -38,10 +38,8 @@ export const execute: CommandExecute = async (
         const outputMaxLength = Boolean(
             output?.length >= Constants.limits.embedField,
         );
-        const evalEmbed = new BetterEmbed({
-            color: Constants.colors.normal,
-            footer: interaction,
-        })
+        const evalEmbed = new BetterEmbed(interaction)
+            .setColor(Constants.colors.normal)
             .setTitle('Executed Eval!')
             .addFields([
                 { name: 'Input', value: `\`\`\`javascript\n${input}\n\`\`\`` },
@@ -65,10 +63,8 @@ export const execute: CommandExecute = async (
         const outputMaxLength = Boolean(
             err.message.length >= Constants.limits.embedField,
         );
-        const evalEmbed = new BetterEmbed({
-            color: Constants.colors.warning,
-            footer: interaction,
-        })
+        const evalEmbed = new BetterEmbed(interaction)
+            .setColor(Constants.colors.warning)
             .setTitle('Failed Eval!')
             .addFields([
                 { name: 'Input', value: `\`${input}\`` },

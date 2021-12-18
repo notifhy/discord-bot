@@ -40,10 +40,8 @@ export const properties: CommandProperties = {
 export const execute: CommandExecute = async (
     interaction: CommandInteraction,
 ): Promise<void> => {
-    const responseEmbed = new BetterEmbed({
-        color: Constants.colors.normal,
-        footer: interaction,
-    });
+    const responseEmbed = new BetterEmbed(interaction)
+        .setColor(Constants.colors.normal);
 
     if (interaction.options.getSubcommand() === 'set') {
         const status = interaction.options.getString('string', true);

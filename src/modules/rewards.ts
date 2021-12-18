@@ -34,7 +34,7 @@ export const execute = async ({
             discordID: userAPIData.discordID,
             table: Constants.tables.rewards,
             allowUndefined: false,
-            columns: ['alertTime', 'lastNotified', 'notificationInterval'],
+            columns: ['alertTime', 'claimNotification', 'lastNotified', 'notificationInterval'],
         })) as RewardsModule;
 
         const userData = (await SQLiteWrapper.getUser<UserData, UserData>({
@@ -52,7 +52,7 @@ export const execute = async ({
         //Not ideal parsing a string but it should be fine
         const hypixelTime = new Date(
             new Date(date).toLocaleString('en-US', {
-                timeZone: 'EST5EDT',
+                timeZone: Constants.modules.rewards.hypixelTimezone,
             }),
         ).getTime();
 
@@ -68,9 +68,9 @@ export const execute = async ({
         const hasClaimed = nextResetTime - Constants.ms.day < lastClaimedReward;
 
         if (
-            hasClaimed === false &&
-            nextResetTime - alertOffset < Date.now() &&
-            rewardsModule.lastNotified + notificationInterval < Date.now()
+            hasClaimed === false && //Claimed status
+            nextResetTime - alertOffset < Date.now() && //Within user's notify time
+            rewardsModule.lastNotified + notificationInterval < Date.now() //Has it been x amount of time since the last notif
         ) {
             const user = await client.users.fetch(userAPIData.discordID);
             const description =
@@ -81,11 +81,9 @@ export const execute = async ({
                     )
                 ];
             const rewardNotification = new BetterEmbed({
-                color: Constants.colors.normal,
-                footer: {
-                    name: locale.rewardReminder.footer,
-                },
+                name: locale.rewardReminder.footer,
             })
+                .setColor(Constants.colors.normal)
                 .setTitle(locale.rewardReminder.title)
                 .setDescription(description);
 
@@ -110,9 +108,7 @@ export const execute = async ({
             rewardsModule.milestones === true
         ) {
             const user = await client.users.fetch(userAPIData.discordID);
-            const milestones = [
-                7, 30, 60, 90, 100, 150, 200, 250, 300, 365, 500, 750, 1000,
-            ];
+            const { milestones } = Constants.modules.rewards;
             const milestone = milestones.find(
                 item => item === differences.primary.rewardScore,
             );
@@ -122,11 +118,9 @@ export const execute = async ({
                 milestone !== undefined
             ) {
                 const milestoneNotification = new BetterEmbed({
-                    color: Constants.colors.normal,
-                    footer: {
-                        name: locale.milestone.footer,
-                    },
+                    name: locale.milestone.footer,
                 })
+                    .setColor(Constants.colors.normal)
                     .setTitle(locale.milestone.title)
                     .setDescription(
                         replace(locale.milestone.description, {
@@ -139,11 +133,9 @@ export const execute = async ({
                 });
             } else if (rewardsModule.claimNotification === true) {
                 const claimedNotification = new BetterEmbed({
-                    color: Constants.colors.normal,
-                    footer: {
-                        name: locale.claimedNotification.footer,
-                    },
+                    name: locale.claimedNotification.footer,
                 })
+                    .setColor(Constants.colors.normal)
                     .setTitle(locale.claimedNotification.title)
                     .setDescription(
                         replace(locale.claimedNotification.description, {

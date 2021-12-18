@@ -191,10 +191,8 @@ async function stats(interaction: CommandInteraction) {
     const { abort, rateLimit, error } = interaction.client.hypixelAPI.errors;
     const { instanceUses, resumeAfter, keyPercentage } =
         interaction.client.hypixelAPI.instance;
-    const statsEmbed = new BetterEmbed({
-        color: '#7289DA',
-        footer: interaction,
-    })
+    const statsEmbed = new BetterEmbed(interaction)
+        .setColor(Constants.colors.normal)
         .addField(
             'Enabled',
             interaction.client.config.enabled === true ? 'Yes' : 'No',
@@ -246,10 +244,8 @@ async function instance(
     interaction.client.hypixelAPI.instance[
         type as keyof Omit<HypixelModuleManager['instance'], 'baseURL'>
     ] = value;
-    const setEmbed = new BetterEmbed({
-        color: Constants.colors.normal,
-        footer: interaction,
-    })
+    const setEmbed = new BetterEmbed(interaction)
+        .setColor(Constants.colors.normal)
         .setTitle('Updated Value!')
         .setDescription(
             `<HypixelModuleManager>.instance.${type} is now ${value}.`,
@@ -269,10 +265,8 @@ async function set(
     interaction.client.hypixelAPI.errors[category][
         type as keyof HypixelModuleErrors[errorTypes]
     ] = value;
-    const setEmbed = new BetterEmbed({
-        color: Constants.colors.normal,
-        footer: interaction,
-    })
+    const setEmbed = new BetterEmbed(interaction)
+        .setColor(Constants.colors.normal)
         .setTitle('Updated Value!')
         .setDescription(
             `<HypixelModuleErrors>.${category}.${type} is now ${value}.`,
@@ -294,10 +288,8 @@ async function call(
     } else if (type === 'addRateLimit') {
         hypixelModuleErrors[type](value ?? false); //value is used for addRateLimit's isGlobal prop
     }
-    const callEmbed = new BetterEmbed({
-        color: Constants.colors.normal,
-        footer: interaction,
-    })
+    const callEmbed = new BetterEmbed(interaction)
+        .setColor(Constants.colors.normal)
         .setTitle('Executed!')
         .setDescription(`Executed <HypixelModuleErrors>.${type}`);
 

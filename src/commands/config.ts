@@ -75,10 +75,8 @@ export const execute: CommandExecute = async (
             config.enabled = !config.enabled;
             interaction.client.config.enabled = Boolean(config.enabled);
 
-            const apiEmbed = new BetterEmbed({
-                color: Constants.colors.normal,
-                footer: interaction,
-            })
+            const apiEmbed = new BetterEmbed(interaction)
+                .setColor(Constants.colors.normal)
                 .setTitle(`API State Updated!`)
                 .setDescription(
                     `API commands and functions are now ${
@@ -99,10 +97,8 @@ export const execute: CommandExecute = async (
                 const guild = await interaction.client.guilds.fetch(guildID);
                 await guild.leave();
 
-                const guildEmbed = new BetterEmbed({
-                    color: Constants.colors.normal,
-                    footer: interaction,
-                })
+                const guildEmbed = new BetterEmbed(interaction)
+                    .setColor(Constants.colors.normal)
                     .setTitle(`Guild Added`)
                     .setDescription(`${guildID} was added to the blacklist!`);
 
@@ -117,10 +113,8 @@ export const execute: CommandExecute = async (
             } else {
                 config.blockedGuilds.splice(blockedGuildIndex, 1);
 
-                const guildEmbed = new BetterEmbed({
-                    color: Constants.colors.normal,
-                    footer: interaction,
-                })
+                const guildEmbed = new BetterEmbed(interaction)
+                    .setColor(Constants.colors.normal)
                     .setTitle(`Guild Removed`)
                     .setDescription(
                         `${guildID} was removed from the blacklist!`,
@@ -139,10 +133,8 @@ export const execute: CommandExecute = async (
             if (blockedUserIndex === -1) {
                 config.blockedUsers.push(user);
 
-                const userEmbed = new BetterEmbed({
-                    color: Constants.colors.normal,
-                    footer: interaction,
-                })
+                const userEmbed = new BetterEmbed(interaction)
+                    .setColor(Constants.colors.normal)
                     .setTitle(`User Added`)
                     .setDescription(`${user} was added to the blacklist!`);
 
@@ -150,10 +142,8 @@ export const execute: CommandExecute = async (
             } else {
                 config.blockedUsers.splice(blockedUserIndex, 1);
 
-                const userEmbed = new BetterEmbed({
-                    color: Constants.colors.normal,
-                    footer: interaction,
-                })
+                const userEmbed = new BetterEmbed(interaction)
+                    .setColor(Constants.colors.normal)
                     .setTitle(`User Removed`)
                     .setDescription(`${user} was removed from the blacklist!`);
 
@@ -167,10 +157,8 @@ export const execute: CommandExecute = async (
             config.devMode = !config.devMode;
             interaction.client.config.devMode = !config.devMode;
 
-            const devmodeEmbed = new BetterEmbed({
-                color: Constants.colors.normal,
-                footer: interaction,
-            })
+            const devmodeEmbed = new BetterEmbed(interaction)
+                .setColor(Constants.colors.normal)
                 .setTitle(`Developer Mode Updated`)
                 .setDescription(
                     `Developer Mode is now ${

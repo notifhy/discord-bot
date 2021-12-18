@@ -1,6 +1,7 @@
 import type { Client } from 'discord.js';
 import type { EventProperties } from '../@types/client';
 import { SQLiteWrapper } from '../database';
+import Constants from '../util/Constants';
 import ErrorHandler from '../util/errors/ErrorHandler';
 
 export const properties: EventProperties = {
@@ -34,7 +35,7 @@ export const execute = async (client: Client) => {
         } catch (error) {
             await new ErrorHandler({ error: error }).systemNotify();
         }
-    }, 30_000);
+    }, Constants.ms.minute);
 
     await client.hypixelAPI.forever(); //eslint-disable-line no-await-in-loop
 };

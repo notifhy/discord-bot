@@ -1,44 +1,15 @@
-/* eslint-disable max-classes-per-file */
 import { BetterEmbed, formattedUnix, sendWebHook } from '../utility';
 import { CommandInteraction, MessageEmbed } from 'discord.js';
 import { fatalWebhook, ownerID } from '../../../config.json';
 import Constants from '../Constants';
 
-export class UserCommandErrorEmbed extends BetterEmbed {
-    constructor({
-        interaction,
-        incidentID,
-    }: {
-        interaction: CommandInteraction;
-        incidentID: string;
-    }) {
-        super({
-            color: Constants.colors.error,
-            footer: {
-                name: `Incident ${incidentID}`,
-                imageURL: interaction.user.displayAvatarURL({
-                    dynamic: true,
-                }),
-            },
-        });
-
-        super
-            .setTitle('Oops!')
-            .setDescription(
-                `An error occurred while executing the command /${interaction.commandName}! This error has been automatically forwarded for review. It should be resolved soon. Sorry.`,
-            );
-        super.addField('Interaction ID', interaction.id);
-    }
-}
-
 export class ErrorStackEmbed extends BetterEmbed {
     constructor(error: unknown, incidentID: string) {
         super({
-            color: Constants.colors.error,
-            footer: {
-                name: `Incident ${incidentID}`,
-            },
+            name: `Incident ${incidentID}`,
         });
+
+        super.setColor(Constants.colors.error);
 
         if (error instanceof Error && error.stack) {
             const nonStackLenth = `${error.name}: ${error.message}`.length;
@@ -97,11 +68,9 @@ export async function replyToError({
             err,
         );
         const failedNotify = new BetterEmbed({
-            color: Constants.colors.error,
-            footer: {
-                name: incidentID,
-            },
+            name: incidentID,
         })
+            .setColor(Constants.colors.error)
             .setTitle('Failed to Resolve')
             .setDescription(
                 'The error handling system failed to notify the user.',

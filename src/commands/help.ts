@@ -64,10 +64,8 @@ async function information(
     userData: UserData,
 ) {
     const locale = RegionLocales.locale(userData.language).commands.help;
-    const informationEmbed = new BetterEmbed({
-        color: Constants.colors.normal,
-        footer: interaction,
-    })
+    const informationEmbed = new BetterEmbed(interaction)
+        .setColor(Constants.colors.normal)
         .setTitle(locale.information.title)
         .setDescription(locale.information.description);
 
@@ -81,10 +79,8 @@ async function specific(interaction: CommandInteraction, userData: UserData) {
     ) as string;
     const command: ClientCommand | undefined =
         interaction.client.commands.get(commandArg);
-    const commandSearchEmbed = new BetterEmbed({
-        color: Constants.colors.normal,
-        footer: interaction,
-    });
+    const commandSearchEmbed = new BetterEmbed(interaction)
+        .setColor(Constants.colors.normal);
 
     if (command === undefined) {
         commandSearchEmbed
@@ -149,10 +145,8 @@ async function commands(interaction: CommandInteraction, userData: UserData) {
     const commandsCollection = interaction.client.commands.filter(
         command => command.properties.ownerOnly === false,
     );
-    const allCommandsEmbed = new BetterEmbed({
-        color: Constants.colors.normal,
-        footer: interaction,
-    })
+    const allCommandsEmbed = new BetterEmbed(interaction)
+        .setColor(Constants.colors.normal)
         .setTitle(locale.all.title)
         .setDescription(locale.all.description);
 

@@ -118,10 +118,8 @@ export const execute: CommandExecute = async (
         });
     }
 
-    const successEmbed = new BetterEmbed({
-        color: Constants.colors.normal,
-        footer: interaction,
-    })
+    const successEmbed = new BetterEmbed(interaction)
+        .setColor(Constants.colors.normal)
         .setTitle('Success!')
         .setDescription(
             JSON.stringify(commands, null, 2).slice(

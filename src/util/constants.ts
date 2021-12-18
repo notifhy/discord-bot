@@ -1,4 +1,4 @@
-import { ColorResolvable } from 'discord.js';
+import { ColorResolvable, Permissions } from 'discord.js';
 import { Tables } from '../@types/database';
 
 export default {
@@ -26,6 +26,21 @@ export default {
     limits: {
         embedDescription: 4096,
         embedField: 1024,
+    },
+    modules: {
+        friends: {
+            permissions: [
+                Permissions.FLAGS.EMBED_LINKS,
+                Permissions.FLAGS.SEND_MESSAGES,
+                Permissions.FLAGS.VIEW_CHANNEL,
+            ],
+        },
+        rewards: {
+            hypixelTimezone: 'EST5EDT',
+            milestones: [
+                7, 30, 60, 90, 100, 150, 200, 250, 300, 365, 500, 750, 1000,
+            ],
+        },
     },
     ms: {
         day: 86_400_000,

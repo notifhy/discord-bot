@@ -1,6 +1,5 @@
 import type { WebHookConfig } from '../@types/client';
 import {
-    ColorResolvable,
     CommandInteraction,
     MessageEmbed,
     PermissionResolvable,
@@ -27,16 +26,12 @@ export async function sendWebHook({
             embeds: embeds,
         });
     } catch (err) {
-        if (!(err instanceof Error)) {
-            return;
-        }
-
         console.error(
             `${formattedUnix({
                 date: true,
                 utc: true,
             })} | An error has occurred while sending an WebHook | ${
-                err.stack ?? err.message
+                (err as Error)?.stack ?? (err as Error)?.message
             }`,
         );
         if (suppressError === true) {
@@ -79,15 +74,8 @@ type Footer =
     | CommandInteraction;
 
 export class BetterEmbed extends MessageEmbed {
-    constructor({
-        color, //Remove color as it doesn't really fit
-        footer,
-    }: {
-        color: ColorResolvable;
-        footer?: Footer;
-    }) {
+    constructor(footer?: Footer) {
         super();
-        super.setColor(color);
         super.setTimestamp();
 
         if (footer instanceof CommandInteraction) {
@@ -99,7 +87,7 @@ export class BetterEmbed extends MessageEmbed {
         }
     }
 
-    addFieldStart(name: string, value: string, inline?: boolean | undefined) {
+    unshiftField(name: string, value: string, inline?: boolean | undefined) {
         super.setFields(
             { name: name, value: value, inline: inline },
             ...this.fields,
@@ -222,7 +210,7 @@ export function cleanLength(
         return null;
     }
 
-    let newMS = Math.floor(ms / 1000) * 1000;
+    let newMS = Math.floor(ms / Constants.ms.second) * Constants.ms.second;
 
     if (rejectZero ? newMS <= 0 : newMS < 0) {
         return null;

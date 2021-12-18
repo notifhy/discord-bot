@@ -24,10 +24,9 @@ export const execute: CommandExecute = async (
 ): Promise<void> => {
     const locale = RegionLocales.locale(userData.language).commands.ping;
     const { replace } = RegionLocales;
-    const initialPingEmbed = new BetterEmbed({
-        color: Constants.colors.normal,
-        footer: interaction,
-    }).setTitle(locale.embed1.title);
+    const initialPingEmbed = new BetterEmbed(interaction)
+        .setColor(Constants.colors.normal)
+        .setTitle(locale.embed1.title);
 
     const sentReply = await interaction.editReply({
         embeds: [initialPingEmbed],
@@ -42,10 +41,8 @@ export const execute: CommandExecute = async (
             : interaction.client.ws.ping < 100 && roundTripDelay < 250
             ? Constants.colors.ok
             : Constants.colors.warning;
-    const pingEmbed = new BetterEmbed({
-        color: embedColor,
-        footer: interaction,
-    })
+    const pingEmbed = new BetterEmbed(interaction)
+        .setColor(embedColor)
         .setTitle(locale.embed2.title)
         .setDescription(
             replace(locale.embed2.description, {

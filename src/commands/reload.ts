@@ -85,10 +85,8 @@ export const execute: CommandExecute = async (
 
             await Promise.all(promises);
 
-            const reloadedEmbed = new BetterEmbed({
-                color: Constants.colors.normal,
-                footer: interaction,
-            })
+            const reloadedEmbed = new BetterEmbed(interaction)
+                .setColor(Constants.colors.normal)
                 .setTitle(`Reloaded Everything`)
                 .setDescription(
                     `All imports have been reloaded! This action took ${
@@ -113,10 +111,8 @@ export const execute: CommandExecute = async (
             const selected = type.get(item);
 
             if (selected === undefined) {
-                const undefinedSelected = new BetterEmbed({
-                    color: Constants.colors.warning,
-                    footer: interaction,
-                })
+                const undefinedSelected = new BetterEmbed(interaction)
+                    .setColor(Constants.colors.warning)
                     .setTitle('Unknown Item')
                     .setDescription(
                         `There is no item with the structure ${typeName}.${item}!`,
@@ -134,10 +130,8 @@ export const execute: CommandExecute = async (
                 moduleRefresh(interaction, selected.properties.name);
             }
 
-            const reloadedEmbed = new BetterEmbed({
-                color: Constants.colors.normal,
-                footer: interaction,
-            })
+            const reloadedEmbed = new BetterEmbed(interaction)
+                .setColor(Constants.colors.normal)
                 .setTitle(`Reloaded`)
                 .setDescription(
                     `${typeName}.${item} was successfully reloaded! This action took ${

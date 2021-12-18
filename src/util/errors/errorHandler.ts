@@ -24,7 +24,7 @@ import HTTPError from './HTTPError';
 import ModuleError from './ModuleError';
 import RateLimitError from './RateLimitError';
 
-export default class ErrorHandler {
+export default class ErrorHandler { //Reconsider
     error: Error | unknown;
     interaction?: Interaction;
     hypixelModuleManager?: HypixelModuleManager;
@@ -95,11 +95,9 @@ export default class ErrorHandler {
 
     private errorEmbed() {
         return new BetterEmbed({
-            color: Constants.colors.error,
-            footer: {
-                name: this.incidentID,
-            },
-        });
+            name: this.incidentID,
+        })
+        .setColor(Constants.colors.error);
     }
 
     private getPriority() {
@@ -261,7 +259,9 @@ export default class ErrorHandler {
                 ]);
 
             if (this.error instanceof AbortError) {
-                embed.setDescription('A timeout has been applied.');
+                if (timeout !== null) {
+                    embed.setDescription('A timeout has been applied.');
+                }
             } else if (this.error instanceof RateLimitError) {
                 embed.setDescription(
                     'A timeout has been applied. Dedicated queries have been lowered by 5%.',

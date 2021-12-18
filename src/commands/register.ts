@@ -54,10 +54,8 @@ export const execute: CommandExecute = async (
         inputUUID.test(input) === false &&
         inputUsername.test(input) === false
     ) {
-        const invalidEmbed = new BetterEmbed({
-            color: Constants.colors.warning,
-            footer: interaction,
-        })
+        const invalidEmbed = new BetterEmbed(interaction)
+            .setColor(Constants.colors.normal)
             .setTitle(locale.invalid.title)
             .setDescription(locale.invalid.description);
         await interaction.editReply({ embeds: [invalidEmbed] });
@@ -68,10 +66,8 @@ export const execute: CommandExecute = async (
     const response = await new Request({}).request(url);
 
     if (response.status === 404) {
-        const notFoundEmbed = new BetterEmbed({
-            color: Constants.colors.warning,
-            footer: interaction,
-        })
+        const notFoundEmbed = new BetterEmbed(interaction)
+            .setColor(Constants.colors.warning)
             .setTitle(locale.notFound.title)
             .setDescription(
                 replace(locale.notFound.description, {
@@ -102,10 +98,8 @@ export const execute: CommandExecute = async (
     } = (await response.json()) as Slothpixel;
 
     if (DISCORD === null) {
-        const unlinkedEmbed = new BetterEmbed({
-            color: Constants.colors.warning,
-            footer: interaction,
-        })
+        const unlinkedEmbed = new BetterEmbed(interaction)
+            .setColor(Constants.colors.warning)
             .setTitle(locale.unlinked.title)
             .setDescription(locale.unlinked.description)
             .setImage(Constants.urls.linkDiscord);
@@ -114,10 +108,8 @@ export const execute: CommandExecute = async (
     }
 
     if (DISCORD !== interaction.user.tag) {
-        const mismatchedEmbed = new BetterEmbed({
-            color: Constants.colors.warning,
-            footer: interaction,
-        })
+        const mismatchedEmbed = new BetterEmbed(interaction)
+            .setColor(Constants.colors.warning)
             .setTitle(locale.mismatched.title)
             .setDescription(locale.mismatched.description)
             .setImage(Constants.urls.linkDiscord);
@@ -163,10 +155,8 @@ export const execute: CommandExecute = async (
         }),
     ]);
 
-    const registeredEmbed = new BetterEmbed({
-        color: Constants.colors.normal,
-        footer: interaction,
-    })
+    const registeredEmbed = new BetterEmbed(interaction)
+        .setColor(Constants.colors.normal)
         .setTitle(locale.title)
         .setDescription(locale.description)
         .addField(locale.field.name, locale.field.value);

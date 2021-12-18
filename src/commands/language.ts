@@ -51,10 +51,8 @@ export const execute: CommandExecute = async (
     const { replace } = RegionLocales;
 
     if (language === userData.language) {
-        const alreadySetEmbed = new BetterEmbed({
-            color: Constants.colors.warning,
-            footer: interaction,
-        })
+        const alreadySetEmbed = new BetterEmbed(interaction)
+            .setColor(Constants.colors.warning)
             .setTitle(locale.alreadySet.title)
             .setDescription(
                 replace(locale.alreadySet.description, {
@@ -73,10 +71,8 @@ export const execute: CommandExecute = async (
         },
     });
 
-    const languageEmbed = new BetterEmbed({
-        color: Constants.colors.normal,
-        footer: interaction,
-    })
+    const languageEmbed = new BetterEmbed(interaction)
+        .setColor(Constants.colors.normal)
         .setTitle(locale.title)
         .setDescription(
             replace(locale.description, {

@@ -106,10 +106,8 @@ async function blockedConstraint(
 ) {
     const locale = RegionLocales.locale(userData.language).constraints;
     if (blockedUsers.includes(interaction.user.id)) {
-        const blockedEmbed = new BetterEmbed({
-            color: Constants.colors.warning,
-            footer: interaction,
-        })
+        const blockedEmbed = new BetterEmbed(interaction)
+            .setColor(Constants.colors.warning)
             .setTitle(locale.blockedUsers.title)
             .setDescription(locale.blockedUsers.description);
 
@@ -128,10 +126,8 @@ async function devConstraint(
 ) {
     const locale = RegionLocales.locale(userData.language).constraints;
     if (devMode === true && ownerID.includes(interaction.user.id) === false) {
-        const devModeEmbed = new BetterEmbed({
-            color: Constants.colors.warning,
-            footer: interaction,
-        })
+        const devModeEmbed = new BetterEmbed(interaction)
+            .setColor(Constants.colors.warning)
             .setTitle(locale.devMode.title)
             .setDescription(locale.devMode.description);
 
@@ -153,10 +149,8 @@ async function ownerConstraint(
         command.properties.ownerOnly === true &&
         ownerID.includes(interaction.user.id) === false
     ) {
-        const ownerEmbed = new BetterEmbed({
-            color: Constants.colors.warning,
-            footer: interaction,
-        })
+        const ownerEmbed = new BetterEmbed(interaction)
+            .setColor(Constants.colors.warning)
             .setTitle(locale.owner.title)
             .setDescription(locale.owner.description);
 
@@ -175,10 +169,8 @@ async function dmConstraint(
 ) {
     const locale = RegionLocales.locale(userData.language).constraints;
     if (command.properties.noDM === true && !interaction.inGuild()) {
-        const dmEmbed = new BetterEmbed({
-            color: Constants.colors.warning,
-            footer: interaction,
-        })
+        const dmEmbed = new BetterEmbed(interaction)
+            .setColor(Constants.colors.warning)
             .setTitle(locale.dm.title)
             .setDescription(locale.dm.description);
 
@@ -217,10 +209,8 @@ async function cooldownConstraint(
     //Adding 2500 milliseconds forces a minimum cooldown time of 2.5 seconds
     if (expirationTime && Date.now() + 2500 < expirationTime) {
         const timeLeft = expirationTime - Date.now();
-        const cooldownEmbed = new BetterEmbed({
-            color: Constants.colors.warning,
-            footer: interaction,
-        })
+        const cooldownEmbed = new BetterEmbed(interaction)
+            .setColor(Constants.colors.warning)
             .setTitle(locale.cooldown.embed1.title)
             .setDescription(
                 replace(locale.cooldown.embed1.description, {
@@ -235,10 +225,8 @@ async function cooldownConstraint(
 
         await setTimeout(timeLeft);
 
-        const cooldownOverEmbed = new BetterEmbed({
-            color: Constants.colors.on,
-            footer: interaction,
-        })
+        const cooldownOverEmbed = new BetterEmbed(interaction)
+            .setColor(Constants.colors.on)
             .setTitle(locale.cooldown.embed2.title)
             .setDescription(
                 replace(locale.cooldown.embed2.description, {

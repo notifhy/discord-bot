@@ -7,9 +7,10 @@ export class HypixelModuleErrors {
 
     abort: {
         baseTimeout: number;
-        timeout: number;
-        resetTimeout: number | undefined;
         lastMinute: number;
+        resetTimeout: number | undefined;
+        timeout: number;
+        total: number;
     };
 
     rateLimit: { isGlobal: boolean } & typeof this.abort;
@@ -21,24 +22,27 @@ export class HypixelModuleErrors {
 
         this.abort = {
             baseTimeout: 0, //The timeout each type starts out with
-            timeout: 0, //The current timeout of each type; this is to be added onto <Instance>.resumeAfter
-            resetTimeout: undefined, //A setTimeout to reset the timeout length
             lastMinute: 0, //Each type's incident count for the last minute
+            resetTimeout: undefined, //A setTimeout to reset the timeout length
+            timeout: 0, //The current timeout of each type; this is to be added onto <Instance>.resumeAfter
+            total: 0, //Total incidents for this session
         };
 
         this.rateLimit = {
             baseTimeout: Constants.ms.minute,
+            lastMinute: 0,
             timeout: Constants.ms.minute,
             resetTimeout: undefined,
-            lastMinute: 0,
+            total: 0,
             isGlobal: false,
         };
 
         this.error = {
             baseTimeout: Constants.ms.minute / 2,
+            lastMinute: 0,
             timeout: Constants.ms.minute / 2,
             resetTimeout: undefined,
-            lastMinute: 0,
+            total: 0,
         };
     }
 
@@ -71,6 +75,8 @@ export class HypixelModuleErrors {
         const newTimeout = this[type].timeout * 2 || Constants.ms.minute / 2;
 
         this[type].timeout = newTimeout; //Setting new timeout
+
+        this[type].total += 1;
 
         this[type].lastMinute += 1; //Adding a type to the count
         setTimeout(() => {

@@ -58,10 +58,8 @@ export const execute: CommandExecute = async (
     const subCommand = interaction.options.getSubcommand();
     const locale = RegionLocales.locale(userData.language).commands.modules
         .friend;
-    const mainEmbed = new BetterEmbed({
-        color: Constants.colors.normal,
-        footer: interaction,
-    })
+    const mainEmbed = new BetterEmbed(interaction)
+        .setColor(Constants.colors.normal)
         .setTitle(locale.title)
         .setDescription(locale.description);
 
@@ -173,10 +171,8 @@ export const execute: CommandExecute = async (
                     //no default
                 }
 
-                const mainMenuUpdateEmbed = new BetterEmbed({
-                    color: Constants.colors.normal,
-                    footer: interaction,
-                })
+                const mainMenuUpdateEmbed = new BetterEmbed(interaction)
+                    .setColor(Constants.colors.normal)
                     .setTitle(locale.title)
                     .setDescription(locale.description) //Add explanation for unable to toggle
                     .addField(

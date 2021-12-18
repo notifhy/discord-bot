@@ -10,7 +10,6 @@ import {
     Client,
     GuildMember,
     MessageEmbed,
-    Permissions,
     TextChannel,
 } from 'discord.js';
 import { RegionLocales } from '../../locales/localesHandler';
@@ -69,11 +68,9 @@ export const execute = async ({
         ) {
             const user = await client.users.fetch(userAPIData.discordID);
             const undefinedData = new BetterEmbed({
-                color: Constants.colors.warning,
-                footer: {
-                    name: locale.missingData.footer,
-                },
+                name: locale.missingData.footer,
             })
+                .setColor(Constants.colors.warning)
                 .setTitle(locale.missingData.title)
                 .setDescription(locale.missingData.description);
 
@@ -92,11 +89,9 @@ export const execute = async ({
         ) {
             const user = await client.users.fetch(userAPIData.discordID);
             const undefinedData = new BetterEmbed({
-                color: Constants.colors.on,
-                footer: {
-                    name: locale.receivedData.footer,
-                },
+                name: locale.receivedData.footer,
             })
+                .setColor(Constants.colors.on)
                 .setTitle(locale.receivedData.title)
                 .setDescription(locale.receivedData.description);
 
@@ -112,20 +107,14 @@ export const execute = async ({
         )) as TextChannel;
         const missingPermissions = channel
             .permissionsFor(channel.guild.me as GuildMember)
-            .missing([
-                Permissions.FLAGS.EMBED_LINKS,
-                Permissions.FLAGS.SEND_MESSAGES,
-                Permissions.FLAGS.VIEW_CHANNEL,
-            ]);
+            .missing(Constants.modules.friends.permissions);
 
         if (missingPermissions.length !== 0) {
             const user = await client.users.fetch(userAPIData.discordID);
             const missingEmbed = new BetterEmbed({
-                color: Constants.colors.warning,
-                footer: {
-                    name: locale.missingPermissions.footer,
-                },
+                name: locale.missingPermissions.footer,
             })
+                .setColor(Constants.colors.warning)
                 .setTitle(locale.missingPermissions.title)
                 .setDescription(replace(locale.missingPermissions.description, {
                     channelID: friendModule.channel!,
@@ -158,11 +147,9 @@ export const execute = async ({
         if (friendModule.suppressNext === true) {
             const user = await client.users.fetch(userAPIData.discordID);
             const suppressedEmbed = new BetterEmbed({
-                color: Constants.colors.normal,
-                footer: {
-                    name: locale.suppressNext.footer,
-                },
+                name: locale.suppressNext.footer,
             })
+                .setColor(Constants.colors.normal)
                 .setTitle(locale.suppressNext.title)
                 .setDescription(locale.suppressNext.description);
 
@@ -246,7 +233,7 @@ export const execute = async ({
     } catch (error) {
         await new ErrorHandler({
             error: new ModuleError({
-                message: (error as Error).message,
+                message: (error as Error)?.message,
                 module: properties.name,
                 user: userAPIData,
             }),
