@@ -18,6 +18,7 @@ import { RegionLocales } from '../../locales/localesHandler';
 import { SQLiteWrapper } from '../database';
 import { ToggleButtons } from '../util/ToggleButtons';
 import Constants from '../util/Constants';
+import { Locale } from '../@types/locales';
 
 export const properties: CommandProperties = {
     name: 'modules',
@@ -55,9 +56,8 @@ export const execute: CommandExecute = async (
     interaction: CommandInteraction,
     { userData },
 ): Promise<void> => {
-    const subCommand = interaction.options.getSubcommand();
-    const locale = RegionLocales.locale(userData.language).commands.modules
-        .friend;
+    const subCommand = interaction.options.getSubcommand(true);
+    const locale = RegionLocales.locale(userData.language).commands.modules[subCommand as keyof Locale['commands']['modules']];
     const mainEmbed = new BetterEmbed(interaction)
         .setColor(Constants.colors.normal)
         .setTitle(locale.title)

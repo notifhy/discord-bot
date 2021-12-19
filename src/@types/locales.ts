@@ -78,7 +78,7 @@ export interface ModulesCommand {
             } & AssetModule;
         };
     };
-    friend: {
+    friends: {
         title: string;
         description: string;
         menuPlaceholder: string;

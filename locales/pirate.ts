@@ -42,6 +42,7 @@ export default nestedIterate(en, input => {
                 return translated;
             })
             .join(' ')
+
             .replaceAll(/(\w+ing)/gi, "in'");
             ///((ing[.!?; ])|(ing$))/gi
     }

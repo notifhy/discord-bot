@@ -80,7 +80,7 @@
                     }
                 }
             },
-            "friend": {
+            "friends": {
                 "title": "Friend Module",
                 "description": "placeholder",
                 "menuPlaceholder": "Friend Module Settings",

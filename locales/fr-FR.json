@@ -80,7 +80,7 @@
                     }
                 }
             },
-            "friend": {
+            "friends": {
                 "title": "Friend Module",
                 "description": "placeholder",
                 "menuPlaceholder": "Select a module",
@@ -141,7 +141,7 @@
                     "longDescription": "Ce module est le remplacement de HyGuard. Il comporte la plupart des mêmes contrôles, bien qu'il ait été légèrement simplifié pour une meilleure expérience utilisateur.",
                     "value": "defender"
                 },
-                "friend": {
+                "friends": {
                     "label": "Notificateur d'amis",
                     "description": "Recevez une notification dès qu'un ami se connecte ou se déconnecte.",
                     "longDescription": "Ce module vous enverra une notification lorsque vos amis se connectent ou se déconnectent. Cette notification peut être envoyée dans la chaîne ou par DM. Vous ne pouvez recevoir des notifications que pour les personnes qui vous ont approuvé sur ce bot pour des raisons de confidentialité.",
