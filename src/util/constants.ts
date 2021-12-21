@@ -26,6 +26,7 @@ export default {
     limits: {
         embedDescription: 4096,
         embedField: 1024,
+        userAPIDataHistory: 500,
     },
     modules: {
         friends: {

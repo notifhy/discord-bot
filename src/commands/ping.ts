@@ -23,7 +23,8 @@ export const execute: CommandExecute = async (
     { userData },
 ): Promise<void> => {
     const locale = RegionLocales.locale(userData.language).commands.ping;
-    const { replace } = RegionLocales;
+    const replace = RegionLocales.replace;
+
     const initialPingEmbed = new BetterEmbed(interaction)
         .setColor(Constants.colors.normal)
         .setTitle(locale.embed1.title);

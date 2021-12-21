@@ -1,16 +1,20 @@
 import { Constants, MessageActionRow, MessageButton } from 'discord.js';
 
+type ButtonLocale = {
+    enable: string;
+    disable: string;
+}
+
+
 export class ToggleButtons extends MessageActionRow {
     constructor({
         allDisabled,
         enabled,
-        enabledLabel,
-        disabledLabel,
+        buttonLocale,
     }: {
         allDisabled?: boolean;
         enabled: boolean;
-        enabledLabel: string;
-        disabledLabel: string;
+        buttonLocale: ButtonLocale;
     }) {
         super();
         const enable = new MessageButton()
@@ -20,7 +24,7 @@ export class ToggleButtons extends MessageActionRow {
                     ? Constants.MessageButtonStyles.SECONDARY
                     : Constants.MessageButtonStyles.SUCCESS,
             )
-            .setLabel(enabledLabel)
+            .setLabel(buttonLocale.enable)
             .setDisabled(allDisabled || enabled);
 
         const disable = new MessageButton()
@@ -30,7 +34,7 @@ export class ToggleButtons extends MessageActionRow {
                     ? Constants.MessageButtonStyles.SECONDARY
                     : Constants.MessageButtonStyles.DANGER,
             )
-            .setLabel(disabledLabel)
+            .setLabel(buttonLocale.disable)
             .setDisabled(allDisabled || enabled === false); //Flips boolean
 
         super.setComponents([enable, disable]);

@@ -1,10 +1,9 @@
 import type { EventProperties, ClientCommand } from '../@types/client';
 import type { RawUserData, UserAPIData, UserData } from '../@types/database';
-import { BetterEmbed, cleanRound, formattedUnix } from '../util/utility';
+import { BetterEmbed, cleanRound, formattedUnix, slashCommandResolver } from '../util/utility';
 import { Collection, CommandInteraction } from 'discord.js';
 import { ownerID } from '../../config.json';
 import { RegionLocales } from '../../locales/localesHandler';
-import { slashCommandOptionString } from '../util/structures';
 import { setTimeout } from 'node:timers/promises';
 import { SQLiteWrapper } from '../database';
 import Constants from '../util/Constants';
@@ -27,18 +26,13 @@ export const execute = async (
                 return;
             }
 
-            const commandData = [
-                `/${interaction.commandName}`,
-                ...slashCommandOptionString(interaction),
-            ].join(' ');
-
             console.log(
                 `${formattedUnix({
                     date: true,
                     utc: true,
                 })} | Slash Command from ${interaction.user.tag} (${
                     interaction.user.id
-                }) | ${commandData}`,
+                }) | ${slashCommandResolver(interaction)}`,
             );
 
             await interaction.deferReply({
@@ -58,7 +52,7 @@ export const execute = async (
                 allowUndefined: true,
             })) as UserAPIData | undefined;
 
-            let userData = (await SQLiteWrapper.getUser<RawUserData, UserData>({
+            let userData = (await SQLiteWrapper.getUser<RawUserData, UserData>({ //Remove after Discord's Locale update :)
                 discordID: interaction.user.id,
                 table: Constants.tables.users,
                 columns: ['*'],

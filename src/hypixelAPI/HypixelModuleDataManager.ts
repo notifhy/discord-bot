@@ -3,6 +3,7 @@ import type { Differences } from '../@types/modules';
 import type { History, RawUserAPIData, UserAPIData } from '../@types/database';
 import { compare } from '../util/utility';
 import { SQLiteWrapper } from '../database';
+import Constants from '../util/Constants';
 
 export class HypixelModuleDataManager {
     oldUserAPIData: UserAPIData;
@@ -47,13 +48,13 @@ export class HypixelModuleDataManager {
             };
             const { history }: { history: History[] } = this.oldUserAPIData;
             history.unshift(historyUpdate);
-            history.splice(250);
+            history.splice(Constants.limits.userAPIDataHistory);
             Object.assign(userAPIDataUpdate, { history: history });
         }
 
         await SQLiteWrapper.updateUser<Partial<UserAPIData>, RawUserAPIData>({
             discordID: this.oldUserAPIData.discordID,
-            table: 'api',
+            table: Constants.tables.api,
             data: userAPIDataUpdate,
         });
     }

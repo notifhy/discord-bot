@@ -1,4 +1,4 @@
-import type { AssetModule } from './modules';
+import type { MessageSelectMenuOptions } from 'discord.js';
 
 /*
 Misc. Interfaces
@@ -21,14 +21,21 @@ export interface ModuleButtons {
 /*
 General Interfaces
 */
+export interface BaseEmbed {
+    title: string;
+    description: string;
+}
+
 export interface Field {
     name: string;
     value: string;
 }
 
-export interface BaseEmbed {
-    title: string;
+export interface ModuleData {
+    label: string;
     description: string;
+    longDescription: string;
+    value: string;
 }
 
 /*
@@ -71,35 +78,60 @@ export interface ModulesCommand {
         title: string;
         description: string;
         menuPlaceholder: string;
+        missingConfigField: {
+            name: string;
+            value: string;
+        };
         menu: {
             toggle: {
-                enableButton: string;
-                disableButton: string;
-            } & AssetModule;
+                button: {
+                    enable: string;
+                    disable: string;
+                }
+            } & ModuleData;
         };
     };
     friends: {
         title: string;
         description: string;
         menuPlaceholder: string;
+        missingConfigField: {
+            name: string;
+            value: string;
+        };
         menu: {
             toggle: {
-                enableButton: string;
-                disableButton: string;
-            } & AssetModule;
-            channel: AssetModule;
+                button: {
+                    enable: string;
+                    disable: string;
+                }
+            } & ModuleData;
+            channel: {
+                select: MessageSelectMenuOptions
+            } & ModuleData;
         };
     };
     rewards: {
         title: string;
         description: string;
         menuPlaceholder: string;
+        missingConfigField: {
+            name: string;
+            value: string;
+        };
         menu: {
             toggle: {
-                enableButton: string;
-                disableButton: string;
-            } & AssetModule;
-            grace: AssetModule;
+                button: {
+                    enable: string;
+                    disable: string;
+                }
+            } & ModuleData;
+            alertTime: {
+                select: MessageSelectMenuOptions
+            } & ModuleData;
+            notificationInterval: {
+                select: MessageSelectMenuOptions
+            } & ModuleData;
         };
     };
 }

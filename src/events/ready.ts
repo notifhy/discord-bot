@@ -12,7 +12,11 @@ export const properties: EventProperties = {
 export const execute = async (client: Client) => {
     console.log(`Logged in as ${client?.user?.tag}!`);
 
-    setInterval(async () => {
+    setActivity();
+
+    setInterval(setActivity, Constants.ms.hour);
+
+    async function setActivity() {
         try {
             let label: string;
             if (client.customStatus) {
@@ -25,7 +29,7 @@ export const execute = async (client: Client) => {
                     })
                 ).length;
 
-                label = `${users} accounts | /register /help | ${client.guilds.cache.size} servers`; //Move to locales etc?
+                label = `${users} accounts | /register /help | ${client.guilds.cache.size} servers`; //Move to constants?
             }
 
             client.user?.setActivity({
@@ -35,7 +39,7 @@ export const execute = async (client: Client) => {
         } catch (error) {
             await new ErrorHandler({ error: error }).systemNotify();
         }
-    }, Constants.ms.minute);
+    }
 
     await client.hypixelAPI.forever(); //eslint-disable-line no-await-in-loop
 };

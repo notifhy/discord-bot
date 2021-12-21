@@ -34,7 +34,7 @@ export const execute = async ({
             discordID: userAPIData.discordID,
             table: Constants.tables.rewards,
             allowUndefined: false,
-            columns: ['alertTime', 'claimNotification', 'lastNotified', 'notificationInterval'],
+            columns: ['alertTime', 'claimNotification', 'lastNotified', 'milestones', 'notificationInterval'],
         })) as RewardsModule;
 
         const userData = (await SQLiteWrapper.getUser<UserData, UserData>({
@@ -103,12 +103,15 @@ export const execute = async ({
             });
         }
 
-        if ( //Refactor after BetterEmbed is fixed and updated with a new method
-            differences.primary.rewardScore !== undefined ||
+        if (differences.primary.rewardScore === undefined) {
+            return;
+        }
+
+        if (
             rewardsModule.milestones === true
         ) {
             const user = await client.users.fetch(userAPIData.discordID);
-            const { milestones } = Constants.modules.rewards;
+            const milestones = Constants.modules.rewards.milestones;
             const milestone = milestones.find(
                 item => item === differences.primary.rewardScore,
             );

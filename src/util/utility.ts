@@ -41,6 +41,39 @@ export async function sendWebHook({
     }
 }
 
+export const slashCommandResolver = (interaction: CommandInteraction) => {
+    let [option] = interaction.options.data;
+
+    const commandOptions: (string | number | boolean)[] = [
+        `/${interaction.commandName}`,
+    ];
+
+    if (option) {
+        if (option.value) {
+            commandOptions.push(option.value);
+        } else {
+            if (option.type === 'SUB_COMMAND_GROUP') {
+                commandOptions.push(option.name);
+                [option] = option.options!;
+            }
+
+            if (option.type === 'SUB_COMMAND') {
+                commandOptions.push(option.name);
+            }
+
+            if (Array.isArray(option.options)) {
+                option.options.forEach(subOption => {
+                    commandOptions.push(
+                        `${subOption.name}: ${subOption.value}`,
+                    );
+                });
+            }
+        }
+    }
+
+    return commandOptions.join(' ');
+};
+
 export function formattedUnix({
     ms = Date.now(),
     date = false,
@@ -87,11 +120,22 @@ export class BetterEmbed extends MessageEmbed {
         }
     }
 
-    unshiftField(name: string, value: string, inline?: boolean | undefined) {
+    setField(name: string, value: string, inline?: boolean | undefined): this {
+        super.setFields([{ name: name, value: value, inline: inline }]);
+
+        return this;
+    }
+
+    unshiftField(
+        name: string,
+        value: string,
+        inline?: boolean | undefined,
+    ): this {
         super.setFields(
             { name: name, value: value, inline: inline },
             ...this.fields,
         );
+
         return this;
     }
 }
@@ -114,13 +158,13 @@ export function compare<Primary, Secondary extends Primary>(
     return { primary: primaryDifferences, secondary: secondaryDifferences };
 }
 
-type AcceptedValue = string | boolean | number | Date;
+type AcceptedValues = string | boolean | number;
 
 type GenericObject = {
-    [index: string]: GenericObject | AcceptedValue[] | AcceptedValue;
+    [index: string]: GenericObject | AcceptedValues[] | AcceptedValues;
 };
 
-type Modifier = (value: AcceptedValue) => unknown; //eslint-disable-line no-unused-vars
+type Modifier = (value: AcceptedValues) => unknown; //eslint-disable-line no-unused-vars
 
 export function nestedIterate(
     inParam: GenericObject,
@@ -142,12 +186,11 @@ export function nestedIterate(
                     typeof input[index] === 'string' ||
                     typeof input[index] === 'boolean' ||
                     typeof input[index] === 'number' ||
-                    typeof input[index] === 'bigint' ||
-                    input[index] instanceof Date
+                    typeof input[index] === 'bigint'
                 ) {
                     input[index] =
                         (modify(
-                            input[index] as AcceptedValue,
+                            input[index] as AcceptedValues,
                         ) as typeof input[typeof index]) ?? input[index];
                 }
             }

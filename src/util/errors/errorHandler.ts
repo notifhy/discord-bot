@@ -5,6 +5,7 @@ import {
     cleanRound,
     formattedUnix,
     sendWebHook,
+    slashCommandResolver,
 } from '../utility';
 import { CommandInteraction, Interaction } from 'discord.js';
 import { ErrorStackEmbed, replyToError } from './helper';
@@ -16,7 +17,6 @@ import {
     ownerID,
 } from '../../../config.json';
 import { HypixelModuleManager } from '../../hypixelAPI/HypixelModuleManager';
-import { slashCommandOptionString } from '../structures';
 import AbortError from './AbortError';
 import Constants from '../Constants';
 import ConstraintError from './ConstraintError';
@@ -58,16 +58,12 @@ export default class ErrorHandler { //Reconsider
         const {
             client,
             channel,
-            commandName,
             createdTimestamp,
             guild,
             id,
             user,
         } = this.interaction as CommandInteraction;
-        const command = [
-            `/${commandName}`,
-            ...slashCommandOptionString(this.interaction as CommandInteraction),
-        ].join(' ');
+        const command = slashCommandResolver(this.interaction as CommandInteraction);
 
         return this.errorEmbed().addFields([
             { name: 'User', value: `Tag: ${user.tag}\nID: ${user.id}` },
@@ -75,7 +71,7 @@ export default class ErrorHandler { //Reconsider
                 name: 'Interaction',
                 value: `${id}\nCommand: ${command}\nCreated At: <t:${Math.round(
                     createdTimestamp / Constants.ms.second,
-                )}:R`,
+                )}:R>`,
             },
             {
                 name: 'Guild',
@@ -89,7 +85,7 @@ export default class ErrorHandler { //Reconsider
                 name: 'Channel',
                 value: `Channel Name: ${channel?.id}\nChannel Type: ${channel?.type}`,
             },
-            { name: 'Other', value: `Websocket Ping: ${client.ws.ping}>` },
+            { name: 'Other', value: `Websocket Ping: ${client.ws.ping}` },
         ]);
     }
 
@@ -211,7 +207,7 @@ export default class ErrorHandler { //Reconsider
                         name: 'Type',
                         value:
                             this.error instanceof Error
-                                ? this.error.name
+                                ? this.error.name ?? 'Unknown'
                                 : 'Unknown',
                     },
                     { name: 'Resuming In', value: timeout ?? 'Not applicable' },

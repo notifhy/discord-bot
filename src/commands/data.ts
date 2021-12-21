@@ -19,6 +19,7 @@ import {
 import { RegionLocales } from '../../locales/localesHandler';
 import { SQLiteWrapper } from '../database';
 import Constants2 from '../util/Constants';
+import ErrorHandler from '../util/errors/ErrorHandler';
 
 export const properties: CommandProperties = {
     name: 'data',
@@ -51,7 +52,15 @@ export const execute: CommandExecute = async (
     { userData },
 ): Promise<void> => {
     const locale = RegionLocales.locale(userData.language).commands.data;
-    if (interaction.options.getSubcommand() === 'delete') {
+    switch (interaction.options.getSubcommand()) {
+        case 'delete': await dataDelete();
+        break;
+        case 'view': await viewData();
+        break;
+        //No default
+    }
+
+    async function dataDelete() {
         const confirmEmbed = new BetterEmbed(interaction)
             .setColor(Constants2.colors.normal)
             .setTitle(locale.delete.confirm.title)
@@ -84,72 +93,94 @@ export const execute: CommandExecute = async (
             i.message.id === confirmation.id; //temp changes
 
         const collector = interaction.channel!.createMessageComponentCollector({
-                filter: componentFilter,
-                idle: 30_000,
-                componentType: 'BUTTON',
-                max: 1,
-            });
-
-        collector.on('collect', async (i: ButtonInteraction) => {
-            yesButton.setDisabled();
-            noButton.setDisabled();
-            const disabledRow = new MessageActionRow().setComponents(
-                yesButton,
-                noButton,
-            );
-
-            if (i.customId === 'true') {
-                Promise.all([
-                    SQLiteWrapper.deleteUser({
-                        discordID: userData.discordID,
-                        table: Constants2.tables.users,
-                    }),
-                    SQLiteWrapper.deleteUser({
-                        discordID: userData.discordID,
-                        table: Constants2.tables.api,
-                    }),
-                    SQLiteWrapper.deleteUser({
-                        discordID: userData.discordID,
-                        table: Constants2.tables.friends,
-                    }),
-                    SQLiteWrapper.deleteUser({
-                        discordID: userData.discordID,
-                        table: Constants2.tables.rewards,
-                    }),
-                ]);
-
-                const aborted = new BetterEmbed(interaction)
-                    .setColor(Constants2.colors.normal)
-                    .setTitle(locale.delete.deleted.title)
-                    .setDescription(locale.delete.deleted.description);
-                await i.update({
-                    embeds: [aborted],
-                    components: [disabledRow],
-                });
-            } else {
-                const aborted = new BetterEmbed(interaction)
-                    .setColor(Constants2.colors.normal)
-                    .setTitle(locale.delete.aborted.title)
-                    .setDescription(locale.delete.aborted.description);
-                await i.update({
-                    embeds: [aborted],
-                    components: [disabledRow],
-                });
-            }
+            filter: componentFilter,
+            idle: Constants2.ms.second * 30,
+            componentType: 'BUTTON',
+            max: 1,
         });
 
-        collector.on('end', async (_collected, reason) => {
-            if (reason === 'idle') {
+        collector.on('collect', async (i: ButtonInteraction) => {
+            try {
                 yesButton.setDisabled();
                 noButton.setDisabled();
                 const disabledRow = new MessageActionRow().setComponents(
                     yesButton,
                     noButton,
                 );
-                await interaction.editReply({ components: [disabledRow] });
+
+                if (i.customId === 'true') {
+                    Promise.all([
+                        SQLiteWrapper.deleteUser({
+                        discordID: userData.discordID,
+                        table: Constants2.tables.users,
+                        }),
+                        SQLiteWrapper.deleteUser({
+                            discordID: userData.discordID,
+                            table: Constants2.tables.api,
+                        }),
+                        SQLiteWrapper.deleteUser({
+                            discordID: userData.discordID,
+                            table: Constants2.tables.friends,
+                        }),
+                        SQLiteWrapper.deleteUser({
+                            discordID: userData.discordID,
+                            table: Constants2.tables.rewards,
+                        }),
+                    ]);
+
+                    const aborted = new BetterEmbed(interaction)
+                        .setColor(Constants2.colors.normal)
+                        .setTitle(locale.delete.deleted.title)
+                        .setDescription(locale.delete.deleted.description);
+                    await i.update({
+                     embeds: [aborted],
+                        components: [disabledRow],
+                });
+                } else {
+                    const aborted = new BetterEmbed(interaction)
+                        .setColor(Constants2.colors.normal)
+                        .setTitle(locale.delete.aborted.title)
+                        .setDescription(locale.delete.aborted.description);
+                    await i.update({
+                        embeds: [aborted],
+                        components: [disabledRow],
+                    });
+                }
+            } catch (error) {
+                const handler = new ErrorHandler({
+                    error: error,
+                    interaction: interaction,
+                });
+
+                await handler.systemNotify();
+                await handler.userNotify();
             }
         });
-    } else {
+
+        collector.on('end', async (_collected, reason) => {
+            try {
+                if (reason === 'idle') {
+                    yesButton.setDisabled();
+                    noButton.setDisabled();
+                    const disabledRow = new MessageActionRow().setComponents(
+                        yesButton,
+                        noButton,
+                    );
+                    await interaction.editReply({ components: [disabledRow] });
+                }
+            } catch (error) {
+                const handler = new ErrorHandler({
+                    error: error,
+                    interaction: interaction,
+                });
+
+                await handler.systemNotify();
+                await handler.userNotify();
+            }
+        });
+    }
+
+    async function viewData() {
         const data = await Promise.all([
             SQLiteWrapper.getUser<RawUserAPIData, UserAPIData>({
                 discordID: userData.discordID,

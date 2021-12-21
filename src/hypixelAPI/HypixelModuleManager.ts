@@ -40,7 +40,7 @@ export class HypixelModuleManager {
                 RawUserAPIData,
                 UserAPIData
             >({
-                table: 'api',
+                table: Constants.tables.api,
                 columns: [
                     'discordID',
                     'uuid',

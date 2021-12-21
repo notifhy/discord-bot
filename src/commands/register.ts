@@ -43,7 +43,8 @@ export const execute: CommandExecute = async (
     { userData },
 ): Promise<void> => {
     const locale = RegionLocales.locale(userData.language).commands.register;
-    const { replace } = RegionLocales;
+    const replace = RegionLocales.replace;
+
     const inputUUID =
         /^[0-9a-f]{8}(-?)[0-9a-f]{4}(-?)[1-5][0-9a-f]{3}(-?)[89AB][0-9a-f]{3}(-?)[0-9a-f]{12}$/i;
     const inputUsername = /^[a-zA-Z0-9_-]{1,24}$/g;
@@ -162,4 +163,16 @@ export const execute: CommandExecute = async (
         .addField(locale.field.name, locale.field.value);
 
     await interaction.editReply({ embeds: [registeredEmbed] });
+
+    const users = (
+        await SQLiteWrapper.getAllUsers({
+            table: 'api',
+            columns: ['discordID'],
+        })
+    ).length;
+
+    interaction.client.user!.setActivity({
+        type: 'WATCHING',
+        name: `${users} accounts | /register /help | ${interaction.client.guilds.cache.size} servers`,
+    });
 };

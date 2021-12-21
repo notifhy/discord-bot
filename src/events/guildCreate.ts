@@ -1,6 +1,7 @@
 import type { EventProperties } from '../@types/client';
 import type { Guild } from 'discord.js';
 import { formattedUnix } from '../util/utility';
+import { SQLiteWrapper } from '../database';
 import ErrorHandler from '../util/errors/ErrorHandler';
 
 export const properties: EventProperties = {
@@ -25,7 +26,7 @@ export const execute = async (guild: Guild): Promise<void> => {
             );
             await guild.leave();
         } catch (error) {
-            console.log(
+            console.error(
                 `${time} | Failed to auto leave a guild. Guild: ${guild.name} | ${guild.id}`,
             );
             await new ErrorHandler({ error: error }).systemNotify();
@@ -34,5 +35,21 @@ export const execute = async (guild: Guild): Promise<void> => {
         console.log(
             `${time} | Bot has joined a guild. Guild: ${guild.name} | ${guild.id} Guild Owner: ${guild.ownerId} Guild Member Count: ${guild.memberCount} (w/ bot)`,
         );
+    }
+
+    try {
+        const users = (
+            await SQLiteWrapper.getAllUsers({
+                table: 'api',
+                columns: ['discordID'],
+            })
+        ).length;
+
+        guild.client.user!.setActivity({
+            type: 'WATCHING',
+            name: `${users} accounts | /register /help | ${guild.client.guilds.cache.size} servers`,
+        });
+    } catch (error) {
+        await new ErrorHandler({ error: error }).systemNotify();
     }
 };

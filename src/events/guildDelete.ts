@@ -1,13 +1,15 @@
 import type { EventProperties } from '../@types/client';
 import type { Guild } from 'discord.js';
 import { formattedUnix } from '../util/utility';
+import { SQLiteWrapper } from '../database';
+import ErrorHandler from '../util/errors/ErrorHandler';
 
 export const properties: EventProperties = {
     name: 'guildDelete',
     once: false,
 };
 
-export const execute = (guild: Guild): void => {
+export const execute = async (guild: Guild): Promise<void> => {
     if (guild.available === false || !guild.client.isReady()) {
         return;
     }
@@ -30,4 +32,20 @@ export const execute = (guild: Guild): void => {
             guild.memberCount - 1
         } (new count)`,
     );
+
+    try {
+        const users = (
+            await SQLiteWrapper.getAllUsers({
+                table: 'api',
+                columns: ['discordID'],
+            })
+        ).length;
+
+        guild.client.user!.setActivity({
+            type: 'WATCHING',
+            name: `${users} accounts | /register /help | ${guild.client.guilds.cache.size} servers`,
+        });
+    } catch (error) {
+        await new ErrorHandler({ error: error }).systemNotify();
+    }
 };

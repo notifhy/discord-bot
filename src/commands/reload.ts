@@ -67,8 +67,15 @@ export const execute: CommandExecute = async (
     interaction: CommandInteraction,
 ): Promise<void> => {
     switch (interaction.options.getSubcommand()) {
-        case 'all': {
-            const now = Date.now();
+        case 'all': await reloadAll();
+        break;
+        case 'single': await reloadSingle();
+        break;
+        //no default
+    }
+
+    async function reloadAll() {
+        const now = Date.now();
             const promises: Promise<void>[] = [];
 
             for (const [command] of interaction.client.commands) {
@@ -95,55 +102,51 @@ export const execute: CommandExecute = async (
                 );
 
             await interaction.editReply({ embeds: [reloadedEmbed] });
-            break;
-        }
-        case 'single': {
-            const now = Date.now();
-            const typeName = interaction.options.getString('type');
-            const type =
-                interaction.client[
-                    typeName as keyof Pick<
-                        typeof interaction.client,
-                        'commands' | 'events' | 'modules'
-                    >
-                ];
-            const item = interaction.options.getString('item')!;
-            const selected = type.get(item);
+    }
 
-            if (selected === undefined) {
-                const undefinedSelected = new BetterEmbed(interaction)
-                    .setColor(Constants.colors.warning)
-                    .setTitle('Unknown Item')
-                    .setDescription(
-                        `There is no item with the structure ${typeName}.${item}!`,
-                    );
+    async function reloadSingle() {
+        const now = Date.now();
+        const typeName = interaction.options.getString('type');
+        const type =
+            interaction.client[
+                typeName as keyof Pick<
+                    typeof interaction.client,
+                    'commands' | 'events' | 'modules'
+                >
+            ];
+        const item = interaction.options.getString('item')!;
+        const selected = type.get(item);
 
-                await interaction.editReply({ embeds: [undefinedSelected] });
-                return;
-            }
-
-            if (typeName === 'commands') {
-                commandRefresh(interaction, selected.properties.name);
-            } else if (typeName === 'events') {
-                eventRefresh(interaction, selected.properties.name);
-            } else if (typeName === 'modules') {
-                moduleRefresh(interaction, selected.properties.name);
-            }
-
-            const reloadedEmbed = new BetterEmbed(interaction)
-                .setColor(Constants.colors.normal)
-                .setTitle(`Reloaded`)
+        if (selected === undefined) {
+            const undefinedSelected = new BetterEmbed(interaction)
+                .setColor(Constants.colors.warning)
+                .setTitle('Unknown Item')
                 .setDescription(
-                    `${typeName}.${item} was successfully reloaded! This action took ${
-                        Date.now() - now
-                    } milliseconds.`,
+                    `There is no item with the structure ${typeName}.${item}!`,
                 );
 
-            await interaction.editReply({ embeds: [reloadedEmbed] });
-            break;
+            await interaction.editReply({ embeds: [undefinedSelected] });
+            return;
         }
 
-        //no default
+        if (typeName === 'commands') {
+            commandRefresh(interaction, selected.properties.name);
+        } else if (typeName === 'events') {
+            eventRefresh(interaction, selected.properties.name);
+        } else if (typeName === 'modules') {
+            moduleRefresh(interaction, selected.properties.name);
+        }
+
+        const reloadedEmbed = new BetterEmbed(interaction)
+            .setColor(Constants.colors.normal)
+            .setTitle(`Reloaded`)
+            .setDescription(
+                `${typeName}.${item} was successfully reloaded! This action took ${
+                    Date.now() - now
+                } milliseconds.`,
+            );
+
+        await interaction.editReply({ embeds: [reloadedEmbed] });
     }
 };
 

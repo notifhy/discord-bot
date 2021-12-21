@@ -48,7 +48,7 @@ export const execute: CommandExecute = async (
 ): Promise<void> => {
     const language = interaction.options.getString('language', true);
     const locale = RegionLocales.locale(language).commands.language;
-    const { replace } = RegionLocales;
+    const replace = RegionLocales.replace;
 
     if (language === userData.language) {
         const alreadySetEmbed = new BetterEmbed(interaction)

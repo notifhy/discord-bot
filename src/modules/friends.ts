@@ -105,6 +105,7 @@ export const execute = async ({
         const channel = (await client.channels.fetch(
             friendModule.channel!,
         )) as TextChannel;
+
         const missingPermissions = channel
             .permissionsFor(channel.guild.me as GuildMember)
             .missing(Constants.modules.friends.permissions);
@@ -173,10 +174,7 @@ export const execute = async ({
 
         const notifications: MessageEmbed[] = [];
 
-        if (
-            differences.primary.lastLogin &&
-            differences.primary.lastLogin + Constants.ms.minute >= Date.now()
-        ) {
+        if (differences.primary.lastLogin) {
             const unixEpoch = Math.round(
                 differences.primary.lastLogin / Constants.ms.second,
             );
@@ -191,10 +189,7 @@ export const execute = async ({
             notifications.push(login);
         }
 
-        if (
-            differences.primary.lastLogout &&
-            differences.primary.lastLogout + Constants.ms.minute >= Date.now()
-        ) {
+        if (differences.primary.lastLogout) {
             const unixEpoch = Math.round(
                 differences.primary.lastLogout / Constants.ms.second,
             );
@@ -207,7 +202,7 @@ export const execute = async ({
             }));
 
             //lastLogout seems to change twice sometimes on a single logout, this is a fix for that
-            const [, lastEvent] = userAPIData.history; //First item in array is this event, so it checks the second item
+            const lastEvent = userAPIData.history[1]; //First item in array is this event, so it checks the second item
             const duplicationCheck = 'lastLogout' in lastEvent;
 
             if (duplicationCheck === false) {

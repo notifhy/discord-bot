@@ -70,106 +70,115 @@ export const execute: CommandExecute = async (
 
     const payload: WebhookEditMessageOptions = {};
 
+
     switch (interaction.options.getSubcommand()) {
-        case 'api': {
-            config.enabled = !config.enabled;
+        case 'api': apiCommand();
+        break;
+        case 'blockguild': await blockGuildCommand();
+        break;
+        case 'blockuser': blockUserCommand();
+        break;
+        case 'devmode': devModeCommand();
+        break;
+        //no default
+    }
+
+    function apiCommand() {
+        config.enabled = !config.enabled;
             interaction.client.config.enabled = Boolean(config.enabled);
 
-            const apiEmbed = new BetterEmbed(interaction)
+        const apiEmbed = new BetterEmbed(interaction)
+            .setColor(Constants.colors.normal)
+            .setTitle(`API State Updated!`)
+            .setDescription(
+                `API commands and functions are now ${
+                    config.enabled === true ? 'on' : 'off'
+                }!`,
+            );
+
+        payload.embeds = [apiEmbed];
+    }
+
+    async function blockGuildCommand() {
+        const guildID = interaction.options.getString('guild', true);
+        const blockedGuildIndex = config.blockedGuilds.indexOf(guildID);
+
+        if (blockedGuildIndex === -1) {
+            config.blockedGuilds.push(guildID);
+
+            const guild = await interaction.client.guilds.fetch(guildID);
+            await guild.leave();
+
+            const guildEmbed = new BetterEmbed(interaction)
                 .setColor(Constants.colors.normal)
-                .setTitle(`API State Updated!`)
+                .setTitle(`Guild Added`)
+                .setDescription(`${guildID} was added to the blacklist!`);
+
+            payload.embeds = [guildEmbed];
+
+            payload.files = [
+                {
+                    attachment: Buffer.from(JSON.stringify(guild, null, 2)),
+                    name: 'guild.json',
+                },
+            ];
+        } else {
+            config.blockedGuilds.splice(blockedGuildIndex, 1);
+
+            const guildEmbed = new BetterEmbed(interaction)
+                .setColor(Constants.colors.normal)
+                .setTitle(`Guild Removed`)
                 .setDescription(
-                    `API commands and functions are now ${
-                        config.enabled === true ? 'on' : 'off'
-                    }!`,
+                    `${guildID} was removed from the blacklist!`,
                 );
 
-            payload.embeds = [apiEmbed];
-            break;
+            payload.embeds = [guildEmbed];
         }
-        case 'blockguild': {
-            const guildID = interaction.options.getString('guild', true);
-            const blockedGuildIndex = config.blockedGuilds.indexOf(guildID);
 
-            if (blockedGuildIndex === -1) {
-                config.blockedGuilds.push(guildID);
+        interaction.client.config.blockedGuilds = config.blockedGuilds;
+    }
 
-                const guild = await interaction.client.guilds.fetch(guildID);
-                await guild.leave();
+    function blockUserCommand() {
+        const user = interaction.options.getString('user', true);
+        const blockedUserIndex = config.blockedUsers.indexOf(user);
 
-                const guildEmbed = new BetterEmbed(interaction)
-                    .setColor(Constants.colors.normal)
-                    .setTitle(`Guild Added`)
-                    .setDescription(`${guildID} was added to the blacklist!`);
+        if (blockedUserIndex === -1) {
+            config.blockedUsers.push(user);
 
-                payload.embeds = [guildEmbed];
-
-                payload.files = [
-                    {
-                        attachment: Buffer.from(JSON.stringify(guild, null, 2)),
-                        name: 'guild.json',
-                    },
-                ];
-            } else {
-                config.blockedGuilds.splice(blockedGuildIndex, 1);
-
-                const guildEmbed = new BetterEmbed(interaction)
-                    .setColor(Constants.colors.normal)
-                    .setTitle(`Guild Removed`)
-                    .setDescription(
-                        `${guildID} was removed from the blacklist!`,
-                    );
-
-                payload.embeds = [guildEmbed];
-            }
-
-            interaction.client.config.blockedGuilds = config.blockedGuilds;
-            break;
-        }
-        case 'blockuser': {
-            const user = interaction.options.getString('user', true);
-            const blockedUserIndex = config.blockedUsers.indexOf(user);
-
-            if (blockedUserIndex === -1) {
-                config.blockedUsers.push(user);
-
-                const userEmbed = new BetterEmbed(interaction)
-                    .setColor(Constants.colors.normal)
-                    .setTitle(`User Added`)
-                    .setDescription(`${user} was added to the blacklist!`);
-
-                payload.embeds = [userEmbed];
-            } else {
-                config.blockedUsers.splice(blockedUserIndex, 1);
-
-                const userEmbed = new BetterEmbed(interaction)
-                    .setColor(Constants.colors.normal)
-                    .setTitle(`User Removed`)
-                    .setDescription(`${user} was removed from the blacklist!`);
-
-                payload.embeds = [userEmbed];
-            }
-
-            interaction.client.config.blockedUsers = config.blockedUsers;
-            break;
-        }
-        case 'devmode': {
-            config.devMode = !config.devMode;
-            interaction.client.config.devMode = !config.devMode;
-
-            const devmodeEmbed = new BetterEmbed(interaction)
+            const userEmbed = new BetterEmbed(interaction)
                 .setColor(Constants.colors.normal)
-                .setTitle(`Developer Mode Updated`)
-                .setDescription(
-                    `Developer Mode is now ${
-                        Boolean(config.devMode) === true ? 'on' : 'off'
-                    }!`,
-                );
+                .setTitle(`User Added`)
+                .setDescription(`${user} was added to the blacklist!`);
 
-            payload.embeds = [devmodeEmbed];
-            break;
+            payload.embeds = [userEmbed];
+        } else {
+            config.blockedUsers.splice(blockedUserIndex, 1);
+
+            const userEmbed = new BetterEmbed(interaction)
+                .setColor(Constants.colors.normal)
+                .setTitle(`User Removed`)
+                .setDescription(`${user} was removed from the blacklist!`);
+
+            payload.embeds = [userEmbed];
         }
-        //no default
+
+        interaction.client.config.blockedUsers = config.blockedUsers;
+    }
+
+    function devModeCommand() {
+        config.devMode = !config.devMode;
+        interaction.client.config.devMode = !config.devMode;
+
+        const devmodeEmbed = new BetterEmbed(interaction)
+            .setColor(Constants.colors.normal)
+            .setTitle(`Developer Mode Updated`)
+            .setDescription(
+                `Developer Mode is now ${
+                    Boolean(config.devMode) === true ? 'on' : 'off'
+                }!`,
+            );
+
+        payload.embeds = [devmodeEmbed];
     }
 
     const newRawConfig = SQLiteWrapper.unJSONize<Config, RawConfig>({

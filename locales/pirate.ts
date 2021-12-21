@@ -23,6 +23,7 @@ const translate = {
     your: 'yer',
 };
 
+//@ts-expect-error no idea why this fails, gonna remove this/refactor this later anyways.
 export default nestedIterate(en, input => {
     if (typeof input === 'string') {
         return input
@@ -42,7 +43,6 @@ export default nestedIterate(en, input => {
                 return translated;
             })
             .join(' ')
-
             .replaceAll(/(\w+ing)/gi, "in'");
             ///((ing[.!?; ])|(ing$))/gi
     }

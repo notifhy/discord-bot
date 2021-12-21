@@ -68,110 +68,260 @@
             "defender": {
                 "title": "Defender Module",
                 "description": "You can add or remove modules here. See more about a module by selecting it. Then, press the button to remove or add it. If you want to delete some or all of your data used by or associated with this bot, you can request it with /deletedata.",
-                "menuPlaceholder": "Defender Settings",
+                "menuPlaceholder": "Defender Module Settings",
+                "missingConfigField": {
+                    "name": "Missing Configuration",
+                    "value": "You need to configure the following settings before enabling the Defender module: %{missingRequirements}%. Click on the menu below, select the option(s), and configure it."
+                },
                 "menu": {
                     "toggle": {
                         "label": "Toggle",
                         "description": "Toggle whether this module is active",
                         "longDescription": "Enable or disable this module. However, this module will not be activated if you have not configured it.",
                         "value": "toggle",
-                        "enableButton": "Enable",
-                        "disableButton": "Disable"
+                        "button": {
+                            "enable": "Enable",
+                            "disable": "Disable"
+                        }
                     }
                 }
             },
             "friends": {
-                "title": "Friend Module",
-                "description": "placeholder",
-                "menuPlaceholder": "Select a module",
+                "title": "Friends Module",
+                "description": "Know when your friends are online without asking or logging onto Hypixel by sharing logins and logouts with each other. This module sends your logins and logouts to a specified channel; have your friends set this module up to share with each other. ",
+                "menuPlaceholder": "Friend Module Settings",
+                "missingConfigField": {
+                    "name": "Missing Configuration",
+                    "value": "You need to configure the following settings before enabling the Friend module: %{missingRequirements}%. Click on the menu below, select the option(s), and configure it."
+                },
                 "menu": {
                     "toggle": {
                         "label": "Toggle",
                         "description": "Toggle whether this module is active",
-                        "longDescription": "Enable or disable this module. However, this module will not be activated if you have not configured it.",
+                        "longDescription": "Enable or disable this module. However, this module cannot be enabled if you have not configured it.",
                         "value": "toggle",
-                        "enableButton": "Enable",
-                        "disableButton": "Disable"
+                        "button": {
+                            "enable": "Enable",
+                            "disable": "Disable"
+                        }
                     },
                     "channel": {
                         "label": "Channel",
                         "description": "Set a channel to send logins and logouts to",
                         "longDescription": "Due to limitations, you need to set a channel with /channel",
-                        "value": "channel"
+                        "value": "channel",
+                        "select": {
+                            "customId": "null",
+                            "placeholder": "Select a channel",
+                            "disabled": true,
+                            "options": [
+                                {
+                                    "label": "Disabled",
+                                    "value": "hello",
+                                    "description": "Disabled"
+                                }
+                            ]
+                        }
                     }
                 }
             },
             "rewards": {
-                "title": "Modules",
-                "description": "This module ",
-                "menuPlaceholder": "Select a module",
+                "title": "Rewards Module",
+                "description": "Never miss a daily reward again - get notifications to claim your daily reward at your convenience!",
+                "menuPlaceholder": "Reward Module Settings",
+                "missingConfigField": {
+                    "name": "Missing Configuration",
+                    "value": "You need to configure the following settings before enabling the Rewards module: %{missingRequirements}%. Click on the menu below, select the option(s), and configure it."
+                },
                 "menu": {
                     "toggle": {
                         "label": "Toggle",
                         "description": "Toggle whether this module is active",
-                        "longDescription": "Enable or disable this module. However, this module will not be activated if you have not configured it.",
+                        "longDescription": "Enable or disable this module.",
                         "value": "toggle",
-                        "enableButton": "Enable",
-                        "disableButton": "Disable"
+                        "button": {
+                            "enable": "Enable",
+                            "disable": "Disable"
+                        }
                     },
-                    "grace": {
+                    "alertTime": {
                         "label": "Grace Period",
                         "description": "Set when the bot should start alerting you",
-                        "longDescription": "Set the amount of hours ahead of the daily reward reset for when the bot should start pinging you",
-                        "value": "grace"
+                        "longDescription": "Set the amount of hours ahead of the daily reward reset for when the bot should start pinging you.",
+                        "value": "alertTime",
+                        "select": {
+                            "customId": "alertTime",
+                            "placeholder": "Select a time",
+                            "disabled": false,
+                            "options": [
+                                {
+                                    "label": "Immediately",
+                                    "value": "81400000",
+                                    "description": "Immediately after the daily reset (12 AM EST)"
+                                },
+                                {
+                                    "label": "1 hour",
+                                    "value": "3600000",
+                                    "description": "1 hour before the next daily reset (11 PM EST)"
+                                },
+                                {
+                                    "label": "2 hours",
+                                    "value": "7200000",
+                                    "description": "2 hours before the next daily reset (10 PM EST)"
+                                },
+                                {
+                                    "label": "3 hours",
+                                    "value": "10800000",
+                                    "description": "3 hours before the next daily reset (9 PM EST)"
+                                },
+                                {
+                                    "label": "4 hours",
+                                    "value": "14400000",
+                                    "description": "4 hours before the next daily reset (8 PM EST)"
+                                },
+                                {
+                                    "label": "5 hours",
+                                    "value": "18000000",
+                                    "description": "5 hours before the next daily reset (7 PM EST)"
+                                },
+                                {
+                                    "label": "6 hours",
+                                    "value": "21600000",
+                                    "description": "6 hours before the next daily reset (6 PM EST)"
+                                },
+                                {
+                                    "label": "7 hours",
+                                    "value": "25200000",
+                                    "description": "7 hours before the next daily reset (5 PM EST)"
+                                },
+                                {
+                                    "label": "8 hours",
+                                    "value": "28800000",
+                                    "description": "8 hours before the next daily reset (4 PM EST)"
+                                },
+                                {
+                                    "label": "9 hours",
+                                    "value": "32400000",
+                                    "description": "9 hours before the next daily reset (3 PM EST)"
+                                },
+                                {
+                                    "label": "10 hours",
+                                    "value": "36000000",
+                                    "description": "10 hours before the next daily reset (2 PM EST)"
+                                },
+                                {
+                                    "label": "11 hours",
+                                    "value": "39600000",
+                                    "description": "11 hours before the next daily reset (1 PM EST)"
+                                },
+                                {
+                                    "label": "12 hours",
+                                    "value": "43200000",
+                                    "description": "12 hours before the next daily reset (12 PM EST)"
+                                },
+                                {
+                                    "label": "13 hours",
+                                    "value": "46800000",
+                                    "description": "12 hours before the next daily reset (11 AM EST)"
+                                },
+                                {
+                                    "label": "14 hours",
+                                    "value": "50400000",
+                                    "description": "14 hours before the next daily reset (10 AM EST)"
+                                },
+                                {
+                                    "label": "15 hours",
+                                    "value": "54000000",
+                                    "description": "15 hours before the next daily reset (9 AM EST)"
+                                },
+                                {
+                                    "label": "16 hours",
+                                    "value": "57600000",
+                                    "description": "16 hours before the next daily reset (8 AM EST)"
+                                },
+                                {
+                                    "label": "17 hours",
+                                    "value": "61200000",
+                                    "description": "17 hours before the next daily reset (7 AM EST)"
+                                },
+                                {
+                                    "label": "18 hours",
+                                    "value": "64800000",
+                                    "description": "18 hours before the next daily reset (6 AM EST)"
+                                },
+                                {
+                                    "label": "19 hours",
+                                    "value": "68400000",
+                                    "description": "19 hours before the next daily reset (5 AM EST)"
+                                },
+                                {
+                                    "label": "20 hours",
+                                    "value": "72000000",
+                                    "description": "20 hours before the next daily reset (4 AM EST)"
+                                },
+                                {
+                                    "label": "21 hours",
+                                    "value": "75600000",
+                                    "description": "21 hours before the next daily reset (3 AM EST)"
+                                },
+                                {
+                                    "label": "22 hours",
+                                    "value": "79200000",
+                                    "description": "18 hours before the next daily reset (2 AM EST)"
+                                },
+                                {
+                                    "label": "23 hours",
+                                    "value": "82800000",
+                                    "description": "23 hours before the next daily reset (1 AM EST)"
+                                }
+                            ]
+                        }
+                    },
+                    "notificationInterval": {
+                        "label": "Notification Interval",
+                        "description": "Set the timeout between pings",
+                        "longDescription": "Set how long the bot should wait before pinging you again.",
+                        "value": "notificationInterval",
+                        "select": {
+                            "customId": "notificationInterval",
+                            "placeholder": "Select a time",
+                            "disabled": false,
+                            "options": [
+                                {
+                                    "label": "15 minutes",
+                                    "value": "900000"
+                                },
+                                {
+                                    "label": "30 minutes",
+                                    "value": "1800000"
+                                },
+                                {
+                                    "label": "1 hour",
+                                    "value": "3600000"
+                                },
+                                {
+                                    "label": "2 hours",
+                                    "value": "7200000"
+                                },
+                                {
+                                    "label": "3 hours",
+                                    "value": "10800000"
+                                },
+                                {
+                                    "label": "4 hours",
+                                    "value": "14400000"
+                                },
+                                {
+                                    "label": "5 hours",
+                                    "value": "18000000"
+                                },
+                                {
+                                    "label": "6 hours",
+                                    "value": "21600000"
+                                }
+                            ]
+                        }
                     }
-                }
-            },
-            "title": "Modules",
-            "description": "Vous pouvez ajouter ou supprimer des modules ici. Pour en savoir plus sur un module, sélectionnez-le. Ensuite, appuyez sur le bouton pour le supprimer ou l'ajouter. Si vous souhaitez supprimer tout ou partie de vos données utilisées par ou associées à ce bot, vous pouvez le demander avec /deletedata.",
-            "menuPlaceholder": "Sélectionnez un module",
-            "moduleField": {
-                "name": "%{moduleName}% Module",
-                "value": "%{moduleDescription}%"
-            },
-            "statusField": {
-                "name": "État",
-                "added": "Ce module est activé. Cliquez sur \"Désactiver\" pour le désactiver. Vos données resteront intactes.",
-                "removed": "Ce module est désactivé. Cliquez sur \"Enable\" pour l'activer."
-            },
-            "modules": {
-                "defender": {
-                    "label": "Défenseur",
-                    "description": "Soyez informé de toute activité inhabituelle sur votre compte",
-                    "longDescription": "Ce module est le remplacement de HyGuard. Il comporte la plupart des mêmes contrôles, bien qu'il ait été légèrement simplifié pour une meilleure expérience utilisateur.",
-                    "value": "defender"
-                },
-                "friends": {
-                    "label": "Notificateur d'amis",
-                    "description": "Recevez une notification dès qu'un ami se connecte ou se déconnecte.",
-                    "longDescription": "Ce module vous enverra une notification lorsque vos amis se connectent ou se déconnectent. Cette notification peut être envoyée dans la chaîne ou par DM. Vous ne pouvez recevoir des notifications que pour les personnes qui vous ont approuvé sur ce bot pour des raisons de confidentialité.",
-                    "value": "friend"
-                },
-                "rewards": {
-                    "label": "Récompenses quotidiennes",
-                    "description": "Recevez une notification lorsque vous êtes sur le point de manquer votre récompense quotidienne.",
-                    "longDescription": "Ce module vous envoie un DM lorsque vous êtes sur le point de manquer votre récompense quotidienne. Vous pouvez personnaliser le seuil et les intervalles d'alerte, y compris le nombre minimum d'heures avant la réinitialisation pour commencer à vous avertir.",
-                    "value": "rewards"
-                }
-            },
-            "buttons": {
-                "enable": {
-                    "label": "Activer",
-                    "id": "enableButton",
-                    "style": "SUCCESS",
-                    "invert": false
-                },
-                "disable": {
-                    "label": "Désactiver",
-                    "id": "disableButton",
-                    "style": "DANGER",
-                    "invert": true
-                },
-                "settings": {
-                    "label": "Paramètres",
-                    "id": "modifyButton",
-                    "style": "PRIMARY",
-                    "invert": true
                 }
             }
         },
