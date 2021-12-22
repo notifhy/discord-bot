@@ -33,6 +33,10 @@ import RateLimitError from './RateLimitError';
 
     * Unified logging system, which would be this file
         * Store static formattings here though.
+
+    * Module error class with a collection on offenders
+
+    * Fix the rateLimit Global issue
 */
 
 export default class ErrorHandler { //this thing sucks

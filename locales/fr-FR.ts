@@ -163,7 +163,7 @@ export default {
                             options: [
                                 {
                                     label: 'Immediately',
-                                    value: '81400000',
+                                    value: '86400000',
                                     description: 'Immediately after the next daily reset (12 AM EST)',
                                 },
                                 {

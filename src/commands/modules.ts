@@ -171,15 +171,16 @@ export const execute: CommandExecute = async (
 
     collector.on('end', async () => {
         try {
-            const fetchedReply = (await interaction.fetchReply()) as Message;
-            fetchedReply.components.forEach(value0 => {
-                value0.components.forEach((_value1, index1, array1) => {
-                    array1[index1].disabled = true;
-                });
-            });
+            const { components: actionRows } = (await interaction.fetchReply()) as Message;
+
+            for (const { components } of actionRows) {
+                for (const component of components) {
+                    component.disabled = true;
+                }
+            }
 
             await interaction.editReply({
-                components: fetchedReply.components,
+                components: actionRows,
             });
         } catch (error) {
             const handler = new ErrorHandler({

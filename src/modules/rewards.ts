@@ -34,7 +34,13 @@ export const execute = async ({
             discordID: userAPIData.discordID,
             table: Constants.tables.rewards,
             allowUndefined: false,
-            columns: ['alertTime', 'claimNotification', 'lastNotified', 'milestones', 'notificationInterval'],
+            columns: [
+                'alertTime',
+                'claimNotification',
+                'lastNotified',
+                'milestones',
+                'notificationInterval',
+            ],
         })) as RewardsModule;
 
         const userData = (await SQLiteWrapper.getUser<UserData, UserData>({
@@ -67,10 +73,16 @@ export const execute = async ({
         //Is the user's last claimed reward between the past midnight and the coming midnight
         const hasClaimed = nextResetTime - Constants.ms.day < lastClaimedReward;
 
+        const surpassedInterval =
+            rewardsModule.lastNotified < nextResetTime - Constants.ms.day
+                ? true //Bypass for alerts from the previous daily reward
+                : rewardsModule.lastNotified + notificationInterval <
+                  Date.now();
+
         if (
             hasClaimed === false && //Claimed status
             nextResetTime - alertOffset < Date.now() && //Within user's notify time
-            rewardsModule.lastNotified + notificationInterval < Date.now() //Has it been x amount of time since the last notif
+            surpassedInterval === true //Has it been x amount of time since the last notif
         ) {
             const user = await client.users.fetch(userAPIData.discordID);
             const description =
@@ -107,19 +119,14 @@ export const execute = async ({
             return;
         }
 
-        if (
-            rewardsModule.milestones === true
-        ) {
+        if (rewardsModule.milestones === true) {
             const user = await client.users.fetch(userAPIData.discordID);
             const milestones = Constants.modules.rewards.milestones;
             const milestone = milestones.find(
                 item => item === differences.primary.rewardScore,
             );
 
-            if (
-                rewardsModule.milestones === true &&
-                milestone !== undefined
-            ) {
+            if (rewardsModule.milestones === true && milestone !== undefined) {
                 const milestoneNotification = new BetterEmbed({
                     name: locale.milestone.footer,
                 })
@@ -143,7 +150,8 @@ export const execute = async ({
                     .setDescription(
                         replace(locale.claimedNotification.description, {
                             rewardScore: userAPIData.rewardScore ?? 0,
-                            totalDailyRewards: userAPIData.totalDailyRewards ?? 0,
+                            totalDailyRewards:
+                                userAPIData.totalDailyRewards ?? 0,
                         }),
                     );
 

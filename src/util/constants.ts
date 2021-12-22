@@ -22,6 +22,8 @@ export default {
             milestones: true,
             notificationInterval: 1_000 * 60 * 30,
         },
+        menuIncrements: 5,
+        menuFastIncrements: 20,
     },
     emoji: {
         power: '<:toggle:922945383104135228>',
