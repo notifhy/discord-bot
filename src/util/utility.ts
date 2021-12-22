@@ -1,4 +1,4 @@
-import type { WebHookConfig } from '../@types/client';
+import type { WebhookConfig } from '../@types/client';
 import {
     CommandInteraction,
     MessageEmbed,
@@ -17,7 +17,7 @@ export async function sendWebHook({
 }: {
     content?: string;
     embeds: MessageEmbed[];
-    webhook: WebHookConfig;
+    webhook: WebhookConfig;
     suppressError?: boolean;
 }): Promise<void> {
     try {

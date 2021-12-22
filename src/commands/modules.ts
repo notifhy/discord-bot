@@ -92,6 +92,7 @@ export const execute: CommandExecute = async (
                         value: itemData.value,
                         description: itemData.description,
                         default: Boolean(defaultV === itemData.value),
+                        emoji: itemData.emoji,
                     },
                 ]);
             }

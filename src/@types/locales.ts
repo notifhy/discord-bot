@@ -36,6 +36,7 @@ export interface ModuleData {
     description: string;
     longDescription: string;
     value: string;
+    emoji: string;
 }
 
 /*

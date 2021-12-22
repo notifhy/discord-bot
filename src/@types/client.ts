@@ -4,7 +4,7 @@ import type { Collection, CommandInteraction } from 'discord.js';
 import type { HypixelModuleManager } from '../hypixelAPI/HypixelModuleManager';
 import type { UserAPIData, UserData } from './database';
 
-export interface WebHookConfig {
+export interface WebhookConfig {
     id: string;
     token: string;
 }

@@ -7,7 +7,7 @@ import {
     sendWebHook,
     slashCommandResolver,
 } from '../utility';
-import { CommandInteraction, Interaction } from 'discord.js';
+import { CommandInteraction, Interaction, TextChannel } from 'discord.js';
 import { ErrorStackEmbed, replyToError } from './helper';
 import {
     fatalWebhook,
@@ -24,7 +24,18 @@ import HTTPError from './HTTPError';
 import ModuleError from './ModuleError';
 import RateLimitError from './RateLimitError';
 
-export default class ErrorHandler { //Reconsider
+/**
+    * API Errors should be handled in HypixelModuleRequest or similar
+        * Only Abort Errors/HTTPS Errors should be sent to the api error webhook
+
+    * Handle command errors in interactionCreate\
+        * Unify constraint errors and rename
+
+    * Unified logging system, which would be this file
+        * Store static formattings here though.
+*/
+
+export default class ErrorHandler { //this thing sucks
     error: Error | unknown;
     interaction?: Interaction;
     hypixelModuleManager?: HypixelModuleManager;
@@ -55,15 +66,11 @@ export default class ErrorHandler { //Reconsider
     }
 
     private baseGuildEmbed() {
-        const {
-            client,
-            channel,
-            createdTimestamp,
-            guild,
-            id,
-            user,
-        } = this.interaction as CommandInteraction;
-        const command = slashCommandResolver(this.interaction as CommandInteraction);
+        const { client, channel, createdTimestamp, guild, id, user } = this
+            .interaction as CommandInteraction;
+        const command = slashCommandResolver(
+            this.interaction as CommandInteraction,
+        );
 
         return this.errorEmbed().addFields([
             { name: 'User', value: `Tag: ${user.tag}\nID: ${user.id}` },
@@ -83,7 +90,13 @@ export default class ErrorHandler { //Reconsider
             },
             {
                 name: 'Channel',
-                value: `Channel Name: ${channel?.id}\nChannel Type: ${channel?.type}`,
+                value: `Channel ID: ${channel?.id}\nChannel Type: ${
+                    channel?.type
+                }\nName: ${
+                    channel instanceof TextChannel ? channel.name : 'N/A'
+                }\nDeleted: ${
+                    channel instanceof TextChannel ? channel.deleted : 'N/A'
+                }`,
             },
             { name: 'Other', value: `Websocket Ping: ${client.ws.ping}` },
         ]);
@@ -92,8 +105,7 @@ export default class ErrorHandler { //Reconsider
     private errorEmbed() {
         return new BetterEmbed({
             name: this.incidentID,
-        })
-        .setColor(Constants.colors.error);
+        }).setColor(Constants.colors.error);
     }
 
     private getPriority() {
@@ -103,17 +115,25 @@ export default class ErrorHandler { //Reconsider
                 (this.hypixelModuleManager?.instance?.resumeAfter ?? 0) <
                 Date.now()
             ) {
+                console.log(
+                    4,
+                    this.hypixelModuleManager?.instance?.resumeAfter,
+                );
                 return 4;
             }
+            console.log(2, this.hypixelModuleManager?.instance?.resumeAfter);
             return 2;
         }
 
         if (this.error instanceof ConstraintError) {
+            console.log(3);
             return 3;
         }
         if (this.error instanceof ModuleError) {
+            console.log(2, '2');
             return 2;
         }
+        console.log(1);
         return 1;
     }
 
@@ -200,6 +220,7 @@ export default class ErrorHandler { //Reconsider
                 this.hypixelModuleManager.instance;
 
             const timeout = cleanLength(resumeAfter - Date.now(), true);
+            console.log('1', this.hypixelModuleManager?.instance?.resumeAfter);
             const embed = this.errorEmbed()
                 .setTitle('Degraded Performance')
                 .addFields([

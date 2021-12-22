@@ -23,6 +23,13 @@ export default {
             notificationInterval: 1_000 * 60 * 30,
         },
     },
+    emoji: {
+        power: '<:toggle:922945383104135228>',
+        hashtag: '<:channel:922980930379984956>',
+        clock: '<:clock:922981726676992070>',
+        loop: '<:interval:922980170124628018>',
+
+    },
     limits: {
         embedDescription: 4096,
         embedField: 1024,

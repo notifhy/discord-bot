@@ -1,4 +1,4 @@
-import * as en from './en-us.json';
+import en from './en-us';
 import { nestedIterate } from '../src/util/utility';
 import { Locale } from '../src/@types/locales';
 
