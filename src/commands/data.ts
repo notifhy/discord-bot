@@ -7,7 +7,7 @@ import type {
     RewardsModule,
     UserAPIData,
 } from '../@types/database';
-import { BetterEmbed } from '../util/utility';
+import { BetterEmbed, camelToNormal } from '../util/utility';
 import {
     ButtonInteraction,
     CommandInteraction,
@@ -250,27 +250,26 @@ export const execute: CommandExecute = async (
             allowUndefined: true,
         })) as UserAPIData;
 
-        const fastLeftButton = new MessageButton()
+        const base = new MessageButton()
+            .setStyle('PRIMARY');
+
+        const fastLeftButton = new MessageButton(base)
             .setCustomId('fastBackward')
             .setLabel('<<')
-            .setStyle('PRIMARY')
             .setDisabled(true);
 
-        const leftButton = new MessageButton()
+        const leftButton = new MessageButton(base)
             .setCustomId('backward')
             .setLabel('<')
-            .setStyle('PRIMARY')
             .setDisabled(true);
 
-        const rightButton = new MessageButton()
+        const rightButton = new MessageButton(base)
             .setCustomId('forward')
-            .setLabel('>')
-            .setStyle('PRIMARY');
+            .setLabel('>');
 
-        const fastRightButton = new MessageButton()
+        const fastRightButton = new MessageButton(base)
             .setCustomId('fastForward')
-            .setLabel('>>')
-            .setStyle('PRIMARY');
+            .setLabel('>>');
 
         rightButton.disabled =
             userAPIData.history.length <
@@ -290,12 +289,12 @@ export const execute: CommandExecute = async (
             );
 
             const fields = shownData.map(({ date, ...event }) => ({
-                name: `<t:${Math.round(date / 1000)}:f>`,
+                name: `<t:${Math.round(date / 1000)}:D><t:${Math.round(date / 1000)}:T>`,
                 value: Object.entries(event)
                     .map(([key, value]) =>
                         (String(value).match(epoch)
-                            ? `${key}: <t:${Math.round(value / 1000)}:T>`
-                            : `${key}: ${value}`),
+                            ? `${camelToNormal(key)}: <t:${Math.round(value / 1000)}:T>` //Time values (logins, logouts etc)
+                            : `${camelToNormal(key)}: ${value ?? 'None'}`), //Anything else
                     )
                     .join('\n'),
             }));
@@ -304,7 +303,7 @@ export const execute: CommandExecute = async (
                 .setColor(Constants2.colors.normal)
                 .setDescription(
                     `Showing ${position + 1} to ${
-                        position + Constants2.defaults.menuIncrements
+                        position + shownData.length
                     } of ${userAPIData.history.length}`,
                 )
                 .setTitle('History')

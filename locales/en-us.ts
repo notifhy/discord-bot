@@ -450,7 +450,6 @@ export default {
                     'Go claim your daily reward!',
                     'Your daily reward is waiting for you!',
                     'It is time to go claim your daily reward!',
-                    'd a i l y r e w a r d!',
                     'Your daily reward awaits collection!',
                     'Your daily reward is waiting!',
                 ],

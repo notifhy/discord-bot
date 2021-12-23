@@ -84,7 +84,8 @@ export const execute: CommandExecute = async (
 
         const menuData = locale.menu;
         for (const item in menuData) {
-            if (Object.prototype.hasOwnProperty.call(menuData, item)) {
+            //@ts-expect-error hasOwn typing not implemented yet
+            if (Object.hasOwn(menuData, item)) {
                 const itemData = menuData[item as keyof typeof menuData];
                 menu.addOptions([
                     {
