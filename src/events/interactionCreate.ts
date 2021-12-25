@@ -1,10 +1,8 @@
 import type { EventProperties, ClientCommand } from '../@types/client';
 import type { RawUserData, UserAPIData, UserData } from '../@types/database';
-import { BetterEmbed, cleanRound, formattedUnix, slashCommandResolver } from '../util/utility';
+import { BetterEmbed, formattedUnix, slashCommandResolver } from '../util/utility';
 import { Collection, CommandInteraction, DiscordAPIError } from 'discord.js';
 import { ownerID } from '../../config.json';
-import { RegionLocales } from '../../locales/localesHandler';
-import { setTimeout } from 'node:timers/promises';
 import { SQLiteWrapper } from '../database';
 import Constants from '../util/Constants';
 import ConstraintError from '../util/errors/ConstraintError';
@@ -39,20 +37,14 @@ export const execute = async (
                 ephemeral: command.properties.ephemeral,
             });
 
-            const {
-                blockedUsers,
-                devMode,
-            }: { blockedUsers: string[]; devMode: boolean } =
-                interaction.client.config;
-
             const userAPIData = (await SQLiteWrapper.getUser({
                 discordID: interaction.user.id,
-                table: 'api',
+                table: Constants.tables.api,
                 columns: ['*'],
                 allowUndefined: true,
             })) as UserAPIData | undefined;
 
-            let userData = (await SQLiteWrapper.getUser<RawUserData, UserData>({ //Remove after Discord's Locale update :)
+            let userData = (await SQLiteWrapper.getUser<RawUserData, UserData>({
                 discordID: interaction.user.id,
                 table: Constants.tables.users,
                 columns: ['*'],
@@ -68,29 +60,29 @@ export const execute = async (
                 returnNew: true,
                 data: {
                     discordID: interaction.user.id,
-                    language: 'en-us',
-                    systemMessage: null,
+                    ...Constants.defaults.users,
                 },
             })) as UserData;
 
             await checkSystemMessages(interaction, userData);
-            await blockedConstraint(interaction, userData, blockedUsers);
-            await devConstraint(interaction, userData, Boolean(devMode));
-            await ownerConstraint(interaction, userData, command);
-            await dmConstraint(interaction, userData, command);
-            await cooldownConstraint(interaction, userData, command);
+            cooldownConstraint(interaction, command);
+            generalConstraints(interaction, command);
             await command.execute(interaction, {
                 userData,
                 userAPIData,
             });
         }
     } catch (error) {
-        const handler = new CommandErrorHandler(error, interaction);
-        await handler.systemNotify();
+        const { language } = (await SQLiteWrapper.getUser<RawUserData, UserData>({
+            discordID: interaction.user.id,
+            table: Constants.tables.users,
+            columns: ['language'],
+            allowUndefined: true,
+        }).catch(() => ({}))) as UserData;
 
-        if (!(error instanceof ConstraintError)) {
-            await handler.userNotify();
-        }
+        const handler = new CommandErrorHandler(error, interaction, language);
+        await handler.systemNotify();
+        await handler.userNotify();
     }
 };
 
@@ -99,7 +91,7 @@ async function checkSystemMessages(
     userData: UserData,
 ) {
     if (userData.systemMessage !== null) {
-        const test = new BetterEmbed({ name: 'System Message' })
+        const test = new BetterEmbed({ name: 'System Message' }) //Localize
             .setColor(Constants.colors.normal)
             .setTitle('System Message')
             .setDescription('This is a notification regarding an aspect of this bot.')
@@ -121,147 +113,60 @@ async function checkSystemMessages(
     }
 }
 
-async function blockedConstraint(
+function cooldownConstraint(
     interaction: CommandInteraction,
-    userData: UserData,
-    blockedUsers: string[],
-) {
-    const locale = RegionLocales.locale(userData.language).constraints;
-    if (blockedUsers.includes(interaction.user.id)) {
-        const blockedEmbed = new BetterEmbed(interaction)
-            .setColor(Constants.colors.warning)
-            .setTitle(locale.blockedUsers.title)
-            .setDescription(locale.blockedUsers.description);
-
-        await interaction.editReply({
-            embeds: [blockedEmbed],
-        });
-
-        throw new ConstraintError('Blocked User');
-    }
-}
-
-async function devConstraint(
-    interaction: CommandInteraction,
-    userData: UserData,
-    devMode: boolean,
-) {
-    const locale = RegionLocales.locale(userData.language).constraints;
-    if (devMode === true && ownerID.includes(interaction.user.id) === false) {
-        const devModeEmbed = new BetterEmbed(interaction)
-            .setColor(Constants.colors.warning)
-            .setTitle(locale.devMode.title)
-            .setDescription(locale.devMode.description);
-
-        await interaction.editReply({
-            embeds: [devModeEmbed],
-        });
-
-        throw new ConstraintError('Developer Mode');
-    }
-}
-
-async function ownerConstraint(
-    interaction: CommandInteraction,
-    userData: UserData,
     command: ClientCommand,
 ) {
-    const locale = RegionLocales.locale(userData.language).constraints;
+    const { client: { cooldowns }, user } = interaction;
+    const { properties: { name, cooldown } } = command;
+
+    const timestamps = cooldowns.get(name);
+
+    if (!timestamps) {
+        cooldowns.set(name, new Collection());
+        cooldowns.get(name)!.set(user.id, Date.now());
+        return;
+    }
+
+    const expireTime = Number(timestamps.get(user.id)) + cooldown;
+    const isCooldown = expireTime > Date.now() + 2_500;
+    const timeLeft = expireTime - Date.now();
+
+    if (isCooldown) {
+        throw new ConstraintError('cooldown', timeLeft);
+    }
+
+    timestamps.set(user.id, Date.now());
+}
+
+function generalConstraints(
+    interaction: CommandInteraction,
+    command: ClientCommand,
+) {
+    const { blockedUsers, devMode } = interaction.client.config;
+
+    if (blockedUsers.includes(interaction.user.id)) {
+        throw new ConstraintError('blockedUsers');
+    }
+
+    if (
+        devMode === true &&
+        ownerID.includes(interaction.user.id) === false
+    ) {
+        throw new ConstraintError('devMode');
+    }
+
     if (
         command.properties.ownerOnly === true &&
         ownerID.includes(interaction.user.id) === false
     ) {
-        const ownerEmbed = new BetterEmbed(interaction)
-            .setColor(Constants.colors.warning)
-            .setTitle(locale.owner.title)
-            .setDescription(locale.owner.description);
-
-        await interaction.editReply({
-            embeds: [ownerEmbed],
-        });
-
-        throw new ConstraintError('Owner Requirement');
-    }
-}
-
-async function dmConstraint(
-    interaction: CommandInteraction,
-    userData: UserData,
-    command: ClientCommand,
-) {
-    const locale = RegionLocales.locale(userData.language).constraints;
-    if (command.properties.noDM === true && !interaction.inGuild()) {
-        const dmEmbed = new BetterEmbed(interaction)
-            .setColor(Constants.colors.warning)
-            .setTitle(locale.dm.title)
-            .setDescription(locale.dm.description);
-
-        await interaction.editReply({
-            embeds: [dmEmbed],
-        });
-
-        throw new ConstraintError('DM Channel');
-    }
-}
-
-async function cooldownConstraint(
-    interaction: CommandInteraction,
-    userData: UserData,
-    command: ClientCommand,
-) {
-    const locale = RegionLocales.locale(userData.language).constraints;
-    const { replace } = RegionLocales;
-    const { cooldowns } = interaction.client;
-
-    if (cooldowns.has(command.properties.name) === false) {
-        cooldowns.set(command.properties.name, new Collection());
+        throw new ConstraintError('owner');
     }
 
-    const timestamps = cooldowns.get(command.properties.name);
-
-    if (timestamps === undefined) {
-        return;
+    if (
+        command.properties.noDM === true &&
+        !interaction.inGuild()
+    ) {
+        throw new ConstraintError('dm');
     }
-
-    const userCooldown = timestamps.get(interaction.user.id);
-    const expirationTime = userCooldown
-        ? userCooldown + command.properties.cooldown
-        : undefined;
-
-    //Adding 2500 milliseconds forces a minimum cooldown time of 2.5 seconds
-    if (expirationTime && Date.now() + 2500 < expirationTime) {
-        const timeLeft = expirationTime - Date.now();
-        const cooldownEmbed = new BetterEmbed(interaction)
-            .setColor(Constants.colors.warning)
-            .setTitle(locale.cooldown.embed1.title)
-            .setDescription(
-                replace(locale.cooldown.embed1.description, {
-                    cooldown: command.properties.cooldown / 1000,
-                    timeLeft: cleanRound(timeLeft / 1000, 1),
-                }),
-            );
-
-        await interaction.editReply({
-            embeds: [cooldownEmbed],
-        });
-
-        await setTimeout(timeLeft);
-
-        const cooldownOverEmbed = new BetterEmbed(interaction)
-            .setColor(Constants.colors.on)
-            .setTitle(locale.cooldown.embed2.title)
-            .setDescription(
-                replace(locale.cooldown.embed2.description, {
-                    commandName: command.properties.name,
-                }),
-            );
-
-        await interaction.editReply({
-            embeds: [cooldownOverEmbed],
-        });
-
-        throw new ConstraintError('Cooldown');
-    }
-
-    timestamps.set(interaction.user.id, Date.now());
 }

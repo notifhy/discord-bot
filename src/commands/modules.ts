@@ -162,7 +162,7 @@ export const execute: CommandExecute = async (
                     await dataUpdate(i);
                 }
             } catch (error) {
-                const handler = new CommandErrorHandler(error, interaction);
+                const handler = new CommandErrorHandler(error, interaction, userData.language);
                 await handler.systemNotify();
                 await handler.userNotify();
             }
@@ -184,7 +184,7 @@ export const execute: CommandExecute = async (
                 components: message.components,
             });
         } catch (error) {
-            const handler = new CommandErrorHandler(error, interaction);
+            const handler = new CommandErrorHandler(error, interaction, userData.language);
             await handler.systemNotify();
             await handler.userNotify();
         }

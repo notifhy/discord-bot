@@ -1,5 +1,5 @@
-import { sendWebHook, slashCommandResolver } from '../../utility';
-import { CommandInteraction, TextChannel } from 'discord.js';
+import { BetterEmbed, cleanRound, sendWebHook, slashCommandResolver } from '../../utility';
+import { ColorResolvable, CommandInteraction, TextChannel } from 'discord.js';
 import {
     fatalWebhook,
     nonFatalWebhook,
@@ -8,13 +8,22 @@ import {
 import BaseErrorHandler from './BaseErrorHandler';
 import ConstraintError from '../ConstraintError';
 import Constants from '../../Constants';
+import { RegionLocales } from '../../../../locales/localesHandler';
+import { BaseEmbed, Locale } from '../../../@types/locales';
+import { setTimeout } from 'timers/promises';
 
 export class CommandErrorHandler extends BaseErrorHandler {
     interaction: CommandInteraction;
+    locale: string;
 
-    constructor(error: unknown, interaction: CommandInteraction) {
+    constructor(
+        error: unknown,
+        interaction: CommandInteraction,
+        locale: string,
+    ) {
         super(error);
         this.interaction = interaction;
+        this.locale = locale;
         this.errorLog();
     }
 
@@ -33,7 +42,11 @@ export class CommandErrorHandler extends BaseErrorHandler {
         );
 
         return this.errorEmbed().addFields([
-            { name: 'User', value: `Tag: ${user.tag}\nID: ${user.id}` },
+            {
+                name: 'User',
+                value: `Tag: ${user.tag}
+                ID: ${user.id}`,
+            },
             {
                 name: 'Interaction',
                 value: `ID: ${id}
@@ -57,7 +70,10 @@ export class CommandErrorHandler extends BaseErrorHandler {
                     channel instanceof TextChannel ? channel.name : 'N/A'
                 }`,
             },
-            { name: 'Other', value: `Websocket Ping: ${client.ws.ping}` },
+            {
+                name: 'Other',
+                value: `Websocket Ping: ${client.ws.ping}`,
+            },
         ]);
     }
 
@@ -73,6 +89,44 @@ export class CommandErrorHandler extends BaseErrorHandler {
         const { commandName, id } = this.interaction;
 
         if (this.error instanceof ConstraintError) {
+            const constraint = RegionLocales
+                .locale(this.locale)
+                .constraints[this.error.message as keyof Locale['constraints']];
+
+            if (this.error.message === 'cooldown') {
+                const embed1 = (constraint as Locale['constraints']['cooldown']).embed1;
+                const embed2 = (constraint as Locale['constraints']['cooldown']).embed2;
+
+                const command = this.interaction.client.commands.get(this.interaction.commandName);
+
+                this.constraintResolver(
+                    embed1.title,
+                    RegionLocales.replace(embed1.description, {
+                        cooldown: (command?.properties.cooldown ?? 0) / 1000,
+                        timeLeft: cleanRound(this.error.cooldown! / 1000, 1),
+                    }),
+                );
+
+                await setTimeout(this.error.cooldown!);
+
+                this.constraintResolver(
+                    embed2.title,
+                    RegionLocales.replace(embed2.description, {
+                        commandName: this.interaction.commandName,
+                    }),
+                    Constants.colors.on,
+                );
+
+                return;
+            }
+
+            const embed = constraint as BaseEmbed;
+
+            this.constraintResolver(
+                embed.title,
+                embed.description,
+            );
+
             return;
         }
 
@@ -108,6 +162,21 @@ export class CommandErrorHandler extends BaseErrorHandler {
                 suppressError: true,
             });
         }
+    }
+
+    private async constraintResolver(
+        title: string,
+        description: string,
+        color?: ColorResolvable,
+    ) {
+        const embed = new BetterEmbed(this.interaction)
+            .setColor(color ?? Constants.colors.warning)
+            .setTitle(title)
+            .setDescription(description);
+
+        await this.interaction.editReply({
+            embeds: [embed],
+        });
     }
 
     async systemNotify() {

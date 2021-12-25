@@ -22,6 +22,10 @@ export default {
             milestones: true,
             notificationInterval: 1_000 * 60 * 30,
         },
+        users: {
+            language: 'en-us',
+            systemMessage: null,
+        },
         menuIncrements: 5,
         menuFastIncrements: 20,
     },

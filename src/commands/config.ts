@@ -174,7 +174,7 @@ export const execute: CommandExecute = async (
             .setTitle(`Developer Mode Updated`)
             .setDescription(
                 `Developer Mode is now ${
-                    Boolean(config.devMode) === true ? 'on' : 'off'
+                    Boolean(config.devMode) === true ? 'off' : 'on'
                 }!`,
             );
 
