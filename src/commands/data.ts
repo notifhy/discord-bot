@@ -8,6 +8,7 @@ import type {
     UserAPIData,
 } from '../@types/database';
 import { BetterEmbed, camelToNormal } from '../util/utility';
+import { CommandErrorHandler } from '../util/errors/handlers/CommandErrorHandler';
 import {
     ButtonInteraction,
     CommandInteraction,
@@ -20,7 +21,6 @@ import {
 import { RegionLocales } from '../../locales/localesHandler';
 import { SQLiteWrapper } from '../database';
 import Constants2 from '../util/Constants';
-import ErrorHandler from '../util/errors/ErrorHandler';
 
 export const properties: CommandProperties = {
     name: 'data',
@@ -165,33 +165,7 @@ export const execute: CommandExecute = async (
                     });
                 }
             } catch (error) {
-                const handler = new ErrorHandler({
-                    error: error,
-                    interaction: interaction,
-                });
-
-                await handler.systemNotify();
-                await handler.userNotify();
-            }
-        });
-
-        collector.on('end', async (_collected, reason) => {
-            try {
-                if (reason === 'idle') {
-                    yesButton.setDisabled();
-                    noButton.setDisabled();
-                    const disabledRow = new MessageActionRow().setComponents(
-                        yesButton,
-                        noButton,
-                    );
-                    await interaction.editReply({ components: [disabledRow] });
-                }
-            } catch (error) {
-                const handler = new ErrorHandler({
-                    error: error,
-                    interaction: interaction,
-                });
-
+                const handler = new CommandErrorHandler(error, interaction);
                 await handler.systemNotify();
                 await handler.userNotify();
             }
@@ -247,11 +221,11 @@ export const execute: CommandExecute = async (
             discordID: userData.discordID,
             table: Constants2.tables.api,
             columns: ['*'],
-            allowUndefined: true,
+            allowUndefined: false,
         })) as UserAPIData;
 
         const base = new MessageButton()
-            .setStyle('PRIMARY');
+            .setStyle(Constants.MessageButtonStyles.PRIMARY);
 
         const fastLeftButton = new MessageButton(base)
             .setCustomId('fastBackward')
@@ -272,12 +246,10 @@ export const execute: CommandExecute = async (
             .setLabel('>>');
 
         rightButton.disabled =
-            userAPIData.history.length <
-            Constants2.defaults.menuFastIncrements;
+            userAPIData.history.length < Constants2.defaults.menuFastIncrements;
 
         fastRightButton.disabled =
-            userAPIData.history.length <
-            Constants2.defaults.menuFastIncrements;
+            userAPIData.history.length < Constants2.defaults.menuFastIncrements;
 
         const epoch = /^\d{13,}$/gm;
 
@@ -289,12 +261,17 @@ export const execute: CommandExecute = async (
             );
 
             const fields = shownData.map(({ date, ...event }) => ({
-                name: `<t:${Math.round(date / 1000)}:D><t:${Math.round(date / 1000)}:T>`,
+                name: `<t:${Math.round(date / 1000)}:D><t:${Math.round(
+                    date / 1000,
+                )}:T>`,
                 value: Object.entries(event)
-                    .map(([key, value]) =>
-                        (String(value).match(epoch)
-                            ? `${camelToNormal(key)}: <t:${Math.round(value / 1000)}:T>` //Time values (logins, logouts etc)
-                            : `${camelToNormal(key)}: ${value ?? 'None'}`), //Anything else
+                    .map(
+                        ([key, value]) =>
+                            (String(value).match(epoch)
+                                ? `${camelToNormal(key)}: <t:${Math.round(
+                                      value / 1000,
+                                  )}:T>` //Time values (logins, logouts etc)
+                                : `${camelToNormal(key)}: ${value ?? 'None'}`), //Anything else
                     )
                     .join('\n'),
             }));
@@ -302,9 +279,12 @@ export const execute: CommandExecute = async (
             return new BetterEmbed(interaction)
                 .setColor(Constants2.colors.normal)
                 .setDescription(
-                    `Showing ${position + 1} to ${
+                    `• Showing ${position + 1} to ${
                         position + shownData.length
-                    } of ${userAPIData.history.length}`,
+                    } out of ${userAPIData.history.length}
+                    • Saves up to ${
+                        Constants2.limits.userAPIDataHistory
+                    } events`,
                 )
                 .setTitle('History')
                 .setFields(fields);
@@ -339,8 +319,7 @@ export const execute: CommandExecute = async (
             try {
                 switch (i.customId) {
                     case 'fastBackward':
-                        currentIndex -=
-                            Constants2.defaults.menuFastIncrements;
+                        currentIndex -= Constants2.defaults.menuFastIncrements;
                         break;
                     case 'backward':
                         currentIndex -= Constants2.defaults.menuIncrements;
@@ -349,8 +328,7 @@ export const execute: CommandExecute = async (
                         currentIndex += Constants2.defaults.menuIncrements;
                         break;
                     case 'fastForward':
-                        currentIndex +=
-                            Constants2.defaults.menuFastIncrements;
+                        currentIndex += Constants2.defaults.menuFastIncrements;
                     //No default
                 }
 
@@ -380,11 +358,7 @@ export const execute: CommandExecute = async (
                     components: [buttons],
                 });
             } catch (error) {
-                const handler = new ErrorHandler({
-                    error: error,
-                    interaction: interaction,
-                });
-
+                const handler = new CommandErrorHandler(error, interaction);
                 await handler.systemNotify();
                 await handler.userNotify();
             }
@@ -392,8 +366,8 @@ export const execute: CommandExecute = async (
 
         collector.on('end', async () => {
             try {
-                const { components: actionRows } =
-                    (await interaction.fetchReply()) as Message;
+                const message = (await interaction.fetchReply()) as Message;
+                const actionRows = message.components;
 
                 for (const { components } of actionRows) {
                     for (const component of components) {
@@ -405,11 +379,7 @@ export const execute: CommandExecute = async (
                     components: actionRows,
                 });
             } catch (error) {
-                const handler = new ErrorHandler({
-                    error: error,
-                    interaction: interaction,
-                });
-
+                const handler = new CommandErrorHandler(error, interaction);
                 await handler.systemNotify();
                 await handler.userNotify();
             }

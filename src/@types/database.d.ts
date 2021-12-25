@@ -20,6 +20,7 @@ export interface RawConfig {
 
 export interface RawUserData extends BaseUserData {
     language: string;
+    systemMessage: string | null;
 }
 
 export interface RawUserAPIData extends BaseUserData, CleanHypixelPlayer {
@@ -31,6 +32,7 @@ export interface RawUserAPIData extends BaseUserData, CleanHypixelPlayer {
 
 export interface UserData extends BaseUserData {
     language: string;
+    systemMessage: string | null;
 }
 
 export interface UserAPIData

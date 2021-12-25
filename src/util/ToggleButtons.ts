@@ -1,8 +1,10 @@
 import { Constants, MessageActionRow, MessageButton } from 'discord.js';
 
-type ButtonLocale = {
+export type Button = {
     enable: string;
     disable: string;
+    enableCustomID: string;
+    disableCustomID: string;
 }
 
 
@@ -12,13 +14,13 @@ export class ToggleButtons extends MessageActionRow {
         enabled,
         buttonLocale,
     }: {
-        allDisabled?: boolean;
+        allDisabled: boolean;
         enabled: boolean;
-        buttonLocale: ButtonLocale;
+        buttonLocale: Button;
     }) {
         super();
         const enable = new MessageButton()
-            .setCustomId('enable')
+            .setCustomId(buttonLocale.enableCustomID)
             .setStyle(
                 allDisabled
                     ? Constants.MessageButtonStyles.SECONDARY
@@ -28,7 +30,7 @@ export class ToggleButtons extends MessageActionRow {
             .setDisabled(allDisabled || enabled);
 
         const disable = new MessageButton()
-            .setCustomId('disable')
+            .setCustomId(buttonLocale.disableCustomID)
             .setStyle(
                 allDisabled
                     ? Constants.MessageButtonStyles.SECONDARY

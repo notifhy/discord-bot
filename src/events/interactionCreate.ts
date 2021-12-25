@@ -1,14 +1,14 @@
 import type { EventProperties, ClientCommand } from '../@types/client';
 import type { RawUserData, UserAPIData, UserData } from '../@types/database';
 import { BetterEmbed, cleanRound, formattedUnix, slashCommandResolver } from '../util/utility';
-import { Collection, CommandInteraction } from 'discord.js';
+import { Collection, CommandInteraction, DiscordAPIError } from 'discord.js';
 import { ownerID } from '../../config.json';
 import { RegionLocales } from '../../locales/localesHandler';
 import { setTimeout } from 'node:timers/promises';
 import { SQLiteWrapper } from '../database';
 import Constants from '../util/Constants';
 import ConstraintError from '../util/errors/ConstraintError';
-import ErrorHandler from '../util/errors/ErrorHandler';
+import { CommandErrorHandler } from '../util/errors/handlers/CommandErrorHandler';
 
 export const properties: EventProperties = {
     name: 'interactionCreate',
@@ -69,9 +69,11 @@ export const execute = async (
                 data: {
                     discordID: interaction.user.id,
                     language: 'en-us',
+                    systemMessage: null,
                 },
             })) as UserData;
 
+            await checkSystemMessages(interaction, userData);
             await blockedConstraint(interaction, userData, blockedUsers);
             await devConstraint(interaction, userData, Boolean(devMode));
             await ownerConstraint(interaction, userData, command);
@@ -83,15 +85,41 @@ export const execute = async (
             });
         }
     } catch (error) {
-        const handler = new ErrorHandler({
-            error: error,
-            interaction: interaction,
-        });
-
+        const handler = new CommandErrorHandler(error, interaction);
         await handler.systemNotify();
-        await handler.userNotify();
+
+        if (!(error instanceof ConstraintError)) {
+            await handler.userNotify();
+        }
     }
 };
+
+async function checkSystemMessages(
+    interaction: CommandInteraction,
+    userData: UserData,
+) {
+    if (userData.systemMessage !== null) {
+        const test = new BetterEmbed({ name: 'System Message' })
+            .setColor(Constants.colors.normal)
+            .setTitle('System Message')
+            .setDescription('This is a notification regarding an aspect of this bot.')
+            .setField('Message', userData.systemMessage);
+
+        try {
+            await interaction.user.send({ embeds: [test] });
+        } catch (error) {
+            if ((error as DiscordAPIError).code === 50007) {
+                await interaction.channel!.send({ embeds: [test] });
+            }
+        }
+
+        await SQLiteWrapper.updateUser<Partial<UserData>, Partial<RawUserData>>({
+            discordID: userData.discordID,
+            table: Constants.tables.users,
+            data: { systemMessage: null },
+        });
+    }
+}
 
 async function blockedConstraint(
     interaction: CommandInteraction,

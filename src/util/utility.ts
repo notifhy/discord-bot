@@ -8,6 +8,7 @@ import {
     WebhookClient,
 } from 'discord.js';
 import Constants from './Constants';
+import BaseErrorHandler from './errors/handlers/BaseErrorHandler';
 
 type Footer =
     | {
@@ -130,6 +131,7 @@ export function compare<Primary, Secondary extends Primary>(
     return { primary: primaryDifferences, secondary: secondaryDifferences };
 }
 
+//Taken from https://stackoverflow.com/a/13016136 under CC BY-SA 3.0 matching ISO 8601
 export function createOffset(date = new Date()): string {
     function pad(value: number) {
         return value < 10 ? `0${value}` : value;
@@ -224,7 +226,7 @@ export async function sendWebHook({
     webhook,
     suppressError = true,
 }: {
-    content?: string;
+    content?: string | null;
     embeds: MessageEmbed[];
     webhook: WebhookConfig;
     suppressError?: boolean;
@@ -235,17 +237,14 @@ export async function sendWebHook({
             embeds: embeds,
         });
     } catch (err) {
-        console.error( //Add to error logging system
-            `${formattedUnix({
-                date: true,
-                utc: true,
-            })} | An error has occurred while sending an WebHook | ${
-                (err as Error)?.stack ?? (err as Error)?.message
-            }`,
-        );
+        BaseErrorHandler.staticLog(`An error has occurred while sending an WebHook | ${
+            (err as Error)?.stack ?? (err as Error)?.message
+        }`);
+
         if (suppressError === true) {
             return;
         }
+
         throw err;
     }
 }

@@ -6,10 +6,10 @@ import { HypixelModuleErrors } from './HypixelModuleErrors';
 import { HypixelModuleInstance } from './HypixelModuleInstance';
 import { HypixelModuleRequest } from './HypixelModuleRequest';
 import { keyLimit } from '../../config.json';
+import { RequestErrorHandler } from '../util/errors/handlers/RequestErrorHandler';
 import { setTimeout } from 'node:timers/promises';
 import { SQLiteWrapper } from '../database';
 import Constants from '../util/Constants';
-import ErrorHandler from '../util/errors/ErrorHandler';
 
 export class HypixelModuleManager {
     instance: HypixelModuleInstance;
@@ -80,7 +80,7 @@ export class HypixelModuleManager {
                             UserAPIData
                         >({
                             discordID: user.discordID,
-                            table: 'api',
+                            table: Constants.tables.api,
                             columns: ['*'],
                             allowUndefined: false,
                         })) as UserAPIData;
@@ -118,19 +118,15 @@ export class HypixelModuleManager {
                         }
                         await Promise.all(modules);
                     } catch (error) {
-                        await new ErrorHandler({
-                            error: error,
-                            hypixelModuleManager: this,
-                        }).systemNotify();
+                        await new RequestErrorHandler(error, this)
+                            .systemNotify();
                     }
                 })();
                 await setTimeout(intervalBetweenRequests * urls.length); //eslint-disable-line no-await-in-loop
             }
         } catch (error) {
-            await new ErrorHandler({
-                error: error,
-                hypixelModuleManager: this,
-            }).systemNotify();
+            await new RequestErrorHandler(error, this)
+                .systemNotify();
         }
     }
 }

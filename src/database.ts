@@ -1,21 +1,16 @@
 import { BaseUserData, RawConfig, Tables } from './@types/database';
 import { formattedUnix } from './util/utility';
 import Database from 'better-sqlite3';
+import Constants from './util/Constants';
 
 // eslint-disable-next-line no-warning-comments
 //TODO: Fix "any" after the rest is done
 
 export class SQLiteWrapper {
-    static createTablesIfNotExists(): Promise<void> {
+    static createTablesIfNotExists(): Promise<void> { //Update this
         return new Promise<void>(resolve => {
             const db = new Database(`${__dirname}/../database.db`);
-            const tables = [
-                'CREATE TABLE IF NOT EXISTS "api" ("discordID" TEXT NOT NULL UNIQUE, "uuid" TEXT NOT NULL UNIQUE, "modules" TEXT NOT NULL, "lastUpdated" INTEGER NOT NULL, "firstLogin" INTEGER, "lastLogin" INTEGER, "lastLogout" INTEGER, "version" TEXT, "language" TEXT NOT NULL, "gameType" TEXT, "lastClaimedReward" INTEGER, "rewardScore" INTEGER, "rewardHighScore" INTEGER, "totalDailyRewards" INTEGER, "totalRewards" INTEGER, "history" TEXT NOT NULL)',
-                'CREATE TABLE IF NOT EXISTS "config" ("blockedGuilds" TEXT NOT NULL, "blockedUsers" TEXT NOT NULL, "devMode" TEXT NOT NULL, "enabled" TEXT NOT NULL, "uses" INTEGER NOT NULL)',
-                'CREATE TABLE IF NOT EXISTS "friends" ("discordID" TEXT NOT NULL UNIQUE, "channel" TEXT, "suppressNext" TEXT NOT NULL)',
-                'CREATE TABLE IF NOT EXISTS "rewards" ("discordID" TEXT NOT NULL UNIQUE, "alertTime" INTEGER, "lastNotified" INTEGER, "milestones" TEXT, "notificationInterval" INTEGER)',
-                'CREATE TABLE IF NOT EXISTS "users" ("discordID" TEXT NOT NULL UNIQUE, "language" TEXT)',
-            ].map(value => db.prepare(value));
+            const tables = Object.values(Constants.tables.create).map(value => db.prepare(value));
 
             const config = db
                 .prepare('SELECT * FROM config WHERE rowid = 1')
@@ -211,7 +206,8 @@ export class SQLiteWrapper {
     }): Promise<void | RawData | CleanData | undefined> {
         const setQuery: string[] = [];
         for (const key in data) {
-            if (Object.prototype.hasOwnProperty.call(data, key)) {
+            //@ts-expect-error Types not added yet
+            if (Object.hasOwn(data, key)) {
                 setQuery.push(`${key} = ?`);
             }
         }
@@ -290,7 +286,8 @@ export class SQLiteWrapper {
      */
     static unJSONize<Input, RawOutput>({ input }: { input: Input }): RawOutput {
         for (const key in input) {
-            if (Object.prototype.hasOwnProperty.call(input, key)) {
+            //@ts-expect-error Types not added yet
+            if (Object.hasOwn(input, key)) {
                 try {
                     const type = Object.prototype.toString.call(input[key]);
 

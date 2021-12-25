@@ -1,4 +1,5 @@
 import type { MessageSelectMenuOptions } from 'discord.js';
+import { Button } from '../util/ToggleButtons';
 
 /*
 Misc. Interfaces
@@ -85,10 +86,7 @@ export interface ModulesCommand {
         };
         menu: {
             toggle: {
-                button: {
-                    enable: string;
-                    disable: string;
-                }
+                button: Button;
             } & ModuleData;
         };
     };
@@ -102,10 +100,7 @@ export interface ModulesCommand {
         };
         menu: {
             toggle: {
-                button: {
-                    enable: string;
-                    disable: string;
-                }
+                button: Button;
             } & ModuleData;
             channel: {
                 select: MessageSelectMenuOptions
@@ -125,13 +120,21 @@ export interface ModulesCommand {
                 button: {
                     enable: string;
                     disable: string;
+                    enableCustomID: string;
+                    disableCustomID: string;
                 }
             } & ModuleData;
             alertTime: {
                 select: MessageSelectMenuOptions
             } & ModuleData;
+            claimNotification: {
+                button: Button;
+            } & ModuleData;
             notificationInterval: {
                 select: MessageSelectMenuOptions
+            } & ModuleData;
+            milestones: {
+                button: Button;
             } & ModuleData;
         };
     };

@@ -21,7 +21,7 @@ import { RegionLocales } from '../../locales/localesHandler';
 import { SQLiteWrapper } from '../database';
 import { ToggleButtons } from '../util/ToggleButtons';
 import Constants from '../util/Constants';
-import ErrorHandler from '../util/errors/ErrorHandler';
+import { CommandErrorHandler } from '../util/errors/handlers/CommandErrorHandler';
 
 export const properties: CommandProperties = {
     name: 'modules',
@@ -153,17 +153,16 @@ export const execute: CommandExecute = async (
         async (i: SelectMenuInteraction | ButtonInteraction) => {
             try {
                 await i.deferUpdate();
-                if (i.customId === 'main' && i.isSelectMenu()) {
+                if (
+                    i.customId === 'main' &&
+                    i.isSelectMenu()
+                ) {
                     await menuUpdate(i);
                 } else {
                     await dataUpdate(i);
                 }
             } catch (error) {
-                const handler = new ErrorHandler({
-                    error: error,
-                    interaction: interaction,
-                });
-
+                const handler = new CommandErrorHandler(error, interaction);
                 await handler.systemNotify();
                 await handler.userNotify();
             }
@@ -172,7 +171,8 @@ export const execute: CommandExecute = async (
 
     collector.on('end', async () => {
         try {
-            const { components: actionRows } = (await interaction.fetchReply()) as Message;
+            const message = (await interaction.fetchReply()) as Message;
+            const actionRows = message.components;
 
             for (const { components } of actionRows) {
                 for (const component of components) {
@@ -181,14 +181,10 @@ export const execute: CommandExecute = async (
             }
 
             await interaction.editReply({
-                components: actionRows,
+                components: message.components,
             });
         } catch (error) {
-            const handler = new ErrorHandler({
-                error: error,
-                interaction: interaction,
-            });
-
+            const handler = new CommandErrorHandler(error, interaction);
             await handler.systemNotify();
             await handler.userNotify();
         }
@@ -240,9 +236,8 @@ export const execute: CommandExecute = async (
                     allDisabled: missingRequirements.length > 0,
                     enabled: userAPIData.modules.includes(subCommand),
                     buttonLocale: (
-                        locale.menu
-                            .toggle as ModulesCommand['friends']['menu']['toggle']
-                    ).button,
+                        locale.menu as ModulesCommand['friends']['menu']
+                    ).toggle.button,
                 });
 
                 components.push(component);
@@ -262,8 +257,7 @@ export const execute: CommandExecute = async (
             case 'alertTime': {
                 const userRewardData = await getRewardsData();
                 const component = new MessageSelectMenu(
-                    (
-                        locale.menu as ModulesCommand['rewards']['menu']
+                    (locale.menu as ModulesCommand['rewards']['menu']
                     ).alertTime.select,
                 );
 
@@ -280,11 +274,24 @@ export const execute: CommandExecute = async (
                 components.push(row);
                 break;
             }
+            case 'claimNotification': {
+                const userRewardData = await getRewardsData();
+
+                const component = new ToggleButtons({
+                    allDisabled: false,
+                    enabled: userRewardData.claimNotification,
+                    buttonLocale: (
+                        locale.menu as ModulesCommand['rewards']['menu']
+                    ).claimNotification.button,
+                });
+
+                components.push(component);
+                break;
+            }
             case 'notificationInterval': {
                 const userRewardData = await getRewardsData();
                 const component = new MessageSelectMenu(
-                    (
-                        locale.menu as ModulesCommand['rewards']['menu']
+                    (locale.menu as ModulesCommand['rewards']['menu']
                     ).notificationInterval.select,
                 );
 
@@ -299,6 +306,20 @@ export const execute: CommandExecute = async (
                 const row = new MessageActionRow().addComponents(component);
 
                 components.push(row);
+                break;
+            }
+            case 'milestones': {
+                const userRewardData = await getRewardsData();
+
+                const component = new ToggleButtons({
+                    allDisabled: false,
+                    enabled: userRewardData.milestones,
+                    buttonLocale: (
+                        locale.menu as ModulesCommand['rewards']['menu']
+                    ).milestones.button,
+                });
+
+                components.push(component);
                 break;
             }
             //No default
@@ -320,11 +341,10 @@ export const execute: CommandExecute = async (
         ];
 
         switch (messageComponentInteraction.customId) {
-            case 'enable':
-            case 'disable': {
+            case 'toggle1':
+            case 'toggle0': {
                 const userAPIData = await getUserAPIData();
                 if (userAPIData.modules.includes(subCommand)) {
-                    //Refactor
                     userAPIData.modules.splice(
                         userAPIData.modules.indexOf(subCommand),
                         1,
@@ -334,11 +354,11 @@ export const execute: CommandExecute = async (
                 }
 
                 const component = new ToggleButtons({
+                    allDisabled: false,
                     enabled: userAPIData.modules.includes(subCommand),
                     buttonLocale: (
-                        locale.menu
-                            .toggle as ModulesCommand['friends']['menu']['toggle']
-                    ).button,
+                        locale.menu as ModulesCommand['friends']['menu']
+                    ).toggle.button,
                 });
 
                 components.push(component);
@@ -361,8 +381,8 @@ export const execute: CommandExecute = async (
 
                 //@ts-expect-error easiest solution for now - priority is getting everything working for now
                 const updatedMenu = structuredClone(
-                    (locale.menu as ModulesCommand['rewards']['menu']).alertTime
-                        .select,
+                    (locale.menu as ModulesCommand['rewards']['menu']
+                    ).alertTime.select,
                 ) as ModulesCommand['rewards']['menu']['alertTime']['select'];
 
                 updatedMenu.options!.find(
@@ -382,6 +402,32 @@ export const execute: CommandExecute = async (
                     discordID: userData.discordID,
                     table: Constants.tables.rewards,
                     data: { alertTime: Number(time) },
+                });
+                break;
+            }
+            case 'claimNotification1':
+            case 'claimNotification0': {
+                const userRewardData = await getRewardsData();
+
+                const flipped = userRewardData.claimNotification === false;
+
+                const component = new ToggleButtons({
+                    allDisabled: false,
+                    enabled: flipped,
+                    buttonLocale: (
+                        locale.menu as ModulesCommand['rewards']['menu']
+                    ).claimNotification.button,
+                });
+
+                components.push(component);
+
+                await SQLiteWrapper.updateUser<
+                    Partial<RewardsModule>,
+                    Partial<RawRewardsModule>
+                >({
+                    discordID: userData.discordID,
+                    table: Constants.tables.rewards,
+                    data: { claimNotification: flipped },
                 });
                 break;
             }
@@ -413,6 +459,32 @@ export const execute: CommandExecute = async (
                     discordID: userData.discordID,
                     table: Constants.tables.rewards,
                     data: { notificationInterval: Number(time) },
+                });
+                break;
+            }
+            case 'milestones1':
+            case 'milestones0': {
+                const userRewardData = await getRewardsData();
+
+                const flipped = userRewardData.milestones === false;
+
+                const component = new ToggleButtons({
+                    allDisabled: false,
+                    enabled: flipped,
+                    buttonLocale: (
+                        locale.menu as ModulesCommand['rewards']['menu']
+                    ).milestones.button,
+                });
+
+                components.push(component);
+
+                await SQLiteWrapper.updateUser<
+                    Partial<RewardsModule>,
+                    Partial<RawRewardsModule>
+                >({
+                    discordID: userData.discordID,
+                    table: Constants.tables.rewards,
+                    data: { milestones: flipped },
                 });
                 break;
             }

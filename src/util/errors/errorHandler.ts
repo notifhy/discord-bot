@@ -28,7 +28,7 @@ import RateLimitError from './RateLimitError';
     * API Errors should be handled in HypixelModuleRequest or similar
         * Only Abort Errors/HTTPS Errors should be sent to the api error webhook
 
-    * Handle command errors in interactionCreate\
+    * Handle command errors in interactionCreate
         * Unify constraint errors and rename
 
     * Unified logging system, which would be this file
@@ -168,6 +168,7 @@ export default class ErrorHandler { //this thing sucks
         if (this.interaction?.isCommand()) {
             const embed = this.errorEmbed();
             const { commandName, id } = this.interaction;
+
             if (this.error instanceof ConstraintError) {
                 return;
             }

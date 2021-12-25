@@ -34,6 +34,8 @@ export interface RawHypixelPlayer extends BaseHypixelAPI {
 export interface RawHypixelStatus extends BaseHypixelAPI {
     session: {
         gameType: string | null | undefined;
+        mode: string | null | undefined;
+        map: string | null | undefined;
     };
 }
 
@@ -54,8 +56,11 @@ export interface CleanHypixelPlayer {
     totalRewards: number | null;
 }
 
-export interface CleanHypixelStatus
-    extends Required<RawHypixelStatus['session']> {}
+export interface CleanHypixelStatus {
+    gameType: string | null;
+    gameMode: string | null;
+    gameMap: string | null;
+}
 
 /*
 Slothpixel

@@ -132,6 +132,8 @@ export const execute: CommandExecute = async (
                 version: mc_version,
                 language: language,
                 gameType: null,
+                gameMode: null,
+                gameMap: null,
                 lastClaimedReward: null,
                 rewardScore: streak_current,
                 rewardHighScore: streak_best,

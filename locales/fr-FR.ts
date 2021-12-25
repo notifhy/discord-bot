@@ -85,6 +85,8 @@ export default {
                         button: {
                             enable: 'Enable',
                             disable: 'Disable',
+                            enableCustomID: 'toggle1',
+                            disableCustomID: 'toggle0',
                         },
                     },
                 },
@@ -107,6 +109,8 @@ export default {
                         button: {
                             enable: 'Enable',
                             disable: 'Disable',
+                            enableCustomID: 'toggle1',
+                            disableCustomID: 'toggle0',
                         },
                     },
                     channel: {
@@ -148,6 +152,8 @@ export default {
                         button: {
                             enable: 'Enable',
                             disable: 'Disable',
+                            enableCustomID: 'toggle1',
+                            disableCustomID: 'toggle0',
                         },
                     },
                     alertTime: {
@@ -284,6 +290,19 @@ export default {
                             ],
                         },
                     },
+                    claimNotification: {
+                        label: 'Claim Notification',
+                        description: 'Toggle notifications for when you claim the reward',
+                        longDescription: 'Toggle whether you get a confirmation when you collect the reward. It also comes with your current streak and total daily rewards!',
+                        value: 'claimNotification',
+                        emoji: Constants.emoji.power,
+                        button: {
+                            enable: 'Enable',
+                            disable: 'Disable',
+                            enableCustomID: 'claimNotification1',
+                            disableCustomID: 'claimNotification0',
+                        },
+                    },
                     notificationInterval: {
                         label: 'Notification Interval',
                         description: 'Set the timeout between pings',
@@ -332,6 +351,19 @@ export default {
                                     value: '21600000',
                                 },
                             ],
+                        },
+                    },
+                    milestones: {
+                        label: 'Reward Milestones',
+                        description: 'Receive congratulations on streaks',
+                        longDescription: `Receive a DM congratulating you when you hti a daily streak  of one of the following: ${Constants.modules.rewards.milestones.join(', ')}`,
+                        value: 'milestones',
+                        emoji: Constants.emoji.power,
+                        button: {
+                            enable: 'Enable',
+                            disable: 'Disable',
+                            enableCustomID: 'milestones1',
+                            disableCustomID: 'milestones0',
                         },
                     },
                 },

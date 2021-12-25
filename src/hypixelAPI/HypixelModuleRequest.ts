@@ -82,6 +82,8 @@ export class HypixelModuleRequest extends HypixelRequest {
             rawHypixelStatus.session;
         return {
             gameType: rawHypixelStatusData.gameType ?? null,
+            gameMode: rawHypixelStatusData.mode ?? null,
+            gameMap: rawHypixelStatusData.map ?? null,
         } as CleanHypixelStatus;
     }
 }
