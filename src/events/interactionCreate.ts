@@ -65,8 +65,8 @@ export const execute = async (
             })) as UserData;
 
             await checkSystemMessages(interaction, userData);
-            cooldownConstraint(interaction, command);
             generalConstraints(interaction, command);
+            cooldownConstraint(interaction, command);
             await command.execute(interaction, {
                 userData,
                 userAPIData,
@@ -101,7 +101,12 @@ async function checkSystemMessages(
             await interaction.user.send({ embeds: [test] });
         } catch (error) {
             if ((error as DiscordAPIError).code === 50007) {
-                await interaction.channel!.send({ embeds: [test] });
+                test.description += ' Your direct messages were disabled, so this message was sent here instead.';
+
+                await interaction.channel!.send({
+                    content: interaction.user.toString(),
+                    embeds: [test],
+                });
             }
         }
 
@@ -111,32 +116,6 @@ async function checkSystemMessages(
             data: { systemMessage: null },
         });
     }
-}
-
-function cooldownConstraint(
-    interaction: CommandInteraction,
-    command: ClientCommand,
-) {
-    const { client: { cooldowns }, user } = interaction;
-    const { properties: { name, cooldown } } = command;
-
-    const timestamps = cooldowns.get(name);
-
-    if (!timestamps) {
-        cooldowns.set(name, new Collection());
-        cooldowns.get(name)!.set(user.id, Date.now());
-        return;
-    }
-
-    const expireTime = Number(timestamps.get(user.id)) + cooldown;
-    const isCooldown = expireTime > Date.now() + 2_500;
-    const timeLeft = expireTime - Date.now();
-
-    if (isCooldown) {
-        throw new ConstraintError('cooldown', timeLeft);
-    }
-
-    timestamps.set(user.id, Date.now());
 }
 
 function generalConstraints(
@@ -169,4 +148,30 @@ function generalConstraints(
     ) {
         throw new ConstraintError('dm');
     }
+}
+
+function cooldownConstraint(
+    interaction: CommandInteraction,
+    command: ClientCommand,
+) {
+    const { client: { cooldowns }, user } = interaction;
+    const { properties: { name, cooldown } } = command;
+
+    const timestamps = cooldowns.get(name);
+
+    if (!timestamps) {
+        cooldowns.set(name, new Collection());
+        cooldowns.get(name)!.set(user.id, Date.now());
+        return;
+    }
+
+    const expireTime = Number(timestamps.get(user.id)) + cooldown;
+    const isCooldown = expireTime > Date.now() + 2_500;
+    const timeLeft = expireTime - Date.now();
+
+    if (isCooldown) {
+        throw new ConstraintError('cooldown', timeLeft);
+    }
+
+    timestamps.set(user.id, Date.now());
 }
