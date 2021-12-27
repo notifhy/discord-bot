@@ -62,14 +62,14 @@ export default class BaseErrorHandler {
         const time = formattedUnix({ date: true, utc: true });
         const base = `${time} | Incident ${
             this.incidentID
-        } | `;
+        } |`;
 
         console.error(base, ...text);
     }
 
     static staticLog(...text: unknown[]) {
         const time = formattedUnix({ date: true, utc: true });
-        const base = `${time} | `;
+        const base = `${time} |`;
 
         console.error(base, ...text);
     }

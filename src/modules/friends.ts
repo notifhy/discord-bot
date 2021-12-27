@@ -1,4 +1,3 @@
-import type { Differences } from '../@types/modules';
 import type {
     FriendsModule,
     RawFriendsModule,
@@ -7,7 +6,6 @@ import type {
 } from '../@types/database';
 import { BetterEmbed } from '../util/utility';
 import {
-    Client,
     GuildMember,
     MessageEmbed,
     TextChannel,
@@ -17,6 +15,7 @@ import { SQLiteWrapper } from '../database';
 import Constants from '../util/Constants';
 import ErrorHandler from '../util/errors/ErrorHandler';
 import ModuleError from '../util/errors/ModuleError';
+import { ModuleHandler } from '../module/ModuleHandler';
 
 export const properties = {
     name: 'friends',
@@ -26,11 +25,8 @@ export const execute = async ({
     client,
     differences,
     userAPIData,
-}: {
-    client: Client;
-    differences: Differences;
-    userAPIData: UserAPIData;
-}): Promise<void> => {
+}: ModuleHandler,
+): Promise<void> => {
     try {
         if (
             differences.primary.lastLogin === undefined &&
@@ -203,7 +199,9 @@ export const execute = async ({
 
             //lastLogout seems to change twice sometimes on a single logout, this is a fix for that
             const lastEvent = userAPIData.history[1]; //First item in array is this event, so it checks the second item
-            const duplicationCheck = 'lastLogout' in lastEvent;
+            //@ts-expect-error hasOwn typing not implemented yet - https://github.com/microsoft/TypeScript/issues/44253
+            const duplicationCheck = Object.hasOwn(lastEvent, 'lastLogout') &&
+                lastEvent.lastLogout! - differences.primary.lastLogout > Constants.ms.second * 2.5;
 
             if (duplicationCheck === false) {
                 if (

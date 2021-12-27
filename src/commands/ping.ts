@@ -32,16 +32,19 @@ export const execute: CommandExecute = async (
     const sentReply = await interaction.editReply({
         embeds: [initialPingEmbed],
     });
+
     const roundTripDelay =
         (sentReply instanceof Message
             ? sentReply.createdTimestamp
             : Date.parse(sentReply.timestamp)) - interaction.createdTimestamp;
+
     const embedColor: ColorResolvable =
         interaction.client.ws.ping < 80 && roundTripDelay < 160
             ? Constants.colors.on
             : interaction.client.ws.ping < 100 && roundTripDelay < 250
             ? Constants.colors.ok
             : Constants.colors.warning;
+
     const pingEmbed = new BetterEmbed(interaction)
         .setColor(embedColor)
         .setTitle(locale.embed2.title)
@@ -51,5 +54,6 @@ export const execute: CommandExecute = async (
                 rtPing: roundTripDelay,
             }),
         );
+
     await interaction.editReply({ embeds: [pingEmbed] });
 };

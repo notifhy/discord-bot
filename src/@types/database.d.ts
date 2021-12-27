@@ -1,4 +1,5 @@
 import type { CleanHypixelPlayer, CleanHypixelStatus } from './hypixel';
+import type { Field } from './locales';
 
 export type Tables = 'users' | 'api' | 'friends' | 'rewards';
 
@@ -20,7 +21,7 @@ export interface RawConfig {
 
 export interface RawUserData extends BaseUserData {
     language: string;
-    systemMessage: string | null;
+    systemMessage: string;
 }
 
 export interface RawUserAPIData extends BaseUserData, CleanHypixelPlayer {
@@ -32,7 +33,7 @@ export interface RawUserAPIData extends BaseUserData, CleanHypixelPlayer {
 
 export interface UserData extends BaseUserData {
     language: string;
-    systemMessage: string | null;
+    systemMessage: Field[];
 }
 
 export interface UserAPIData

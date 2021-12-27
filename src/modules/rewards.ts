@@ -1,17 +1,15 @@
-import type { Differences } from '../@types/modules';
 import type {
     RawRewardsModule,
     RewardsModule,
-    UserAPIData,
     UserData,
 } from '../@types/database';
 import { BetterEmbed } from '../util/utility';
-import { Client } from 'discord.js';
 import { RegionLocales } from '../../locales/localesHandler';
 import { SQLiteWrapper } from '../database';
 import Constants from '../util/Constants';
 import ErrorHandler from '../util/errors/ErrorHandler';
 import ModuleError from '../util/errors/ModuleError';
+import { ModuleHandler } from '../module/ModuleHandler';
 
 export const properties = {
     name: 'rewards',
@@ -21,11 +19,8 @@ export const execute = async ({
     client,
     differences,
     userAPIData,
-}: {
-    client: Client;
-    differences: Differences;
-    userAPIData: UserAPIData;
-}): Promise<void> => {
+}: ModuleHandler,
+): Promise<void> => {
     try {
         const rewardsModule = (await SQLiteWrapper.getUser<
             RawRewardsModule,
@@ -163,7 +158,7 @@ export const execute = async ({
     } catch (error) {
         await new ErrorHandler({
             error: new ModuleError({
-                message: (error as Error).message,
+                message: (error as Error)?.message,
                 module: properties.name,
                 user: userAPIData,
             }),

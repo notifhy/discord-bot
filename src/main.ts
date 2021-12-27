@@ -32,12 +32,6 @@ const client = new Client({
     },
     presence: {
         status: 'dnd',
-        activities: [
-            {
-                type: 'WATCHING',
-                name: 'initialization | /help /register',
-            },
-        ],
     },
 });
 

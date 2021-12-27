@@ -90,12 +90,15 @@ async function checkSystemMessages(
     interaction: CommandInteraction,
     userData: UserData,
 ) {
-    if (userData.systemMessage !== null) {
+    if (userData.systemMessage.length > 0) {
         const test = new BetterEmbed({ name: 'System Message' }) //Localize
             .setColor(Constants.colors.normal)
             .setTitle('System Message')
-            .setDescription('This is a notification regarding an aspect of this bot.')
-            .setField('Message', userData.systemMessage);
+            .setDescription('This is a notification regarding an aspect of this bot.');
+
+        for (const message of userData.systemMessage) {
+            test.addField(message.name, message.value);
+        }
 
         try {
             await interaction.user.send({ embeds: [test] });
@@ -113,7 +116,7 @@ async function checkSystemMessages(
         await SQLiteWrapper.updateUser<Partial<UserData>, Partial<RawUserData>>({
             discordID: userData.discordID,
             table: Constants.tables.users,
-            data: { systemMessage: null },
+            data: { systemMessage: [] },
         });
     }
 }

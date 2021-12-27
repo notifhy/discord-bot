@@ -10,6 +10,7 @@ import { RequestErrorHandler } from '../util/errors/handlers/RequestErrorHandler
 import { setTimeout } from 'node:timers/promises';
 import { SQLiteWrapper } from '../database';
 import Constants from '../util/Constants';
+import { ModuleHandler } from '../module/ModuleHandler';
 
 export class HypixelModuleManager {
     instance: HypixelModuleInstance;
@@ -94,29 +95,8 @@ export class HypixelModuleManager {
 
                         await hypixelModuleDataManager.updateUserAPIData();
 
-                        const payLoad = {
-                            client: this.client,
-                            differences: hypixelModuleDataManager.differences,
-                            userAPIData:
-                                hypixelModuleDataManager.newUserAPIData,
-                        };
-
-                        const modules = [];
-                        if (user.modules.includes('rewards')) {
-                            modules.push(
-                                this.client.modules
-                                    .get('rewards')!
-                                    .execute(payLoad),
-                            );
-                        }
-                        if (user.modules.includes('friends')) {
-                            modules.push(
-                                this.client.modules
-                                    .get('friends')!
-                                    .execute(payLoad),
-                            );
-                        }
-                        await Promise.all(modules);
+                        const moduleHandler = new ModuleHandler(this.client, hypixelModuleDataManager);
+                        await moduleHandler.init();
                     } catch (error) {
                         await new RequestErrorHandler(error, this)
                             .systemNotify();
