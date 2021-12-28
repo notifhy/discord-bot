@@ -2,7 +2,6 @@ import type { Differences } from '../@types/modules';
 import type { UserAPIData } from '../@types/database';
 import { Client } from 'discord.js';
 import { ModuleData } from './ModuleData';
-import { ModuleErrorHandler } from '../util/errors/handlers/ModuleErrorHandler';
 
 export class ModuleHandler {
     readonly client: Client;
@@ -22,21 +21,16 @@ export class ModuleHandler {
     }
 
     async init() {
-        try {
-            const promises = [];
+        const promises: Promise<void>[] = [];
 
-            for (const module of this.userAPIData.modules) {
-                promises.push(
-                    this.client.modules
-                        .get(module)!
-                        .execute(this),
-                );
-            }
-
-            await Promise.all(promises);
-        } catch (error) {
-            await new ModuleErrorHandler(error, this.userAPIData.discordID)
-                .systemNotify();
+        for (const module of this.userAPIData.modules) {
+            promises.push(
+                this.client.modules
+                    .get(module)!
+                    .execute(this),
+            );
         }
+
+        await Promise.all(promises);
     }
 }

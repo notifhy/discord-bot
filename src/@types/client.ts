@@ -1,7 +1,7 @@
 /* eslint-disable no-unused-vars */
 import type { ClientModule } from './modules';
 import type { Collection, CommandInteraction } from 'discord.js';
-import type { HypixelModuleManager } from '../module/ModuleManager';
+import type { RequestManager } from '../hypixelAPI/RequestManager';
 import type { UserAPIData, UserData } from './database';
 
 export interface WebhookConfig {
@@ -62,7 +62,7 @@ declare module 'discord.js' {
         config: Config;
         customStatus: string | null;
         events: Collection<string, ClientEvent>;
-        hypixelAPI: HypixelModuleManager;
+        hypixelAPI: RequestManager;
         modules: Collection<string, ClientModule>;
     }
 }

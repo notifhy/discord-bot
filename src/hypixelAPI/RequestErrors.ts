@@ -5,7 +5,7 @@ export class RequestErrors {
     instance: RequestInstance;
 
     readonly abort: {
-        readonly baseTimeout: number;
+        baseTimeout: number;
         lastMinute: number;
         resetTimeout: number | undefined;
         timeout: number;

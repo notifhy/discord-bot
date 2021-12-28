@@ -78,6 +78,6 @@ export default {
     urls: {
         linkDiscord: 'https://i.imgur.com/gGKd2s8.gif',
         hypixel: 'https://api.hypixel.net/',
-        slothpixel: 'https://api.slothpixel.me/api',
+        slothpixel: 'https://api.slothpixel.me/api/',
     },
 };

@@ -18,6 +18,7 @@ import ModuleError from '../util/errors/ModuleError';
 
 export const properties = {
     name: 'friends',
+    cleanName: 'Friends',
 };
 
 export const execute = async ({
@@ -34,25 +35,29 @@ export const execute = async ({
             return; //If the login/logout aren't in differences
         }
 
-        const friendModule = (await SQLiteWrapper.getUser<
-            RawFriendsModule,
-            FriendsModule
-        >({
-            discordID: userAPIData.discordID,
-            table: Constants.tables.friends,
-            allowUndefined: false,
-            columns: ['channel'],
-        })) as FriendsModule;
+        const friendModule = (
+            await SQLiteWrapper.getUser<
+                RawFriendsModule,
+                FriendsModule
+            >({
+                discordID: userAPIData.discordID,
+                table: Constants.tables.friends,
+                allowUndefined: false,
+                columns: ['channel'],
+            })
+        ) as FriendsModule;
 
-        const userData = (await SQLiteWrapper.getUser<
-            UserData,
-            UserData
-        >({
-            discordID: userAPIData.discordID,
-            table: Constants.tables.users,
-            allowUndefined: false,
-            columns: ['language'],
-        })) as UserData;
+        const userData = (
+            await SQLiteWrapper.getUser<
+                UserData,
+                UserData
+            >({
+                discordID: userAPIData.discordID,
+                table: Constants.tables.users,
+                allowUndefined: false,
+                columns: ['language'],
+            })
+        ) as UserData;
 
         const locale = RegionLocales.locale(userData.language).modules.friends;
         const { replace } = RegionLocales;
@@ -97,9 +102,11 @@ export const execute = async ({
             return;
         }
 
-        const channel = (await client.channels.fetch(
-            friendModule.channel!,
-        )) as TextChannel;
+        const channel = (
+            await client.channels.fetch(
+                friendModule.channel!,
+            )
+        ) as TextChannel;
 
         const missingPermissions = channel
             .permissionsFor(channel.guild.me as GuildMember)
@@ -140,7 +147,7 @@ export const execute = async ({
             return;
         }
 
-        if (friendModule.suppressNext === true) {
+        if (friendModule.suppressNext === true) { //Unused currently
             const user = await client.users.fetch(userAPIData.discordID);
             const suppressedEmbed = new BetterEmbed({
                 name: locale.suppressNext.footer,
@@ -225,6 +232,7 @@ export const execute = async ({
     } catch (error) {
         throw new ModuleError({
             error: error,
+            cleanModule: properties.cleanName,
             module: properties.name,
         });
     }

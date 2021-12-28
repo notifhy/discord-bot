@@ -1,7 +1,7 @@
 import type { EventProperties, ClientCommand } from '../@types/client';
 import type { RawUserData, UserAPIData, UserData } from '../@types/database';
 import { BetterEmbed, formattedUnix, slashCommandResolver } from '../util/utility';
-import { Collection, CommandInteraction, DiscordAPIError } from 'discord.js';
+import { Collection, CommandInteraction, Constants as DiscordConstants, DiscordAPIError } from 'discord.js';
 import { ownerID } from '../../config.json';
 import { SQLiteWrapper } from '../database';
 import Constants from '../util/Constants';
@@ -37,32 +37,38 @@ export const execute = async (
                 ephemeral: command.properties.ephemeral,
             });
 
-            const userAPIData = (await SQLiteWrapper.getUser({
-                discordID: interaction.user.id,
-                table: Constants.tables.api,
-                columns: ['*'],
-                allowUndefined: true,
-            })) as UserAPIData | undefined;
-
-            let userData = (await SQLiteWrapper.getUser<RawUserData, UserData>({
-                discordID: interaction.user.id,
-                table: Constants.tables.users,
-                columns: ['*'],
-                allowUndefined: true,
-            })) as UserData | undefined;
-
-            userData ??= (await SQLiteWrapper.newUser<
-                UserData,
-                RawUserData,
-                UserData
-            >({
-                table: Constants.tables.users,
-                returnNew: true,
-                data: {
+            const userAPIData = (
+                await SQLiteWrapper.getUser({
                     discordID: interaction.user.id,
-                    ...Constants.defaults.users,
+                    table: Constants.tables.api,
+                    columns: ['*'],
+                    allowUndefined: true,
                 },
-            })) as UserData;
+            )) as UserAPIData | undefined;
+
+            let userData = (
+                await SQLiteWrapper.getUser<RawUserData, UserData>({
+                    discordID: interaction.user.id,
+                    table: Constants.tables.users,
+                    columns: ['*'],
+                    allowUndefined: true,
+                },
+            )) as UserData | undefined;
+
+            userData ??= (
+                await SQLiteWrapper.newUser<
+                    UserData,
+                    RawUserData,
+                    UserData
+                >({
+                    table: Constants.tables.users,
+                    returnNew: true,
+                    data: {
+                        discordID: interaction.user.id,
+                        ...Constants.defaults.users,
+                    },
+                })
+            ) as UserData;
 
             await checkSystemMessages(interaction, userData);
             generalConstraints(interaction, command);
@@ -91,24 +97,24 @@ async function checkSystemMessages(
     userData: UserData,
 ) {
     if (userData.systemMessage.length > 0) {
-        const test = new BetterEmbed({ name: 'System Message' }) //Localize
+        const systemMessage = new BetterEmbed({ name: 'System Message' }) //Localize
             .setColor(Constants.colors.normal)
             .setTitle('System Message')
             .setDescription('This is a notification regarding an aspect of this bot.');
 
         for (const message of userData.systemMessage) {
-            test.addField(message.name, message.value);
+            systemMessage.addField(message.name, message.value);
         }
 
         try {
-            await interaction.user.send({ embeds: [test] });
+            await interaction.user.send({ embeds: [systemMessage] });
         } catch (error) {
-            if ((error as DiscordAPIError).code === 50007) {
-                test.description += ' Your direct messages were disabled, so this message was sent here instead.';
+            if ((error as DiscordAPIError).code === DiscordConstants.APIErrors.CANNOT_MESSAGE_USER) {
+                systemMessage.description += ' Your direct messages were disabled, so this message was sent here instead.';
 
                 await interaction.channel!.send({
                     content: interaction.user.toString(),
-                    embeds: [test],
+                    embeds: [systemMessage],
                 });
             }
         }

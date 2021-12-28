@@ -12,7 +12,7 @@ import { CommandErrorHandler } from '../util/errors/handlers/CommandErrorHandler
 import {
     ButtonInteraction,
     CommandInteraction,
-    Constants,
+    Constants as DiscordConstants,
     Message,
     MessageActionRow,
     MessageButton,
@@ -20,7 +20,7 @@ import {
 } from 'discord.js';
 import { RegionLocales } from '../../locales/localesHandler';
 import { SQLiteWrapper } from '../database';
-import Constants2 from '../util/Constants';
+import Constants from '../util/Constants';
 
 export const properties: CommandProperties = {
     name: 'data',
@@ -80,19 +80,19 @@ export const execute: CommandExecute = async (
 
     async function dataDelete() {
         const confirmEmbed = new BetterEmbed(interaction)
-            .setColor(Constants2.colors.normal)
+            .setColor(Constants.colors.normal)
             .setTitle(locale.delete.confirm.title)
             .setDescription(locale.delete.confirm.description);
 
         const yesButton = new MessageButton()
             .setCustomId('true')
             .setLabel(locale.delete.yesButton)
-            .setStyle(Constants.MessageButtonStyles.SUCCESS);
+            .setStyle(DiscordConstants.MessageButtonStyles.SUCCESS);
 
         const noButton = new MessageButton()
             .setCustomId('false')
             .setLabel(locale.delete.noButton)
-            .setStyle(Constants.MessageButtonStyles.DANGER);
+            .setStyle(DiscordConstants.MessageButtonStyles.DANGER);
 
         const buttonRow = new MessageActionRow().addComponents(
             yesButton,
@@ -112,7 +112,7 @@ export const execute: CommandExecute = async (
 
         const collector = interaction.channel!.createMessageComponentCollector({
             filter: componentFilter,
-            idle: Constants2.ms.second * 30,
+            idle: Constants.ms.second * 30,
             componentType: 'BUTTON',
             max: 1,
         });
@@ -130,24 +130,24 @@ export const execute: CommandExecute = async (
                     Promise.all([
                         SQLiteWrapper.deleteUser({
                             discordID: userData.discordID,
-                            table: Constants2.tables.users,
+                            table: Constants.tables.users,
                         }),
                         SQLiteWrapper.deleteUser({
                             discordID: userData.discordID,
-                            table: Constants2.tables.api,
+                            table: Constants.tables.api,
                         }),
                         SQLiteWrapper.deleteUser({
                             discordID: userData.discordID,
-                            table: Constants2.tables.friends,
+                            table: Constants.tables.friends,
                         }),
                         SQLiteWrapper.deleteUser({
                             discordID: userData.discordID,
-                            table: Constants2.tables.rewards,
+                            table: Constants.tables.rewards,
                         }),
                     ]);
 
                     const aborted = new BetterEmbed(interaction)
-                        .setColor(Constants2.colors.normal)
+                        .setColor(Constants.colors.normal)
                         .setTitle(locale.delete.deleted.title)
                         .setDescription(locale.delete.deleted.description);
                     await i.update({
@@ -156,7 +156,7 @@ export const execute: CommandExecute = async (
                     });
                 } else {
                     const aborted = new BetterEmbed(interaction)
-                        .setColor(Constants2.colors.normal)
+                        .setColor(Constants.colors.normal)
                         .setTitle(locale.delete.aborted.title)
                         .setDescription(locale.delete.aborted.description);
                     await i.update({
@@ -219,13 +219,13 @@ export const execute: CommandExecute = async (
             UserAPIData
         >({
             discordID: userData.discordID,
-            table: Constants2.tables.api,
+            table: Constants.tables.api,
             columns: ['*'],
             allowUndefined: false,
         })) as UserAPIData;
 
         const base = new MessageButton()
-            .setStyle(Constants.MessageButtonStyles.PRIMARY);
+            .setStyle(DiscordConstants.MessageButtonStyles.PRIMARY);
 
         const fastLeftButton = new MessageButton(base)
             .setCustomId('fastBackward')
@@ -246,10 +246,10 @@ export const execute: CommandExecute = async (
             .setLabel('>>');
 
         rightButton.disabled =
-            userAPIData.history.length < Constants2.defaults.menuFastIncrements;
+            userAPIData.history.length < Constants.defaults.menuFastIncrements;
 
         fastRightButton.disabled =
-            userAPIData.history.length < Constants2.defaults.menuFastIncrements;
+            userAPIData.history.length < Constants.defaults.menuFastIncrements;
 
         const epoch = /^\d{13,}$/gm;
 
@@ -257,7 +257,7 @@ export const execute: CommandExecute = async (
             const data = userAPIData.history;
             const shownData = data.slice(
                 position,
-                position + Constants2.defaults.menuIncrements,
+                position + Constants.defaults.menuIncrements,
             );
 
             const fields = shownData.map(({ date, ...event }) => ({
@@ -277,13 +277,13 @@ export const execute: CommandExecute = async (
             }));
 
             return new BetterEmbed(interaction)
-                .setColor(Constants2.colors.normal)
+                .setColor(Constants.colors.normal)
                 .setDescription(
                     `• Showing ${position + 1} to ${
                         position + shownData.length
                     } out of ${userAPIData.history.length}
                     • Saves up to ${
-                        Constants2.limits.userAPIDataHistory
+                        Constants.limits.userAPIDataHistory
                     } events`,
                 )
                 .setTitle('History')
@@ -309,8 +309,8 @@ export const execute: CommandExecute = async (
 
         const collector = interaction.channel!.createMessageComponentCollector({
             filter: filter,
-            idle: Constants2.ms.minute * 5,
-            time: Constants2.ms.minute * 30,
+            idle: Constants.ms.minute * 5,
+            time: Constants.ms.minute * 30,
         });
 
         let currentIndex = 0;
@@ -319,31 +319,31 @@ export const execute: CommandExecute = async (
             try {
                 switch (i.customId) {
                     case 'fastBackward':
-                        currentIndex -= Constants2.defaults.menuFastIncrements;
+                        currentIndex -= Constants.defaults.menuFastIncrements;
                         break;
                     case 'backward':
-                        currentIndex -= Constants2.defaults.menuIncrements;
+                        currentIndex -= Constants.defaults.menuIncrements;
                         break;
                     case 'forward':
-                        currentIndex += Constants2.defaults.menuIncrements;
+                        currentIndex += Constants.defaults.menuIncrements;
                         break;
                     case 'fastForward':
-                        currentIndex += Constants2.defaults.menuFastIncrements;
+                        currentIndex += Constants.defaults.menuFastIncrements;
                     //No default
                 }
 
                 fastLeftButton.disabled =
-                    currentIndex - Constants2.defaults.menuFastIncrements < 0;
+                    currentIndex - Constants.defaults.menuFastIncrements < 0;
 
                 leftButton.disabled =
-                    currentIndex - Constants2.defaults.menuIncrements < 0;
+                    currentIndex - Constants.defaults.menuIncrements < 0;
 
                 rightButton.disabled =
-                    currentIndex + Constants2.defaults.menuIncrements >
+                    currentIndex + Constants.defaults.menuIncrements >
                     userAPIData.history.length;
 
                 fastRightButton.disabled =
-                    currentIndex + Constants2.defaults.menuFastIncrements >
+                    currentIndex + Constants.defaults.menuFastIncrements >
                     userAPIData.history.length;
 
                 buttons.setComponents(

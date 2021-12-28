@@ -12,6 +12,7 @@ import ModuleError from '../util/errors/ModuleError';
 
 export const properties = {
     name: 'rewards',
+    cleanName: 'Rewards',
 };
 
 export const execute = async ({
@@ -64,7 +65,7 @@ export const execute = async ({
         const lastClaimedReward = userAPIData.lastClaimedReward!;
         const notificationInterval = rewardsModule.notificationInterval!;
 
-        //Is the user's last claimed reward between the past midnight and the coming midnight
+        //Is the user's last claimed reward between the last midnight and the coming midnight
         const hasClaimed = nextResetTime - Constants.ms.day < lastClaimedReward;
 
         const surpassedInterval =
@@ -93,6 +94,10 @@ export const execute = async ({
                 .setTitle(locale.rewardReminder.title)
                 .setDescription(description);
 
+             await user.send({
+                embeds: [rewardNotification],
+            });
+
             await SQLiteWrapper.updateUser<
                 Partial<RewardsModule>,
                 Partial<RewardsModule>
@@ -102,10 +107,6 @@ export const execute = async ({
                 data: {
                     lastNotified: Date.now(),
                 },
-            });
-
-            await user.send({
-                embeds: [rewardNotification],
             });
         }
 
@@ -120,7 +121,10 @@ export const execute = async ({
                 item => item === differences.primary.rewardScore,
             );
 
-            if (rewardsModule.milestones === true && milestone !== undefined) {
+            if (
+                rewardsModule.milestones === true &&
+                milestone !== undefined
+            ) {
                 const milestoneNotification = new BetterEmbed({
                     name: locale.milestone.footer,
                 })
@@ -157,6 +161,7 @@ export const execute = async ({
     } catch (error) {
         throw new ModuleError({
             error: error,
+            cleanModule: properties.cleanName,
             module: properties.name,
         });
     }

@@ -63,7 +63,7 @@ export const execute: CommandExecute = async (
         return;
     }
 
-    const url = `${Constants.urls.slothpixel}/players/${input}`;
+    const url = `${Constants.urls.slothpixel}players/${input}`;
     const response = await new Request({}).request(url);
 
     if (response.status === 404) {
@@ -168,7 +168,7 @@ export const execute: CommandExecute = async (
 
     const users = (
         await SQLiteWrapper.getAllUsers({
-            table: 'api',
+            table: Constants.tables.api,
             columns: ['discordID'],
         })
     ).length;

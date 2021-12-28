@@ -6,6 +6,7 @@ import { SQLiteWrapper } from '../database';
 
 export const properties = {
     name: 'defender',
+    cleanName: 'cleanName',
 };
 
 export const execute = async ({

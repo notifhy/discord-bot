@@ -1,17 +1,18 @@
-import { sendWebHook } from '../../utility';
-import { DiscordAPIError, Snowflake } from 'discord.js';
+import type { Field } from '../../../@types/locales';
+import type { RawUserData, UserAPIData, UserData } from '../../../@types/database';
+import { Constants as DiscordConstants, DiscordAPIError, Snowflake } from 'discord.js';
 import {
     fatalWebhook,
     ownerID,
 } from '../../../../config.json';
-import BaseErrorHandler from './BaseErrorHandler';
-import { RawUserData, UserAPIData, UserData } from '../../../@types/database';
+import { sendWebHook } from '../../utility';
 import { SQLiteWrapper } from '../../../database';
+import BaseErrorHandler from './BaseErrorHandler';
 import Constants from '../../Constants';
-import { Field } from '../../../@types/locales';
 import ModuleError from '../ModuleError';
 
 export class ModuleErrorHandler extends BaseErrorHandler {
+    readonly cleanModule: string;
     readonly discordID: string;
     readonly module: string;
 
@@ -20,16 +21,20 @@ export class ModuleErrorHandler extends BaseErrorHandler {
         discordID: Snowflake,
     ) {
         super(error);
+        this.cleanModule = error instanceof ModuleError
+            ? error.cleanModule
+            : 'Unknown';
+
         this.discordID = discordID;
         this.module = error instanceof ModuleError
             ? error.module
-            : 'Unknown';
+            : 'placeholder';
 
         this.errorLog();
         this.statusCode();
     }
 
-    async disableAllModules(message: Field) {
+    async disableModules(message: Field) {
         const userAPIData = (
             await SQLiteWrapper.getUser({
                 discordID: this.discordID,
@@ -42,7 +47,7 @@ export class ModuleErrorHandler extends BaseErrorHandler {
         const index = userAPIData.modules.indexOf(this.module);
         let modules;
 
-        if (index >= 0) { //why
+        if (index >= 0) { //thanks javascript
             userAPIData.modules.splice(index, 1);
         } else {
             modules = [];
@@ -55,23 +60,26 @@ export class ModuleErrorHandler extends BaseErrorHandler {
             discordID: this.discordID,
             table: Constants.tables.api,
             data: {
-                modules: modules ?? userAPIData.modules,
+                modules: modules ??
+                userAPIData.modules,
             },
         });
 
-        const userData = (await SQLiteWrapper.getUser<RawUserData, UserData>({
-            discordID: this.discordID,
-            table: Constants.tables.users,
-            columns: ['systemMessage'],
-            allowUndefined: false,
-        })) as UserData;
+        const userData = (
+            await SQLiteWrapper.getUser<RawUserData, UserData>({
+                discordID: this.discordID,
+                table: Constants.tables.users,
+                columns: ['systemMessage'],
+                allowUndefined: false,
+            },
+        )) as UserData;
 
         await SQLiteWrapper.updateUser<
             Partial<UserData>,
             Partial<UserData>
         >({
             discordID: this.discordID,
-            table: Constants.tables.api,
+            table: Constants.tables.users,
             data: {
                 systemMessage: [
                     ...userData.systemMessage,
@@ -83,50 +91,56 @@ export class ModuleErrorHandler extends BaseErrorHandler {
 
     private async statusCode() {
         try {
-            if (this.error instanceof DiscordAPIError) {
+            if (
+                this.error instanceof ModuleError &&
+                this.error.raw instanceof DiscordAPIError
+            ) {
                 let message: Field | undefined;
-                switch (this.error.code) {
-                    case 10003: message = { //Unknown channel
-                        name: 'Cannot send message',
-                        value: 'blah blah blah',
+
+                switch (this.error.raw.code) {
+                    case DiscordConstants.APIErrors.UNKNOWN_CHANNEL: message = { //Unknown channel
+                        name: `${this.cleanModule} Module Disabled`,
+                        value: `The ${this.cleanModule} Module was disabled because the channel set was not fetchable.`,
                     };
                     break;
-                    case 10013: message = { //Unknown user
-                        name: 'Cannot send message',
-                        value: 'blah blah blah',
+                    case DiscordConstants.APIErrors.UNKNOWN_USER: message = { //Unknown user
+                        name: `${this.cleanModule} Module Disabled`,
+                        value: `The ${this.cleanModule} Module was disabled because your account was not fetchable.`,
                     };
                     break;
-                    case 50007: message = { //Cannot send messages to this user
-                        name: 'Cannot send message',
-                        value: 'blah blah blah',
-                    };
-                    break;
-                    case 50013: message = { //You lack permissions to perform that action
-                        name: 'Cannot send message',
-                        value: 'blah blah blah',
+                    case DiscordConstants.APIErrors.CANNOT_MESSAGE_USER: message = { //Cannot send messages to this user
+                        name: `${this.cleanModule} Module Disabled`,
+                        value: `The ${this.cleanModule} Module was disabled because the bot was unable to DM you. Please check your privacy settings and enable DMs. Then, reenable this module with /modules rewards`,
                     };
                     break;
                     //No default
                 }
 
                 if (message) {
-                    await this.disableAllModules(message);
+                    await this.disableModules(message);
                 }
+
+                this.log('Handled a Discord API error', this.error.raw.code);
             }
         } catch (error) {
-            this.log('Failed to parse Discord API error code', error);
+            this.log('Failed to handle a Discord API error', error);
         }
     }
 
     private errorLog() {
-        this.log(`User: ${this.discordID}`, `Module: ${this.module}`, this.error);
+        this.log(
+            `User: ${this.discordID}`,
+            `Module: ${this.cleanModule}`,
+            (this.error as Error)?.stack ??
+                this.error,
+        );
     }
 
     async systemNotify() {
         const identifier = this.errorEmbed()
             .setTitle('Unexpected Error')
             .addField('User', this.discordID)
-            .addField('Module', this.module);
+            .addField('Module', this.cleanModule);
 
         await sendWebHook({
             content: `<@${ownerID.join('><@')}>`,

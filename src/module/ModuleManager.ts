@@ -2,10 +2,10 @@ import type { CleanHypixelPlayer, CleanHypixelStatus } from '../@types/hypixel';
 import type { RawUserAPIData, UserAPIData } from '../@types/database';
 import { Client, Snowflake } from 'discord.js';
 import { ModuleData } from './ModuleData';
+import { ModuleErrorHandler } from '../util/errors/handlers/ModuleErrorHandler';
 import { ModuleHandler } from './ModuleHandler';
 import { SQLiteWrapper } from '../database';
 import Constants from '../util/Constants';
-import ErrorHandler from '../util/errors/handlers/ErrorHandler';
 
 export class ModuleManager {
     readonly client: Client;
@@ -51,7 +51,8 @@ export class ModuleManager {
 
             await new ModuleHandler(this.client, moduleData).init();
         } catch (error) {
-            await new ErrorHandler(error).systemNotify();
+            await new ModuleErrorHandler(error, this.discordID)
+                .systemNotify();
         }
     }
 }
