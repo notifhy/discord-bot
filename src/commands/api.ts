@@ -2,8 +2,8 @@ import type { CommandExecute, CommandProperties } from '../@types/client';
 import { BetterEmbed, cleanLength, cleanRound } from '../util/utility';
 import { CommandInteraction } from 'discord.js';
 import { keyLimit } from '../../config.json';
-import { HypixelModuleManager } from '../hypixelAPI/HypixelModuleManager';
-import { HypixelModuleErrors } from '../hypixelAPI/HypixelModuleErrors';
+import { RequestManager } from '../hypixelAPI/RequestManager';
+import { RequestErrors } from '../hypixelAPI/RequestErrors';
 import Constants from '../util/Constants';
 
 export const properties: CommandProperties = {
@@ -242,13 +242,13 @@ async function instance(
     }
 
     interaction.client.hypixelAPI.instance[
-        type as keyof Omit<HypixelModuleManager['instance'], 'baseURL'>
+        type as keyof Omit<RequestManager['instance'], 'baseURL'>
     ] = value;
     const setEmbed = new BetterEmbed(interaction)
         .setColor(Constants.colors.normal)
         .setTitle('Updated Value!')
         .setDescription(
-            `<HypixelModuleManager>.instance.${type} is now ${value}.`,
+            `<RequestManager>.instance.${type} is now ${value}.`,
         );
 
     await interaction.editReply({
@@ -263,13 +263,13 @@ async function set(
     value: number,
 ) {
     interaction.client.hypixelAPI.errors[category][
-        type as keyof HypixelModuleErrors[errorTypes]
+        type as keyof RequestErrors[errorTypes]
     ] = value;
     const setEmbed = new BetterEmbed(interaction)
         .setColor(Constants.colors.normal)
         .setTitle('Updated Value!')
         .setDescription(
-            `<HypixelModuleErrors>.${category}.${type} is now ${value}.`,
+            `<RequestErrors>.${category}.${type} is now ${value}.`,
         );
 
     await interaction.editReply({
@@ -291,7 +291,7 @@ async function call(
     const callEmbed = new BetterEmbed(interaction)
         .setColor(Constants.colors.normal)
         .setTitle('Executed!')
-        .setDescription(`Executed <HypixelModuleErrors>.${type}`);
+        .setDescription(`Executed <RequestErrors>.${type}`);
 
     await stats(interaction);
     await interaction.followUp({

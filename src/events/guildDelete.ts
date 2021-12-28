@@ -2,7 +2,7 @@ import type { EventProperties } from '../@types/client';
 import type { Guild } from 'discord.js';
 import { formattedUnix } from '../util/utility';
 import { SQLiteWrapper } from '../database';
-import ErrorHandler from '../util/errors/ErrorHandler';
+import ErrorHandler from '../util/errors/handlers/ErrorHandler';
 
 export const properties: EventProperties = {
     name: 'guildDelete',
@@ -46,6 +46,6 @@ export const execute = async (guild: Guild): Promise<void> => {
             name: `${users} accounts | /register /help | ${guild.client.guilds.cache.size} servers`,
         });
     } catch (error) {
-        await new ErrorHandler({ error: error }).systemNotify();
+        await new ErrorHandler(error).systemNotify();
     }
 };

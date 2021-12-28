@@ -1,12 +1,11 @@
-import { HypixelModuleInstance } from './HypixelModuleInstance';
+import { RequestInstance } from './RequestInstance';
 import Constants from '../util/Constants';
 
-export class HypixelModuleErrors {
-    //extend instance
-    instance: HypixelModuleInstance;
+export class RequestErrors {
+    instance: RequestInstance;
 
-    abort: {
-        baseTimeout: number;
+    readonly abort: {
+        readonly baseTimeout: number;
         lastMinute: number;
         resetTimeout: number | undefined;
         timeout: number;
@@ -17,7 +16,7 @@ export class HypixelModuleErrors {
 
     error: typeof this.abort;
 
-    constructor(instance: HypixelModuleInstance) {
+    constructor(instance: RequestInstance) {
         this.instance = instance;
 
         this.abort = {

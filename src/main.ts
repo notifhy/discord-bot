@@ -2,10 +2,10 @@ import type { ClientCommand, ClientEvent, Config } from './@types/client';
 import type { ClientModule } from './@types/modules';
 import { Client, Collection, Intents } from 'discord.js';
 import { discordAPIkey } from '../config.json';
-import { HypixelModuleManager } from './hypixelAPI/HypixelModuleManager';
+import { RequestManager } from './hypixelAPI/RequestManager';
 import { RawConfig } from './@types/database';
 import { SQLiteWrapper } from './database';
-import ErrorHandler from './util/errors/ErrorHandler';
+import ErrorHandler from './util/errors/handlers/ErrorHandler';
 import * as fs from 'node:fs/promises';
 
 process.on('exit', code => {
@@ -14,13 +14,13 @@ process.on('exit', code => {
 
 process.on('unhandledRejection', async error => {
     console.error('unhandledRejection', error);
-    await new ErrorHandler({ error: error }).systemNotify();
+    await new ErrorHandler(error).systemNotify();
     process.exit(0);
 });
 
 process.on('uncaughtException', async error => {
     console.error('uncaughtException', error);
-    await new ErrorHandler({ error: error }).systemNotify();
+    await new ErrorHandler(error).systemNotify();
     process.exit(0);
 });
 
@@ -39,7 +39,7 @@ client.commands = new Collection();
 client.cooldowns = new Collection();
 client.customStatus = null;
 client.events = new Collection();
-client.hypixelAPI = new HypixelModuleManager(client);
+client.hypixelAPI = new RequestManager(client);
 client.modules = new Collection();
 
 (async () => {

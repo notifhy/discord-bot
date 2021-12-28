@@ -5,31 +5,32 @@ import { compare } from '../util/utility';
 import { SQLiteWrapper } from '../database';
 import Constants from '../util/Constants';
 
-export class HypixelModuleDataManager {
-    oldUserAPIData: UserAPIData;
-    now: number;
-    differences: Differences;
-    newUserAPIData: UserAPIData;
+export class ModuleData {
+    readonly currentUserAPIData: UserAPIData;
+    readonly now: number;
+    readonly differences: Differences;
+    readonly userAPIData: UserAPIData;
 
-    constructor({
-        oldUserAPIData,
-        cleanHypixelPlayer,
-        cleanHypixelStatusData,
-    }: {
-        oldUserAPIData: UserAPIData;
-        cleanHypixelPlayer: CleanHypixelPlayer;
-        cleanHypixelStatusData: CleanHypixelStatus | undefined;
-    }) {
+    constructor(
+        currentUserAPIData: UserAPIData,
+        {
+            cleanHypixelPlayer,
+            cleanHypixelStatusData,
+        }: {
+            cleanHypixelPlayer: CleanHypixelPlayer;
+            cleanHypixelStatusData?: CleanHypixelStatus;
+        },
+    ) {
         const hypixelData = Object.assign(
             cleanHypixelPlayer,
             cleanHypixelStatusData,
         );
 
-        this.oldUserAPIData = oldUserAPIData;
+        this.currentUserAPIData = currentUserAPIData;
         this.now = Date.now();
-        this.differences = compare(hypixelData, this.oldUserAPIData);
-        this.newUserAPIData = Object.assign(
-            this.oldUserAPIData,
+        this.differences = compare(hypixelData, this.currentUserAPIData);
+        this.userAPIData = Object.assign(
+            this.currentUserAPIData,
             this.differences.primary,
             { lastUpdated: this.now },
         );
@@ -46,14 +47,14 @@ export class HypixelModuleDataManager {
                 date: this.now,
                 ...this.differences.primary,
             };
-            const { history }: { history: History[] } = this.oldUserAPIData;
+            const { history }: { history: History[] } = this.currentUserAPIData;
             history.unshift(historyUpdate);
             history.splice(Constants.limits.userAPIDataHistory);
             Object.assign(userAPIDataUpdate, { history: history });
         }
 
         await SQLiteWrapper.updateUser<Partial<UserAPIData>, RawUserAPIData>({
-            discordID: this.oldUserAPIData.discordID,
+            discordID: this.currentUserAPIData.discordID,
             table: Constants.tables.api,
             data: userAPIDataUpdate,
         });

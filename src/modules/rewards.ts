@@ -4,12 +4,11 @@ import type {
     UserData,
 } from '../@types/database';
 import { BetterEmbed } from '../util/utility';
+import { ModuleHandler } from '../module/ModuleHandler';
 import { RegionLocales } from '../../locales/localesHandler';
 import { SQLiteWrapper } from '../database';
 import Constants from '../util/Constants';
-import ErrorHandler from '../util/errors/ErrorHandler';
 import ModuleError from '../util/errors/ModuleError';
-import { ModuleHandler } from '../module/ModuleHandler';
 
 export const properties = {
     name: 'rewards',
@@ -156,13 +155,9 @@ export const execute = async ({
             }
         }
     } catch (error) {
-        await new ErrorHandler({
-            error: new ModuleError({
-                message: (error as Error)?.message,
-                module: properties.name,
-                user: userAPIData,
-            }),
-            moduleUser: userAPIData,
-        }).systemNotify();
+        throw new ModuleError({
+            error: error,
+            module: properties.name,
+        });
     }
 };

@@ -1,7 +1,7 @@
 import { Locale } from '../../@types/locales';
 
 export default class ConstraintError extends Error {
-    cooldown?: number;
+    readonly cooldown?: number;
 
     constructor(message: keyof Locale['constraints'], cooldown?: number) {
         super(message);

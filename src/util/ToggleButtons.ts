@@ -1,10 +1,10 @@
 import { Constants, MessageActionRow, MessageButton } from 'discord.js';
 
 export type Button = {
-    enable: string;
-    disable: string;
-    enableCustomID: string;
-    disableCustomID: string;
+    readonly enable: string;
+    readonly disable: string;
+    readonly enableCustomID: string;
+    readonly disableCustomID: string;
 }
 
 

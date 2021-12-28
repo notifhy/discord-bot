@@ -1,22 +1,16 @@
-import { UserAPIData } from '../../@types/database';
-
 export default class ModuleError extends Error {
-    module: string;
-    user: UserAPIData;
+    readonly module: string;
 
     constructor({
-        message,
+        error,
         module,
-        user,
     }: {
-        message?: string;
+        error: unknown;
         module: string;
-        user: UserAPIData;
     }) {
-        super(message);
-        this.name = 'ModuleError';
+        super((error as Error)?.message);
+        this.name = error instanceof Error ? `ModuleError [${error.name}]` : 'ModuleError';
         this.module = module;
-        this.user = user;
 
         Object.setPrototypeOf(this, ModuleError.prototype);
         Error.captureStackTrace(this, this.constructor);

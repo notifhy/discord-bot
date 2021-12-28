@@ -2,8 +2,8 @@ import Constants from '../../Constants';
 import { BetterEmbed, formattedUnix } from '../../utility';
 
 export default class BaseErrorHandler {
-    error: unknown;
-    incidentID: string;
+    readonly error: unknown;
+    readonly incidentID: string;
 
     constructor(error: unknown) {
         this.error = error;

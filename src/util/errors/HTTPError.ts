@@ -1,11 +1,11 @@
 import type { Response } from 'node-fetch';
 
 export default class HTTPError<JSON> extends Error {
-    json: JSON | null;
-    response: Response | null;
-    status: number;
-    statusText: string | null;
-    url: string;
+    readonly json: JSON | null;
+    readonly response: Response | null;
+    readonly status: number;
+    readonly statusText: string | null;
+    readonly url: string;
 
     constructor({
         json,

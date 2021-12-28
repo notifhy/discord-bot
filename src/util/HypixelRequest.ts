@@ -4,26 +4,25 @@ import type {
     HypixelAPIError,
     HypixelAPIOk,
 } from '../@types/hypixel';
-import type { Response } from 'node-fetch';
 import { hypixelAPIkey } from '../../config.json';
-import { HypixelModuleInstance } from './HypixelModuleInstance';
-import { Request } from '../util/Request';
-import HTTPError from '../util/errors/HTTPError';
-import RateLimitError from '../util/errors/RateLimitError';
+import { Request } from './Request';
+import type { Response } from 'node-fetch';
+import HTTPError from './errors/HTTPError';
+import RateLimitError from './errors/RateLimitError';
 
 export class HypixelRequest {
-    instance: HypixelModuleInstance;
+    readonly maxAborts?: number;
+    readonly abortThreshold?: number;
 
-    constructor(instance: HypixelModuleInstance) {
-        this.instance = instance;
+    constructor(init?: { maxAborts?: number, abortThreshold?: number }) {
+        this.maxAborts = init?.maxAborts;
+        this.abortThreshold = init?.abortThreshold;
     }
 
     async call(url: string): Promise<HypixelAPIOk> {
-        this.instance.instanceUses += 1;
-
         const response: Response = (await new Request({
-            maxAborts: this.instance.maxAborts,
-            abortThreshold: this.instance.abortThreshold,
+            maxAborts: this.maxAborts,
+            abortThreshold: this.abortThreshold,
         }).request(url, {
             headers: { 'API-Key': hypixelAPIkey },
         })) as Response;

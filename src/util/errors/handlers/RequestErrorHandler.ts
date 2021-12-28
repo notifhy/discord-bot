@@ -6,7 +6,7 @@ import {
     nonFatalWebhook,
     ownerID,
 } from '../../../../config.json';
-import { HypixelModuleManager } from '../../../hypixelAPI/HypixelModuleManager';
+import { RequestManager } from '../../../hypixelAPI/RequestManager';
 import AbortError from '../AbortError';
 import BaseErrorHandler from './BaseErrorHandler';
 import ConstraintError from '../ConstraintError';
@@ -14,10 +14,10 @@ import HTTPError from '../HTTPError';
 import RateLimitError from '../RateLimitError';
 
 export class RequestErrorHandler extends BaseErrorHandler {
-    hypixelModuleManager: HypixelModuleManager;
-    timeout: string | null;
+    readonly hypixelModuleManager: RequestManager;
+    readonly timeout: string | null;
 
-    constructor(error: unknown, hypixelModuleManager: HypixelModuleManager) {
+    constructor(error: unknown, hypixelModuleManager: RequestManager) {
         super(error);
         this.hypixelModuleManager = hypixelModuleManager;
 

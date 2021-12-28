@@ -4,8 +4,8 @@ import AbortError from './errors/AbortError';
 
 export class Request {
     aborts: number;
-    abortThreshold: number;
-    maxAborts: number;
+    readonly abortThreshold: number;
+    readonly maxAborts: number;
 
     constructor({
         maxAborts,

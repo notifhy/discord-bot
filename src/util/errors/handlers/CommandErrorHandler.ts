@@ -13,8 +13,8 @@ import { BaseEmbed, Locale } from '../../../@types/locales';
 import { setTimeout } from 'timers/promises';
 
 export class CommandErrorHandler extends BaseErrorHandler {
-    interaction: CommandInteraction;
-    locale: string;
+    readonly interaction: CommandInteraction;
+    readonly locale: string;
 
     constructor(
         error: unknown,

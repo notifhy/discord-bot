@@ -1,6 +1,6 @@
 import Constants from '../util/Constants';
 
-export class HypixelModuleInstance {
+export class RequestInstance {
     abortThreshold: number;
     readonly baseURL: string;
     instanceUses: number;
