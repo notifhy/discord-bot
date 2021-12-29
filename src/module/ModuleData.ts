@@ -15,15 +15,15 @@ export class ModuleData {
         currentUserAPIData: UserAPIData,
         {
             cleanHypixelPlayer,
-            cleanHypixelStatusData,
+            cleanHypixelStatus,
         }: {
             cleanHypixelPlayer: CleanHypixelPlayer;
-            cleanHypixelStatusData?: CleanHypixelStatus;
+            cleanHypixelStatus?: CleanHypixelStatus;
         },
     ) {
         const hypixelData = Object.assign(
             cleanHypixelPlayer,
-            cleanHypixelStatusData,
+            cleanHypixelStatus,
         );
 
         this.currentUserAPIData = currentUserAPIData;

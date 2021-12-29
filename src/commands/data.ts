@@ -66,6 +66,8 @@ export const execute: CommandExecute = async (
     { userData },
 ): Promise<void> => {
     const locale = RegionLocales.locale(userData.language).commands.data;
+    const { replace } = RegionLocales;
+
     switch (interaction.options.getSubcommand()) {
         case 'delete':
             await dataDelete();
@@ -271,22 +273,22 @@ export const execute: CommandExecute = async (
                                 ? `${camelToNormal(key)}: <t:${Math.round(
                                       value / 1000,
                                   )}:T>` //Time values (logins, logouts etc)
-                                : `${camelToNormal(key)}: ${value ?? 'None'}`), //Anything else
+                                : `${camelToNormal(key)}: ${
+                                    value ?? locale.history.null
+                                }`), //Anything else
                     )
                     .join('\n'),
             }));
 
             return new BetterEmbed(interaction)
                 .setColor(Constants.colors.normal)
-                .setDescription(
-                    `• Showing ${position + 1} to ${
-                        position + shownData.length
-                    } out of ${userAPIData.history.length}
-                    • Saves up to ${
-                        Constants.limits.userAPIDataHistory
-                    } events`,
-                )
-                .setTitle('History')
+                .setTitle(locale.history.embed.title)
+                .setDescription(replace(locale.history.embed.description, {
+                    start: position + 1,
+                    end: position + shownData.length,
+                    total: userAPIData.history.length,
+                    max: Constants.limits.userAPIDataHistory,
+                }))
                 .setFields(fields);
         };
 

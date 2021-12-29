@@ -16,18 +16,20 @@ const locales: Locales = {
 
 export class RegionLocales {
     static locale(locale?: string): Locale {
+        let locale2 = locale;
         if (!Object.keys(locales).includes(locale ?? 'en-us')) {
-            throw new RangeError('Invalid Locale');
+            locale2 = 'en-us';
         }
 
-        const fetched: Locale = locales[(locale ?? 'en-us') as keyof Locales];
+        const fetched: Locale = locales[locale2 as keyof Locales];
         return fetched;
     }
 
     static replace(input: string, parameters?: Parameters): string {
         let replaced: string = input;
         for (const parameter in parameters) {
-            if (Object.prototype.hasOwnProperty.call(parameters, parameter)) {
+            //@ts-expect-error hasOwn not implemented in typings.
+            if (Object.hasOwn(parameters, parameter)) {
                 const regex = new RegExp(`%{${parameter}}%`, 'g');
                 replaced = replaced.replaceAll(
                     regex,

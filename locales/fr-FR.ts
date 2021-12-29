@@ -19,6 +19,13 @@ export default {
                 yesButton: 'Yes',
                 noButton: 'No',
             },
+            history: {
+                embed: {
+                    title: 'History',
+                    description: '• Showing %{start}% to %{end}% out of %{total}%\n• Saves up to %{max}% events',
+                },
+                null: 'None',
+            },
         },
         help: {
             information: {
@@ -280,7 +287,7 @@ export default {
                                 {
                                     label: '22 hours',
                                     value: '79200000',
-                                    description: '18 hours before the next daily reset (2 AM EST)',
+                                    description: '22 hours before the next daily reset (2 AM EST)',
                                 },
                                 {
                                     label: '23 hours',
@@ -295,7 +302,7 @@ export default {
                         description: 'Toggle notifications for when you claim the reward',
                         longDescription: 'Toggle whether you get a confirmation when you collect the reward. It also comes with your current streak and total daily rewards!',
                         value: 'claimNotification',
-                        emoji: Constants.emoji.power,
+                        emoji: Constants.emoji.checkmark,
                         button: {
                             enable: 'Enable',
                             disable: 'Disable',
@@ -355,10 +362,10 @@ export default {
                     },
                     milestones: {
                         label: 'Reward Milestones',
-                        description: 'Receive congratulations on streaks',
-                        longDescription: `Receive a DM congratulating you when you hti a daily streak  of one of the following: ${Constants.modules.rewards.milestones.join(', ')}`,
+                        description: 'Receive a congratulation on streak milestones',
+                        longDescription: `Receive a DM congratulating you when you hit a daily streak listed in the following: ${Constants.modules.rewards.milestones.join(', ')}`,
                         value: 'milestones',
-                        emoji: Constants.emoji.power,
+                        emoji: Constants.emoji.celebration,
                         button: {
                             enable: 'Enable',
                             disable: 'Disable',
@@ -403,32 +410,66 @@ export default {
             },
         },
     },
-    constraints: {
-        blockedUsers: {
-            title: 'Blocked User',
-            description: 'You were blocked from using this bot. You cannot appeal this.',
-        },
-        devMode: {
-            title: 'Developer Mode',
-            description: 'This bot is in developer only mode, likely due to a major issue or an upgrade that is taking place. Please check back later!',
-        },
-        owner: {
-            title: 'Insufficient Permissions',
-            description: 'You cannot execute this command without being an owner!',
-        },
-        dm: {
-            title: 'DM Channel',
-            description: 'You cannot execute this command in the DM channel! Please switch to a server channel!',
-        },
-        cooldown: {
-            embed1: {
-                title: 'Cooldown',
-                description: 'You are executing commands too quickly! This cooldown of this command is %{cooldown}% seconds. This message will turn green in %{timeLeft}% seconds once the cooldown expires.',
+    errors: {
+        commandErrors: {
+            embed: {
+                title: 'Oops',
+                description: 'An error occurred while executing the command /%{commandName}%! This error has been automatically forwarded for review. It should be resolved soon. Sorry.',
+                field: {
+                    name: 'Interaction ID',
+                    value: '%{id}%',
+                },
             },
-            embed2: {
-                title: 'Cooldown Over',
-                description: 'The cooldown has expired! You can now execute the command /%{commandName}%!',
+        },
+        constraintErrors: {
+            blockedUsers: {
+                title: 'Blocked User',
+                description: 'You were blocked from using this bot. You cannot appeal this.',
             },
+            devMode: {
+                title: 'Developer Mode',
+                description: 'This bot is in developer only mode, likely due to a major issue or an upgrade that is taking place. Please check back later!',
+            },
+            owner: {
+                title: 'Insufficient Permissions',
+                description: 'You cannot execute this command without being an owner!',
+            },
+            dm: {
+                title: 'DM Channel',
+                description: 'You cannot execute this command in the DM channel! Please switch to a server channel!',
+            },
+            cooldown: {
+                embed1: {
+                    title: 'Cooldown',
+                    description: 'You are executing commands too quickly! This cooldown of this command is %{cooldown}% seconds. This message will turn green in %{timeLeft}% seconds once the cooldown expires.',
+                },
+                embed2: {
+                    title: 'Cooldown Over',
+                    description: 'The cooldown has expired! You can now execute the command /%{commandName}%!',
+                },
+            },
+        },
+        moduleErrors: {
+            10003: {
+                name: '%{cleanModule}% Module Disabled',
+                value: 'The %{cleanModule}% Module was disabled because the set channel was not fetchable.',
+            },
+            10013: {
+                name: '%{cleanModule}% Module Disabled',
+                value: 'The %{cleanModule}% Module was disabled because your account was not fetchable.',
+            },
+            50007: {
+                name: '%{cleanModule}% Module Disabled',
+                value: 'The %{cleanModule}% Module was disabled because the bot was unable to DM you. Please check your privacy settings and enable DMs. Then, reenable this module with /modules %{module}%',
+            },
+        },
+        systemMessage: {
+            embed: {
+                title: 'System Message',
+                description: 'This is a notification regarding an aspect of this bot.',
+                footer: 'System Message',
+            },
+            failedDM: ' Your direct messages were disabled, so this message was sent here instead.',
         },
     },
     modules: {

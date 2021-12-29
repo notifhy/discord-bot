@@ -51,6 +51,10 @@ export interface Data {
         yesButton: string;
         noButton: string;
     };
+    history: {
+        embed: BaseEmbed;
+        null: string;
+    };
 }
 
 export interface Help {
@@ -167,9 +171,15 @@ export interface Commands {
 }
 
 /*
-Constraint Interface
+Errors
 */
-export interface Constraints {
+export interface CommandErrors {
+    embed: {
+        field: Field
+    } & BaseEmbed
+}
+
+export interface ConstraintErrors {
     blockedUsers: BaseEmbed;
     devMode: BaseEmbed;
     owner: BaseEmbed;
@@ -178,6 +188,26 @@ export interface Constraints {
         embed1: BaseEmbed;
         embed2: BaseEmbed;
     };
+}
+
+export interface ModuleErrors {
+    10003: Field,
+    10013: Field,
+    50007: Field,
+}
+
+export interface SystemMessage {
+    embed: {
+        footer: string;
+    } & BaseEmbed,
+    failedDM: string,
+}
+
+export interface Errors {
+    commandErrors: CommandErrors;
+    constraintErrors: ConstraintErrors;
+    moduleErrors: ModuleErrors;
+    systemMessage: SystemMessage;
 }
 
 /*
@@ -227,7 +257,7 @@ export interface Modules {
 Base
 */
 export interface Locale {
-    constraints: Constraints;
+    errors: Errors;
     commands: Commands;
     modules: Modules;
 }
@@ -246,7 +276,11 @@ export type LocaleTree =
     | ModulesCommand
     | Ping
     | Register
-    | Constraints
+    | Errors
+    | CommandErrors
+    | ConstraintErrors
+    | ModuleErrors
+    | SystemMessage
     | Modules
     | Friends;
 

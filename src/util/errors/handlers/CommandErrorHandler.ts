@@ -88,14 +88,19 @@ export class CommandErrorHandler extends BaseErrorHandler {
     async userNotify() {
         const { commandName, id } = this.interaction;
 
+        const locale = RegionLocales
+            .locale(this.locale)
+            .errors;
+
+        const { replace } = RegionLocales;
+
         if (this.error instanceof ConstraintError) {
-            const constraint = RegionLocales
-                .locale(this.locale)
-                .constraints[this.error.message as keyof Locale['constraints']];
+            const constraint = locale
+                .constraintErrors[this.error.message as keyof Locale['errors']['constraintErrors']];
 
             if (this.error.message === 'cooldown') {
-                const embed1 = (constraint as Locale['constraints']['cooldown']).embed1;
-                const embed2 = (constraint as Locale['constraints']['cooldown']).embed2;
+                const embed1 = (constraint as Locale['errors']['constraintErrors']['cooldown']).embed1;
+                const embed2 = (constraint as Locale['errors']['constraintErrors']['cooldown']).embed2;
 
                 const command = this.interaction.client.commands.get(this.interaction.commandName);
 
@@ -131,11 +136,16 @@ export class CommandErrorHandler extends BaseErrorHandler {
         }
 
         const embed = this.errorEmbed()
-            .setTitle('Oops')
-            .setDescription(
-                `An error occurred while executing the command /${commandName}! This error has been automatically forwarded for review. It should be resolved soon. Sorry.`,
-            )
-            .addField('Interaction ID', id);
+            .setTitle(locale.commandErrors.embed.title)
+            .setDescription(replace(locale.commandErrors.embed.description, {
+                commandName: commandName,
+            }))
+            .addField(
+                locale.commandErrors.embed.field.name,
+                replace(locale.commandErrors.embed.field.value, {
+                id: id,
+                }),
+            );
 
         const payLoad = { embeds: [embed], ephemeral: true };
 

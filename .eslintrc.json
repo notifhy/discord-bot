@@ -35,7 +35,7 @@
       "no-var": "error",
       "init-declarations": "off",
       "max-lines": ["error", {
-        "max": 500, 
+        "max": 100000, 
         "skipBlankLines": true,
         "skipComments": true
       }],

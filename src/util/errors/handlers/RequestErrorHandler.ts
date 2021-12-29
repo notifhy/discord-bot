@@ -142,7 +142,8 @@ export class RequestErrorHandler extends BaseErrorHandler {
             embeds.push(embed);
         } else if (this.error instanceof HTTPError) {
             embed
-                .setDescription('A timeout has been applied.').addField(
+                .setDescription('A timeout has been applied.')
+                .addField(
                     'Request',
                     `Status: ${this.error.status}
                     Status Text: ${this.error.statusText}`,

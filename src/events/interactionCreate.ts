@@ -2,11 +2,12 @@ import type { EventProperties, ClientCommand } from '../@types/client';
 import type { RawUserData, UserAPIData, UserData } from '../@types/database';
 import { BetterEmbed, formattedUnix, slashCommandResolver } from '../util/utility';
 import { Collection, CommandInteraction, Constants as DiscordConstants, DiscordAPIError } from 'discord.js';
+import { CommandErrorHandler } from '../util/errors/handlers/CommandErrorHandler';
 import { ownerID } from '../../config.json';
 import { SQLiteWrapper } from '../database';
 import Constants from '../util/Constants';
 import ConstraintError from '../util/errors/ConstraintError';
-import { CommandErrorHandler } from '../util/errors/handlers/CommandErrorHandler';
+import { RegionLocales } from '../../locales/localesHandler';
 
 export const properties: EventProperties = {
     name: 'interactionCreate',
@@ -96,11 +97,12 @@ async function checkSystemMessages(
     interaction: CommandInteraction,
     userData: UserData,
 ) {
+    const locale = RegionLocales.locale(userData.language).errors.systemMessage;
     if (userData.systemMessage.length > 0) {
-        const systemMessage = new BetterEmbed({ name: 'System Message' }) //Localize
+        const systemMessage = new BetterEmbed({ name: locale.embed.footer }) //Localize
             .setColor(Constants.colors.normal)
-            .setTitle('System Message')
-            .setDescription('This is a notification regarding an aspect of this bot.');
+            .setTitle(locale.embed.title)
+            .setDescription(locale.embed.description);
 
         for (const message of userData.systemMessage) {
             systemMessage.addField(message.name, message.value);
@@ -110,7 +112,7 @@ async function checkSystemMessages(
             await interaction.user.send({ embeds: [systemMessage] });
         } catch (error) {
             if ((error as DiscordAPIError).code === DiscordConstants.APIErrors.CANNOT_MESSAGE_USER) {
-                systemMessage.description += ' Your direct messages were disabled, so this message was sent here instead.';
+                systemMessage.description += locale.failedDM;
 
                 await interaction.channel!.send({
                     content: interaction.user.toString(),

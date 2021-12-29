@@ -5,6 +5,7 @@ import {
     fatalWebhook,
     ownerID,
 } from '../../../../config.json';
+import { RegionLocales } from '../../../../locales/localesHandler';
 import { sendWebHook } from '../../utility';
 import { SQLiteWrapper } from '../../../database';
 import BaseErrorHandler from './BaseErrorHandler';
@@ -28,7 +29,7 @@ export class ModuleErrorHandler extends BaseErrorHandler {
         this.discordID = discordID;
         this.module = error instanceof ModuleError
             ? error.module
-            : 'placeholder';
+            : 'never';
 
         this.errorLog();
         this.statusCode();
@@ -95,22 +96,37 @@ export class ModuleErrorHandler extends BaseErrorHandler {
                 this.error instanceof ModuleError &&
                 this.error.raw instanceof DiscordAPIError
             ) {
+                const userData = (
+                    await SQLiteWrapper.getUser<RawUserData, UserData>({
+                        discordID: this.discordID,
+                        table: Constants.tables.users,
+                        columns: ['language'],
+                        allowUndefined: false,
+                    },
+                )) as UserData;
+
+                const locale = RegionLocales.locale(userData.language).errors.moduleErrors;
+                const { replace } = RegionLocales;
+                const cleanModule = { cleanModule: this.cleanModule };
                 let message: Field | undefined;
 
                 switch (this.error.raw.code) {
                     case DiscordConstants.APIErrors.UNKNOWN_CHANNEL: message = { //Unknown channel
-                        name: `${this.cleanModule} Module Disabled`,
-                        value: `The ${this.cleanModule} Module was disabled because the channel set was not fetchable.`,
+                        name: replace(locale[10003].name, cleanModule),
+                        value: replace(locale[10003].value, cleanModule),
                     };
                     break;
                     case DiscordConstants.APIErrors.UNKNOWN_USER: message = { //Unknown user
-                        name: `${this.cleanModule} Module Disabled`,
-                        value: `The ${this.cleanModule} Module was disabled because your account was not fetchable.`,
+                        name: replace(locale[10013].name, cleanModule),
+                        value: replace(locale[10013].value, cleanModule),
                     };
                     break;
                     case DiscordConstants.APIErrors.CANNOT_MESSAGE_USER: message = { //Cannot send messages to this user
-                        name: `${this.cleanModule} Module Disabled`,
-                        value: `The ${this.cleanModule} Module was disabled because the bot was unable to DM you. Please check your privacy settings and enable DMs. Then, reenable this module with /modules rewards`,
+                        name: replace(locale[50007].name, cleanModule),
+                        value: replace(locale[50007].value, {
+                            ...cleanModule,
+                            module: this.module,
+                        }),
                     };
                     break;
                     //No default
@@ -123,7 +139,17 @@ export class ModuleErrorHandler extends BaseErrorHandler {
                 this.log('Handled a Discord API error', this.error.raw.code);
             }
         } catch (error) {
-            this.log('Failed to handle a Discord API error', error);
+            const message = 'Failed to handle a Discord API error';
+            this.log(message, error);
+
+             const stackEmbed = this.errorStackEmbed(error);
+
+            await sendWebHook({
+                content: `<@${ownerID.join('><@')}> ${message}.`,
+                embeds: [stackEmbed],
+                webhook: fatalWebhook,
+                suppressError: true,
+            });
         }
     }
 
