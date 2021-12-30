@@ -5,11 +5,11 @@ import { RequestErrors } from './RequestErrors';
 import { RequestInstance } from './RequestInstance';
 import { RequestRequest } from './RequestRequest';
 import { keyLimit } from '../../config.json';
-import { RequestErrorHandler } from '../util/errors/handlers/RequestErrorHandler';
+import { ModuleManager } from '../module/ModuleManager';
 import { setTimeout } from 'node:timers/promises';
 import { SQLiteWrapper } from '../database';
 import Constants from '../util/Constants';
-import { ModuleManager } from '../module/ModuleManager';
+import RequestErrorHandler from '../util/errors/handlers/RequestErrorHandler';
 
 export class RequestManager {
     readonly instance: RequestInstance;
@@ -36,19 +36,21 @@ export class RequestManager {
                 await setTimeout(this.instance.resumeAfter - Date.now());
             }
 
-            const allUsers = (await SQLiteWrapper.getAllUsers<
-                RawUserAPIData,
-                UserAPIData
-            >({
-                table: Constants.tables.api,
-                columns: [
-                    'discordID',
-                    'uuid',
-                    'modules',
-                    'lastLogin',
-                    'lastLogout',
-                ],
-            })) as UserAPIData[];
+            const allUsers = (
+                await SQLiteWrapper.getAllUsers<
+                    RawUserAPIData,
+                    UserAPIData
+                >({
+                    table: Constants.tables.api,
+                    columns: [
+                        'discordID',
+                        'uuid',
+                        'modules',
+                        'lastLogin',
+                        'lastLogout',
+                    ],
+                })
+            ) as UserAPIData[];
 
             const users = allUsers.filter(user => user.modules.length > 0);
 

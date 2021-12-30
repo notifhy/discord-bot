@@ -46,13 +46,22 @@ export default class BaseErrorHandler {
                 );
             }
         } else {
-            embed.setDescription(
-                JSON.stringify(
-                    error,
-                    Object.getOwnPropertyNames(error),
-                    2,
-                ).slice(0, Constants.limits.embedDescription),
+            const data = JSON.stringify(
+                 error,
+                Object.getOwnPropertyNames(error),
+                2,
             );
+
+            embed.setDescription(
+                data.slice(0, Constants.limits.embedDescription),
+            );
+
+            if (data.length >= Constants.limits.embedDescription) {
+                embed.addField(
+                    'Over Max Length',
+                    'The stack is over 4096 characters long and was cut short',
+                );
+            }
         }
 
         return embed;

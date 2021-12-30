@@ -20,8 +20,8 @@ import {
 import { RegionLocales } from '../../locales/localesHandler';
 import { SQLiteWrapper } from '../database';
 import { ToggleButtons } from '../util/ToggleButtons';
+import CommandErrorHandler from '../util/errors/handlers/CommandErrorHandler';
 import Constants from '../util/Constants';
-import { CommandErrorHandler } from '../util/errors/handlers/CommandErrorHandler';
 
 export const properties: CommandProperties = {
     name: 'modules',

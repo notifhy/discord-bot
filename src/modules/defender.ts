@@ -1,28 +1,24 @@
-/* eslint-disable no-unused-vars */
-/* eslint-disable @typescript-eslint/no-unused-vars */
-import type { FriendsModule, UserAPIData, UserData } from '../@types/database';
-import { CleanHypixelPlayer } from '../@types/hypixel';
-import { SQLiteWrapper } from '../database';
+import { ModuleHandler } from '../module/ModuleHandler';
+import ModuleError from '../util/errors/ModuleError';
 
 export const properties = {
     name: 'defender',
-    cleanName: 'cleanName',
+    cleanName: 'Defender',
 };
 
 export const execute = async ({
+    client,
     differences,
     userAPIData,
-}: {
-    differences: Partial<CleanHypixelPlayer>;
-    userAPIData: UserAPIData;
-}): Promise<void> => {
-    const friendModule = (await SQLiteWrapper.getUser<
-        FriendsModule,
-        FriendsModule
-    >({
-        discordID: userAPIData.discordID,
-        table: 'friends',
-        allowUndefined: false,
-        columns: ['enabled', 'channel'],
-    })) as FriendsModule;
+}: ModuleHandler,
+): Promise<void> => {
+    try {
+        console.log(client.user?.tag, differences, userAPIData.discordID);
+    } catch (error) {
+        throw new ModuleError({
+            error: error,
+            cleanModule: properties.cleanName,
+            module: properties.name,
+        });
+    }
 };

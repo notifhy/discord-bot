@@ -12,7 +12,7 @@ import { RegionLocales } from '../../../../locales/localesHandler';
 import { BaseEmbed, Locale } from '../../../@types/locales';
 import { setTimeout } from 'timers/promises';
 
-export class CommandErrorHandler extends BaseErrorHandler {
+export default class CommandErrorHandler extends BaseErrorHandler {
     readonly interaction: CommandInteraction;
     readonly locale: string;
 

@@ -12,24 +12,20 @@ import BaseErrorHandler from './BaseErrorHandler';
 import Constants from '../../Constants';
 import ModuleError from '../ModuleError';
 
-export class ModuleErrorHandler extends BaseErrorHandler {
+export default class ModuleErrorHandler extends BaseErrorHandler {
     readonly cleanModule: string;
     readonly discordID: string;
     readonly module: string;
 
     constructor(
-        error: unknown,
+        error: ModuleError,
         discordID: Snowflake,
     ) {
         super(error);
-        this.cleanModule = error instanceof ModuleError
-            ? error.cleanModule
-            : 'Unknown';
+        this.cleanModule = error.cleanModule;
 
         this.discordID = discordID;
-        this.module = error instanceof ModuleError
-            ? error.module
-            : 'never';
+        this.module = error.module;
 
         this.errorLog();
         this.statusCode();
@@ -46,13 +42,8 @@ export class ModuleErrorHandler extends BaseErrorHandler {
         ) as UserAPIData;
 
         const index = userAPIData.modules.indexOf(this.module);
-        let modules;
 
-        if (index >= 0) { //thanks javascript
-            userAPIData.modules.splice(index, 1);
-        } else {
-            modules = [];
-        }
+        userAPIData.modules.splice(index, 1);
 
         await SQLiteWrapper.updateUser<
             Partial<UserAPIData>,
@@ -61,8 +52,7 @@ export class ModuleErrorHandler extends BaseErrorHandler {
             discordID: this.discordID,
             table: Constants.tables.api,
             data: {
-                modules: modules ??
-                userAPIData.modules,
+                modules: userAPIData.modules,
             },
         });
 
@@ -123,10 +113,7 @@ export class ModuleErrorHandler extends BaseErrorHandler {
                     break;
                     case DiscordConstants.APIErrors.CANNOT_MESSAGE_USER: message = { //Cannot send messages to this user
                         name: replace(locale[50007].name, cleanModule),
-                        value: replace(locale[50007].value, {
-                            ...cleanModule,
-                            module: this.module,
-                        }),
+                        value: replace(locale[50007].value, cleanModule),
                     };
                     break;
                     //No default
@@ -157,7 +144,7 @@ export class ModuleErrorHandler extends BaseErrorHandler {
         this.log(
             `User: ${this.discordID}`,
             `Module: ${this.cleanModule}`,
-            (this.error as Error)?.stack ??
+            (this.error as ModuleError)?.stack ??
                 this.error,
         );
     }

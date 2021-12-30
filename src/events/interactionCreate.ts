@@ -2,12 +2,12 @@ import type { EventProperties, ClientCommand } from '../@types/client';
 import type { RawUserData, UserAPIData, UserData } from '../@types/database';
 import { BetterEmbed, formattedUnix, slashCommandResolver } from '../util/utility';
 import { Collection, CommandInteraction, Constants as DiscordConstants, DiscordAPIError } from 'discord.js';
-import { CommandErrorHandler } from '../util/errors/handlers/CommandErrorHandler';
 import { ownerID } from '../../config.json';
+import { RegionLocales } from '../../locales/localesHandler';
 import { SQLiteWrapper } from '../database';
+import CommandErrorHandler from '../util/errors/handlers/CommandErrorHandler';
 import Constants from '../util/Constants';
 import ConstraintError from '../util/errors/ConstraintError';
-import { RegionLocales } from '../../locales/localesHandler';
 
 export const properties: EventProperties = {
     name: 'interactionCreate',

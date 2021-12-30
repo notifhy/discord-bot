@@ -3,25 +3,23 @@ import {
     fatalWebhook,
     hypixelAPIWebhook,
     keyLimit,
-    nonFatalWebhook,
     ownerID,
 } from '../../../../config.json';
 import { RequestManager } from '../../../hypixelAPI/RequestManager';
 import AbortError from '../AbortError';
 import BaseErrorHandler from './BaseErrorHandler';
-import ConstraintError from '../ConstraintError';
 import HTTPError from '../HTTPError';
 import RateLimitError from '../RateLimitError';
 
-export class RequestErrorHandler extends BaseErrorHandler {
-    readonly hypixelModuleManager: RequestManager;
+export default class RequestErrorHandler extends BaseErrorHandler {
+    readonly requestManager: RequestManager;
     readonly timeout: string | null;
 
-    constructor(error: unknown, hypixelModuleManager: RequestManager) {
+    constructor(error: unknown, requestManager: RequestManager) {
         super(error);
-        this.hypixelModuleManager = hypixelModuleManager;
+        this.requestManager = requestManager;
 
-        const { errors } = this.hypixelModuleManager;
+        const { errors } = this.requestManager;
 
         if (this.error instanceof AbortError) {
             errors.addAbort();
@@ -33,7 +31,7 @@ export class RequestErrorHandler extends BaseErrorHandler {
 
         this.errorLog();
 
-        const { resumeAfter } = this.hypixelModuleManager.instance;
+        const { resumeAfter } = this.requestManager.instance;
 
         this.timeout = cleanLength(resumeAfter - Date.now(), true);
     }
@@ -50,7 +48,7 @@ export class RequestErrorHandler extends BaseErrorHandler {
         const {
             instanceUses,
             keyPercentage,
-        } = this.hypixelModuleManager.instance;
+        } = this.requestManager.instance;
 
         const {
             errors: {
@@ -58,7 +56,7 @@ export class RequestErrorHandler extends BaseErrorHandler {
                 rateLimit,
                 error,
             },
-        } = this.hypixelModuleManager;
+        } = this.requestManager;
 
         const embed = this.errorEmbed()
             .setTitle('Degraded Performance')
@@ -67,7 +65,7 @@ export class RequestErrorHandler extends BaseErrorHandler {
                     name: 'Type',
                     value:
                         this.error instanceof Error
-                            ? this.error.name ?? 'Unknown'
+                            ? this.error.name
                             : 'Unknown',
                 },
                 {
@@ -151,6 +149,10 @@ export class RequestErrorHandler extends BaseErrorHandler {
 
             embeds.push(embed);
         } else {
+            embed
+                .setTitle('Unexpected Error');
+
+            embeds.push(embed);
             embeds.push(this.errorStackEmbed(this.error));
         }
 
@@ -161,9 +163,7 @@ export class RequestErrorHandler extends BaseErrorHandler {
                     : `<@${ownerID.join('><@')}>`,
             embeds: embeds,
             webhook:
-                this.error instanceof ConstraintError
-                    ? nonFatalWebhook
-                    : this.hypixelModuleManager
+                this.error instanceof HTTPError
                     ? hypixelAPIWebhook
                     : fatalWebhook,
             suppressError: true,

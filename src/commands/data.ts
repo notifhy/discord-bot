@@ -8,7 +8,6 @@ import type {
     UserAPIData,
 } from '../@types/database';
 import { BetterEmbed, camelToNormal } from '../util/utility';
-import { CommandErrorHandler } from '../util/errors/handlers/CommandErrorHandler';
 import {
     ButtonInteraction,
     CommandInteraction,
@@ -20,6 +19,7 @@ import {
 } from 'discord.js';
 import { RegionLocales } from '../../locales/localesHandler';
 import { SQLiteWrapper } from '../database';
+import CommandErrorHandler from '../util/errors/handlers/CommandErrorHandler';
 import Constants from '../util/Constants';
 
 export const properties: CommandProperties = {

@@ -6,13 +6,20 @@ import {
 } from '../../../../config.json';
 
 export default class ErrorHandler extends BaseErrorHandler {
-    constructor(error: unknown) {
+    data: string[];
+
+    constructor(error: unknown, ...data: string[]) {
         super(error);
+        this.data = data;
         this.errorLog();
     }
 
     private errorLog() {
         this.log(this.error);
+
+        if (this.data.length > 0) {
+            this.log('Extra data:', ...this.data);
+        }
     }
 
     async systemNotify() {

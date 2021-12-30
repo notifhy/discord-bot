@@ -362,7 +362,7 @@ export default {
                     },
                     milestones: {
                         label: 'Reward Milestones',
-                        description: 'Receive a congratulation on streak milestones',
+                        description: 'Receive a congratulation on achieving streak milestones',
                         longDescription: `Receive a DM congratulating you when you hit a daily streak listed in the following: ${Constants.modules.rewards.milestones.join(', ')}`,
                         value: 'milestones',
                         emoji: Constants.emoji.celebration,
@@ -452,15 +452,15 @@ export default {
         moduleErrors: {
             10003: {
                 name: '%{cleanModule}% Module Disabled',
-                value: 'The %{cleanModule}% Module was disabled because the set channel was not fetchable.',
+                value: 'The %{cleanModule}% module was disabled because the set channel was not fetchable.',
             },
             10013: {
                 name: '%{cleanModule}% Module Disabled',
-                value: 'The %{cleanModule}% Module was disabled because your account was not fetchable.',
+                value: 'The %{cleanModule}% module was disabled because your account was not fetchable.',
             },
             50007: {
                 name: '%{cleanModule}% Module Disabled',
-                value: 'The %{cleanModule}% Module was disabled because the bot was unable to DM you. Please check your privacy settings and enable DMs. Then, reenable this module with /modules %{module}%',
+                value: 'The %{cleanModule}% module was disabled because the bot was unable to DM you. Please check your privacy settings and enable direct messages. Then, reenable this module with /modules',
             },
         },
         systemMessage: {
