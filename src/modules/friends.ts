@@ -207,7 +207,7 @@ export const execute = async ({
             const lastEvent = userAPIData.history[1]; //First item in array is this event, so it checks the second item
             //@ts-expect-error hasOwn typing not implemented yet - https://github.com/microsoft/TypeScript/issues/44253
             const duplicationCheck = Object.hasOwn(lastEvent, 'lastLogout') &&
-                lastEvent.lastLogout! - differences.primary.lastLogout > Constants.ms.second * 2.5;
+                differences.primary.lastLogout - lastEvent.lastLogout! < Constants.ms.second * 2.5;
 
             if (duplicationCheck === false) {
                 if (

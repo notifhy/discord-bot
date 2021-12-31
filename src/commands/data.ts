@@ -8,6 +8,7 @@ import type {
     UserAPIData,
 } from '../@types/database';
 import { BetterEmbed, camelToNormal } from '../util/utility';
+import { Buffer } from 'node:buffer';
 import {
     ButtonInteraction,
     CommandInteraction,
@@ -121,13 +122,6 @@ export const execute: CommandExecute = async (
 
         collector.on('collect', async (i: ButtonInteraction) => {
             try {
-                yesButton.setDisabled();
-                noButton.setDisabled();
-                const disabledRow = new MessageActionRow().setComponents(
-                    yesButton,
-                    noButton,
-                );
-
                 if (i.customId === 'true') {
                     Promise.all([
                         SQLiteWrapper.deleteUser({
@@ -152,20 +146,43 @@ export const execute: CommandExecute = async (
                         .setColor(Constants.colors.normal)
                         .setTitle(locale.delete.deleted.title)
                         .setDescription(locale.delete.deleted.description);
+
                     await i.update({
                         embeds: [aborted],
-                        components: [disabledRow],
                     });
                 } else {
                     const aborted = new BetterEmbed(interaction)
                         .setColor(Constants.colors.normal)
                         .setTitle(locale.delete.aborted.title)
                         .setDescription(locale.delete.aborted.description);
+
                     await i.update({
                         embeds: [aborted],
-                        components: [disabledRow],
                     });
                 }
+            } catch (error) {
+                const handler = new CommandErrorHandler(error, interaction, userData.language);
+                await handler.systemNotify();
+                await handler.userNotify();
+            }
+        });
+
+        collector.on('end', async () => {
+            try {
+                const message = (await interaction.fetchReply()) as Message;
+                const actionRows = message.components;
+
+                for (const actionRow of actionRows) {
+                    const components = actionRow.components;
+
+                    for (const component of components) {
+                        component.disabled = true;
+                    }
+                }
+
+                await interaction.editReply({
+                    components: actionRows,
+                });
             } catch (error) {
                 const handler = new CommandErrorHandler(error, interaction, userData.language);
                 await handler.systemNotify();
@@ -216,15 +233,17 @@ export const execute: CommandExecute = async (
     }
 
     async function viewHistory() {
-        const userAPIData = (await SQLiteWrapper.getUser<
-            RawUserAPIData,
-            UserAPIData
-        >({
-            discordID: userData.discordID,
-            table: Constants.tables.api,
-            columns: ['*'],
-            allowUndefined: false,
-        })) as UserAPIData;
+        const userAPIData = (
+            await SQLiteWrapper.getUser<
+                RawUserAPIData,
+                UserAPIData
+            >({
+                discordID: userData.discordID,
+                table: Constants.tables.api,
+                columns: ['*'],
+                allowUndefined: false,
+            })
+        ) as UserAPIData;
 
         const base = new MessageButton()
             .setStyle(DiscordConstants.MessageButtonStyles.PRIMARY);
@@ -371,7 +390,9 @@ export const execute: CommandExecute = async (
                 const message = (await interaction.fetchReply()) as Message;
                 const actionRows = message.components;
 
-                for (const { components } of actionRows) {
+                for (const actionRow of actionRows) {
+                    const components = actionRow.components;
+
                     for (const component of components) {
                         component.disabled = true;
                     }

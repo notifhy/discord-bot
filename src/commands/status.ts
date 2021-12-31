@@ -5,6 +5,7 @@ import { CommandInteraction } from 'discord.js';
 import { keyLimit } from '../../config.json';
 import { SQLiteWrapper } from '../database';
 import Constants from '../util/Constants';
+import process from 'node:process';
 
 export const properties: CommandProperties = {
     name: 'status',

@@ -40,6 +40,7 @@ export default {
     limits: {
         embedDescription: 4096,
         embedField: 1024,
+        performanceHistory: 50,
         userAPIDataHistory: 500,
     },
     modules: {

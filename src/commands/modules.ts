@@ -174,7 +174,9 @@ export const execute: CommandExecute = async (
             const message = (await interaction.fetchReply()) as Message;
             const actionRows = message.components;
 
-            for (const { components } of actionRows) {
+            for (const actionRow of actionRows) {
+                const components = actionRow.components;
+
                 for (const component of components) {
                     component.disabled = true;
                 }

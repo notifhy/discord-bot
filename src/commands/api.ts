@@ -242,7 +242,7 @@ async function instance(
     }
 
     interaction.client.hypixelAPI.instance[
-        type as keyof Omit<RequestManager['instance'], 'baseURL'>
+        type as keyof Omit<RequestManager['instance'], 'baseURL' | 'performance'>
     ] = value;
     const setEmbed = new BetterEmbed(interaction)
         .setColor(Constants.colors.normal)
@@ -286,7 +286,10 @@ async function call(
     if (type === 'addAbort' || type === 'addError') {
         hypixelModuleErrors[type]();
     } else if (type === 'addRateLimit') {
-        hypixelModuleErrors[type](value ?? false); //value is used for addRateLimit's isGlobal prop
+        hypixelModuleErrors[type]({
+            rateLimitGlobal: value ?? false,
+            ratelimitReset: null,
+        });
     }
     const callEmbed = new BetterEmbed(interaction)
         .setColor(Constants.colors.normal)

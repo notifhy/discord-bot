@@ -3,6 +3,7 @@ import type { RawUserAPIData, UserAPIData } from '../@types/database';
 import { Client, Snowflake } from 'discord.js';
 import { ModuleData } from './ModuleData';
 import { ModuleHandler } from './ModuleHandler';
+import { Performance } from '../hypixelAPI/RequestManager';
 import { SQLiteWrapper } from '../database';
 import Constants from '../util/Constants';
 import ErrorHandler from '../util/errors/handlers/ErrorHandler';
@@ -28,7 +29,7 @@ export class ModuleManager {
         this.hypixelData = hypixelData;
     }
 
-    async process() {
+    async process(performance: Performance) {
         try {
             const currentUserAPIData = (
                 await SQLiteWrapper.getUser<
@@ -48,6 +49,8 @@ export class ModuleManager {
             );
 
             await moduleData.updateUserAPIData();
+
+            performance.data = Date.now() - performance.start;
 
             await new ModuleHandler(this.client, moduleData).init();
         } catch (error) {

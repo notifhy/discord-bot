@@ -10,6 +10,7 @@ import AbortError from '../AbortError';
 import BaseErrorHandler from './BaseErrorHandler';
 import HTTPError from '../HTTPError';
 import RateLimitError from '../RateLimitError';
+import { FetchError } from 'node-fetch';
 
 export default class RequestErrorHandler extends BaseErrorHandler {
     readonly requestManager: RequestManager;
@@ -24,7 +25,10 @@ export default class RequestErrorHandler extends BaseErrorHandler {
         if (this.error instanceof AbortError) {
             errors.addAbort();
         } else if (this.error instanceof RateLimitError) {
-            errors.addRateLimit(this.error.json?.global);
+            errors.addRateLimit({
+                rateLimitGlobal: this.error.json?.global ?? null,
+                ratelimitReset: this.error.response?.headers?.get('ratelimit-reset') ?? null,
+            });
         } else {
             errors.addError();
         }
@@ -73,13 +77,6 @@ export default class RequestErrorHandler extends BaseErrorHandler {
                     value:
                         this.timeout ??
                         'Not applicable',
-                },
-                {
-                    name: 'Listed Cause',
-                    value:
-                        this.error instanceof Error
-                            ? this.error.message
-                            : 'Unknown',
                 },
                 {
                     name: 'Global Rate Limit',
@@ -132,9 +129,16 @@ export default class RequestErrorHandler extends BaseErrorHandler {
 
             embeds.push(embed);
         } else if (this.error instanceof RateLimitError) {
+            const headers = this.error.response?.headers;
+
             embed
                 .setDescription(
                     'A timeout has been applied. Dedicated queries have been lowered by 5%.',
+                )
+                .addField(
+                    'Header Data',
+                    `Remaining: ${headers?.get('ratelimit-remaining')}
+                    Reset: ${headers?.get('ratelimit-reset')}`,
                 );
 
             embeds.push(embed);
@@ -143,9 +147,13 @@ export default class RequestErrorHandler extends BaseErrorHandler {
                 .setDescription('A timeout has been applied.')
                 .addField(
                     'Request',
-                    `Status: ${this.error.status}
-                    Status Text: ${this.error.statusText}`,
+                    `Status: ${this.error.status}`,
                 );
+
+            embeds.push(embed);
+        } else if (this.error instanceof FetchError) {
+            embed
+                .setDescription('A timeout has been applied.');
 
             embeds.push(embed);
         } else {
@@ -163,7 +171,8 @@ export default class RequestErrorHandler extends BaseErrorHandler {
                     : `<@${ownerID.join('><@')}>`,
             embeds: embeds,
             webhook:
-                this.error instanceof HTTPError
+                this.error instanceof HTTPError ||
+                this.error instanceof FetchError
                     ? hypixelAPIWebhook
                     : fatalWebhook,
             suppressError: true,

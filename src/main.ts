@@ -1,12 +1,13 @@
 import type { ClientCommand, ClientEvent, Config } from './@types/client';
 import type { ClientModule } from './@types/modules';
-import { Client, Collection, Intents } from 'discord.js';
+import type { RawConfig } from './@types/database';
+import { Client, Collection, Intents, Sweepers } from 'discord.js';
 import { discordAPIkey } from '../config.json';
 import { RequestManager } from './hypixelAPI/RequestManager';
-import { RawConfig } from './@types/database';
 import { SQLiteWrapper } from './database';
 import ErrorHandler from './util/errors/handlers/ErrorHandler';
-import * as fs from 'node:fs/promises';
+import fs from 'node:fs/promises';
+import process from 'node:process';
 
 process.on('exit', code => {
     console.warn(`Exiting with code ${code}`);
@@ -32,6 +33,34 @@ const client = new Client({
     },
     presence: {
         status: 'dnd',
+    },
+    sweepers: {
+        guildMembers: {
+            interval: 600,
+            filter: Sweepers.filterByLifetime({
+                lifetime: 1,
+            }),
+        },
+        messages: {
+            interval: 600,
+            lifetime: 30,
+        },
+        users: {
+            interval: 3600,
+            filter: Sweepers.filterByLifetime({
+                lifetime: 3600,
+            }),
+        },
+        threadMembers: {
+            interval: 600,
+            filter: Sweepers.filterByLifetime({
+                lifetime: 1,
+            }),
+        },
+        threads: {
+            interval: 600,
+            lifetime: 30,
+        },
     },
 });
 

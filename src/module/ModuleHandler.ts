@@ -1,6 +1,6 @@
+import type { Client } from 'discord.js';
 import type { Differences } from '../@types/modules';
 import type { UserAPIData } from '../@types/database';
-import { Client } from 'discord.js';
 import { ModuleData } from './ModuleData';
 import ModuleError from '../util/errors/ModuleError';
 import ModuleErrorHandler from '../util/errors/handlers/ModuleErrorHandler';

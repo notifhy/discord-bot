@@ -1,3 +1,4 @@
+import { Performance } from '../hypixelAPI/RequestManager';
 import Constants from '../util/Constants';
 
 export class RequestInstance {
@@ -6,6 +7,10 @@ export class RequestInstance {
     instanceUses: number;
     keyPercentage: number;
     maxAborts: number;
+    performance: {
+        latest: Performance | null;
+        history: Performance[];
+    };
     resumeAfter: number;
 
     constructor() {
@@ -14,6 +19,10 @@ export class RequestInstance {
         this.instanceUses = 0;
         this.keyPercentage = 0.2;
         this.maxAborts = 1;
+        this.performance = {
+            latest: null,
+            history: [],
+        };
         this.resumeAfter = 0;
     }
 }

@@ -3,9 +3,9 @@ import type {
     CommandProperties,
     Config,
 } from '../@types/client';
+import type { RawConfig } from '../@types/database';
 import { BetterEmbed } from '../util/utility';
 import { CommandInteraction, WebhookEditMessageOptions } from 'discord.js';
-import type { RawConfig } from '../@types/database';
 import { SQLiteWrapper } from '../database';
 import Constants from '../util/Constants';
 

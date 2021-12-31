@@ -25,9 +25,9 @@ export class BetterEmbed extends MessageEmbed {
         if (footer instanceof CommandInteraction) {
             const interaction = footer;
             const avatar = interaction.user.displayAvatarURL({ dynamic: true });
-            super.setFooter(`/${interaction.commandName}`, avatar);
+            super.setFooter({ text: `/${interaction.commandName}`, iconURL: avatar });
         } else if (footer !== undefined) {
-            super.setFooter(footer.name, footer.imageURL);
+            super.setFooter({ text: footer.name, iconURL: footer.imageURL });
         }
     }
 

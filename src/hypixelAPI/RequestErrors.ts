@@ -1,3 +1,4 @@
+import { clearTimeout, setTimeout } from 'node:timers';
 import { RequestInstance } from './RequestInstance';
 import Constants from '../util/Constants';
 
@@ -12,9 +13,9 @@ export class RequestErrors {
         total: number;
     };
 
-    rateLimit: { isGlobal: boolean } & typeof this.abort;
+    readonly rateLimit: { isGlobal: boolean } & typeof this.abort;
 
-    error: typeof this.abort;
+    readonly error: typeof this.abort;
 
     constructor(instance: RequestInstance) {
         this.instance = instance;
@@ -51,7 +52,18 @@ export class RequestErrors {
         });
     }
 
-    addRateLimit(rateLimitGlobal?: boolean) {
+    addRateLimit({
+        rateLimitGlobal,
+        ratelimitReset,
+    }: {
+        rateLimitGlobal: boolean | null,
+        ratelimitReset: string | null;
+    }) {
+        if (ratelimitReset) {
+            this.rateLimit.timeout =
+                (Number(ratelimitReset) + 1) * Constants.ms.second;
+        }
+
         this.rateLimit.isGlobal = rateLimitGlobal ?? this.rateLimit.isGlobal;
         this.instance.keyPercentage -= 0.05;
         this.base({
@@ -89,7 +101,7 @@ export class RequestErrors {
 
         this[type].resetTimeout = setTimeout(() => {
             //Returns type number rather than NodeJS.timeout
-            this[type].timeout = this[type].baseTimeout; //Sets a timeout to set the timeout back to 0
+            this[type].timeout = this[type].baseTimeout; //Sets a timeout to set the timeout back to "0"
         }, newTimeout + Constants.ms.minute) as unknown as number;
     }
 }

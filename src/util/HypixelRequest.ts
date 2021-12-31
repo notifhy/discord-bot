@@ -20,12 +20,14 @@ export class HypixelRequest {
     }
 
     async call(url: string): Promise<HypixelAPIOk> {
-        const response: Response = (await new Request({
-            maxAborts: this.maxAborts,
-            abortThreshold: this.abortThreshold,
-        }).request(url, {
-            headers: { 'API-Key': hypixelAPIkey },
-        })) as Response;
+        const response: Response = (
+            await new Request({
+                maxAborts: this.maxAborts,
+                abortThreshold: this.abortThreshold,
+            }).request(url, {
+                headers: { 'API-Key': hypixelAPIkey },
+            })
+        ) as Response;
 
         const JSON = await tryParse(response);
 
@@ -37,7 +39,7 @@ export class HypixelRequest {
             response.status === 429;
 
         if (isHypixelAPIError(JSON)) {
-            //typescript.
+            //typescript. fix when possible.
             const errorData = {
                 message: JSON?.cause,
                 response: response,
