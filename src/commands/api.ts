@@ -26,7 +26,7 @@ export const properties: CommandProperties = {
             {
                 name: 'instance',
                 type: '1',
-                description: 'Modify data held by HypixelModuleInstance',
+                description: 'Modify data held by RequestInstance',
                 options: [
                     {
                         name: 'type',
@@ -191,8 +191,14 @@ async function stats(interaction: CommandInteraction) {
     const { abort, rateLimit, error } = interaction.client.hypixelAPI.errors;
     const { instanceUses, resumeAfter, keyPercentage } =
         interaction.client.hypixelAPI.instance;
+
     const statsEmbed = new BetterEmbed(interaction)
         .setColor(Constants.colors.normal)
+        .setDescription(
+            JSON.stringify(
+                interaction.client.hypixelAPI.instance.performance,
+            ).slice(0, Constants.limits.embedDescription),
+        )
         .addField(
             'Enabled',
             interaction.client.config.enabled === true ? 'Yes' : 'No',
@@ -208,15 +214,15 @@ async function stats(interaction: CommandInteraction) {
         .addField(
             'Last Minute Statistics',
             `Aborts: ${abort.lastMinute}
-      Rate Limit Hits: ${rateLimit.lastMinute}
-      Other Errors: ${error.lastMinute}`,
+            Rate Limit Hits: ${rateLimit.lastMinute}
+            Other Errors: ${error.lastMinute}`,
         )
         .addField(
             'Next Timeout Lengths',
             `May not be accurate
-      Abort Errors: ${cleanLength(abort.timeout)}
-      Rate Limit Errors: ${cleanLength(rateLimit.timeout)}
-      Other Errors: ${cleanLength(error.timeout)}`,
+            Abort Errors: ${cleanLength(abort.timeout)}
+            Rate Limit Errors: ${cleanLength(rateLimit.timeout)}
+            Other Errors: ${cleanLength(error.timeout)}`,
         )
         .addField(
             'API Key',
@@ -224,7 +230,7 @@ async function stats(interaction: CommandInteraction) {
                 keyPercentage * keyLimit,
                 1,
             )} or ${cleanRound(keyPercentage * 100, 1)}%
-      Instance Queries: ${instanceUses}`,
+            Instance Queries: ${instanceUses}`,
         );
 
     await interaction.editReply({

@@ -43,14 +43,18 @@ export class ModuleManager {
                 })
             ) as UserAPIData;
 
+            performance.databaseFetch = Date.now();
+
             const moduleData = new ModuleData(
                 currentUserAPIData,
                 this.hypixelData,
             );
 
+            performance.process = Date.now();
+
             await moduleData.updateUserAPIData();
 
-            performance.data = Date.now() - performance.start;
+            performance.save = Date.now();
 
             await new ModuleHandler(this.client, moduleData).init();
         } catch (error) {

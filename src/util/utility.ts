@@ -208,10 +208,11 @@ export function nestedIterate(
                     typeof input[index] === 'number' ||
                     typeof input[index] === 'bigint'
                 ) {
-                    input[index] =
-                        (modify(
+                    input[index] = (
+                        modify(
                             input[index] as AcceptedValues,
-                        ) as typeof input[typeof index]) ?? input[index];
+                        ) as typeof input[typeof index]
+                    ) ?? input[index];
                 }
             }
         }

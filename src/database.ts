@@ -6,6 +6,17 @@ import Constants from './util/Constants';
 // eslint-disable-next-line no-warning-comments
 //TODO: Fix "any" after the rest is done
 
+type JSONize<Type> = {
+    [Property in keyof Type]:
+        Type[Property] extends Record<string, unknown>
+            ? string
+            : Type[Property] extends Array<unknown>
+            ? string
+            : Type[Property] extends boolean
+            ? string
+            : Property;
+}
+
 export class SQLiteWrapper {
     static createTablesIfNotExists(): Promise<void> { //Update this
         return new Promise<void>(resolve => {

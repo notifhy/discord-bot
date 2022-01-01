@@ -24,20 +24,33 @@ export const properties: CommandProperties = {
 export const execute: CommandExecute = async (
     interaction: CommandInteraction,
 ): Promise<void> => {
+    const { instance } = interaction.client.hypixelAPI;
+
     const keyQueryLimit =
-        keyLimit * interaction.client.hypixelAPI.instance.keyPercentage;
-    const intervalBetweenRequests = (60 / keyQueryLimit) * Constants.ms.second;
+        keyLimit * instance.keyPercentage;
 
-    const users = (
+    const intervalBetweenRequests =
+        (60 / keyQueryLimit) * Constants.ms.second;
+
+    const registeredUsers = (
         await SQLiteWrapper.getAllUsers<RawUserAPIData, UserAPIData>({
-            table: 'api',
-            columns: ['discordID', 'modules'],
+            table: Constants.tables.api,
+            columns: ['modules'],
         })
-    );
+    ).filter(user => user.modules.length > 0);
 
-    const userCount = users.length;
+    const userCount = registeredUsers.length;
 
-    const updateInterval = users.filter(user => user.modules.length > 0).length * intervalBetweenRequests;
+    const updateInterval =
+        registeredUsers.length * intervalBetweenRequests;
+
+    const {
+        fetch: fetchPerformance,
+        databaseFetch: databaseFetchPerformance,
+        process: processPerformance,
+        save: savePerformance,
+        modules: modulePerformance,
+    } = instance.performance.latest!;
 
     const responseEmbed = new BetterEmbed(interaction)
         .setColor(Constants.colors.normal)
@@ -45,11 +58,15 @@ export const execute: CommandExecute = async (
         .addFields([
             {
                 name: 'Uptime',
-                value: String(cleanLength(process.uptime() * 1000)),
+                value: String(
+                    cleanLength(process.uptime() * 1000),
+                ),
             },
             {
                 name: 'Servers',
-                value: String(interaction.client.guilds.cache.size),
+                value: String(
+                    interaction.client.guilds.cache.size,
+                ),
             },
             {
                 name: 'Users',
@@ -66,10 +83,39 @@ export const execute: CommandExecute = async (
             },
             {
                 name: 'Hypixel API',
-                value: `Refresh Interval: ${cleanLength(
+                value:
+                `
+                Instance Queries: ${
+                    instance.instanceUses
+                }
+                Refresh Interval: ${cleanLength(
                     updateInterval,
-                )}\nInstance Queries: ${interaction.client.hypixelAPI.instance.instanceUses
-                    }`,
+                )}`,
+            },
+            {
+                name: 'Latest Performance',
+                value:
+                `Hypixel API Fetch: ${
+                    fetchPerformance
+                }ms
+                Database Fetch: ${
+                    databaseFetchPerformance
+                }ms
+                Data Process: ${
+                    processPerformance
+                }ms
+                Data Save: ${
+                    savePerformance
+                }ms
+                Module Execution: ${
+                    modulePerformance
+                }ms
+                Total: ${
+                    fetchPerformance +
+                    processPerformance +
+                    savePerformance +
+                    modulePerformance
+                }ms`,
             },
         ]);
 

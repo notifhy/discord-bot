@@ -14,9 +14,11 @@ import RequestErrorHandler from '../util/errors/handlers/RequestErrorHandler';
 export type Performance = {
     start: number;
     uses: number;
-    fetch: number;
-    data: number;
-    modules: number;
+    fetch: number; //Hypixel API fetch
+    databaseFetch: number; //Database fetch
+    process: number; //Processing data
+    save: number; //Saving to database
+    modules: number; //Executing module(s)
 }
 
 export class RequestManager {
@@ -93,7 +95,9 @@ export class RequestManager {
                 start: Date.now(),
                 uses: uses,
                 fetch: 0,
-                data: 0,
+                databaseFetch: 0,
+                process: 0,
+                save: 0,
                 modules: 0,
             };
 
@@ -105,7 +109,7 @@ export class RequestManager {
             const cleanHypixelData =
                 await this.request.executeRequest(user, urls);
 
-            performance.fetch = Date.now() - performance.start;
+            performance.fetch = Date.now();
 
             await new ModuleManager(
                 this.client,
@@ -113,7 +117,7 @@ export class RequestManager {
                 cleanHypixelData,
             ).process(performance);
 
-            performance.modules = Date.now() - performance.start;
+            performance.modules = Date.now();
 
             this.logPerformance(performance);
         } catch (error) {
@@ -123,6 +127,12 @@ export class RequestManager {
     }
 
     logPerformance(performance: Performance) {
+        performance.modules -= performance.save; //Turns the ms since the Jan 1st 1970 into relative
+        performance.save -= performance.process;
+        performance.process -= performance.databaseFetch;
+        performance.databaseFetch -= performance.fetch;
+        performance.fetch -= performance.start;
+
         this.instance.performance.latest = performance;
 
         const history =

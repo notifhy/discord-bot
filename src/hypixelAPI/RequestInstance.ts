@@ -17,7 +17,7 @@ export class RequestInstance {
         this.abortThreshold = 2500;
         this.baseURL = `${Constants.urls.hypixel}%{type}%?uuid=%{uuid}%`;
         this.instanceUses = 0;
-        this.keyPercentage = 0.2;
+        this.keyPercentage = 0.6;
         this.maxAborts = 1;
         this.performance = {
             latest: null,

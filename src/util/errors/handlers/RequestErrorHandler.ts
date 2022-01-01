@@ -137,8 +137,8 @@ export default class RequestErrorHandler extends BaseErrorHandler {
                 )
                 .addField(
                     'Header Data',
-                    `Remaining: ${headers?.get('ratelimit-remaining')}
-                    Reset: ${headers?.get('ratelimit-reset')}`,
+                    `Remaining: ${headers?.get('ratelimit-remaining') ?? 'Unknown'}
+                    Reset: ${headers?.get('ratelimit-reset') ?? 'Unknown'}`,
                 );
 
             embeds.push(embed);

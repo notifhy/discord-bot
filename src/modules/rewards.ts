@@ -22,28 +22,32 @@ export const execute = async ({
 }: ModuleHandler,
 ): Promise<void> => {
     try {
-        const rewardsModule = (await SQLiteWrapper.getUser<
-            RawRewardsModule,
-            RewardsModule
-        >({
-            discordID: userAPIData.discordID,
-            table: Constants.tables.rewards,
-            allowUndefined: false,
-            columns: [
+        const rewardsModule = (
+            await SQLiteWrapper.getUser<
+                RawRewardsModule,
+                RewardsModule
+            >({
+                discordID: userAPIData.discordID,
+                table: Constants.tables.rewards,
+                allowUndefined: false,
+                columns: [
                 'alertTime',
                 'claimNotification',
                 'lastNotified',
                 'milestones',
                 'notificationInterval',
-            ],
-        })) as RewardsModule;
+                ],
+            })
+        ) as RewardsModule;
 
-        const userData = (await SQLiteWrapper.getUser<UserData, UserData>({
-            discordID: userAPIData.discordID,
-            table: Constants.tables.users,
-            allowUndefined: false,
-            columns: ['language'],
-        })) as UserData;
+        const userData = (
+            await SQLiteWrapper.getUser<UserData, UserData>({
+                discordID: userAPIData.discordID,
+                table: Constants.tables.users,
+                allowUndefined: false,
+                columns: ['language'],
+            })
+        ) as UserData;
 
         const locale = RegionLocales.locale(userData.language).modules.rewards;
         const { replace } = RegionLocales;
