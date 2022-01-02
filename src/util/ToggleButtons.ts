@@ -1,4 +1,8 @@
-import { Constants, MessageActionRow, MessageButton } from 'discord.js';
+import {
+    Constants,
+    MessageActionRow,
+    MessageButton,
+} from 'discord.js';
 
 export type Button = {
     readonly enable: string;

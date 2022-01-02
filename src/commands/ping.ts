@@ -1,6 +1,13 @@
-import type { CommandExecute, CommandProperties } from '../@types/client';
+import type {
+    CommandExecute,
+    CommandProperties,
+} from '../@types/client';
 import { BetterEmbed } from '../util/utility';
-import { ColorResolvable, CommandInteraction, Message } from 'discord.js';
+import {
+    ColorResolvable,
+    CommandInteraction,
+    Message,
+} from 'discord.js';
 import { RegionLocales } from '../../locales/localesHandler';
 import Constants from '../util/Constants';
 

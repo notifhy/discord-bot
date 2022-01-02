@@ -1,4 +1,7 @@
-import { clearTimeout, setTimeout } from 'node:timers';
+import {
+    clearTimeout,
+    setTimeout,
+} from 'node:timers';
 import { RequestInstance } from './RequestInstance';
 import Constants from '../util/Constants';
 

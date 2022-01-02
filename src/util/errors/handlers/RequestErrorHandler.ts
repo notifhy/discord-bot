@@ -1,4 +1,8 @@
-import { cleanLength, cleanRound, sendWebHook } from '../../utility';
+import {
+    cleanLength,
+    cleanRound,
+    sendWebHook,
+} from '../../utility';
 import {
     fatalWebhook,
     hypixelAPIWebhook,

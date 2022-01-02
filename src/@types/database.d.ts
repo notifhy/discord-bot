@@ -1,4 +1,7 @@
-import type { CleanHypixelPlayer, CleanHypixelStatus } from './hypixel';
+import type {
+    CleanHypixelPlayer,
+    CleanHypixelStatus,
+} from './hypixel';
 import type { Field } from './locales';
 
 export type Tables = 'users' | 'api' | 'friends' | 'rewards';

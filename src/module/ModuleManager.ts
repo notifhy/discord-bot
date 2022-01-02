@@ -1,6 +1,12 @@
-import type { CleanHypixelPlayer, CleanHypixelStatus } from '../@types/hypixel';
+import type {
+    CleanHypixelPlayer,
+    CleanHypixelStatus,
+} from '../@types/hypixel';
 import type { UserAPIData } from '../@types/database';
-import { Client, Snowflake } from 'discord.js';
+import {
+    Client,
+    Snowflake,
+} from 'discord.js';
 import { ModuleData } from './ModuleData';
 import { ModuleHandler } from './ModuleHandler';
 import { Performance } from '../hypixelAPI/RequestManager';

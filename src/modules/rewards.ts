@@ -29,17 +29,17 @@ export const execute = async ({
                 table: Constants.tables.rewards,
                 allowUndefined: false,
                 columns: [
-                'alertTime',
-                'claimNotification',
-                'lastNotified',
-                'milestones',
-                'notificationInterval',
+                    'alertTime',
+                    'claimNotification',
+                    'lastNotified',
+                    'milestones',
+                    'notificationInterval',
                 ],
             })
         ) as RewardsModule;
 
         const userData = (
-            await SQLite.getUser<UserData>({
+            await SQLite.getUser({
                 discordID: userAPIData.discordID,
                 table: Constants.tables.users,
                 allowUndefined: false,

@@ -4,7 +4,10 @@ import type {
     ClientCommand,
 } from '../@types/client';
 import { BetterEmbed } from '../util/utility';
-import { clientID, discordAPIkey as token } from '../../config.json';
+import {
+    clientID,
+    discordAPIkey as token,
+} from '../../config.json';
 import { CommandInteraction } from 'discord.js';
 import { REST } from '@discordjs/rest';
 import { Routes } from 'discord-api-types/v9';
@@ -86,17 +89,19 @@ export const execute: CommandExecute = async (
         const {
             properties: { ownerOnly, structure },
         }: ClientCommand = await import(`${__dirname}/${file}`); // eslint-disable-line no-await-in-loop
+
         if (ownerOnly === false) {
             userCommands.push(structure);
-        } else if (ownerOnly === true) {
+        } else {
             ownerCommands.push(structure);
         }
     }
 
     const scope = interaction.options.getString('scope', true);
     const type = interaction.options.getString('type', true);
-    const guildID =
-        interaction.options.getString('guild') ?? interaction.guildId!;
+    const guildID = interaction.options.getString('guild') ??
+        interaction.guildId!;
+
     const commands =
         type === 'both'
             ? ownerCommands.concat(userCommands)

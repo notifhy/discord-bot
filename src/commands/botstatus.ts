@@ -1,4 +1,7 @@
-import type { CommandExecute, CommandProperties } from '../@types/client';
+import type {
+    CommandExecute,
+    CommandProperties,
+} from '../@types/client';
 import { BetterEmbed } from '../util/utility';
 import { CommandInteraction } from 'discord.js';
 import Constants from '../util/Constants';

@@ -1,5 +1,8 @@
 import Constants from '../../Constants';
-import { BetterEmbed, formattedUnix } from '../../utility';
+import {
+    BetterEmbed,
+    formattedUnix,
+} from '../../utility';
 
 export default class BaseErrorHandler {
     readonly error: unknown;

@@ -1,4 +1,7 @@
-import type { CommandExecute, CommandProperties } from '../@types/client';
+import type {
+    CommandExecute,
+    CommandProperties,
+} from '../@types/client';
 import { CommandInteraction } from 'discord.js';
 
 export const properties: CommandProperties = {

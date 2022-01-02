@@ -1,7 +1,22 @@
-import type { EventProperties, ClientCommand } from '../@types/client';
-import type { UserAPIData, UserData } from '../@types/database';
-import { BetterEmbed, formattedUnix, slashCommandResolver } from '../util/utility';
-import { Collection, CommandInteraction, Constants as DiscordConstants, DiscordAPIError } from 'discord.js';
+import type {
+    EventProperties,
+    ClientCommand,
+} from '../@types/client';
+import type {
+    UserAPIData,
+    UserData,
+} from '../@types/database';
+import {
+    BetterEmbed,
+    formattedUnix,
+    slashCommandResolver,
+} from '../util/utility';
+import {
+    Collection,
+    CommandInteraction,
+    Constants as DiscordConstants,
+    DiscordAPIError,
+} from 'discord.js';
 import { ownerID } from '../../config.json';
 import { RegionLocales } from '../../locales/localesHandler';
 import { SQLite } from '../util/SQLite';
@@ -97,7 +112,7 @@ async function checkSystemMessages(
 ) {
     const locale = RegionLocales.locale(userData.language).errors.systemMessage;
     if (userData.systemMessage.length > 0) {
-        const systemMessage = new BetterEmbed({ name: locale.embed.footer }) //Localize
+        const systemMessage = new BetterEmbed({ name: locale.embed.footer })
             .setColor(Constants.colors.normal)
             .setTitle(locale.embed.title)
             .setDescription(locale.embed.description);
@@ -167,7 +182,7 @@ function cooldownConstraint(
     command: ClientCommand,
 ) {
     const { client: { cooldowns }, user } = interaction;
-    const { properties: { name, cooldown } } = command;
+    const { name, cooldown } = command.properties;
 
     const timestamps = cooldowns.get(name);
 
@@ -178,7 +193,7 @@ function cooldownConstraint(
     }
 
     const expireTime = Number(timestamps.get(user.id)) + cooldown;
-    const isCooldown = expireTime > Date.now() + 2_500;
+    const isCooldown = expireTime > (Constants.ms.second * 2.5) + Date.now();
     const timeLeft = expireTime - Date.now();
 
     if (isCooldown) {

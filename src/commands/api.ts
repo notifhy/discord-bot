@@ -1,5 +1,12 @@
-import type { CommandExecute, CommandProperties } from '../@types/client';
-import { BetterEmbed, cleanLength, cleanRound } from '../util/utility';
+import type {
+    CommandExecute,
+    CommandProperties,
+} from '../@types/client';
+import {
+    BetterEmbed,
+    cleanLength,
+    cleanRound,
+} from '../util/utility';
 import { CommandInteraction } from 'discord.js';
 import { keyLimit } from '../../config.json';
 import { RequestManager } from '../hypixelAPI/RequestManager';

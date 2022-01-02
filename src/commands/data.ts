@@ -17,6 +17,7 @@ import { Buffer } from 'node:buffer';
 import {
     CommandInteraction,
     Constants as DiscordConstants,
+    Formatters,
     Message,
     MessageActionRow,
     MessageButton,
@@ -181,19 +182,19 @@ export const execute: CommandExecute = async (
                 table: Constants.tables.api,
                 columns: ['*'],
                 allowUndefined: true,
-            }) as Promise<UserAPIData>,
+            })!,
             SQLite.getUser<FriendsModule>({
                 discordID: userData.discordID,
                 table: Constants.tables.friends,
                 columns: ['*'],
                 allowUndefined: true,
-            }) as Promise<FriendsModule>,
+            })!,
             SQLite.getUser<RewardsModule>({
                 discordID: userData.discordID,
                 table: Constants.tables.rewards,
                 columns: ['*'],
                 allowUndefined: true,
-            }) as Promise<RewardsModule>,
+            })!,
         ]);
 
         const allUserData = {
@@ -228,7 +229,9 @@ export const execute: CommandExecute = async (
         ) as UserAPIData;
 
         const base = new MessageButton()
-            .setStyle(DiscordConstants.MessageButtonStyles.PRIMARY);
+            .setStyle(
+                DiscordConstants.MessageButtonStyles.PRIMARY,
+            );
 
         const fastLeftButton = new MessageButton(base)
             .setCustomId('fastBackward')
@@ -249,10 +252,10 @@ export const execute: CommandExecute = async (
             .setLabel('>>');
 
         rightButton.disabled =
-            userAPIData.history.length < Constants.defaults.menuFastIncrements;
+            userAPIData.history.length <= Constants.defaults.menuFastIncrements;
 
         fastRightButton.disabled =
-            userAPIData.history.length < Constants.defaults.menuFastIncrements;
+            userAPIData.history.length <= Constants.defaults.menuFastIncrements;
 
         const epoch = /^\d{13,}$/gm;
 
@@ -264,19 +267,13 @@ export const execute: CommandExecute = async (
             );
 
             const fields = shownData.map(({ date, ...event }) => ({
-                name: `<t:${Math.round(date / 1000)}:D><t:${Math.round(
-                    date / 1000,
-                )}:T>`,
+                name: `${Formatters.time(date, 'D')}${Formatters.time(date, 'T')}`,
                 value: Object.entries(event)
                     .map(
                         ([key, value]) =>
-                            (String(value).match(epoch)
-                                ? `${camelToNormal(key)}: <t:${Math.round(
-                                      value / 1000,
-                                  )}:T>` //Time values (logins, logouts etc)
-                                : `${camelToNormal(key)}: ${
-                                    value ?? locale.history.null
-                                }`), //Anything else
+                        (String(value).match(epoch)
+                            ? `${camelToNormal(key)}: ${Formatters.time(value, 'T')}` //Time values (logins, logouts etc)
+                            : `${camelToNormal(key)}: ${value ?? locale.history.null}`), //Anything else
                     )
                     .join('\n'),
             }));
@@ -293,12 +290,13 @@ export const execute: CommandExecute = async (
                 .setFields(fields);
         };
 
-        const buttons = new MessageActionRow().setComponents(
-            fastLeftButton,
-            leftButton,
-            rightButton,
-            fastRightButton,
-        );
+        const buttons = new MessageActionRow()
+            .setComponents(
+                fastLeftButton,
+                leftButton,
+                rightButton,
+                fastRightButton,
+            );
 
         const reply = await interaction.editReply({
             embeds: [paginator(0)],
@@ -371,17 +369,10 @@ export const execute: CommandExecute = async (
             try {
                 const message = (await interaction.fetchReply()) as Message;
                 const actionRows = message.components;
-
-                for (const actionRow of actionRows) {
-                    const components = actionRow.components;
-
-                    for (const component of components) {
-                        component.disabled = true;
-                    }
-                }
+                const disabledRows = disableComponents(actionRows);
 
                 await interaction.editReply({
-                    components: actionRows,
+                    components: disabledRows,
                 });
             } catch (error) {
                 const handler = new CommandErrorHandler(error, interaction, userData.language);

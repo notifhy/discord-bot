@@ -1,5 +1,15 @@
-import { BetterEmbed, cleanRound, sendWebHook, slashCommandResolver } from '../../utility';
-import { ColorResolvable, CommandInteraction, TextChannel } from 'discord.js';
+import {
+    BetterEmbed,
+    cleanRound,
+    sendWebHook,
+    slashCommandResolver,
+} from '../../utility';
+import {
+    ColorResolvable,
+    CommandInteraction,
+    GuildChannel,
+    TextChannel,
+} from 'discord.js';
 import {
     fatalWebhook,
     nonFatalWebhook,
@@ -9,7 +19,10 @@ import BaseErrorHandler from './BaseErrorHandler';
 import ConstraintError from '../ConstraintError';
 import Constants from '../../Constants';
 import { RegionLocales } from '../../../../locales/localesHandler';
-import { BaseEmbed, Locale } from '../../../@types/locales';
+import {
+    BaseEmbed,
+    Locale,
+} from '../../../@types/locales';
 import { setTimeout } from 'timers/promises';
 
 export default class CommandErrorHandler extends BaseErrorHandler {
@@ -60,14 +73,18 @@ export default class CommandErrorHandler extends BaseErrorHandler {
                 value: `Guild ID: ${guild?.id}
                 Guild Name: ${guild?.name}
                 Owner ID: ${guild?.ownerId ?? 'None'}
-                Guild Member Count: ${guild?.memberCount}`,
+                Guild Member Count: ${guild?.memberCount}
+                Permissions: ${guild?.me?.permissions.bitfield}`,
             },
             {
                 name: 'Channel',
                 value: `Channel ID: ${channel?.id}
                 Channel Type: ${channel?.type}
-                Name: ${
-                    channel instanceof TextChannel ? channel.name : 'N/A'
+                Name: ${channel instanceof TextChannel ? channel.name : 'N/A'}
+                Permissions: ${
+                    channel instanceof GuildChannel
+                        ? guild?.me?.permissionsIn(channel).bitfield
+                        : 'N/A'
                 }`,
             },
             {
@@ -143,7 +160,7 @@ export default class CommandErrorHandler extends BaseErrorHandler {
             .addField(
                 locale.commandErrors.embed.field.name,
                 replace(locale.commandErrors.embed.field.value, {
-                id: id,
+                    id: id,
                 }),
             );
 

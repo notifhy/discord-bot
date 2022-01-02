@@ -1,6 +1,12 @@
-import type { CommandExecute, CommandProperties } from '../@types/client';
+import type {
+    CommandExecute,
+    CommandProperties,
+} from '../@types/client';
 import type { UserAPIData } from '../@types/database';
-import { BetterEmbed, cleanLength } from '../util/utility';
+import {
+    BetterEmbed,
+    cleanLength,
+} from '../util/utility';
 import { CommandInteraction } from 'discord.js';
 import { keyLimit } from '../../config.json';
 import { SQLite } from '../util/SQLite';

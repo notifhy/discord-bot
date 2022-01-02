@@ -1,4 +1,7 @@
-import { ColorResolvable, Permissions } from 'discord.js';
+import {
+    ColorResolvable,
+    Permissions,
+} from 'discord.js';
 import { Tables } from '../@types/database';
 
 export default {

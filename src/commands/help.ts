@@ -49,6 +49,7 @@ export const execute: CommandExecute = async (
 ): Promise<void> => {
     const replace = RegionLocales.replace;
     const locale = RegionLocales.locale(userData.language).commands.help;
+
     if (interaction.options.getSubcommand() === 'information') {
         await information();
     } else if (interaction.options.getString('command')) {
@@ -67,9 +68,8 @@ export const execute: CommandExecute = async (
     }
 
     async function specific() {
-        const commandArg: string = interaction.options.getString(
-            'command',
-        ) as string;
+        const commandArg =
+            interaction.options.getString('command', true);
         const command: ClientCommand | undefined =
             interaction.client.commands.get(commandArg);
         const commandSearchEmbed = new BetterEmbed(interaction)

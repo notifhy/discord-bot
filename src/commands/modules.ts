@@ -1,11 +1,20 @@
-import type { CommandExecute, CommandProperties } from '../@types/client';
+import type {
+    CommandExecute,
+    CommandProperties,
+} from '../@types/client';
 import type {
     FriendsModule,
     RewardsModule,
     UserAPIData,
 } from '../@types/database';
-import type { Locale, ModulesCommand } from '../@types/locales';
-import { BetterEmbed, disableComponents } from '../util/utility';
+import type {
+    Locale,
+    ModulesCommand,
+} from '../@types/locales';
+import {
+    BetterEmbed,
+    disableComponents,
+} from '../util/utility';
 import {
     ButtonInteraction,
     CommandInteraction,
@@ -231,7 +240,7 @@ export const execute: CommandExecute = async (
                     allDisabled: missingRequirements.length > 0,
                     enabled: userAPIData.modules.includes(subCommand),
                     buttonLocale: (
-                        locale.menu as ModulesCommand['friends']['menu']
+                        locale.menu as ModulesCommand['friends']['menu'] | ModulesCommand['rewards']['menu']
                     ).toggle.button,
                 });
 
@@ -384,7 +393,8 @@ export const execute: CommandExecute = async (
                 const component = new MessageSelectMenu(updatedMenu);
 
                 components.push(
-                    new MessageActionRow().addComponents(component),
+                    new MessageActionRow()
+                        .addComponents(component),
                 );
 
                 await SQLite.updateUser<RewardsModule>({

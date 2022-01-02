@@ -1,6 +1,12 @@
-import type { CleanHypixelPlayer, CleanHypixelStatus } from '../@types/hypixel';
+import type {
+    CleanHypixelPlayer,
+    CleanHypixelStatus,
+} from '../@types/hypixel';
 import type { Differences } from '../@types/modules';
-import type { History, UserAPIData } from '../@types/database';
+import type {
+    History,
+    UserAPIData,
+} from '../@types/database';
 import { compare } from '../util/utility';
 import { SQLite } from '../util/SQLite';
 import Constants from '../util/Constants';
@@ -47,7 +53,9 @@ export class ModuleData {
                 date: this.now,
                 ...this.differences.primary,
             };
-            const { history }: { history: History[] } = this.currentUserAPIData;
+
+            const { history } = this.currentUserAPIData;
+
             history.unshift(historyUpdate);
             history.splice(Constants.limits.userAPIDataHistory);
             Object.assign(userAPIDataUpdate, { history: history });

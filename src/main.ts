@@ -1,6 +1,15 @@
-import type { ClientCommand, ClientEvent, Config } from './@types/client';
+import type {
+    ClientCommand,
+    ClientEvent,
+    Config,
+} from './@types/client';
 import type { ClientModule } from './@types/modules';
-import { Client, Collection, Intents, Sweepers } from 'discord.js';
+import {
+    Client,
+    Collection,
+    Intents,
+    Sweepers,
+} from 'discord.js';
 import { discordAPIkey } from '../config.json';
 import { RequestManager } from './hypixelAPI/RequestManager';
 import { SQLite } from './util/SQLite';

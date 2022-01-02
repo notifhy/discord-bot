@@ -1,6 +1,13 @@
 import type { Field } from '../../../@types/locales';
-import type { UserAPIData, UserData } from '../../../@types/database';
-import { Constants as DiscordConstants, DiscordAPIError, Snowflake } from 'discord.js';
+import type {
+    UserAPIData,
+    UserData,
+} from '../../../@types/database';
+import {
+    Constants as DiscordConstants,
+    DiscordAPIError,
+    Snowflake,
+} from 'discord.js';
 import {
     fatalWebhook,
     ownerID,

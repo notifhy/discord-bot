@@ -1,6 +1,12 @@
-import type { CommandExecute, CommandProperties } from '../@types/client';
+import type {
+    CommandExecute,
+    CommandProperties,
+} from '../@types/client';
 import { BetterEmbed } from '../util/utility';
-import { CommandInteraction } from 'discord.js';
+import {
+    CommandInteraction,
+    Formatters,
+} from 'discord.js';
 import Constants from '../util/Constants';
 
 export const properties: CommandProperties = {
@@ -35,18 +41,31 @@ export const execute: CommandExecute = async (
         const output = await eval(input); //eslint-disable-line no-eval
         const end = Date.now();
         const timeTaken = end - start;
-        const outputMaxLength = Boolean(
-            output?.length >= Constants.limits.embedField,
-        );
+        const outputMaxLength =
+            output?.length >= Constants.limits.embedField;
+
         const evalEmbed = new BetterEmbed(interaction)
             .setColor(Constants.colors.normal)
             .setTitle('Executed Eval!')
             .addFields([
-                { name: 'Input', value: `\`\`\`javascript\n${input}\n\`\`\`` },
-                { name: 'Output', value: `\`\`\`javascript\n${output?.toString()?.slice(0, Constants.limits.embedField)}\n\`\`\`` },
-                { name: 'Type', value: `\`\`\`${typeof output}\`\`\`` },
-                { name: 'Time Taken', value: `\`\`\`${timeTaken} millisecond${timeTaken === 1 ? '' : 's'}\`\`\`` },
+                {
+                    name: 'Input', value:
+                        Formatters.codeBlock('javascript', input),
+                },
+                {
+                    name: 'Output', value:
+                        Formatters.codeBlock('javascript', output?.toString()?.slice(0, Constants.limits.embedField)),
+                },
+                {
+                    name: 'Type', value:
+                        Formatters.codeBlock(typeof output),
+                },
+                {
+                    name: 'Time Taken', value:
+                        Formatters.codeBlock(`${timeTaken} millisecond${timeTaken === 1 ? '' : 's'}`),
+                },
             ]);
+
         if (outputMaxLength === true) {
             evalEmbed.addField(
                 'Over Max Length',
@@ -55,21 +74,19 @@ export const execute: CommandExecute = async (
         }
 
         await interaction.editReply({ embeds: [evalEmbed] });
-    } catch (err) {
-        if (!(err instanceof Error)) {
-            return;
-        }
-
+    } catch (error) {
         const outputMaxLength = Boolean(
-            err.message.length >= Constants.limits.embedField,
+            (error as Error).message.length >= Constants.limits.embedField,
         );
+
         const evalEmbed = new BetterEmbed(interaction)
             .setColor(Constants.colors.warning)
             .setTitle('Failed Eval!')
             .addFields([
-                { name: 'Input', value: `\`${input}\`` },
-                { name: `${err.name}:`, value: `${err.message.slice(0, Constants.limits.embedField)}` },
+                { name: 'Input', value: Formatters.codeBlock('javascript', input) },
+                { name: `${(error as Error).name}:`, value: `${(error as Error).stack!.slice(0, Constants.limits.embedField)}` },
             ]);
+
         if (outputMaxLength === true) {
             evalEmbed.addField(
                 'Over Max Length',

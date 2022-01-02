@@ -1,5 +1,8 @@
 import { setTimeout } from 'node:timers';
-import fetch, { RequestInit, Response } from 'node-fetch';
+import fetch, {
+    RequestInit,
+    Response,
+} from 'node-fetch';
 import AbortError from './errors/AbortError';
 
 export class Request {
@@ -43,6 +46,16 @@ export class Request {
             });
         } finally {
             clearTimeout(abortTimeout);
+        }
+    }
+
+    static async tryParse<Type>(
+        response: Response,
+    ): Promise<Type | null> {
+        try {
+            return await response.json();
+        } catch {
+            return null;
         }
     }
 }

@@ -1,4 +1,7 @@
-import { BaseUserData, Tables } from '../@types/database';
+import {
+    BaseUserData,
+    Tables,
+} from '../@types/database';
 import Database from 'better-sqlite3';
 import Constants from './Constants';
 

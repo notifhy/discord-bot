@@ -1,7 +1,6 @@
 import type {
     CleanHypixelPlayer,
     CleanHypixelStatus,
-    HypixelAPIOk,
     RawHypixelPlayer,
     RawHypixelStatus,
 } from '../@types/hypixel';
@@ -40,11 +39,11 @@ export class RequestRequest extends HypixelRequest {
             this.instance.instanceUses += 1;
         });
 
-        const urlPromises: Promise<HypixelAPIOk>[] = urls.map(url =>
-            this.call(url),
+        const hypixelAPIOk = await Promise.all(
+            urls.map(url =>
+                this.call(url),
+            ),
         );
-
-        const hypixelAPIOk = await Promise.all(urlPromises);
 
         const hypixelPlayerData: CleanHypixelPlayer =
             RequestRequest.cleanPlayerData(
@@ -94,16 +93,21 @@ export class RequestRequest extends HypixelRequest {
         };
     }
 
-    static cleanStatusData(rawHypixelStatus: RawHypixelStatus | undefined) {
+    static cleanStatusData(rawHypixelStatus?: RawHypixelStatus) {
         if (rawHypixelStatus === undefined) {
             return undefined;
         }
-        const rawHypixelStatusData: RawHypixelStatus['session'] =
-            rawHypixelStatus.session;
+
+        const {
+            gameType = null,
+            mode = null,
+            map = null,
+        } = rawHypixelStatus.session;
+
         return {
-            gameType: rawHypixelStatusData.gameType ?? null,
-            gameMode: rawHypixelStatusData.mode ?? null,
-            gameMap: rawHypixelStatusData.map ?? null,
+            gameType: gameType,
+            gameMode: mode,
+            gameMap: map,
         } as CleanHypixelStatus;
     }
 }

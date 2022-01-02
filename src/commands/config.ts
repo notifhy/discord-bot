@@ -4,7 +4,10 @@ import type {
     Config,
 } from '../@types/client';
 import { BetterEmbed } from '../util/utility';
-import { CommandInteraction, WebhookEditMessageOptions } from 'discord.js';
+import {
+    CommandInteraction,
+    WebhookEditMessageOptions,
+} from 'discord.js';
 import { SQLite } from '../util/SQLite';
 import Constants from '../util/Constants';
 
