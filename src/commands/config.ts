@@ -3,10 +3,9 @@ import type {
     CommandProperties,
     Config,
 } from '../@types/client';
-import type { RawConfig } from '../@types/database';
 import { BetterEmbed } from '../util/utility';
 import { CommandInteraction, WebhookEditMessageOptions } from 'discord.js';
-import { SQLiteWrapper } from '../database';
+import { SQLite } from '../util/SQLite';
 import Constants from '../util/Constants';
 
 export const properties: CommandProperties = {
@@ -64,7 +63,7 @@ export const properties: CommandProperties = {
 export const execute: CommandExecute = async (
     interaction: CommandInteraction,
 ): Promise<void> => {
-    const config = await SQLiteWrapper.queryGet<RawConfig, Config>({
+    const config = await SQLite.queryGet<Config>({
         query: 'SELECT blockedGuilds, blockedUsers, devMode, enabled FROM config WHERE rowid = 1',
     });
 
@@ -181,11 +180,9 @@ export const execute: CommandExecute = async (
         payload.embeds = [devmodeEmbed];
     }
 
-    const newRawConfig = SQLiteWrapper.unJSONize<Config, RawConfig>({
-        input: config,
-    });
+    const newRawConfig = SQLite.unJSONize({ ...config });
 
-    await SQLiteWrapper.queryRun({
+    await SQLite.queryRun({
         query: 'UPDATE config set blockedGuilds = ?, blockedUsers = ?, devMode = ?, enabled = ? WHERE rowid = 1',
         data: Object.values(newRawConfig),
     });

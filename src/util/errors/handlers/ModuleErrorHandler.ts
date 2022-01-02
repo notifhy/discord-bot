@@ -1,5 +1,5 @@
 import type { Field } from '../../../@types/locales';
-import type { RawUserData, UserAPIData, UserData } from '../../../@types/database';
+import type { UserAPIData, UserData } from '../../../@types/database';
 import { Constants as DiscordConstants, DiscordAPIError, Snowflake } from 'discord.js';
 import {
     fatalWebhook,
@@ -7,7 +7,7 @@ import {
 } from '../../../../config.json';
 import { RegionLocales } from '../../../../locales/localesHandler';
 import { sendWebHook } from '../../utility';
-import { SQLiteWrapper } from '../../../database';
+import { SQLite } from '../../SQLite';
 import BaseErrorHandler from './BaseErrorHandler';
 import Constants from '../../Constants';
 import ModuleError from '../ModuleError';
@@ -33,7 +33,7 @@ export default class ModuleErrorHandler extends BaseErrorHandler {
 
     async disableModules(message: Field) {
         const userAPIData = (
-            await SQLiteWrapper.getUser({
+            await SQLite.getUser({
                 discordID: this.discordID,
                 table: Constants.tables.api,
                 columns: ['modules'],
@@ -45,10 +45,7 @@ export default class ModuleErrorHandler extends BaseErrorHandler {
 
         userAPIData.modules.splice(index, 1);
 
-        await SQLiteWrapper.updateUser<
-            Partial<UserAPIData>,
-            Partial<UserAPIData>
-        >({
+        await SQLite.updateUser<UserAPIData>({
             discordID: this.discordID,
             table: Constants.tables.api,
             data: {
@@ -57,7 +54,7 @@ export default class ModuleErrorHandler extends BaseErrorHandler {
         });
 
         const userData = (
-            await SQLiteWrapper.getUser<RawUserData, UserData>({
+            await SQLite.getUser<UserData>({
                 discordID: this.discordID,
                 table: Constants.tables.users,
                 columns: ['systemMessage'],
@@ -65,10 +62,7 @@ export default class ModuleErrorHandler extends BaseErrorHandler {
             },
         )) as UserData;
 
-        await SQLiteWrapper.updateUser<
-            Partial<UserData>,
-            Partial<UserData>
-        >({
+        await SQLite.updateUser<UserData>({
             discordID: this.discordID,
             table: Constants.tables.users,
             data: {
@@ -87,7 +81,7 @@ export default class ModuleErrorHandler extends BaseErrorHandler {
                 this.error.raw instanceof DiscordAPIError
             ) {
                 const userData = (
-                    await SQLiteWrapper.getUser<RawUserData, UserData>({
+                    await SQLite.getUser<UserData>({
                         discordID: this.discordID,
                         table: Constants.tables.users,
                         columns: ['language'],

@@ -1,10 +1,10 @@
 import type { CleanHypixelPlayer, CleanHypixelStatus } from '../@types/hypixel';
-import type { RawUserAPIData, UserAPIData } from '../@types/database';
+import type { UserAPIData } from '../@types/database';
 import { Client, Snowflake } from 'discord.js';
 import { ModuleData } from './ModuleData';
 import { ModuleHandler } from './ModuleHandler';
 import { Performance } from '../hypixelAPI/RequestManager';
-import { SQLiteWrapper } from '../database';
+import { SQLite } from '../util/SQLite';
 import Constants from '../util/Constants';
 import ErrorHandler from '../util/errors/handlers/ErrorHandler';
 
@@ -32,8 +32,7 @@ export class ModuleManager {
     async process(performance: Performance) {
         try {
             const currentUserAPIData = (
-                await SQLiteWrapper.getUser<
-                    RawUserAPIData,
+                await SQLite.getUser<
                     UserAPIData
                 >({
                     discordID: this.discordID,

@@ -1,14 +1,41 @@
 import type { WebhookConfig } from '../@types/client';
 import {
+    AwaitMessageCollectorOptionsParams,
     CommandInteraction,
+    MessageActionRow,
+    MessageComponentType,
     MessageEmbed,
     PermissionResolvable,
     Permissions,
     PermissionString,
+    TextBasedChannel,
     WebhookClient,
 } from 'discord.js';
 import Constants from './Constants';
 import BaseErrorHandler from './errors/handlers/BaseErrorHandler';
+
+export async function awaitComponent(
+    channel: TextBasedChannel,
+    component: MessageComponentType,
+    options: Omit<AwaitMessageCollectorOptionsParams<typeof component, true>, 'componentType'>,
+) {
+    try {
+        return await channel.awaitMessageComponent({
+            componentType: component,
+            ...options,
+        });
+    } catch (error) {
+        if (
+            error instanceof Error &&
+            (error as Error &{ code: string })
+                ?.code === 'INTERACTION_COLLECTOR_ERROR'
+        ) {
+            return null;
+        }
+
+        throw error;
+    }
+}
 
 type Footer =
     | {
@@ -169,6 +196,21 @@ export function formattedUnix({
     }`;
 }
 
+export function disableComponents(messageActionRows: MessageActionRow[]) {
+    const actionRows = messageActionRows
+        .map(row => new MessageActionRow(row));
+
+    for (const actionRow of actionRows) {
+        const components = actionRow.components;
+
+        for (const component of components) {
+            component.disabled = true;
+        }
+    }
+
+    return actionRows;
+}
+
 export function matchPermissions(
     required: PermissionResolvable,
     subject: Permissions,
@@ -251,31 +293,31 @@ export async function sendWebHook({
 }
 
 export const slashCommandResolver = (interaction: CommandInteraction) => {
-    let [option] = interaction.options.data;
-
     const commandOptions: (string | number | boolean)[] = [
         `/${interaction.commandName}`,
     ];
 
-    if (option) {
+    for (let option of interaction.options.data) {
         if (option.value) {
-            commandOptions.push(option.value);
-        } else {
-            if (option.type === 'SUB_COMMAND_GROUP') {
-                commandOptions.push(option.name);
-                [option] = option.options!;
-            }
+            commandOptions.push(
+                `${option.name}: ${option.value}`,
+            );
+        }
 
-            if (option.type === 'SUB_COMMAND') {
-                commandOptions.push(option.name);
-            }
+        if (option.type === 'SUB_COMMAND_GROUP') {
+            commandOptions.push(option.name);
+            [option] = option.options!;
+        }
 
-            if (Array.isArray(option.options)) {
-                option.options.forEach(subOption => {
-                    commandOptions.push(
-                        `${subOption.name}: ${subOption.value}`,
-                    );
-                });
+        if (option.type === 'SUB_COMMAND') {
+            commandOptions.push(option.name);
+        }
+
+        if (Array.isArray(option.options)) {
+            for (const subOption of option.options) {
+                commandOptions.push(
+                    `${subOption.name}: ${subOption.value}`,
+                );
             }
         }
     }

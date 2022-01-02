@@ -1,7 +1,6 @@
-import { BaseUserData, RawConfig, Tables } from './@types/database';
-import { formattedUnix } from './util/utility';
+import { BaseUserData, Tables } from '../@types/database';
 import Database from 'better-sqlite3';
-import Constants from './util/Constants';
+import Constants from './Constants';
 
 // eslint-disable-next-line no-warning-comments
 //TODO: Fix "any" after the rest is done
@@ -17,20 +16,22 @@ type JSONize<Type> = {
             : Property;
 }
 
-export class SQLiteWrapper {
-    static createTablesIfNotExists(): Promise<void> { //Update this
+export class SQLite {
+    static createTablesIfNotExists(): Promise<void> {
         return new Promise<void>(resolve => {
-            const db = new Database(`${__dirname}/../database.db`);
-            const tables = Object.values(Constants.tables.create).map(value => db.prepare(value));
-
-            const config = db
-                .prepare('SELECT * FROM config WHERE rowid = 1')
-                .get() as RawConfig | undefined;
+            const db = new Database(`${__dirname}/../../database.db`);
+            const tables =
+                Object.values(Constants.tables.create)
+                .map(value => db.prepare(value));
 
             db.transaction(() => {
                 for (const table of tables) {
                     table.run();
                 }
+
+                const config = db
+                    .prepare('SELECT * FROM config')
+                    .get();
 
                 if (config === undefined) {
                     db.prepare('INSERT INTO config DEFAULT VALUES').run();
@@ -42,58 +43,55 @@ export class SQLiteWrapper {
         });
     }
 
-    static queryGet<RawOutput, CleanOutput>({
+    static queryGet<Type>({
         query,
         allowUndefined = false,
     }: {
         query: string;
         allowUndefined?: boolean;
-    }): Promise<CleanOutput> {
+    }): Promise<Type> {
         /*
          *const string = '2';
          *const output = await queryGet(`SELECT tests FROM test WHERE tests = '${string}' `);
          *SELECT * FROM ${table}
          */
 
-        return new Promise<CleanOutput>(resolve => {
-            const db = new Database(`${__dirname}/../database.db`);
-            const rawData: RawOutput = db.prepare(query).get() as RawOutput;
+        return new Promise<Type>(resolve => {
+            const db = new Database(`${__dirname}/../../database.db`);
+            const rawData = db.prepare(query).get() as Record<string, unknown>;
             db.close();
-            if (allowUndefined === false && rawData === undefined) {
+
+            if (
+                allowUndefined === false &&
+                rawData === undefined
+            ) {
                 throw new RangeError(
                     `The query ${query} returned an undefined value`,
                 );
             }
 
-            const data = this.JSONize<RawOutput, CleanOutput>({
-                input: rawData,
-            });
+            const data = this.JSONize(rawData);
 
-            resolve(data as CleanOutput);
+            resolve(data as Type);
         });
     }
 
-    static queryGetAll<RawOutput, CleanOutput>({
-        query,
-    }: {
-        query: string;
-    }): Promise<CleanOutput[]> {
+    static queryGetAll<Type>(query: string): Promise<Type[]> {
         /*
          *const string = '2';
          *const output = await queryGetAll(`SELECT tests FROM test WHERE tests = '${string}' `);
          */
-        return new Promise<CleanOutput[]>(resolve => {
-            const db = new Database(`${__dirname}/../database.db`);
-            const rawData: RawOutput[] = db.prepare(query).all() as RawOutput[];
+
+        return new Promise<Type[]>(resolve => {
+            const db = new Database(`${__dirname}/../../database.db`);
+            const rawData = db.prepare(query).all() as Record<string, unknown>[];
             db.close();
 
             const data = rawData.map(rawData1 =>
-                this.JSONize<RawOutput, CleanOutput>({
-                    input: rawData1,
-                }),
+                this.JSONize(rawData1),
             );
 
-            resolve(data);
+            resolve(data as Type[]);
         });
     }
 
@@ -110,15 +108,17 @@ export class SQLiteWrapper {
          *'INSERT INTO servers VALUES(?,?,?)'
          *'DELETE FROM users WHERE id=(?)'
          */
+
         return new Promise<void>(resolve => {
-            const db = new Database(`${__dirname}/../database.db`);
+            const db = new Database(`${__dirname}/../../database.db`);
             db.prepare(query).run(data);
             db.close();
+
             resolve();
         });
     }
 
-    static async getUser<RawData, CleanData>({
+    static async getUser<Type>({
         discordID,
         table,
         allowUndefined,
@@ -128,58 +128,52 @@ export class SQLiteWrapper {
         table: Tables;
         allowUndefined: boolean;
         columns: string[];
-    }): Promise<RawData | CleanData | undefined> {
+    }): Promise<Type | undefined> {
         const query = `SELECT ${
             columns?.join(', ') ?? '*'
         } FROM ${table} WHERE discordID = '${discordID}'`;
-        const data = await this.queryGet<RawData, CleanData>({
+
+        const data = await this.queryGet<Type>({
             query: query,
             allowUndefined: allowUndefined,
         });
 
         if (data === undefined) {
-            return undefined;
+            return;
         }
 
-        return data;
+        return data; //eslint-disable-line consistent-return
     }
 
-    static async getAllUsers<RawData, CleanData>({
+    static async getAllUsers<Type>({
         table,
         columns,
     }: {
         table: Tables;
         columns: string[];
-    }): Promise<CleanData[]> {
+    }): Promise<Type[]> {
         const query = `SELECT ${columns?.join(', ') ?? '*'} FROM ${table}`;
-        const userData = await this.queryGetAll<RawData, CleanData>({
-            query: query,
-        });
+        const userData = await this.queryGetAll<Type>(query);
 
-        return userData as CleanData[];
+        return userData as Type[];
     }
 
-    static async newUser<
-        Input extends BaseUserData,
-        RawData,
-        CleanData = void,
-    >({
+    static async newUser<Type extends Omit<BaseUserData, never>>({
         table,
         returnNew = false,
         data,
     }: {
         table: Tables;
         returnNew?: boolean;
-        data: Input;
-    }): Promise<void | RawData | CleanData> {
+        data: Type;
+    }): Promise<void | Type> {
         const values = [];
+
         for (let i = 0; i < Object.values(data).length; i += 1) {
             values.push('?');
         }
 
-        const dataArray = this.unJSONize<Input, RawData>({
-            input: data,
-        });
+        const dataArray = this.unJSONize(data);
 
         await this.queryRun({
             query: `INSERT INTO ${table} VALUES(${values})`,
@@ -191,20 +185,16 @@ export class SQLiteWrapper {
         }
 
         const returnQuery = `SELECT * FROM ${table} WHERE discordID = '${data.discordID}'`;
-        const newUserData = await this.queryGet<RawData, CleanData>({
+
+        const newUserData = await this.queryGet<Type>({
             query: returnQuery,
             allowUndefined: false,
         });
 
-        console.log(
-            `${formattedUnix({ date: true, utc: true })} | ${
-                data.discordID
-            } added to ${table}`,
-        );
         return newUserData; //eslint-disable-line consistent-return
     }
 
-    static async updateUser<Input, RawData, CleanData = void>({
+    static async updateUser<Type extends Omit<BaseUserData, never>>({
         discordID,
         table,
         returnNew,
@@ -213,9 +203,10 @@ export class SQLiteWrapper {
         discordID: string;
         table: Tables;
         returnNew?: boolean;
-        data: Input;
-    }): Promise<void | RawData | CleanData | undefined> {
+        data: Partial<Type>;
+    }): Promise<void | Type> {
         const setQuery: string[] = [];
+
         for (const key in data) {
             //@ts-expect-error Types not added yet
             if (Object.hasOwn(data, key)) {
@@ -223,9 +214,12 @@ export class SQLiteWrapper {
             }
         }
 
-        const dataArray = this.unJSONize<Input, RawData>({
-            input: data,
-        });
+        const dataArray = this.unJSONize(
+            data as Record<
+                string,
+                Array<unknown> | boolean | null | number | string | undefined
+            >,
+        );
 
         await this.queryRun({
             query: `UPDATE ${table} SET ${setQuery.join(
@@ -239,7 +233,8 @@ export class SQLiteWrapper {
         }
 
         const returnQuery = `SELECT * FROM ${table} WHERE discordID = '${discordID}'`;
-        const newUserData = await this.queryGet<RawData, CleanData>({
+
+        const newUserData = await this.queryGet<Type>({
             query: returnQuery,
             allowUndefined: false,
         });
@@ -259,14 +254,13 @@ export class SQLiteWrapper {
             query: query,
             data: [discordID],
         });
-        //console.log(`${formattedUnix({ date: true, utc: true })} | ${discordID} data deleted from ${table}`);
     }
 
     /*
      * Taken from https://stackoverflow.com/a/52799327 under CC BY-SA 4.0
      * Takes an input and tests for a JSON structure (excluding primitives)
      */
-    static JSONize<RawInput, Output>({ input }: { input: RawInput }): Output {
+    static JSONize(input: Record<string, unknown>) {
         for (const key in input) {
             if (typeof input[key] !== 'string') {
                 continue;
@@ -275,39 +269,39 @@ export class SQLiteWrapper {
             try {
                 const JSONized = JSON.parse(
                     String(input[key]),
-                ) as Output[keyof Output];
+                );
+
                 const type = Object.prototype.toString.call(JSONized);
 
-                if (
-                    type === '[object Object]' ||
-                    type === '[object Array]' ||
-                    type === '[object Boolean]'
-                ) {
-                    (input[key as keyof RawInput] as unknown) = JSONized;
+                if (this.isArray(type, input[key])) {
+                    input[key] = JSONized as Array<unknown>;
+                }
+
+                if (this.isBoolean(type, input[key])) {
+                    input[key] = JSONized as boolean;
                 }
             } catch {} //eslint-disable-line no-empty
         }
 
-        return input as unknown as Output;
+        return input;
     }
 
     /*
      * Taken from https://stackoverflow.com/a/52799327 under CC BY-SA 4.0
      * Takes an input and tests for a JSON structure (excluding primitives)
      */
-    static unJSONize<Input, RawOutput>({ input }: { input: Input }): RawOutput {
+    static unJSONize(input: Record<string, Array<unknown> | boolean | null | number | string | undefined>): JSONize<typeof input> {
         for (const key in input) {
             //@ts-expect-error Types not added yet
             if (Object.hasOwn(input, key)) {
                 try {
-                    const type = Object.prototype.toString.call(input[key]);
+                    const type = Object.prototype.toString.call(input[key] as string);
 
                     if (
-                        type === '[object Object]' ||
                         type === '[object Array]' ||
                         type === '[object Boolean]'
                     ) {
-                        (input[key as keyof Input] as unknown) = JSON.stringify(
+                        (input[key]) = JSON.stringify(
                             input[key],
                         );
                     }
@@ -315,6 +309,14 @@ export class SQLiteWrapper {
             }
         }
 
-        return input as unknown as RawOutput;
+        return input as JSONize<typeof input>;
+    }
+
+    private static isArray(typeParam: string, value: unknown): value is Array<unknown> {
+        return typeParam === '[object Array]';
+    }
+
+    private static isBoolean(typeParam: string, value: unknown): value is boolean {
+        return typeParam === '[object Boolean]';
     }
 }

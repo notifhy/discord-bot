@@ -1,9 +1,9 @@
 import type { CommandExecute, CommandProperties } from '../@types/client';
-import type { RawUserAPIData, UserAPIData } from '../@types/database';
+import type { UserAPIData } from '../@types/database';
 import { BetterEmbed, cleanLength } from '../util/utility';
 import { CommandInteraction } from 'discord.js';
 import { keyLimit } from '../../config.json';
-import { SQLiteWrapper } from '../database';
+import { SQLite } from '../util/SQLite';
 import Constants from '../util/Constants';
 import process from 'node:process';
 
@@ -33,7 +33,7 @@ export const execute: CommandExecute = async (
         (60 / keyQueryLimit) * Constants.ms.second;
 
     const registeredUsers = (
-        await SQLiteWrapper.getAllUsers<RawUserAPIData, UserAPIData>({
+        await SQLite.getAllUsers<UserAPIData>({
             table: Constants.tables.api,
             columns: ['modules'],
         })

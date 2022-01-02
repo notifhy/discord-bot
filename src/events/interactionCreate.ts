@@ -1,10 +1,10 @@
 import type { EventProperties, ClientCommand } from '../@types/client';
-import type { RawUserData, UserAPIData, UserData } from '../@types/database';
+import type { UserAPIData, UserData } from '../@types/database';
 import { BetterEmbed, formattedUnix, slashCommandResolver } from '../util/utility';
 import { Collection, CommandInteraction, Constants as DiscordConstants, DiscordAPIError } from 'discord.js';
 import { ownerID } from '../../config.json';
 import { RegionLocales } from '../../locales/localesHandler';
-import { SQLiteWrapper } from '../database';
+import { SQLite } from '../util/SQLite';
 import CommandErrorHandler from '../util/errors/handlers/CommandErrorHandler';
 import Constants from '../util/Constants';
 import ConstraintError from '../util/errors/ConstraintError';
@@ -39,29 +39,25 @@ export const execute = async (
             });
 
             const userAPIData = (
-                await SQLiteWrapper.getUser({
+                await SQLite.getUser<UserAPIData>({
                     discordID: interaction.user.id,
                     table: Constants.tables.api,
                     columns: ['*'],
                     allowUndefined: true,
                 },
-            )) as UserAPIData | undefined;
+            ));
 
             let userData = (
-                await SQLiteWrapper.getUser<RawUserData, UserData>({
+                await SQLite.getUser<UserData>({
                     discordID: interaction.user.id,
                     table: Constants.tables.users,
                     columns: ['*'],
                     allowUndefined: true,
                 },
-            )) as UserData | undefined;
+            ));
 
             userData ??= (
-                await SQLiteWrapper.newUser<
-                    UserData,
-                    RawUserData,
-                    UserData
-                >({
+                await SQLite.newUser<UserData>({
                     table: Constants.tables.users,
                     returnNew: true,
                     data: {
@@ -69,7 +65,7 @@ export const execute = async (
                         ...Constants.defaults.users,
                     },
                 })
-            ) as UserData;
+            )!;
 
             await checkSystemMessages(interaction, userData);
             generalConstraints(interaction, command);
@@ -80,12 +76,14 @@ export const execute = async (
             });
         }
     } catch (error) {
-        const { language } = (await SQLiteWrapper.getUser<RawUserData, UserData>({
-            discordID: interaction.user.id,
-            table: Constants.tables.users,
-            columns: ['language'],
-            allowUndefined: true,
-        }).catch(() => ({}))) as UserData;
+        const { language } = (
+            await SQLite.getUser<UserData>({
+                discordID: interaction.user.id,
+                table: Constants.tables.users,
+                columns: ['language'],
+                allowUndefined: true,
+            },
+        ).catch(() => ({}))) as UserData;
 
         const handler = new CommandErrorHandler(error, interaction, language);
         await handler.systemNotify();
@@ -111,7 +109,10 @@ async function checkSystemMessages(
         try {
             await interaction.user.send({ embeds: [systemMessage] });
         } catch (error) {
-            if ((error as DiscordAPIError).code === DiscordConstants.APIErrors.CANNOT_MESSAGE_USER) {
+            if (
+                (error as DiscordAPIError).code ===
+                    DiscordConstants.APIErrors.CANNOT_MESSAGE_USER
+            ) {
                 systemMessage.description += locale.failedDM;
 
                 await interaction.channel!.send({
@@ -121,7 +122,7 @@ async function checkSystemMessages(
             }
         }
 
-        await SQLiteWrapper.updateUser<Partial<UserData>, Partial<RawUserData>>({
+        await SQLite.updateUser<UserData>({
             discordID: userData.discordID,
             table: Constants.tables.users,
             data: { systemMessage: [] },

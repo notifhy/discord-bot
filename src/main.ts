@@ -1,10 +1,9 @@
 import type { ClientCommand, ClientEvent, Config } from './@types/client';
 import type { ClientModule } from './@types/modules';
-import type { RawConfig } from './@types/database';
 import { Client, Collection, Intents, Sweepers } from 'discord.js';
 import { discordAPIkey } from '../config.json';
 import { RequestManager } from './hypixelAPI/RequestManager';
-import { SQLiteWrapper } from './database';
+import { SQLite } from './util/SQLite';
 import ErrorHandler from './util/errors/handlers/ErrorHandler';
 import fs from 'node:fs/promises';
 import process from 'node:process';
@@ -127,9 +126,9 @@ client.modules = new Collection();
         }
     }
 
-    await SQLiteWrapper.createTablesIfNotExists();
+    await SQLite.createTablesIfNotExists();
 
-    const config = await SQLiteWrapper.queryGet<RawConfig, Config>({
+    const config = await SQLite.queryGet<Config>({
         query: 'SELECT * FROM config WHERE rowid = 1',
     });
 

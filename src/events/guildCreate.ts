@@ -1,7 +1,7 @@
 import type { EventProperties } from '../@types/client';
 import type { Guild } from 'discord.js';
 import { formattedUnix } from '../util/utility';
-import { SQLiteWrapper } from '../database';
+import { SQLite } from '../util/SQLite';
 import ErrorHandler from '../util/errors/handlers/ErrorHandler';
 
 export const properties: EventProperties = {
@@ -39,7 +39,7 @@ export const execute = async (guild: Guild): Promise<void> => {
 
     try {
         const users = (
-            await SQLiteWrapper.getAllUsers({
+            await SQLite.getAllUsers({
                 table: 'api',
                 columns: ['discordID'],
             })

@@ -1,6 +1,6 @@
 import type { Client } from 'discord.js';
 import type { EventProperties } from '../@types/client';
-import { SQLiteWrapper } from '../database';
+import { SQLite } from '../util/SQLite';
 import Constants from '../util/Constants';
 import ErrorHandler from '../util/errors/handlers/ErrorHandler';
 
@@ -23,7 +23,7 @@ export const execute = async (client: Client) => {
                 label = client.customStatus;
             } else {
                 const users = (
-                    await SQLiteWrapper.getAllUsers({
+                    await SQLite.getAllUsers({
                         table: 'api',
                         columns: ['discordID'],
                     })

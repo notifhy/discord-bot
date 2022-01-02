@@ -1,16 +1,20 @@
-import type { CommandExecute, CommandProperties } from '../@types/client';
+import type {
+    CommandExecute,
+    CommandProperties,
+} from '../@types/client';
 import type {
     FriendsModule,
-    RawFriendsModule,
-    RawRewardsModule,
-    RawUserAPIData,
     RewardsModule,
     UserAPIData,
 } from '../@types/database';
-import { BetterEmbed, camelToNormal } from '../util/utility';
+import {
+    awaitComponent,
+    BetterEmbed,
+    camelToNormal,
+    disableComponents,
+} from '../util/utility';
 import { Buffer } from 'node:buffer';
 import {
-    ButtonInteraction,
     CommandInteraction,
     Constants as DiscordConstants,
     Message,
@@ -19,7 +23,7 @@ import {
     MessageComponentInteraction,
 } from 'discord.js';
 import { RegionLocales } from '../../locales/localesHandler';
-import { SQLiteWrapper } from '../database';
+import { SQLite } from '../util/SQLite';
 import CommandErrorHandler from '../util/errors/handlers/CommandErrorHandler';
 import Constants from '../util/Constants';
 
@@ -102,112 +106,91 @@ export const execute: CommandExecute = async (
             noButton,
         );
 
-        const confirmation = await interaction.editReply({
+        const message = await interaction.editReply({
             embeds: [confirmEmbed],
             components: [buttonRow],
-        });
+        }) as Message;
+
+        const disabledRows = disableComponents(message.components);
 
         await interaction.client.channels.fetch(interaction.channelId);
 
         const componentFilter = (i: MessageComponentInteraction) =>
             interaction.user.id === i.user.id &&
-            i.message.id === confirmation.id; //temp changes
+            i.message.id === message.id;
 
-        const collector = interaction.channel!.createMessageComponentCollector({
-            filter: componentFilter,
-            idle: Constants.ms.second * 30,
-            componentType: 'BUTTON',
-            max: 1,
-        });
+        const button = await awaitComponent(
+            interaction.channel!,
+            'BUTTON',
+            {
+                filter: componentFilter,
+                idle: Constants.ms.second * 30,
+            },
+        );
 
-        collector.on('collect', async (i: ButtonInteraction) => {
-            try {
-                if (i.customId === 'true') {
-                    Promise.all([
-                        SQLiteWrapper.deleteUser({
-                            discordID: userData.discordID,
-                            table: Constants.tables.users,
-                        }),
-                        SQLiteWrapper.deleteUser({
-                            discordID: userData.discordID,
-                            table: Constants.tables.api,
-                        }),
-                        SQLiteWrapper.deleteUser({
-                            discordID: userData.discordID,
-                            table: Constants.tables.friends,
-                        }),
-                        SQLiteWrapper.deleteUser({
-                            discordID: userData.discordID,
-                            table: Constants.tables.rewards,
-                        }),
-                    ]);
+        if (button === null) {
+            await interaction.editReply({
+                components: disabledRows,
+            });
+        } else if (button.customId === 'true') {
+            Promise.all([
+                SQLite.deleteUser({
+                    discordID: userData.discordID,
+                    table: Constants.tables.users,
+                }),
+                SQLite.deleteUser({
+                    discordID: userData.discordID,
+                    table: Constants.tables.api,
+                }),
+                SQLite.deleteUser({
+                    discordID: userData.discordID,
+                    table: Constants.tables.friends,
+                }),
+                SQLite.deleteUser({
+                    discordID: userData.discordID,
+                    table: Constants.tables.rewards,
+                }),
+            ]);
 
-                    const aborted = new BetterEmbed(interaction)
-                        .setColor(Constants.colors.normal)
-                        .setTitle(locale.delete.deleted.title)
-                        .setDescription(locale.delete.deleted.description);
+            const deleted = new BetterEmbed(interaction)
+                .setColor(Constants.colors.normal)
+                .setTitle(locale.delete.deleted.title)
+                .setDescription(locale.delete.deleted.description);
 
-                    await i.update({
-                        embeds: [aborted],
-                    });
-                } else {
-                    const aborted = new BetterEmbed(interaction)
-                        .setColor(Constants.colors.normal)
-                        .setTitle(locale.delete.aborted.title)
-                        .setDescription(locale.delete.aborted.description);
+            await button.update({
+                embeds: [deleted],
+                components: disabledRows,
+            });
+        } else {
+            const aborted = new BetterEmbed(interaction)
+                .setColor(Constants.colors.normal)
+                .setTitle(locale.delete.aborted.title)
+                .setDescription(locale.delete.aborted.description);
 
-                    await i.update({
-                        embeds: [aborted],
-                    });
-                }
-            } catch (error) {
-                const handler = new CommandErrorHandler(error, interaction, userData.language);
-                await handler.systemNotify();
-                await handler.userNotify();
-            }
-        });
-
-        collector.on('end', async () => {
-            try {
-                const message = (await interaction.fetchReply()) as Message;
-                const actionRows = message.components;
-
-                for (const actionRow of actionRows) {
-                    const components = actionRow.components;
-
-                    for (const component of components) {
-                        component.disabled = true;
-                    }
-                }
-
-                await interaction.editReply({
-                    components: actionRows,
-                });
-            } catch (error) {
-                const handler = new CommandErrorHandler(error, interaction, userData.language);
-                await handler.systemNotify();
-                await handler.userNotify();
-            }
-        });
+            await button.update({
+                embeds: [aborted],
+                components: disabledRows,
+            });
+        }
     }
 
     async function viewAll() {
         const data = await Promise.all([
-            SQLiteWrapper.getUser<RawUserAPIData, UserAPIData>({
+            SQLite.getUser<UserAPIData>({
                 discordID: userData.discordID,
-                table: 'api',
+                table: Constants.tables.api,
                 columns: ['*'],
                 allowUndefined: true,
             }) as Promise<UserAPIData>,
-            SQLiteWrapper.getUser<RawFriendsModule, FriendsModule>({
+            SQLite.getUser<FriendsModule>({
                 discordID: userData.discordID,
-                table: 'friends',
+                table: Constants.tables.friends,
                 columns: ['*'],
                 allowUndefined: true,
             }) as Promise<FriendsModule>,
-            SQLiteWrapper.getUser<RawRewardsModule, RewardsModule>({
+            SQLite.getUser<RewardsModule>({
                 discordID: userData.discordID,
-                table: 'rewards',
+                table: Constants.tables.rewards,
                 columns: ['*'],
                 allowUndefined: true,
             }) as Promise<RewardsModule>,
@@ -234,8 +217,7 @@ export const execute: CommandExecute = async (
 
     async function viewHistory() {
         const userAPIData = (
-            await SQLiteWrapper.getUser<
-                RawUserAPIData,
+            await SQLite.getUser<
                 UserAPIData
             >({
                 discordID: userData.discordID,
@@ -360,11 +342,11 @@ export const execute: CommandExecute = async (
                     currentIndex - Constants.defaults.menuIncrements < 0;
 
                 rightButton.disabled =
-                    currentIndex + Constants.defaults.menuIncrements >
+                    currentIndex + Constants.defaults.menuIncrements >=
                     userAPIData.history.length;
 
                 fastRightButton.disabled =
-                    currentIndex + Constants.defaults.menuFastIncrements >
+                    currentIndex + Constants.defaults.menuFastIncrements >=
                     userAPIData.history.length;
 
                 buttons.setComponents(

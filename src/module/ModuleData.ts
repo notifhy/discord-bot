@@ -1,8 +1,8 @@
 import type { CleanHypixelPlayer, CleanHypixelStatus } from '../@types/hypixel';
 import type { Differences } from '../@types/modules';
-import type { History, RawUserAPIData, UserAPIData } from '../@types/database';
+import type { History, UserAPIData } from '../@types/database';
 import { compare } from '../util/utility';
-import { SQLiteWrapper } from '../database';
+import { SQLite } from '../util/SQLite';
 import Constants from '../util/Constants';
 
 export class ModuleData {
@@ -53,7 +53,7 @@ export class ModuleData {
             Object.assign(userAPIDataUpdate, { history: history });
         }
 
-        await SQLiteWrapper.updateUser<Partial<UserAPIData>, RawUserAPIData>({
+        await SQLite.updateUser({
             discordID: this.currentUserAPIData.discordID,
             table: Constants.tables.api,
             data: userAPIDataUpdate,

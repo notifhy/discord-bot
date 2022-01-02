@@ -466,7 +466,7 @@ export default {
         systemMessage: {
             embed: {
                 title: 'System Message',
-                description: 'This is a notification regarding an aspect of this bot.',
+                description: 'This message is part of this bot\'s automatic mailbox system. These system messages are queued when the bot requires your attention and are sent when you execute a command.',
                 footer: 'System Message',
             },
             failedDM: ' Your direct messages were disabled, so this message was sent here instead.',

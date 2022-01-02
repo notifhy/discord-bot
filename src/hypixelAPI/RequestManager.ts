@@ -1,4 +1,4 @@
-import type { RawUserAPIData, UserAPIData } from '../@types/database';
+import type { UserAPIData } from '../@types/database';
 import { Client } from 'discord.js';
 import { formattedUnix } from '../util/utility';
 import { RequestErrors } from './RequestErrors';
@@ -7,7 +7,7 @@ import { RequestRequest } from './RequestRequest';
 import { keyLimit } from '../../config.json';
 import { ModuleManager } from '../module/ModuleManager';
 import { setTimeout } from 'node:timers/promises';
-import { SQLiteWrapper } from '../database';
+import { SQLite } from '../util/SQLite';
 import Constants from '../util/Constants';
 import RequestErrorHandler from '../util/errors/handlers/RequestErrorHandler';
 
@@ -47,8 +47,7 @@ export class RequestManager {
             }
 
             const allUsers = (
-                await SQLiteWrapper.getAllUsers<
-                    RawUserAPIData,
+                await SQLite.getAllUsers<
                     UserAPIData
                 >({
                     table: Constants.tables.api,
@@ -146,8 +145,8 @@ export class RequestManager {
         }
 
         history.unshift(
-                performance,
-            );
+            performance,
+        );
 
         history.splice(
             Constants.limits.performanceHistory,

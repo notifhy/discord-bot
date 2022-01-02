@@ -1,6 +1,5 @@
 import type {
     FriendsModule,
-    RawFriendsModule,
     UserAPIData,
     UserData,
 } from '../@types/database';
@@ -12,7 +11,7 @@ import {
 import { BetterEmbed } from '../util/utility';
 import { ModuleHandler } from '../module/ModuleHandler';
 import { RegionLocales } from '../../locales/localesHandler';
-import { SQLiteWrapper } from '../database';
+import { SQLite } from '../util/SQLite';
 import Constants from '../util/Constants';
 import ModuleError from '../util/errors/ModuleError';
 
@@ -36,8 +35,7 @@ export const execute = async ({
         }
 
         const friendModule = (
-            await SQLiteWrapper.getUser<
-                RawFriendsModule,
+            await SQLite.getUser<
                 FriendsModule
             >({
                 discordID: userAPIData.discordID,
@@ -48,8 +46,7 @@ export const execute = async ({
         ) as FriendsModule;
 
         const userData = (
-            await SQLiteWrapper.getUser<
-                UserData,
+            await SQLite.getUser<
                 UserData
             >({
                 discordID: userAPIData.discordID,
@@ -129,9 +126,8 @@ export const execute = async ({
                 1,
             );
 
-            await SQLiteWrapper.updateUser<
-                Partial<UserAPIData>,
-                Partial<UserAPIData>
+            await SQLite.updateUser<
+                UserAPIData
             >({
                 discordID: userAPIData.discordID,
                 table: Constants.tables.friends,
@@ -156,10 +152,7 @@ export const execute = async ({
                 .setTitle(locale.suppressNext.title)
                 .setDescription(locale.suppressNext.description);
 
-            await SQLiteWrapper.updateUser<
-                Partial<FriendsModule>,
-                Partial<RawFriendsModule>
-            >({
+            await SQLite.updateUser<FriendsModule>({
                 discordID: userAPIData.discordID,
                 table: Constants.tables.friends,
                 data: {

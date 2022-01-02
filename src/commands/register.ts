@@ -4,15 +4,12 @@ import { BetterEmbed } from '../util/utility';
 import { CommandInteraction } from 'discord.js';
 import {
     FriendsModule,
-    RawFriendsModule,
-    RawRewardsModule,
-    RawUserAPIData,
     RewardsModule,
     UserAPIData,
 } from '../@types/database';
 import { RegionLocales } from '../../locales/localesHandler';
 import { Request } from '../util/Request';
-import { SQLiteWrapper } from '../database';
+import { SQLite } from '../util/SQLite';
 import Constants from '../util/Constants';
 import HTTPError from '../util/errors/HTTPError';
 
@@ -119,7 +116,7 @@ export const execute: CommandExecute = async (
     }
 
     await Promise.all([
-        SQLiteWrapper.newUser<UserAPIData, RawUserAPIData>({
+        SQLite.newUser<UserAPIData>({
             table: Constants.tables.api,
             data: {
                 discordID: interaction.user.id,
@@ -142,14 +139,14 @@ export const execute: CommandExecute = async (
                 history: [],
             },
         }),
-        SQLiteWrapper.newUser<FriendsModule, RawFriendsModule>({
+        SQLite.newUser<FriendsModule>({
             table: Constants.tables.friends,
             data: {
                 discordID: interaction.user.id,
                 ...Constants.defaults.friends,
             },
         }),
-        SQLiteWrapper.newUser<RewardsModule, RawRewardsModule>({
+        SQLite.newUser<RewardsModule>({
             table: Constants.tables.rewards,
             data: {
                 discordID: interaction.user.id,
@@ -167,7 +164,7 @@ export const execute: CommandExecute = async (
     await interaction.editReply({ embeds: [registeredEmbed] });
 
     const users = (
-        await SQLiteWrapper.getAllUsers({
+        await SQLite.getAllUsers<UserAPIData>({
             table: Constants.tables.api,
             columns: ['discordID'],
         })

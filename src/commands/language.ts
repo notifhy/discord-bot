@@ -1,9 +1,9 @@
 import type { CommandExecute, CommandProperties } from '../@types/client';
+import type { UserData } from '../@types/database';
 import { BetterEmbed } from '../util/utility';
 import { CommandInteraction } from 'discord.js';
-import type { RawUserAPIData, UserAPIData } from '../@types/database';
 import { RegionLocales } from '../../locales/localesHandler';
-import { SQLiteWrapper } from '../database';
+import { SQLite } from '../util/SQLite';
 import Constants from '../util/Constants';
 
 export const properties: CommandProperties = {
@@ -63,7 +63,7 @@ export const execute: CommandExecute = async (
         return;
     }
 
-    await SQLiteWrapper.updateUser<Partial<UserAPIData>, RawUserAPIData>({
+    await SQLite.updateUser<UserData>({
         discordID: interaction.user.id,
         table: Constants.tables.users,
         data: {

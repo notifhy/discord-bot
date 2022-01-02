@@ -1,12 +1,11 @@
 import type {
-    RawRewardsModule,
     RewardsModule,
     UserData,
 } from '../@types/database';
 import { BetterEmbed } from '../util/utility';
 import { ModuleHandler } from '../module/ModuleHandler';
 import { RegionLocales } from '../../locales/localesHandler';
-import { SQLiteWrapper } from '../database';
+import { SQLite } from '../util/SQLite';
 import Constants from '../util/Constants';
 import ModuleError from '../util/errors/ModuleError';
 
@@ -23,8 +22,7 @@ export const execute = async ({
 ): Promise<void> => {
     try {
         const rewardsModule = (
-            await SQLiteWrapper.getUser<
-                RawRewardsModule,
+            await SQLite.getUser<
                 RewardsModule
             >({
                 discordID: userAPIData.discordID,
@@ -41,7 +39,7 @@ export const execute = async ({
         ) as RewardsModule;
 
         const userData = (
-            await SQLiteWrapper.getUser<UserData, UserData>({
+            await SQLite.getUser<UserData>({
                 discordID: userAPIData.discordID,
                 table: Constants.tables.users,
                 allowUndefined: false,
@@ -102,10 +100,7 @@ export const execute = async ({
                 embeds: [rewardNotification],
             });
 
-            await SQLiteWrapper.updateUser<
-                Partial<RewardsModule>,
-                Partial<RewardsModule>
-            >({
+            await SQLite.updateUser<RewardsModule>({
                 discordID: userAPIData.discordID,
                 table: Constants.tables.rewards,
                 data: {

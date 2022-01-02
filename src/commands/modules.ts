@@ -1,13 +1,11 @@
 import type { CommandExecute, CommandProperties } from '../@types/client';
 import type {
     FriendsModule,
-    RawRewardsModule,
-    RawUserAPIData,
     RewardsModule,
     UserAPIData,
 } from '../@types/database';
 import type { Locale, ModulesCommand } from '../@types/locales';
-import { BetterEmbed } from '../util/utility';
+import { BetterEmbed, disableComponents } from '../util/utility';
 import {
     ButtonInteraction,
     CommandInteraction,
@@ -18,7 +16,7 @@ import {
     SelectMenuInteraction,
 } from 'discord.js';
 import { RegionLocales } from '../../locales/localesHandler';
-import { SQLiteWrapper } from '../database';
+import { SQLite } from '../util/SQLite';
 import { ToggleButtons } from '../util/ToggleButtons';
 import CommandErrorHandler from '../util/errors/handlers/CommandErrorHandler';
 import Constants from '../util/Constants';
@@ -101,24 +99,26 @@ export const execute: CommandExecute = async (
         return new MessageActionRow().addComponents(menu);
     };
 
-    const getUserAPIData = async () =>
-        (await SQLiteWrapper.getUser<UserAPIData, RawUserAPIData>({
+    const getUserAPIData = async () => (
+        await SQLite.getUser<UserAPIData>({
             discordID: userData.discordID,
             table: Constants.tables.api,
             columns: ['discordID', 'modules'],
             allowUndefined: false,
-        })) as UserAPIData;
+        })
+    ) as UserAPIData;
 
-    const getFriendsData = async () =>
-        (await SQLiteWrapper.getUser<FriendsModule, FriendsModule>({
+    const getFriendsData = async () => (
+        await SQLite.getUser<FriendsModule>({
             discordID: userData.discordID,
             table: Constants.tables.friends,
             columns: ['discordID', 'channel', 'suppressNext'],
             allowUndefined: false,
-        })) as FriendsModule;
+        })
+    ) as FriendsModule;
 
-    const getRewardsData = async () =>
-        (await SQLiteWrapper.getUser<RawRewardsModule, RewardsModule>({
+    const getRewardsData = async () => (
+        await SQLite.getUser<RewardsModule>({
             discordID: userData.discordID,
             table: Constants.tables.rewards,
             allowUndefined: false,
@@ -128,7 +128,8 @@ export const execute: CommandExecute = async (
                 'milestones',
                 'notificationInterval',
             ],
-        })) as RewardsModule;
+        })
+    ) as RewardsModule;
 
     const reply = await interaction.editReply({
         embeds: [mainEmbed],
@@ -172,18 +173,10 @@ export const execute: CommandExecute = async (
     collector.on('end', async () => {
         try {
             const message = (await interaction.fetchReply()) as Message;
-            const actionRows = message.components;
-
-            for (const actionRow of actionRows) {
-                const components = actionRow.components;
-
-                for (const component of components) {
-                    component.disabled = true;
-                }
-            }
+            const disabledComponents = disableComponents(message.components);
 
             await interaction.editReply({
-                components: message.components,
+                components: disabledComponents,
             });
         } catch (error) {
             const handler = new CommandErrorHandler(error, interaction, userData.language);
@@ -365,10 +358,7 @@ export const execute: CommandExecute = async (
 
                 components.push(component);
 
-                await SQLiteWrapper.updateUser<
-                    Partial<UserAPIData>,
-                    Partial<UserAPIData>
-                >({
+                await SQLite.updateUser<UserAPIData>({
                     discordID: userAPIData.discordID,
                     table: Constants.tables.api,
                     data: { modules: userAPIData.modules },
@@ -397,10 +387,7 @@ export const execute: CommandExecute = async (
                     new MessageActionRow().addComponents(component),
                 );
 
-                await SQLiteWrapper.updateUser<
-                    Partial<RewardsModule>,
-                    Partial<RawRewardsModule>
-                >({
+                await SQLite.updateUser<RewardsModule>({
                     discordID: userData.discordID,
                     table: Constants.tables.rewards,
                     data: { alertTime: Number(time) },
@@ -423,10 +410,7 @@ export const execute: CommandExecute = async (
 
                 components.push(component);
 
-                await SQLiteWrapper.updateUser<
-                    Partial<RewardsModule>,
-                    Partial<RawRewardsModule>
-                >({
+                await SQLite.updateUser<RewardsModule>({
                     discordID: userData.discordID,
                     table: Constants.tables.rewards,
                     data: { claimNotification: flipped },
@@ -454,10 +438,7 @@ export const execute: CommandExecute = async (
                     new MessageActionRow().addComponents(component),
                 );
 
-                await SQLiteWrapper.updateUser<
-                    Partial<RewardsModule>,
-                    Partial<RawRewardsModule>
-                >({
+                await SQLite.updateUser<RewardsModule>({
                     discordID: userData.discordID,
                     table: Constants.tables.rewards,
                     data: { notificationInterval: Number(time) },
@@ -480,9 +461,8 @@ export const execute: CommandExecute = async (
 
                 components.push(component);
 
-                await SQLiteWrapper.updateUser<
-                    Partial<RewardsModule>,
-                    Partial<RawRewardsModule>
+                await SQLite.updateUser<
+                    RewardsModule
                 >({
                     discordID: userData.discordID,
                     table: Constants.tables.rewards,

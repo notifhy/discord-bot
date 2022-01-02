@@ -70,10 +70,10 @@ export default {
         friends: 'friends' as Tables,
         rewards: 'rewards' as Tables,
         create: {
-            users: 'CREATE TABLE IF NOT EXISTS "users" ( "discordID" TEXT NOT NULL UNIQUE, "language" TEXT )',
-            api: 'CREATE TABLE IF NOT EXISTS "api" ( "discordID" TEXT NOT NULL UNIQUE, "uuid" TEXT NOT NULL UNIQUE, "modules" TEXT NOT NULL, "lastUpdated" INTEGER NOT NULL, "firstLogin" INTEGER, "lastLogin" INTEGER, "lastLogout" INTEGER, "version" TEXT, "language" TEXT NOT NULL, "gameType" TEXT, "gameMode" TEXT, "gameMap" TEXT, "lastClaimedReward" INTEGER, "rewardScore" INTEGER, "rewardHighScore" INTEGER, "totalDailyRewards" INTEGER, "totalRewards" INTEGER, "history" TEXT NOT NULL )',
-            friends: 'CREATE TABLE IF NOT EXISTS "friends" ( "discordID" TEXT NOT NULL UNIQUE, "channel" TEXT, "suppressNext" TEXT NOT NULL )',
-            rewards: 'CREATE TABLE IF NOT EXISTS "rewards" ( "discordID" TEXT NOT NULL UNIQUE, "alertTime" INTEGER, "claimNotification" INTEGER NOT NULL, "lastNotified" INTEGER NOT NULL, "milestones" TEXT NOT NULL, "notificationInterval" INTEGER NOT NULL )',
+            users: 'CREATE TABLE IF NOT EXISTS "users" ("discordID" TEXT NOT NULL UNIQUE, "language" TEXT)',
+            api: 'CREATE TABLE IF NOT EXISTS "api" ("discordID" TEXT NOT NULL UNIQUE, "uuid" TEXT NOT NULL UNIQUE, "modules" TEXT NOT NULL, "lastUpdated" INTEGER NOT NULL, "firstLogin" INTEGER, "lastLogin" INTEGER, "lastLogout" INTEGER, "version" TEXT, "language" TEXT NOT NULL, "gameType" TEXT, "gameMode" TEXT, "gameMap" TEXT, "lastClaimedReward" INTEGER, "rewardScore" INTEGER, "rewardHighScore" INTEGER, "totalDailyRewards" INTEGER, "totalRewards" INTEGER, "history" TEXT NOT NULL)',
+            friends: 'CREATE TABLE IF NOT EXISTS "friends" ("discordID" TEXT NOT NULL UNIQUE, "channel" TEXT, "suppressNext" TEXT NOT NULL)',
+            rewards: 'CREATE TABLE IF NOT EXISTS "rewards" ("discordID" TEXT NOT NULL UNIQUE, "alertTime" INTEGER, "claimNotification" INTEGER NOT NULL, "lastNotified" INTEGER NOT NULL, "milestones" TEXT NOT NULL, "notificationInterval" INTEGER NOT NULL)',
         },
     },
     urls: {
