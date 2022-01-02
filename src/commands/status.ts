@@ -101,10 +101,10 @@ export const execute: CommandExecute = async (
                 Database Fetch: ${
                     databaseFetchPerformance
                 }ms
-                Data Process: ${
+                Process Data: ${
                     processPerformance
                 }ms
-                Data Save: ${
+                Save Data: ${
                     savePerformance
                 }ms
                 Module Execution: ${
