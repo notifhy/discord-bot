@@ -16,7 +16,7 @@ export interface History extends Partial<CleanHypixelPlayer> {
 
 export interface UserData extends BaseUserData {
     language: string;
-    systemMessage: Field[];
+    systemMessages: Field[];
 }
 
 export interface UserAPIData
@@ -35,7 +35,6 @@ Module Specifics
 
 export interface FriendsModule extends BaseUserData {
     channel: string | null;
-    suppressNext: boolean;
 }
 
 export interface RewardsModule extends BaseUserData {

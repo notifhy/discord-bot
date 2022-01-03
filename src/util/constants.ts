@@ -27,7 +27,7 @@ export default {
         },
         users: {
             language: 'en-us',
-            systemMessage: [],
+            systemMessages: [],
         },
         menuIncrements: 5,
         menuFastIncrements: 20,

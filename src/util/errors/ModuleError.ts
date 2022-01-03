@@ -18,6 +18,11 @@ export default class ModuleError extends Error {
         this.name = error instanceof Error
             ? `ModuleError [${error.name}]`
             : 'ModuleError';
+
+        if (error instanceof Error) {
+            error.name = this.name;
+        }
+
         this.raw = error;
 
         Object.setPrototypeOf(this, ModuleError.prototype);

@@ -8,6 +8,7 @@ import {
     Client,
     Collection,
     Intents,
+    Options,
     Sweepers,
 } from 'discord.js';
 import { discordAPIkey } from '../config.json';
@@ -34,11 +35,28 @@ process.on('uncaughtException', async error => {
 });
 
 const client = new Client({
-    intents: [Intents.FLAGS.GUILDS],
     allowedMentions: {
         parse: ['users'],
         repliedUser: true,
     },
+    failIfNotExists: false,
+    intents: [Intents.FLAGS.GUILDS],
+    makeCache: Options.cacheWithLimits({
+        GuildBanManager: 0,
+        GuildInviteManager: 0,
+        GuildMemberManager: 25,
+        GuildEmojiManager: 0,
+        GuildScheduledEventManager: 0,
+        GuildStickerManager: 0,
+        MessageManager: 50,
+        PresenceManager: 0,
+        ReactionManager: 0,
+        ReactionUserManager: 0,
+        StageInstanceManager: 0,
+        ThreadManager: 0,
+        ThreadMemberManager: 0,
+        VoiceStateManager: 0,
+    }),
     presence: {
         status: 'dnd',
     },
@@ -46,18 +64,12 @@ const client = new Client({
         guildMembers: {
             interval: 600,
             filter: Sweepers.filterByLifetime({
-                lifetime: 1,
+                lifetime: 60,
             }),
         },
         messages: {
             interval: 600,
-            lifetime: 30,
-        },
-        users: {
-            interval: 3600,
-            filter: Sweepers.filterByLifetime({
-                lifetime: 3600,
-            }),
+            lifetime: 60,
         },
         threadMembers: {
             interval: 600,
@@ -68,6 +80,12 @@ const client = new Client({
         threads: {
             interval: 600,
             lifetime: 30,
+        },
+        users: {
+            interval: 3600,
+            filter: Sweepers.filterByLifetime({
+                lifetime: 3600,
+            }),
         },
     },
 });

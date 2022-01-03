@@ -76,7 +76,7 @@ export default {
         modules: {
             defender: {
                 title: 'Defender Module',
-                description: 'You can add or remove modules here. See more about a module by selecting it. Then, press the button to remove or add it. If you want to delete some or all of your data used by or associated with this bot, you can request it with /deletedata.',
+                description: 'T',
                 menuPlaceholder: 'Defender Module Settings',
                 missingConfigField: {
                     name: 'Missing Configuration',
@@ -409,6 +409,35 @@ export default {
                 value: '/help • See information about any command or about this bot\n/language • Set a language for this bot',
             },
         },
+        system: {
+            embed: {
+                title: 'System',
+                field1: {
+                    name: 'Uptime',
+                    value: '%{uptime}%',
+                },
+                field2: {
+                    name: 'Memory Usage',
+                    value: '%{memoryMegaBytes}%MB',
+                },
+                field3: {
+                    name: 'Servers',
+                    value: '%{servers}%',
+                },
+                field4: {
+                    name: 'Users',
+                    value: '%{users}%',
+                },
+                field5: {
+                    name: 'Registered Users',
+                    value: '%{registeredUsers}%',
+                },
+                field6: {
+                    name: 'Hypixel API',
+                    value: 'Fetches: %{instanceUses}%\nRefresh Interval: %{updateInterval}%',
+                },
+            },
+        },
     },
     errors: {
         commandErrors: {
@@ -452,18 +481,22 @@ export default {
         moduleErrors: {
             10003: {
                 name: '%{cleanModule}% Module Disabled',
-                value: 'The %{cleanModule}% module was disabled because the set channel was not fetchable.',
+                value: 'The %{cleanModule}% module was disabled because the set channel was not fetchable. [Code 10003](https://discord.com/developers/docs/topics/opcodes-and-status-codes#json "Opcodes and Status codes")',
             },
             10013: {
                 name: '%{cleanModule}% Module Disabled',
-                value: 'The %{cleanModule}% module was disabled because your account was not fetchable.',
+                value: 'The %{cleanModule}% module was disabled because your account was not fetchable. [Code 10013](https://discord.com/developers/docs/topics/opcodes-and-status-codes#json "Opcodes and Status codes")',
+            },
+            50001: {
+                name: '%{cleanModule}% Module Disabled',
+                value: 'The %{cleanModule}% module was disabled because the set channel, server, or user was not reachable. [Code 50001](https://discord.com/developers/docs/topics/opcodes-and-status-codes#json "Opcodes and Status codes")',
             },
             50007: {
                 name: '%{cleanModule}% Module Disabled',
-                value: 'The %{cleanModule}% module was disabled because the bot was unable to DM you. Please check your privacy settings and enable direct messages. Then, reenable this module with /modules',
+                value: 'The %{cleanModule}% module was disabled because the bot was unable to DM you. Please check your privacy settings and enable direct messages. Then, reenable this module with /modules. [Code 50007](https://discord.com/developers/docs/topics/opcodes-and-status-codes#json "Opcodes and Status codes")',
             },
         },
-        systemMessage: {
+        systemMessages: {
             embed: {
                 title: 'System Message',
                 description: 'This message is part of this bot\'s automatic mailbox system. These system messages are queued when the bot requires your attention and are sent when you execute a command.',
@@ -485,9 +518,8 @@ export default {
                 footer: 'Notification',
             },
             missingPermissions: {
-                title: 'Missing Permissions',
-                description: 'This bot is missing the following permissions in the channel <#%{channelID}%>: %{missingPermissions}%. The Friends Module has been toggled off due to this issue.',
-                footer: 'Issue',
+                name: 'Friend Module Disabled',
+                value: 'The Friends module was disabled because this bot is missing the following permissions in the channel %{channel}% %{missingPermissions}%.',
             },
             suppressNext: {
                 title: 'Alert Suppressed',
@@ -495,10 +527,10 @@ export default {
                 footer: 'Notification',
             },
             login: {
-                description: '<@!%{discordID}%> logged in <t:%{unixEpoch}%:R> at <t:%{unixEpoch}%:T>',
+                description: '%{mention}% logged in %{relative}% at %{time}%',
             },
             logout: {
-                description: '<@!%{discordID}%> logged out <t:%{unixEpoch}%:R> at <t:%{unixEpoch}%:T>',
+                description: '%{mention}% logged out %{relative}% at %{time}%',
             },
         },
         rewards: {

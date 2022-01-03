@@ -110,29 +110,29 @@ async function checkSystemMessages(
     interaction: CommandInteraction,
     userData: UserData,
 ) {
-    const locale = RegionLocales.locale(userData.language).errors.systemMessage;
-    if (userData.systemMessage.length > 0) {
-        const systemMessage = new BetterEmbed({ name: locale.embed.footer })
+    const locale = RegionLocales.locale(userData.language).errors.systemMessages;
+    if (userData.systemMessages.length > 0) {
+        const systemMessages = new BetterEmbed({ name: locale.embed.footer })
             .setColor(Constants.colors.normal)
             .setTitle(locale.embed.title)
             .setDescription(locale.embed.description);
 
-        for (const message of userData.systemMessage) {
-            systemMessage.addField(message.name, message.value);
+        for (const message of userData.systemMessages) {
+            systemMessages.addField(message.name, message.value);
         }
 
         try {
-            await interaction.user.send({ embeds: [systemMessage] });
+            await interaction.user.send({ embeds: [systemMessages] });
         } catch (error) {
             if (
                 (error as DiscordAPIError).code ===
                     DiscordConstants.APIErrors.CANNOT_MESSAGE_USER
             ) {
-                systemMessage.description += locale.failedDM;
+                systemMessages.description += locale.failedDM;
 
                 await interaction.channel!.send({
                     content: interaction.user.toString(),
-                    embeds: [systemMessage],
+                    embeds: [systemMessages],
                 });
             }
         }
@@ -140,7 +140,7 @@ async function checkSystemMessages(
         await SQLite.updateUser<UserData>({
             discordID: userData.discordID,
             table: Constants.tables.users,
-            data: { systemMessage: [] },
+            data: { systemMessages: [] },
         });
     }
 }

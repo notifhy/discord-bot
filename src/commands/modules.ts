@@ -50,12 +50,12 @@ export const properties: CommandProperties = {
             },
             {
                 name: 'friends',
-                description: 'placeholder',
+                description: 'Know when your friends are online by sharing logins and logouts with each other',
                 type: '1',
             },
             {
                 name: 'rewards',
-                description: 'placeholder',
+                description: 'Never miss a daily reward again - get notifications to claim your daily reward at your convenience',
                 type: '1',
             },
         ],
@@ -121,7 +121,7 @@ export const execute: CommandExecute = async (
         await SQLite.getUser<FriendsModule>({
             discordID: userData.discordID,
             table: Constants.tables.friends,
-            columns: ['discordID', 'channel', 'suppressNext'],
+            columns: ['discordID', 'channel'],
             allowUndefined: false,
         })
     ) as FriendsModule;

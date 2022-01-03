@@ -12,12 +12,12 @@ import {
     BetterEmbed,
     camelToNormal,
     disableComponents,
+    timestamp,
 } from '../util/utility';
 import { Buffer } from 'node:buffer';
 import {
     CommandInteraction,
     Constants as DiscordConstants,
-    Formatters,
     Message,
     MessageActionRow,
     MessageButton,
@@ -43,7 +43,7 @@ export const properties: CommandProperties = {
             {
                 name: 'delete',
                 type: '1',
-                description: 'Delete all of your data',
+                description: 'Delete all of your data - there is a confirmation step to prevent accidents',
             },
             {
                 name: 'view',
@@ -267,12 +267,12 @@ export const execute: CommandExecute = async (
             );
 
             const fields = shownData.map(({ date, ...event }) => ({
-                name: `${Formatters.time(date, 'D')}${Formatters.time(date, 'T')}`,
+                name: `${timestamp(date, 'D')}${timestamp(date, 'T')}`,
                 value: Object.entries(event)
                     .map(
                         ([key, value]) =>
                         (String(value).match(epoch)
-                            ? `${camelToNormal(key)}: ${Formatters.time(value, 'T')}` //Time values (logins, logouts etc)
+                            ? `${camelToNormal(key)}: ${timestamp(value, 'T')}` //Time values (logins, logouts etc)
                             : `${camelToNormal(key)}: ${value ?? locale.history.null}`), //Anything else
                     )
                     .join('\n'),

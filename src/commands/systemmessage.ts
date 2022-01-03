@@ -63,7 +63,7 @@ export const execute: CommandExecute = async (
         await SQLite.getUser<UserData>({
             discordID: id,
             table: Constants.tables.users,
-            columns: ['systemMessage'],
+            columns: ['systemMessages'],
             allowUndefined: true,
         },
     )) as UserData | undefined;
@@ -133,12 +133,12 @@ export const execute: CommandExecute = async (
         discordID: id,
         table: Constants.tables.users,
         data: {
-            systemMessage: [
+            systemMessages: [
                 {
                     name: name,
                     value: value,
                 },
-                ...userData.systemMessage,
+                ...userData.systemMessages,
             ],
         },
     });

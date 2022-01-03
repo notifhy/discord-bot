@@ -23,6 +23,7 @@ export default class ModuleErrorHandler extends BaseErrorHandler {
     readonly cleanModule: string;
     readonly discordID: string;
     readonly module: string;
+    readonly raw: unknown;
 
     constructor(
         error: ModuleError,
@@ -33,6 +34,7 @@ export default class ModuleErrorHandler extends BaseErrorHandler {
 
         this.discordID = discordID;
         this.module = error.module;
+        this.raw = error.raw;
 
         this.errorLog();
         this.statusCode();
@@ -64,7 +66,7 @@ export default class ModuleErrorHandler extends BaseErrorHandler {
             await SQLite.getUser<UserData>({
                 discordID: this.discordID,
                 table: Constants.tables.users,
-                columns: ['systemMessage'],
+                columns: ['systemMessages'],
                 allowUndefined: false,
             },
         )) as UserData;
@@ -73,8 +75,8 @@ export default class ModuleErrorHandler extends BaseErrorHandler {
             discordID: this.discordID,
             table: Constants.tables.users,
             data: {
-                systemMessage: [
-                    ...userData.systemMessage,
+                systemMessages: [
+                    ...userData.systemMessages,
                     message,
                 ],
             },
@@ -112,6 +114,11 @@ export default class ModuleErrorHandler extends BaseErrorHandler {
                         value: replace(locale[10013].value, cleanModule),
                     };
                     break;
+                    case DiscordConstants.APIErrors.MISSING_ACCESS: message = { //Unable to access channel, server, etc.
+                        name: replace(locale[50001].name, cleanModule),
+                        value: replace(locale[50001].value, cleanModule),
+                    };
+                    break;
                     case DiscordConstants.APIErrors.CANNOT_MESSAGE_USER: message = { //Cannot send messages to this user
                         name: replace(locale[50007].name, cleanModule),
                         value: replace(locale[50007].value, cleanModule),
@@ -145,8 +152,9 @@ export default class ModuleErrorHandler extends BaseErrorHandler {
         this.log(
             `User: ${this.discordID}`,
             `Module: ${this.cleanModule}`,
-            (this.error as ModuleError)?.stack ??
-                this.error,
+            this.raw instanceof Error
+                ? this.raw
+                : this.error,
         );
     }
 
@@ -160,7 +168,11 @@ export default class ModuleErrorHandler extends BaseErrorHandler {
             content: `<@${ownerID.join('><@')}>`,
             embeds: [
                 identifier,
-                this.errorStackEmbed(this.error),
+                this.errorStackEmbed(
+                    this.raw instanceof Error
+                        ? this.raw
+                        : this.error,
+                ),
             ],
             webhook: fatalWebhook,
             suppressError: true,

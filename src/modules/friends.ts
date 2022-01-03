@@ -1,14 +1,16 @@
 import type {
     FriendsModule,
-    UserAPIData,
     UserData,
 } from '../@types/database';
 import {
-    GuildMember,
+    Formatters,
     MessageEmbed,
     TextChannel,
 } from 'discord.js';
-import { BetterEmbed } from '../util/utility';
+import {
+    BetterEmbed,
+    timestamp,
+} from '../util/utility';
 import { ModuleHandler } from '../module/ModuleHandler';
 import { RegionLocales } from '../../locales/localesHandler';
 import { SQLite } from '../util/SQLite';
@@ -52,7 +54,10 @@ export const execute = async ({
                 discordID: userAPIData.discordID,
                 table: Constants.tables.users,
                 allowUndefined: false,
-                columns: ['language'],
+                columns: [
+                    'language',
+                    'systemMessages',
+                ],
             })
         ) as UserData;
 
@@ -105,63 +110,32 @@ export const execute = async ({
             )
         ) as TextChannel;
 
+        const me = await channel.guild.members.fetch(client.user!.id);
+
         const missingPermissions = channel
-            .permissionsFor(channel.guild.me as GuildMember)
+            .permissionsFor(me)
             .missing(Constants.modules.friends.permissions);
 
         if (missingPermissions.length !== 0) {
-            const user = await client.users.fetch(userAPIData.discordID);
-            const missingEmbed = new BetterEmbed({
-                name: locale.missingPermissions.footer,
-            })
-                .setColor(Constants.colors.warning)
-                .setTitle(locale.missingPermissions.title)
-                .setDescription(replace(locale.missingPermissions.description, {
-                    channelID: friendModule.channel!,
+            const missingPermissionsField = {
+                name: locale.missingPermissions.name,
+                value: replace(locale.missingPermissions.value, {
+                    channel: Formatters.channelMention(friendModule.channel!),
                     missingPermissions: missingPermissions.join(', '),
-                }));
-
-            userAPIData.modules.splice(
-                userAPIData.modules.indexOf('friends'),
-                1,
-            );
+                }),
+            };
 
             await SQLite.updateUser<
-                UserAPIData
+                UserData
             >({
                 discordID: userAPIData.discordID,
                 table: Constants.tables.friends,
                 data: {
-                    modules: userAPIData.modules,
+                    systemMessages: [
+                        missingPermissionsField,
+                        ...userData.systemMessages,
+                    ],
                 },
-            });
-
-            await user.send({
-                embeds: [missingEmbed],
-            });
-
-            return;
-        }
-
-        if (friendModule.suppressNext === true) { //Unused currently
-            const user = await client.users.fetch(userAPIData.discordID);
-            const suppressedEmbed = new BetterEmbed({
-                name: locale.suppressNext.footer,
-            })
-                .setColor(Constants.colors.normal)
-                .setTitle(locale.suppressNext.title)
-                .setDescription(locale.suppressNext.description);
-
-            await SQLite.updateUser<FriendsModule>({
-                discordID: userAPIData.discordID,
-                table: Constants.tables.friends,
-                data: {
-                    suppressNext: false,
-                },
-            });
-
-            await user.send({
-                embeds: [suppressedEmbed],
             });
 
             return;
@@ -170,30 +144,32 @@ export const execute = async ({
         const notifications: MessageEmbed[] = [];
 
         if (differences.primary.lastLogin) {
-            const unixEpoch = Math.round(
-                differences.primary.lastLogin / Constants.ms.second,
-            );
+            const relative = timestamp(differences.primary.lastLogin, 'R');
+            const time = timestamp(differences.primary.lastLogin, 'T');
+
             const login = new MessageEmbed({
                 color: Constants.colors.on,
             })
             .setDescription(replace(locale.login.description, {
-                discordID: userAPIData.discordID,
-                unixEpoch: unixEpoch,
+                mention: Formatters.userMention(userAPIData.discordID),
+                relative: relative,
+                time: time,
             }));
 
             notifications.push(login);
         }
 
         if (differences.primary.lastLogout) {
-            const unixEpoch = Math.round(
-                differences.primary.lastLogout / Constants.ms.second,
-            );
+            const relative = timestamp(differences.primary.lastLogout, 'R');
+            const time = timestamp(differences.primary.lastLogout, 'T');
+
             const logout = new MessageEmbed({
                 color: Constants.colors.off,
             })
             .setDescription(replace(locale.logout.description, {
-                discordID: userAPIData.discordID,
-                unixEpoch: unixEpoch,
+                mention: Formatters.userMention(userAPIData.discordID),
+                relative: relative,
+                time: time,
             }));
 
             //lastLogout seems to change twice sometimes on a single logout, this is a fix for that

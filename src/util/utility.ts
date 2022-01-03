@@ -2,6 +2,7 @@ import type { WebhookConfig } from '../@types/client';
 import {
     AwaitMessageCollectorOptionsParams,
     CommandInteraction,
+    Formatters,
     MessageActionRow,
     MessageComponentType,
     MessageEmbed,
@@ -325,10 +326,13 @@ export const slashCommandResolver = (interaction: CommandInteraction) => {
     return commandOptions.join(' ');
 };
 
-
 export function timeAgo(ms: number): number | null {
     if (ms < 0 || ms === null || isNaN(ms)) {
         return null;
     }
     return Date.now() - ms;
+}
+
+export function timestamp(ms: number, style: typeof Formatters.TimestampStylesString) {
+    return Formatters.time(Math.round(ms / 1000), style);
 }

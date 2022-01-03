@@ -161,6 +161,18 @@ export interface Register {
     field: Field;
 }
 
+export interface System {
+    embed: {
+        title: string;
+        field1: Field;
+        field2: Field;
+        field3: Field;
+        field4: Field;
+        field5: Field;
+        field6: Field;
+    }
+}
+
 export interface Commands {
     data: Data;
     help: Help;
@@ -168,6 +180,7 @@ export interface Commands {
     modules: ModulesCommand;
     ping: Ping;
     register: Register;
+    system: System;
 }
 
 /*
@@ -193,10 +206,11 @@ export interface ConstraintErrors {
 export interface ModuleErrors {
     10003: Field,
     10013: Field,
+    50001: Field,
     50007: Field,
 }
 
-export interface SystemMessage {
+export interface SystemMessages {
     embed: {
         footer: string;
     } & BaseEmbed,
@@ -207,7 +221,7 @@ export interface Errors {
     commandErrors: CommandErrors;
     constraintErrors: ConstraintErrors;
     moduleErrors: ModuleErrors;
-    systemMessage: SystemMessage;
+    systemMessages: SystemMessages;
 }
 
 /*
@@ -220,9 +234,7 @@ export interface Friends {
     receivedData: {
         footer: string;
     } & BaseEmbed;
-    missingPermissions: {
-        footer: string;
-    } & BaseEmbed;
+    missingPermissions: Field;
     suppressNext: {
         footer: string;
     } & BaseEmbed;
@@ -276,11 +288,12 @@ export type LocaleTree =
     | ModulesCommand
     | Ping
     | Register
+    | System
     | Errors
     | CommandErrors
     | ConstraintErrors
     | ModuleErrors
-    | SystemMessage
+    | SystemMessages
     | Modules
     | Friends;
 
