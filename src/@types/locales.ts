@@ -4,7 +4,7 @@ import { Button } from '../util/ToggleButtons';
 /*
 Misc. Interfaces
 */
-export interface ModuleButton {
+export interface ModuleButton { //unused?????
     [key: string]: string | boolean;
     label: string;
     id: string;
@@ -12,7 +12,7 @@ export interface ModuleButton {
     invert: boolean;
 }
 
-export interface ModuleButtons {
+export interface ModuleButtons { //same here?
     [key: string]: ModuleButton;
     enable: ModuleButton;
     disable: ModuleButton;
@@ -36,8 +36,15 @@ export interface ModuleData {
     label: string;
     description: string;
     longDescription: string;
-    value: string;
-    emoji: string;
+}
+
+export interface ModuleButton extends Omit<Button, 'enableCustomID' | 'disableCustomID'> {}
+
+export interface ModuleSelect extends Omit<MessageSelectMenuOptions, 'customId' | 'minValues' | 'maxValues' | 'disabled' | 'options'> {
+    options: {
+        label: string;
+        description: string;
+    }[];
 }
 
 /*
@@ -90,7 +97,7 @@ export interface ModulesCommand {
         };
         menu: {
             toggle: {
-                button: Button;
+                button: ModuleButton;
             } & ModuleData;
         };
     };
@@ -104,10 +111,10 @@ export interface ModulesCommand {
         };
         menu: {
             toggle: {
-                button: Button;
+                button: ModuleButton;
             } & ModuleData;
             channel: {
-                select: MessageSelectMenuOptions
+                select: ModuleSelect
             } & ModuleData;
         };
     };
@@ -129,16 +136,16 @@ export interface ModulesCommand {
                 }
             } & ModuleData;
             alertTime: {
-                select: MessageSelectMenuOptions
+                select: ModuleSelect
             } & ModuleData;
             claimNotification: {
-                button: Button;
+                button: ModuleButton;
             } & ModuleData;
             notificationInterval: {
-                select: MessageSelectMenuOptions
+                select: ModuleSelect
             } & ModuleData;
             milestones: {
-                button: Button;
+                button: ModuleButton;
             } & ModuleData;
         };
     };

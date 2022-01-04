@@ -87,13 +87,9 @@ export default {
                         label: 'Toggle',
                         description: 'Toggle whether this module is active',
                         longDescription: 'Enable or disable this module. However, this module will not be activated if you have not configured it.',
-                        value: 'toggle',
-                        emoji: Constants.emoji.power,
                         button: {
                             enable: 'Enable',
                             disable: 'Disable',
-                            enableCustomID: 'toggle1',
-                            disableCustomID: 'toggle0',
                         },
                     },
                 },
@@ -111,29 +107,20 @@ export default {
                         label: 'Toggle',
                         description: 'Toggle whether this module is active',
                         longDescription: 'Enable or disable this module. However, this module cannot be enabled if you have not configured it.',
-                        value: 'toggle',
-                        emoji: Constants.emoji.power,
                         button: {
                             enable: 'Enable',
                             disable: 'Disable',
-                            enableCustomID: 'toggle1',
-                            disableCustomID: 'toggle0',
                         },
                     },
                     channel: {
                         label: 'Channel',
                         description: 'Set a channel to send logins and logouts to',
                         longDescription: 'Due to limitations, you need to set a channel with /channel',
-                        value: 'channel',
-                        emoji: Constants.emoji.hashtag,
                         select: {
-                            customId: 'null',
                             placeholder: 'Select a channel',
-                            disabled: true,
                             options: [
                                 {
                                     label: 'Disabled',
-                                    value: 'hello',
                                     description: 'Disabled',
                                 },
                             ],
@@ -154,8 +141,6 @@ export default {
                         label: 'Toggle',
                         description: 'Toggle whether this module is active',
                         longDescription: 'Enable or disable this module.',
-                        value: 'toggle',
-                        emoji: Constants.emoji.power,
                         button: {
                             enable: 'Enable',
                             disable: 'Disable',
@@ -168,7 +153,6 @@ export default {
                         description: 'Set when the bot should start alerting you',
                         longDescription: 'Set the amount of hours ahead of the daily reward reset for when the bot should start pinging you.',
                         value: 'alertTime',
-                        emoji: Constants.emoji.clock,
                         select: {
                             customId: 'alertTime',
                             placeholder: 'Select a time',
@@ -176,32 +160,26 @@ export default {
                             options: [
                                 {
                                     label: 'Immediately',
-                                    value: '86400000',
                                     description: 'Immediately after the next daily reset (12 AM EST)',
                                 },
                                 {
                                     label: '1 hour',
-                                    value: '3600000',
                                     description: '1 hour before the next daily reset (11 PM EST)',
                                 },
                                 {
                                     label: '2 hours',
-                                    value: '7200000',
                                     description: '2 hours before the next daily reset (10 PM EST)',
                                 },
                                 {
                                     label: '3 hours',
-                                    value: '10800000',
                                     description: '3 hours before the next daily reset (9 PM EST)',
                                 },
                                 {
                                     label: '4 hours',
-                                    value: '14400000',
                                     description: '4 hours before the next daily reset (8 PM EST)',
                                 },
                                 {
                                     label: '5 hours',
-                                    value: '18000000',
                                     description: '5 hours before the next daily reset (7 PM EST)',
                                 },
                                 {
@@ -211,87 +189,70 @@ export default {
                                 },
                                 {
                                     label: '7 hours',
-                                    value: '25200000',
                                     description: '7 hours before the next daily reset (5 PM EST)',
                                 },
                                 {
                                     label: '8 hours',
-                                    value: '28800000',
                                     description: '8 hours before the next daily reset (4 PM EST)',
                                 },
                                 {
                                     label: '9 hours',
-                                    value: '32400000',
                                     description: '9 hours before the next daily reset (3 PM EST)',
                                 },
                                 {
                                     label: '10 hours',
-                                    value: '36000000',
                                     description: '10 hours before the next daily reset (2 PM EST)',
                                 },
                                 {
                                     label: '11 hours',
-                                    value: '39600000',
                                     description: '11 hours before the next daily reset (1 PM EST)',
                                 },
                                 {
                                     label: '12 hours',
-                                    value: '43200000',
                                     description: '12 hours before the next daily reset (12 PM EST)',
                                 },
                                 {
                                     label: '13 hours',
-                                    value: '46800000',
                                     description: '13 hours before the next daily reset (11 AM EST)',
                                 },
                                 {
                                     label: '14 hours',
-                                    value: '50400000',
                                     description: '14 hours before the next daily reset (10 AM EST)',
                                 },
                                 {
                                     label: '15 hours',
-                                    value: '54000000',
                                     description: '15 hours before the next daily reset (9 AM EST)',
                                 },
                                 {
                                     label: '16 hours',
-                                    value: '57600000',
                                     description: '16 hours before the next daily reset (8 AM EST)',
                                 },
                                 {
                                     label: '17 hours',
-                                    value: '61200000',
                                     description: '17 hours before the next daily reset (7 AM EST)',
                                 },
                                 {
                                     label: '18 hours',
-                                    value: '64800000',
                                     description: '18 hours before the next daily reset (6 AM EST)',
                                 },
                                 {
                                     label: '19 hours',
-                                    value: '68400000',
                                     description: '19 hours before the next daily reset (5 AM EST)',
                                 },
                                 {
                                     label: '20 hours',
-                                    value: '72000000',
                                     description: '20 hours before the next daily reset (4 AM EST)',
                                 },
                                 {
                                     label: '21 hours',
-                                    value: '75600000',
                                     description: '21 hours before the next daily reset (3 AM EST)',
                                 },
                                 {
                                     label: '22 hours',
-                                    value: '79200000',
                                     description: '22 hours before the next daily reset (2 AM EST)',
                                 },
                                 {
                                     label: '23 hours',
-                                    value: '82800000',
                                     description: '23 hours before the next daily reset (1 AM EST)',
                                 },
                             ],
@@ -302,7 +263,6 @@ export default {
                         description: 'Toggle notifications for when you claim the reward',
                         longDescription: 'Toggle whether you get a confirmation when you collect the reward. It also comes with your current streak and total daily rewards!',
                         value: 'claimNotification',
-                        emoji: Constants.emoji.checkmark,
                         button: {
                             enable: 'Enable',
                             disable: 'Disable',
@@ -315,7 +275,6 @@ export default {
                         description: 'Set the timeout between pings',
                         longDescription: 'Set how long the bot should wait before pinging you again.',
                         value: 'notificationInterval',
-                        emoji: Constants.emoji.loop,
                         select: {
                             customId: 'notificationInterval',
                             placeholder: 'Select a time',
@@ -365,7 +324,6 @@ export default {
                         description: 'Receive a congratulation on achieving streak milestones',
                         longDescription: `Receive a DM congratulating you when you hit a daily streak listed in the following: ${Constants.modules.rewards.milestones.join(', ')}`,
                         value: 'milestones',
-                        emoji: Constants.emoji.celebration,
                         button: {
                             enable: 'Enable',
                             disable: 'Disable',

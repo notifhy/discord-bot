@@ -24,12 +24,14 @@ import {
     MessageSelectMenu,
     SelectMenuInteraction,
 } from 'discord.js';
+import { Log } from '../util/Log';
 import { RegionLocales } from '../../locales/localesHandler';
 import { SQLite } from '../util/SQLite';
 import { ToggleButtons } from '../util/ToggleButtons';
 import CommandErrorHandler from '../util/errors/handlers/CommandErrorHandler';
 import Constants from '../util/Constants';
-import { Log } from '../util/Log';
+import Structures from '../util/Structures';
+import { merge } from '../util/Merge';
 
 export const properties: CommandProperties = {
     name: 'modules',
@@ -71,12 +73,27 @@ export const execute: CommandExecute = async (
     const locale = RegionLocales.locale(userData.language).commands.modules[
         subCommand as keyof Locale['commands']['modules']
     ];
+
+    const structureData =
+            Structures[subCommand as keyof typeof Structures];
+
+    const localeMenu = merge(locale.menu, structureData);
+
     const replace = RegionLocales.replace;
 
     const mainEmbed = new BetterEmbed(interaction)
         .setColor(Constants.colors.normal)
         .setTitle(locale.title)
         .setDescription(locale.description);
+
+    const emojiMap = {
+        toggle: Constants.emoji.power,
+        channel: Constants.emoji.hashtag,
+        alertTime: Constants.emoji.clock,
+        claimNotification: Constants.emoji.checkmark,
+        notificationInterval: Constants.emoji.loop,
+        milestones: Constants.emoji.celebration,
+    };
 
     const mainMenu = ({
         defaultV,
@@ -90,7 +107,7 @@ export const execute: CommandExecute = async (
             .setPlaceholder(locale.menuPlaceholder)
             .setDisabled(disabled ?? false);
 
-        const menuData = locale.menu;
+        const menuData = localeMenu;
         for (const item in menuData) {
             //@ts-expect-error hasOwn typing not implemented yet
             if (Object.hasOwn(menuData, item)) {
@@ -101,7 +118,7 @@ export const execute: CommandExecute = async (
                         value: itemData.value,
                         description: itemData.description,
                         default: Boolean(defaultV === itemData.value),
-                        emoji: itemData.emoji,
+                        emoji: emojiMap[itemData.value as keyof typeof emojiMap],
                     },
                 ]);
             }
@@ -241,7 +258,7 @@ export const execute: CommandExecute = async (
                     allDisabled: missingRequirements.length > 0,
                     enabled: userAPIData.modules.includes(subCommand),
                     buttonLocale: (
-                        locale.menu as ModulesCommand['friends']['menu'] | ModulesCommand['rewards']['menu']
+                        localeMenu
                     ).toggle.button,
                 });
 
@@ -251,7 +268,7 @@ export const execute: CommandExecute = async (
             case 'channel': {
                 const component = new MessageSelectMenu(
                     (
-                        locale.menu as ModulesCommand['friends']['menu']
+                        localeMenu as ModulesCommand['friends']['menu'] & typeof Structures['friends']
                     ).channel.select,
                 );
                 const row = new MessageActionRow().addComponents(component);
