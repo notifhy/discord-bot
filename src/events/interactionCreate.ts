@@ -8,7 +8,6 @@ import type {
 } from '../@types/database';
 import {
     BetterEmbed,
-    formattedUnix,
     slashCommandResolver,
 } from '../util/utility';
 import {
@@ -17,6 +16,7 @@ import {
     Constants as DiscordConstants,
     DiscordAPIError,
 } from 'discord.js';
+import { Log } from '../util/Log';
 import { ownerID } from '../../config.json';
 import { RegionLocales } from '../../locales/localesHandler';
 import { SQLite } from '../util/SQLite';
@@ -40,14 +40,7 @@ export const execute = async (
                 return;
             }
 
-            console.log(
-                `${formattedUnix({
-                    date: true,
-                    utc: true,
-                })} | Slash Command from ${interaction.user.tag} (${
-                    interaction.user.id
-                }) | ${slashCommandResolver(interaction)}`,
-            );
+            Log.command(interaction, slashCommandResolver(interaction));
 
             await interaction.deferReply({
                 ephemeral: command.properties.ephemeral,
@@ -77,7 +70,6 @@ export const execute = async (
                     returnNew: true,
                     data: {
                         discordID: interaction.user.id,
-                        ...Constants.defaults.users,
                     },
                 })
             )!;
@@ -91,7 +83,7 @@ export const execute = async (
             });
         }
     } catch (error) {
-        const { language } = (
+        const userData = (
             await SQLite.getUser<UserData>({
                 discordID: interaction.user.id,
                 table: Constants.tables.users,
@@ -100,7 +92,7 @@ export const execute = async (
             },
         ).catch(() => ({}))) as UserData;
 
-        const handler = new CommandErrorHandler(error, interaction, language);
+        const handler = new CommandErrorHandler(error, interaction, userData?.language);
         await handler.systemNotify();
         await handler.userNotify();
     }
@@ -121,7 +113,7 @@ async function checkSystemMessages(
             systemMessages.addField(message.name, message.value);
         }
 
-        try {
+        try { //Add a way to send a file instead if there are more than 25 fields/oer 6k chars?
             await interaction.user.send({ embeds: [systemMessages] });
         } catch (error) {
             if (
@@ -129,6 +121,8 @@ async function checkSystemMessages(
                     DiscordConstants.APIErrors.CANNOT_MESSAGE_USER
             ) {
                 systemMessages.description += locale.failedDM;
+
+                Log.command(interaction, 'Code 50007 while sending system message(s)');
 
                 await interaction.channel!.send({
                     content: interaction.user.toString(),

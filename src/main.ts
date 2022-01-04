@@ -157,6 +157,7 @@ client.modules = new Collection();
 
     const config = await SQLite.queryGet<Config>({
         query: 'SELECT * FROM config WHERE rowid = 1',
+        allowUndefined: false,
     });
 
     client.config = {
@@ -164,7 +165,6 @@ client.modules = new Collection();
         blockedUsers: config.blockedUsers,
         devMode: config.devMode,
         enabled: config.enabled,
-        uses: config.uses,
     };
 
     await client.login(discordAPIkey);

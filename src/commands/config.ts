@@ -8,13 +8,14 @@ import {
     CommandInteraction,
     WebhookEditMessageOptions,
 } from 'discord.js';
+import { Log } from '../util/Log';
 import { SQLite } from '../util/SQLite';
 import Constants from '../util/Constants';
 
 export const properties: CommandProperties = {
     name: 'config',
     description: 'Configure the bot',
-    usage: '/config [block/userlimit/devmode/api]',
+    usage: '/config [api/blockguild/blockuser/devmode]',
     cooldown: 0,
     ephemeral: true,
     noDM: false,
@@ -99,11 +100,16 @@ export const execute: CommandExecute = async (
             );
 
         payload.embeds = [apiEmbed];
+
+        Log.command(interaction, apiEmbed.description);
     }
 
     async function blockGuildCommand() {
         const guildID = interaction.options.getString('guild', true);
         const blockedGuildIndex = config.blockedGuilds.indexOf(guildID);
+
+        const guildEmbed = new BetterEmbed(interaction)
+                .setColor(Constants.colors.normal);
 
         if (blockedGuildIndex === -1) {
             config.blockedGuilds.push(guildID);
@@ -111,12 +117,9 @@ export const execute: CommandExecute = async (
             const guild = await interaction.client.guilds.fetch(guildID);
             await guild.leave();
 
-            const guildEmbed = new BetterEmbed(interaction)
-                .setColor(Constants.colors.normal)
+            guildEmbed
                 .setTitle(`Guild Added`)
                 .setDescription(`${guildID} was added to the blacklist!`);
-
-            payload.embeds = [guildEmbed];
 
             payload.files = [
                 {
@@ -124,11 +127,12 @@ export const execute: CommandExecute = async (
                     name: 'guild.json',
                 },
             ];
+
+            Log.command(interaction, guildEmbed.description);
         } else {
             config.blockedGuilds.splice(blockedGuildIndex, 1);
 
-            const guildEmbed = new BetterEmbed(interaction)
-                .setColor(Constants.colors.normal)
+            guildEmbed
                 .setTitle(`Guild Removed`)
                 .setDescription(
                     `${guildID} was removed from the blacklist!`,
@@ -137,39 +141,44 @@ export const execute: CommandExecute = async (
             payload.embeds = [guildEmbed];
         }
 
+        payload.embeds = [guildEmbed];
+
         interaction.client.config.blockedGuilds = config.blockedGuilds;
+
+        Log.command(interaction, guildEmbed.description);
     }
 
     function blockUserCommand() {
         const user = interaction.options.getString('user', true);
         const blockedUserIndex = config.blockedUsers.indexOf(user);
 
+        const userEmbed = new BetterEmbed(interaction)
+                .setColor(Constants.colors.normal);
+
         if (blockedUserIndex === -1) {
             config.blockedUsers.push(user);
 
-            const userEmbed = new BetterEmbed(interaction)
-                .setColor(Constants.colors.normal)
+            userEmbed
                 .setTitle(`User Added`)
                 .setDescription(`${user} was added to the blacklist!`);
-
-            payload.embeds = [userEmbed];
         } else {
             config.blockedUsers.splice(blockedUserIndex, 1);
 
-            const userEmbed = new BetterEmbed(interaction)
-                .setColor(Constants.colors.normal)
+            userEmbed
                 .setTitle(`User Removed`)
                 .setDescription(`${user} was removed from the blacklist!`);
-
-            payload.embeds = [userEmbed];
         }
 
+        payload.embeds = [userEmbed];
+
         interaction.client.config.blockedUsers = config.blockedUsers;
+
+        Log.command(interaction, userEmbed.description);
     }
 
     function devModeCommand() {
         config.devMode = !config.devMode;
-        interaction.client.config.devMode = !config.devMode;
+        interaction.client.config.devMode = config.devMode;
 
         const devmodeEmbed = new BetterEmbed(interaction)
             .setColor(Constants.colors.normal)
@@ -181,6 +190,8 @@ export const execute: CommandExecute = async (
             );
 
         payload.embeds = [devmodeEmbed];
+
+        Log.command(interaction, devmodeEmbed.description);
     }
 
     const newRawConfig = SQLite.unJSONize({ ...config });

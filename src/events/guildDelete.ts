@@ -1,6 +1,7 @@
 import type { EventProperties } from '../@types/client';
 import type { Guild } from 'discord.js';
 import { formattedUnix } from '../util/utility';
+import { Log } from '../util/Log';
 import { SQLite } from '../util/SQLite';
 import ErrorHandler from '../util/errors/handlers/ErrorHandler';
 
@@ -10,14 +11,12 @@ export const properties: EventProperties = {
 };
 
 export const execute = async (guild: Guild): Promise<void> => {
-    if (guild.available === false || !guild.client.isReady()) {
+    if (
+        guild.available === false ||
+        !guild.client.isReady()
+    ) {
         return;
     }
-
-    const time = formattedUnix({
-        date: true,
-        utc: true,
-    });
 
     const joinedAt = formattedUnix({
         ms: guild.joinedTimestamp,
@@ -25,8 +24,8 @@ export const execute = async (guild: Guild): Promise<void> => {
         utc: true,
     });
 
-    console.log(
-        `${time} | Bot has left a guild; joined ${joinedAt}. Guild: ${
+    Log.log(
+        `Bot has left a guild; joined ${joinedAt}. Guild: ${
             guild.name
         } | ${guild.id} Guild Owner: ${guild.ownerId} Guild Member Count: ${
             guild.memberCount - 1

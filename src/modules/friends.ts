@@ -1,5 +1,6 @@
 import type {
     FriendsModule,
+    UserAPIData,
     UserData,
 } from '../@types/database';
 import {
@@ -8,6 +9,7 @@ import {
     TextChannel,
 } from 'discord.js';
 import {
+    arrayRemove,
     BetterEmbed,
     timestamp,
 } from '../util/utility';
@@ -16,6 +18,7 @@ import { RegionLocales } from '../../locales/localesHandler';
 import { SQLite } from '../util/SQLite';
 import Constants from '../util/Constants';
 import ModuleError from '../util/errors/ModuleError';
+import { Log } from '../util/Log';
 
 export const properties = {
     name: 'friends',
@@ -117,8 +120,23 @@ export const execute = async ({
             .missing(Constants.modules.friends.permissions);
 
         if (missingPermissions.length !== 0) {
+            Log.error(userAPIData.discordID, `Friend Module: Missing ${missingPermissions.join(', ')}`);
+
+            const newModules =
+                arrayRemove(userAPIData.modules, 'friends') as string[];
+
+            await SQLite.updateUser<
+            UserAPIData
+            >({
+                discordID: userAPIData.discordID,
+                table: Constants.tables.api,
+                data: {
+                    modules: newModules,
+                },
+            });
+
             const missingPermissionsField = {
-                name: locale.missingPermissions.name,
+                name: `${timestamp(Date.now(), 'D')} - ${locale.missingPermissions.name}`,
                 value: replace(locale.missingPermissions.value, {
                     channel: Formatters.channelMention(friendModule.channel!),
                     missingPermissions: missingPermissions.join(', '),
@@ -129,7 +147,7 @@ export const execute = async ({
                 UserData
             >({
                 discordID: userAPIData.discordID,
-                table: Constants.tables.friends,
+                table: Constants.tables.users,
                 data: {
                     systemMessages: [
                         missingPermissionsField,

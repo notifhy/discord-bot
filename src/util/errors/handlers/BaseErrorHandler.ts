@@ -1,7 +1,7 @@
 import Constants from '../../Constants';
+import { Log } from '../../Log';
 import {
     BetterEmbed,
-    formattedUnix,
 } from '../../utility';
 
 export default class BaseErrorHandler {
@@ -71,18 +71,10 @@ export default class BaseErrorHandler {
     }
 
     log(...text: unknown[]) {
-        const time = formattedUnix({ date: true, utc: true });
-        const base = `${time} | Incident ${
+        const id = `Incident ${
             this.incidentID
         } |`;
 
-        console.error(base, ...text);
-    }
-
-    static staticLog(...text: unknown[]) {
-        const time = formattedUnix({ date: true, utc: true });
-        const base = `${time} |`;
-
-        console.error(base, ...text);
+        Log.error(id, ...text);
     }
 }

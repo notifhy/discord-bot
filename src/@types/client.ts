@@ -20,7 +20,6 @@ export interface Config {
     blockedUsers: string[];
     devMode: boolean;
     enabled: boolean;
-    uses: number;
 }
 
 export interface EventProperties {

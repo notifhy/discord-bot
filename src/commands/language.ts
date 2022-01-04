@@ -5,6 +5,7 @@ import type {
 import type { UserData } from '../@types/database';
 import { BetterEmbed } from '../util/utility';
 import { CommandInteraction } from 'discord.js';
+import { Log } from '../util/Log';
 import { RegionLocales } from '../../locales/localesHandler';
 import { SQLite } from '../util/SQLite';
 import Constants from '../util/Constants';
@@ -35,10 +36,6 @@ export const properties: CommandProperties = {
                         name: 'fr-FR • Français',
                         value: 'fr-FR',
                     },
-                    {
-                        name: 'pirate • Pirate',
-                        value: 'pirate',
-                    },
                 ],
             },
         ],
@@ -62,6 +59,9 @@ export const execute: CommandExecute = async (
                     language: language,
                 }),
             );
+
+        Log.command(interaction, `Language already set: ${language}`);
+
         await interaction.editReply({ embeds: [alreadySetEmbed] });
         return;
     }
@@ -82,6 +82,8 @@ export const execute: CommandExecute = async (
                 language: language,
             }),
         );
+
+    Log.command(interaction, `Language set to ${language}`);
 
     await interaction.editReply({ embeds: [languageEmbed] });
 };

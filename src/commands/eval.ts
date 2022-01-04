@@ -7,6 +7,7 @@ import {
     CommandInteraction,
     Formatters,
 } from 'discord.js';
+import { Log } from '../util/Log';
 import Constants from '../util/Constants';
 
 export const properties: CommandProperties = {
@@ -72,6 +73,8 @@ export const execute: CommandExecute = async (
                 'The output is over 1024 characters long',
             );
         }
+
+        Log.command(interaction, 'Output: ', output);
 
         await interaction.editReply({ embeds: [evalEmbed] });
     } catch (error) {

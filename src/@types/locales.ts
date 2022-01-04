@@ -277,7 +277,6 @@ export interface Locale {
 export interface Locales {
     'en-us': Locale;
     'fr-FR': Locale;
-    pirate: Locale;
 }
 
 export type LocaleTree =

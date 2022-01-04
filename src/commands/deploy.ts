@@ -9,6 +9,7 @@ import {
     discordAPIkey as token,
 } from '../../config.json';
 import { CommandInteraction } from 'discord.js';
+import { Log } from '../util/Log';
 import { REST } from '@discordjs/rest';
 import { Routes } from 'discord-api-types/v9';
 import fs from 'node:fs/promises';
@@ -132,6 +133,8 @@ export const execute: CommandExecute = async (
                 Constants.limits.embedDescription,
             ) ?? 'None',
         );
+
+    Log.command(interaction, `Scope: ${scope} | Type: ${type} | Guild ID: ${guildID}`);
 
     await interaction.editReply({ embeds: [successEmbed] });
 };

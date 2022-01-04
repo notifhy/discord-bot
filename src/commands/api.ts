@@ -9,6 +9,7 @@ import {
 } from '../util/utility';
 import { CommandInteraction } from 'discord.js';
 import { keyLimit } from '../../config.json';
+import { Log } from '../util/Log';
 import { RequestManager } from '../hypixelAPI/RequestManager';
 import { RequestErrors } from '../hypixelAPI/RequestErrors';
 import Constants from '../util/Constants';
@@ -257,12 +258,15 @@ async function instance(
     interaction.client.hypixelAPI.instance[
         type as keyof Omit<RequestManager['instance'], 'baseURL' | 'performance'>
     ] = value;
+
     const setEmbed = new BetterEmbed(interaction)
         .setColor(Constants.colors.normal)
         .setTitle('Updated Value!')
         .setDescription(
             `<RequestManager>.instance.${type} is now ${value}.`,
         );
+
+    Log.command(interaction, setEmbed.description);
 
     await interaction.editReply({
         embeds: [setEmbed],
@@ -284,6 +288,8 @@ async function set(
         .setDescription(
             `<RequestErrors>.${category}.${type} is now ${value}.`,
         );
+
+    Log.command(interaction, setEmbed.description);
 
     await interaction.editReply({
         embeds: [setEmbed],
@@ -308,6 +314,8 @@ async function call(
         .setColor(Constants.colors.normal)
         .setTitle('Executed!')
         .setDescription(`Executed <RequestErrors>.${type}`);
+
+    Log.command(interaction, callEmbed.description);
 
     await stats(interaction);
     await interaction.followUp({

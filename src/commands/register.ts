@@ -6,10 +6,12 @@ import type { Slothpixel } from '../@types/hypixel';
 import { BetterEmbed } from '../util/utility';
 import { CommandInteraction } from 'discord.js';
 import {
+    DefenderModule,
     FriendsModule,
     RewardsModule,
     UserAPIData,
 } from '../@types/database';
+import { Log } from '../util/Log';
 import { RegionLocales } from '../../locales/localesHandler';
 import { Request } from '../util/Request';
 import { SQLite } from '../util/SQLite';
@@ -75,6 +77,9 @@ export const execute: CommandExecute = async (
                     inputType: inputType,
                 }),
             );
+
+        Log.command(interaction, 404);
+
         await interaction.editReply({ embeds: [notFoundEmbed] });
         return;
     }
@@ -104,6 +109,9 @@ export const execute: CommandExecute = async (
             .setTitle(locale.unlinked.title)
             .setDescription(locale.unlinked.description)
             .setImage(Constants.urls.linkDiscord);
+
+        Log.command(interaction, 'Not linked');
+
         await interaction.editReply({ embeds: [unlinkedEmbed] });
         return;
     }
@@ -114,6 +122,9 @@ export const execute: CommandExecute = async (
             .setTitle(locale.mismatched.title)
             .setDescription(locale.mismatched.description)
             .setImage(Constants.urls.linkDiscord);
+
+        Log.command(interaction, 'Mismatch');
+
         await interaction.editReply({ embeds: [mismatchedEmbed] });
         return;
     }
@@ -124,7 +135,6 @@ export const execute: CommandExecute = async (
             data: {
                 discordID: interaction.user.id,
                 uuid: uuid,
-                modules: [],
                 lastUpdated: Date.now(),
                 firstLogin: first_login,
                 lastLogin: last_login,
@@ -139,21 +149,24 @@ export const execute: CommandExecute = async (
                 rewardHighScore: streak_best,
                 totalDailyRewards: claimed_daily,
                 totalRewards: claimed,
-                history: [],
+            },
+        }),
+        SQLite.newUser<DefenderModule>({
+            table: Constants.tables.defender,
+            data: {
+                discordID: interaction.user.id,
             },
         }),
         SQLite.newUser<FriendsModule>({
             table: Constants.tables.friends,
             data: {
                 discordID: interaction.user.id,
-                ...Constants.defaults.friends,
             },
         }),
         SQLite.newUser<RewardsModule>({
             table: Constants.tables.rewards,
             data: {
                 discordID: interaction.user.id,
-                ...Constants.defaults.rewards,
             },
         }),
     ]);
@@ -163,6 +176,8 @@ export const execute: CommandExecute = async (
         .setTitle(locale.title)
         .setDescription(locale.description)
         .addField(locale.field.name, locale.field.value);
+
+    Log.command(interaction, 'Success');
 
     await interaction.editReply({ embeds: [registeredEmbed] });
 

@@ -13,7 +13,16 @@ import {
     WebhookClient,
 } from 'discord.js';
 import Constants from './Constants';
-import BaseErrorHandler from './errors/handlers/BaseErrorHandler';
+import { Log } from './Log';
+
+export function arrayRemove(array: unknown[], item: unknown) {
+    array.splice(
+        array.indexOf(item),
+        1,
+    );
+
+    return array;
+}
 
 export async function awaitComponent(
     channel: TextBasedChannel,
@@ -281,9 +290,10 @@ export async function sendWebHook({
             embeds: embeds,
         });
     } catch (err) {
-        BaseErrorHandler.staticLog(`An error has occurred while sending an WebHook | ${
-            (err as Error)?.stack ?? (err as Error)?.message
-        }`);
+        Log.error(
+            `An error has occurred while sending an WebHook |`,
+            (err as Error)?.stack ?? (err as Error)?.message,
+        );
 
         if (suppressError === true) {
             return;
@@ -333,6 +343,6 @@ export function timeAgo(ms: number): number | null {
     return Date.now() - ms;
 }
 
-export function timestamp(ms: number, style: typeof Formatters.TimestampStylesString) {
-    return Formatters.time(Math.round(ms / 1000), style);
+export function timestamp(ms: number, style?: typeof Formatters.TimestampStylesString) {
+    return Formatters.time(Math.round(ms / 1000), style ?? 'f');
 }

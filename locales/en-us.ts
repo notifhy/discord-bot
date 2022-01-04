@@ -489,7 +489,7 @@ export default {
             },
             50001: {
                 name: '%{cleanModule}% Module Disabled',
-                value: 'The %{cleanModule}% module was disabled because the set channel, server, or user was not reachable. [Code 50001](https://discord.com/developers/docs/topics/opcodes-and-status-codes#json "Opcodes and Status codes")',
+                value: 'The %{cleanModule}% module was disabled because the set channel, server, or user was not reachable. Please check to see if this bot can access the set channel. [Code 50001](https://discord.com/developers/docs/topics/opcodes-and-status-codes#json "Opcodes and Status codes")',
             },
             50007: {
                 name: '%{cleanModule}% Module Disabled',
@@ -519,7 +519,7 @@ export default {
             },
             missingPermissions: {
                 name: 'Friend Module Disabled',
-                value: 'The Friends module was disabled because this bot is missing the following permissions in the channel %{channel}% %{missingPermissions}%.',
+                value: 'The Friends module was disabled because this bot is missing the following permission(s) in the channel %{channel}%: %{missingPermissions}%.',
             },
             suppressNext: {
                 title: 'Alert Suppressed',

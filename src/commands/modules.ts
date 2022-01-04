@@ -29,6 +29,7 @@ import { SQLite } from '../util/SQLite';
 import { ToggleButtons } from '../util/ToggleButtons';
 import CommandErrorHandler from '../util/errors/handlers/CommandErrorHandler';
 import Constants from '../util/Constants';
+import { Log } from '../util/Log';
 
 export const properties: CommandProperties = {
     name: 'modules',
@@ -343,6 +344,8 @@ export const execute: CommandExecute = async (
                 defaultV: selected,
             }),
         ];
+
+        Log.command(interaction, `Update customID: ${messageComponentInteraction.customId}`);
 
         switch (messageComponentInteraction.customId) {
             case 'toggle1':

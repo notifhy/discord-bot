@@ -4,6 +4,7 @@ import type {
 } from '../@types/client';
 import { BetterEmbed } from '../util/utility';
 import { CommandInteraction } from 'discord.js';
+import { Log } from '../util/Log';
 import Constants from '../util/Constants';
 
 export const properties: CommandProperties = {
@@ -62,6 +63,8 @@ export const execute: CommandExecute = async (
         responseEmbed.setDescription('The status is now automatic!');
         interaction.client.customStatus = null;
     }
+
+    Log.command(interaction, responseEmbed.description);
 
     await interaction.editReply({ embeds: [responseEmbed] });
 };

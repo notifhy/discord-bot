@@ -13,7 +13,7 @@ import {
     ownerID,
 } from '../../../../config.json';
 import { RegionLocales } from '../../../../locales/localesHandler';
-import { sendWebHook } from '../../utility';
+import { arrayRemove, sendWebHook, timestamp } from '../../utility';
 import { SQLite } from '../../SQLite';
 import BaseErrorHandler from './BaseErrorHandler';
 import Constants from '../../Constants';
@@ -50,15 +50,13 @@ export default class ModuleErrorHandler extends BaseErrorHandler {
             })
         ) as UserAPIData;
 
-        const index = userAPIData.modules.indexOf(this.module);
-
-        userAPIData.modules.splice(index, 1);
+        const modules = arrayRemove(userAPIData.modules, this.module);
 
         await SQLite.updateUser<UserAPIData>({
             discordID: this.discordID,
             table: Constants.tables.api,
             data: {
-                modules: userAPIData.modules,
+                modules: modules as string[],
             },
         });
 
@@ -128,6 +126,8 @@ export default class ModuleErrorHandler extends BaseErrorHandler {
                 }
 
                 if (message) {
+                    message.name = `${timestamp(Date.now(), 'D')} - ${message.name}`;
+                    this.log('Disabling module');
                     await this.disableModules(message);
                 }
 

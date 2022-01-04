@@ -1,5 +1,8 @@
+import { DefenderModule, UserData } from '../@types/database';
 import { ModuleHandler } from '../module/ModuleHandler';
+import Constants from '../util/Constants';
 import ModuleError from '../util/errors/ModuleError';
+import { SQLite } from '../util/SQLite';
 
 export const properties = {
     name: 'defender',
@@ -13,7 +16,34 @@ export const execute = async ({
 }: ModuleHandler,
 ): Promise<void> => {
     try {
-        console.log(client.user?.tag, differences, userAPIData.discordID);
+        const defenderModule = (
+            await SQLite.getUser<
+                DefenderModule
+            >({
+                discordID: userAPIData.discordID,
+                table: Constants.tables.friends,
+                allowUndefined: false,
+                columns: [
+                    'alerts',
+                    'language',
+                    'version',
+                ],
+            })
+        ) as DefenderModule;
+
+        const userData = (
+            await SQLite.getUser<
+                UserData
+            >({
+                discordID: userAPIData.discordID,
+                table: Constants.tables.users,
+                allowUndefined: false,
+                columns: [
+                    'language',
+                    'systemMessages',
+                ],
+            })
+        ) as UserData;
     } catch (error) {
         throw new ModuleError({
             error: error,

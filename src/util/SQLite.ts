@@ -16,6 +16,8 @@ type JSONize<Type> = {
             ? string
             : Type[Property] extends boolean
             ? string
+            : Type[Property] extends Record<string, unknown>
+            ? string
             : Property;
 }
 
@@ -168,18 +170,24 @@ export class SQLite {
     }: {
         table: Tables;
         returnNew?: boolean;
-        data: Type;
+        data: Partial<Type>;
     }): Promise<void | Type> {
-        const values = [];
+        const values: string[] = [];
+        const keys = Object.keys(data);
 
-        for (let i = 0; i < Object.values(data).length; i += 1) {
+        keys.forEach(() => {
             values.push('?');
-        }
+        });
 
-        const dataArray = this.unJSONize(data);
+        const dataArray = this.unJSONize(
+            data as Record<
+                string,
+                Array<unknown> | boolean | null | number | string | undefined
+            >,
+        );
 
         await this.queryRun({
-            query: `INSERT INTO ${table} VALUES(${values})`,
+            query: `INSERT INTO ${table} (${keys.join(', ')}) VALUES(${values.join(', ')})`,
             data: Object.values(dataArray),
         });
 
@@ -283,6 +291,10 @@ export class SQLite {
                 if (this.isBoolean(type, input[key])) {
                     input[key] = JSONized as boolean;
                 }
+
+                if (this.isObject(type, input[key])) {
+                    input[key] = JSONized as Record<string, unknown>;
+                }
             } catch {} //eslint-disable-line no-empty
         }
 
@@ -293,7 +305,11 @@ export class SQLite {
      * Taken from https://stackoverflow.com/a/52799327 under CC BY-SA 4.0
      * Takes an input and tests for a JSON structure (excluding primitives)
      */
-    static unJSONize(input: Record<string, Array<unknown> | boolean | null | number | string | undefined>): JSONize<typeof input> {
+    static unJSONize(
+        input: Record<
+            string,
+            Array<unknown> | boolean | null | number | Record<string, unknown> | string | undefined>,
+        ): JSONize<typeof input> {
         for (const key in input) {
             //@ts-expect-error Types not added yet
             if (Object.hasOwn(input, key)) {
@@ -302,7 +318,8 @@ export class SQLite {
 
                     if (
                         type === '[object Array]' ||
-                        type === '[object Boolean]'
+                        type === '[object Boolean]' ||
+                        type === '[object Object]'
                     ) {
                         (input[key]) = JSON.stringify(
                             input[key],
@@ -321,5 +338,9 @@ export class SQLite {
 
     private static isBoolean(typeParam: string, value: unknown): value is boolean {
         return typeParam === '[object Boolean]';
+    }
+
+    private static isObject(typeParam: string, value: unknown): value is Record<string, unknown> {
+        return typeParam === '[object Object]';
     }
 }

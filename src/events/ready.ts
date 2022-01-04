@@ -1,5 +1,6 @@
 import type { Client } from 'discord.js';
 import type { EventProperties } from '../@types/client';
+import { Log } from '../util/Log';
 import { SQLite } from '../util/SQLite';
 import Constants from '../util/Constants';
 import ErrorHandler from '../util/errors/handlers/ErrorHandler';
@@ -10,7 +11,9 @@ export const properties: EventProperties = {
 };
 
 export const execute = async (client: Client) => {
-    console.log(`Logged in as ${client?.user?.tag}!`);
+    Log.log(
+        `Logged in as ${client?.user?.tag}!`,
+    );
 
     setActivity();
 
@@ -29,7 +32,7 @@ export const execute = async (client: Client) => {
                     })
                 ).length;
 
-                label = `${users} accounts | /register /help | ${client.guilds.cache.size} servers`; //Move to constants?
+                label = `${users} accounts | /register /help | ${client.guilds.cache.size} servers`;
             }
 
             client.user?.setActivity({

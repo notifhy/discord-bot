@@ -1,5 +1,5 @@
 import type { EventProperties } from '../@types/client';
-import { formattedUnix } from '../util/utility';
+import { Log } from '../util/Log';
 
 export const properties: EventProperties = {
     name: 'warn',
@@ -7,8 +7,8 @@ export const properties: EventProperties = {
 };
 
 export const execute = (info: string): void => {
-    console.warn(
-        `${formattedUnix({ date: true, utc: true })} | discord.js Warning:`,
+    Log.error(
+        `discord.js Warning:`,
         info,
     );
 };

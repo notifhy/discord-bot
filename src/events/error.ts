@@ -1,5 +1,5 @@
 import type { EventProperties } from '../@types/client';
-import { formattedUnix } from '../util/utility';
+import { Log } from '../util/Log';
 
 export const properties: EventProperties = {
     name: 'error',
@@ -7,10 +7,5 @@ export const properties: EventProperties = {
 };
 
 export const execute = (error: Error): void => {
-    const time = formattedUnix({
-        date: true,
-        utc: true,
-    });
-
-    console.error(`${time} | discord.js Error:`, error);
+    Log.error(`discord.js Error:`, error);
 };

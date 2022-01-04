@@ -23,7 +23,7 @@ import {
     BaseEmbed,
     Locale,
 } from '../../../@types/locales';
-import { setTimeout } from 'timers/promises';
+import { setTimeout } from 'node:timers/promises';
 
 export default class CommandErrorHandler extends BaseErrorHandler {
     readonly interaction: CommandInteraction;

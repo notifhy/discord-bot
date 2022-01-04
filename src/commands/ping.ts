@@ -8,6 +8,7 @@ import {
     CommandInteraction,
     Message,
 } from 'discord.js';
+import { Log } from '../util/Log';
 import { RegionLocales } from '../../locales/localesHandler';
 import Constants from '../util/Constants';
 
@@ -61,6 +62,8 @@ export const execute: CommandExecute = async (
                 rtPing: roundTripDelay,
             }),
         );
+
+    Log.command(interaction, `WS: ${interaction.client.ws.ping}ms | RT: ${roundTripDelay}ms`);
 
     await interaction.editReply({ embeds: [pingEmbed] });
 };

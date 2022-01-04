@@ -1,6 +1,5 @@
 import type { UserAPIData } from '../@types/database';
 import { Client } from 'discord.js';
-import { formattedUnix } from '../util/utility';
 import { RequestErrors } from './RequestErrors';
 import { RequestInstance } from './RequestInstance';
 import { RequestRequest } from './RequestRequest';
@@ -10,6 +9,7 @@ import { setTimeout } from 'node:timers/promises';
 import { SQLite } from '../util/SQLite';
 import Constants from '../util/Constants';
 import RequestErrorHandler from '../util/errors/handlers/RequestErrorHandler';
+import { Log } from '../util/Log';
 
 export type Performance = {
     start: number;
@@ -100,10 +100,7 @@ export class RequestManager {
                 modules: 0,
             };
 
-            console.log(
-                formattedUnix({ date: true, utc: false }),
-                user.uuid,
-            );
+            Log.log(user.uuid);
 
             const cleanHypixelData =
                 await this.request.executeRequest(user, urls);

@@ -4,7 +4,7 @@ import type {
 } from './hypixel';
 import type { Field } from './locales';
 
-export type Tables = 'users' | 'api' | 'friends' | 'rewards';
+export type Tables = 'users' | 'api' | 'defender' | 'friends' | 'rewards';
 
 export interface BaseUserData {
     discordID: string;
@@ -32,6 +32,17 @@ export interface UserAPIData
 /*
 Module Specifics
 */
+
+export interface DefenderModule extends BaseUserData {
+    alerts: {
+        login: boolean;
+        logout: boolean;
+        language: boolean;
+        version: boolean;
+    };
+    language: [];
+    version: [];
+}
 
 export interface FriendsModule extends BaseUserData {
     channel: string | null;

@@ -7,6 +7,7 @@ import {
     awaitComponent,
     BetterEmbed,
     disableComponents,
+    timestamp,
 } from '../util/utility';
 import {
     CommandInteraction,
@@ -17,6 +18,7 @@ import {
     MessageComponentInteraction,
     MessageEmbed,
 } from 'discord.js';
+import { Log } from '../util/Log';
 import { SQLite } from '../util/SQLite';
 import Constants from '../util/Constants';
 
@@ -81,8 +83,10 @@ export const execute: CommandExecute = async (
         return;
     }
 
-    const name = interaction.options.getString('name', true);
+    let name = interaction.options.getString('name', true);
     const value = interaction.options.getString('value', true);
+
+    name = `${timestamp(Date.now(), 'D')} - ${name}`;
 
     const buttons = new MessageActionRow()
         .setComponents(
@@ -122,6 +126,8 @@ export const execute: CommandExecute = async (
     );
 
     if (button === null) {
+        Log.command(interaction, 'Ran out of time');
+
         await interaction.editReply({
             components: disabledRows,
         });
@@ -147,7 +153,9 @@ export const execute: CommandExecute = async (
         .setTitle('Success')
         .setDescription('Your message was queued.');
 
-     await button.update({
+    Log.command(interaction, name);
+
+    await button.update({
         embeds: [successEmbed],
         components: disabledRows,
     });

@@ -23,6 +23,7 @@ import {
     MessageButton,
     MessageComponentInteraction,
 } from 'discord.js';
+import { Log } from '../util/Log';
 import { RegionLocales } from '../../locales/localesHandler';
 import { SQLite } from '../util/SQLite';
 import CommandErrorHandler from '../util/errors/handlers/CommandErrorHandler';
@@ -130,6 +131,8 @@ export const execute: CommandExecute = async (
         );
 
         if (button === null) {
+            Log.command(interaction, 'Ran out of time');
+
             await interaction.editReply({
                 components: disabledRows,
             });
@@ -158,6 +161,8 @@ export const execute: CommandExecute = async (
                 .setTitle(locale.delete.deleted.title)
                 .setDescription(locale.delete.deleted.description);
 
+            Log.command(interaction, 'Accepted data deletion');
+
             await button.update({
                 embeds: [deleted],
                 components: disabledRows,
@@ -167,6 +172,8 @@ export const execute: CommandExecute = async (
                 .setColor(Constants.colors.normal)
                 .setTitle(locale.delete.aborted.title)
                 .setDescription(locale.delete.aborted.description);
+
+            Log.command(interaction, 'Aborted data deletion');
 
             await button.update({
                 embeds: [aborted],
