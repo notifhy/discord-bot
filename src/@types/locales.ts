@@ -241,7 +241,9 @@ export interface Defender {
     logout: Field;
     version: Field;
     language: Field;
-    embed: BaseEmbed;
+    embed: {
+        title: string;
+    };
     missingPermissions: Field;
 }
 

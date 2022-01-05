@@ -101,7 +101,7 @@ export default {
                         description: 'Select alerts to receive for the defender module',
                         longDescription: 'Toggle alerts for the defender module. You can individually toggle each type of notification.',
                         value: 'alerts',
-                        emoji: Constants.emoji.hashtag,
+                        emoji: Constants.emoji.alert,
                         select: {
                             customId: 'alerts',
                             placeholder: 'Select your alerts',
@@ -152,14 +152,14 @@ export default {
                         },
                     },
                     versions: {
-                        label: 'Versions',
+                        label: 'Whitelisted Version(s)',
                         description: 'Select whitelisted version(s) of Minecraft',
                         longDescription: 'Select whitelisted version(s) of Minecraft. If the bot detects you switching to a whitelisted version, it will not alert or notify you. Select none to get a notification on every version change.',
                         value: 'versions',
-                        emoji: Constants.emoji.hashtag,
+                        emoji: Constants.emoji.gear,
                         select: {
                             customId: 'versions',
-                            placeholder: 'Select your version(s) of Minecraft',
+                            placeholder: 'None',
                             minValues: 0,
                             maxValues: 9,
                             disabled: false,
@@ -204,14 +204,14 @@ export default {
                         },
                     },
                     languages: {
-                        label: 'Languages',
+                        label: 'Whitelisted Language(s)',
                         description: 'Select whitelisted languages(s)',
                         longDescription: 'Select whitelisted version(s) for use on Hypixel. If the bot detects you switching to a whitelisted language, it will not alert or notify you. Select none to get a notification on every language change.',
                         value: 'languages',
-                        emoji: Constants.emoji.hashtag,
+                        emoji: Constants.emoji.speech,
                         select: {
                             customId: 'languages',
-                            placeholder: 'Select your language(s)',
+                            placeholder: 'None',
                             minValues: 0,
                             maxValues: 15,
                             disabled: false,
@@ -708,7 +708,6 @@ export default {
             },
             embed: {
                 title: 'Alert',
-                description: 'Activity was detected on your account!',
             },
             missingPermissions: {
                 name: 'Defender Module Disabled',
@@ -750,7 +749,7 @@ export default {
             },
             milestone: {
                 title: 'Congratulations',
-                description: '🎉 You have reached a daily streak of %{milestone}%! To opt out of future milestone messages, uae /modules',
+                description: '🎉 You have reached a daily streak of %{milestone}%!',
                 footer: 'Notification',
             },
             rewardReminder: {

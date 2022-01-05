@@ -32,12 +32,15 @@ export default {
         menuFastIncrements: 20,
     },
     emoji: {
+        alert: '<:alert:928112368704192533>',
         celebration: '<:celebration:924365718726795304>',
         checkmark: '<:checkmark:924365737416601631>',
         clock: '<:clock:922981726676992070>',
+        gear: '<:gear:928110894041432098>',
         hashtag: '<:channel:922980930379984956>',
         loop: '<:interval:922980170124628018>',
         power: '<:toggle:922945383104135228>',
+        speech: '<:speech:928110050130681876>',
     },
     limits: {
         embedDescription: 4096,

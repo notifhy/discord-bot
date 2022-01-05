@@ -48,7 +48,7 @@ export const properties: CommandProperties = {
             {
                 name: 'defender',
                 type: '1',
-                description: 'placeholder',
+                description: 'The replacement to HyGuard - get notified on logins, logouts, version changes, and more',
             },
             {
                 name: 'friends',
@@ -281,9 +281,7 @@ export const execute: CommandExecute = async (
                     (locale.menu as ModulesCommand['defender']['menu']).alerts.select;
 
                 for (const value of menu.options!) {
-                    if (alerts[value.value as keyof typeof alerts] === true) {
-                        value.default = true;
-                    }
+                    value.default = alerts[value.value as keyof typeof alerts];
                 }
 
                 const component = new MessageSelectMenu(menu);
@@ -300,9 +298,7 @@ export const execute: CommandExecute = async (
                     (locale.menu as ModulesCommand['defender']['menu']).versions.select;
 
                 for (const value of menu.options!) {
-                    if (versions.includes(value.value)) {
-                        value.default = true;
-                    }
+                    value.default = versions.includes(value.value);
                 }
 
                 const component = new MessageSelectMenu(menu);
@@ -319,9 +315,7 @@ export const execute: CommandExecute = async (
                     (locale.menu as ModulesCommand['defender']['menu']).languages.select;
 
                 for (const value of menu.options!) {
-                    if (versions.includes(value.value)) {
-                        value.default = true;
-                    }
+                    value.default = versions.includes(value.value);
                 }
 
                 const component = new MessageSelectMenu(menu);
@@ -349,12 +343,8 @@ export const execute: CommandExecute = async (
                     ).alertTime.select,
                 );
 
-                const currentGracePeriod = component.options.find(
-                    value => Number(value.value) === userRewardData.alertTime,
-                );
-
-                if (currentGracePeriod) {
-                    currentGracePeriod.default = true;
+                for (const value of component.options!) {
+                    value.default = Number(value.value) === userRewardData.alertTime;
                 }
 
                 const row = new MessageActionRow().addComponents(component);
@@ -383,12 +373,8 @@ export const execute: CommandExecute = async (
                     ).notificationInterval.select,
                 );
 
-                const currentGracePeriod = component.options.find(
-                    value => Number(value.value) === userRewardData.notificationInterval,
-                );
-
-                if (currentGracePeriod) {
-                    currentGracePeriod.default = true;
+                for (const value of component.options!) {
+                    value.default = Number(value.value) === userRewardData.notificationInterval;
                 }
 
                 const row = new MessageActionRow().addComponents(component);
@@ -477,8 +463,11 @@ export const execute: CommandExecute = async (
                     base[value as keyof typeof base] = true;
                 }
 
-                const updatedMenu =
-                    (locale.menu as ModulesCommand['defender']['menu']).alerts.select;
+                //@ts-expect-error typings not available
+                const updatedMenu = structuredClone(
+                    (locale.menu as ModulesCommand['defender']['menu']
+                    ).alerts.select,
+                ) as ModulesCommand['defender']['menu']['alerts']['select'];
 
                 for (const option of updatedMenu.options!) {
                     option.default = base[option.value as keyof typeof base] === true;
@@ -503,13 +492,14 @@ export const execute: CommandExecute = async (
                     messageComponentInteraction as SelectMenuInteraction
                 ).values;
 
-                const updatedMenu =
-                    (locale.menu as ModulesCommand['defender']['menu']).versions.select;
+                //@ts-expect-error typings not available
+                const updatedMenu = structuredClone(
+                    (locale.menu as ModulesCommand['defender']['menu']
+                    ).versions.select,
+                ) as ModulesCommand['defender']['menu']['versions']['select'];
 
                 for (const value of updatedMenu.options!) {
-                    if (selectedValues.includes(value.value)) {
-                        value.default = true;
-                    }
+                    value.default = selectedValues.includes(value.value);
                 }
 
                 const component = new MessageSelectMenu(updatedMenu);
@@ -531,13 +521,14 @@ export const execute: CommandExecute = async (
                     messageComponentInteraction as SelectMenuInteraction
                 ).values;
 
-                const updatedMenu =
-                    (locale.menu as ModulesCommand['defender']['menu']).languages.select;
+                //@ts-expect-error typings not available
+                const updatedMenu = structuredClone(
+                    (locale.menu as ModulesCommand['defender']['menu']
+                    ).languages.select,
+                ) as ModulesCommand['defender']['menu']['languages']['select'];
 
                 for (const value of updatedMenu.options!) {
-                    if (selectedValues.includes(value.value)) {
-                        value.default = true;
-                    }
+                    value.default = selectedValues.includes(value.value);
                 }
 
                 const component = new MessageSelectMenu(updatedMenu);
@@ -559,15 +550,15 @@ export const execute: CommandExecute = async (
                     messageComponentInteraction as SelectMenuInteraction
                 ).values[0];
 
-                //@ts-expect-error easiest solution for now - priority is getting everything working for now
+                //@ts-expect-error typings not available
                 const updatedMenu = structuredClone(
                     (locale.menu as ModulesCommand['rewards']['menu']
                     ).alertTime.select,
                 ) as ModulesCommand['rewards']['menu']['alertTime']['select'];
 
-                updatedMenu.options!.find(
-                    value => value.value === time,
-                )!.default = true;
+                for (const value of updatedMenu.options!) {
+                    value.default = value.value === time;
+                }
 
                 const component = new MessageSelectMenu(updatedMenu);
 
@@ -617,9 +608,9 @@ export const execute: CommandExecute = async (
                         .select,
                 ) as ModulesCommand['rewards']['menu']['notificationInterval']['select'];
 
-                updatedMenu.options!.find(
-                    value => value.value === time,
-                )!.default = true;
+                for (const value of updatedMenu.options!) {
+                    value.default = value.value === time;
+                }
 
                 const component = new MessageSelectMenu(updatedMenu);
 

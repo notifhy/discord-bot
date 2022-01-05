@@ -33,8 +33,9 @@ export const execute = async ({
                 allowUndefined: false,
                 columns: [
                     'alerts',
-                    'language',
-                    'version',
+                    'channel',
+                    'languages',
+                    'versions',
                 ],
             })
         ) as DefenderModule;
@@ -210,7 +211,6 @@ export const execute = async ({
         const alertEmbed = new BetterEmbed()
             .setColor(threat)
             .setTitle(locale.embed.title)
-            .setDescription(locale.embed.description)
             .addFields(fields.reverse());
 
         await address.send({

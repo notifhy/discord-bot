@@ -708,7 +708,6 @@ export default {
             },
             embed: {
                 title: 'Alert',
-                description: 'Activity was detected on your account!',
             },
             missingPermissions: {
                 name: 'Defender Module Disabled',
