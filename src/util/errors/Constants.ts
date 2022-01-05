@@ -2,7 +2,7 @@ import {
     ColorResolvable,
     Permissions,
 } from 'discord.js';
-import { Tables } from '../@types/database';
+import { Tables } from '../../@types/database';
 
 export default {
     colors: {

@@ -29,7 +29,7 @@ import { RegionLocales } from '../../locales/localesHandler';
 import { SQLite } from '../util/SQLite';
 import { ToggleButtons } from '../util/ToggleButtons';
 import CommandErrorHandler from '../util/errors/handlers/CommandErrorHandler';
-import Constants from '../util/Constants';
+import Constants from '../util/errors/Constants';
 import { Log } from '../util/Log';
 
 export const properties: CommandProperties = {

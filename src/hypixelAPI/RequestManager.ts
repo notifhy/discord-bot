@@ -7,7 +7,7 @@ import { keyLimit } from '../../config.json';
 import { ModuleManager } from '../module/ModuleManager';
 import { setTimeout } from 'node:timers/promises';
 import { SQLite } from '../util/SQLite';
-import Constants from '../util/Constants';
+import Constants from '../util/errors/Constants';
 import RequestErrorHandler from '../util/errors/handlers/RequestErrorHandler';
 import { Log } from '../util/Log';
 

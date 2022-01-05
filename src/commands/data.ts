@@ -27,7 +27,7 @@ import { Log } from '../util/Log';
 import { RegionLocales } from '../../locales/localesHandler';
 import { SQLite } from '../util/SQLite';
 import CommandErrorHandler from '../util/errors/handlers/CommandErrorHandler';
-import Constants from '../util/Constants';
+import Constants from '../util/errors/Constants';
 
 export const properties: CommandProperties = {
     name: 'data',

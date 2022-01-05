@@ -20,7 +20,7 @@ import {
 } from 'discord.js';
 import { Log } from '../util/Log';
 import { SQLite } from '../util/SQLite';
-import Constants from '../util/Constants';
+import Constants from '../util/errors/Constants';
 
 export const properties: CommandProperties = {
     name: 'systemmessage',

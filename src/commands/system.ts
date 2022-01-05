@@ -12,7 +12,7 @@ import { CommandInteraction } from 'discord.js';
 import { keyLimit } from '../../config.json';
 import { RegionLocales } from '../../locales/localesHandler';
 import { SQLite } from '../util/SQLite';
-import Constants from '../util/Constants';
+import Constants from '../util/errors/Constants';
 import process from 'node:process';
 
 export const properties: CommandProperties = {

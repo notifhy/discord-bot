@@ -15,7 +15,7 @@ import { Log } from '../util/Log';
 import { RegionLocales } from '../../locales/localesHandler';
 import { Request } from '../util/Request';
 import { SQLite } from '../util/SQLite';
-import Constants from '../util/Constants';
+import Constants from '../util/errors/Constants';
 import HTTPError from '../util/errors/HTTPError';
 
 export const properties: CommandProperties = {

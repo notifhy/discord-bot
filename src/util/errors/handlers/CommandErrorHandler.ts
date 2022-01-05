@@ -17,7 +17,7 @@ import {
 } from '../../../../config.json';
 import BaseErrorHandler from './BaseErrorHandler';
 import ConstraintError from '../ConstraintError';
-import Constants from '../../Constants';
+import Constants from '../Constants';
 import { RegionLocales } from '../../../../locales/localesHandler';
 import {
     BaseEmbed,

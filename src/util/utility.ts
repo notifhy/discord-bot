@@ -12,7 +12,7 @@ import {
     TextBasedChannel,
     WebhookClient,
 } from 'discord.js';
-import Constants from './Constants';
+import Constants from './errors/Constants';
 import { Log } from './Log';
 
 export function arrayRemove(array: unknown[], item: unknown) {

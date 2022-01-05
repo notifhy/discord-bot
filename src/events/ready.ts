@@ -2,7 +2,7 @@ import type { Client } from 'discord.js';
 import type { EventProperties } from '../@types/client';
 import { Log } from '../util/Log';
 import { SQLite } from '../util/SQLite';
-import Constants from '../util/Constants';
+import Constants from '../util/errors/Constants';
 import ErrorHandler from '../util/errors/handlers/ErrorHandler';
 
 export const properties: EventProperties = {

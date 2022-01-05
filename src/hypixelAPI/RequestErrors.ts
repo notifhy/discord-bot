@@ -3,7 +3,7 @@ import {
     setTimeout,
 } from 'node:timers';
 import { RequestInstance } from './RequestInstance';
-import Constants from '../util/Constants';
+import Constants from '../util/errors/Constants';
 
 export class RequestErrors {
     instance: RequestInstance;

@@ -12,7 +12,7 @@ import { keyLimit } from '../../config.json';
 import { Log } from '../util/Log';
 import { RequestManager } from '../hypixelAPI/RequestManager';
 import { RequestErrors } from '../hypixelAPI/RequestErrors';
-import Constants from '../util/Constants';
+import Constants from '../util/errors/Constants';
 
 export const properties: CommandProperties = {
     name: 'api',

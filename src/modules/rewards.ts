@@ -6,7 +6,7 @@ import { BetterEmbed } from '../util/utility';
 import { ModuleHandler } from '../module/ModuleHandler';
 import { RegionLocales } from '../../locales/localesHandler';
 import { SQLite } from '../util/SQLite';
-import Constants from '../util/Constants';
+import Constants from '../util/errors/Constants';
 import ModuleError from '../util/errors/ModuleError';
 
 export const properties = {

@@ -11,7 +11,7 @@ import { ModuleData } from './ModuleData';
 import { ModuleHandler } from './ModuleHandler';
 import { Performance } from '../hypixelAPI/RequestManager';
 import { SQLite } from '../util/SQLite';
-import Constants from '../util/Constants';
+import Constants from '../util/errors/Constants';
 import ErrorHandler from '../util/errors/handlers/ErrorHandler';
 
 export class ModuleManager {
