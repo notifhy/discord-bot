@@ -1,2 +1,2 @@
 # NotifHy - Alerts and notifications for the Hypixel Server
-#### NotifHy is a Discord Bot centered around notifications and alerts, such as ones that let you know your friend has logged in or that you are about to miss your daily reward. This bot is effectively the replacement to [HyGuard](https://bit.ly/3hcoLHJ) but better in every way.
+#### NotifHy is a Discord Bot centered around notifications and alerts, such as ones that let you know your friend has logged in or that you are about to miss your daily reward. This bot is effectively the replacement to [HyGuard](https://bit.ly/3hcoLHJ) but better in every way. YouTube updates: [link](https://youtube.com/playlist?list=PLRx8PVZLh6GKVqatqcnLSgVNo3LuRgUud)
