@@ -31,6 +31,7 @@ export const execute: CommandExecute = async (
         process: processPerformance,
         save: savePerformance,
         modules: modulePerformance,
+        total,
     } = instance.performance.latest!;
 
     const responseEmbed = new BetterEmbed(interaction)
@@ -55,12 +56,7 @@ export const execute: CommandExecute = async (
                 Module Execution: ${
                     modulePerformance
                 }ms
-                Total: ${
-                    fetchPerformance +
-                    processPerformance +
-                    savePerformance +
-                    modulePerformance
-                }ms`,
+                Total: ${total}ms`,
             },
         ]);
 

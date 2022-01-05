@@ -14,6 +14,7 @@ import { Log } from '../util/Log';
 export type Performance = {
     start: number;
     uses: number;
+    total: number; //Sum of the rest below
     fetch: number; //Hypixel API fetch
     databaseFetch: number; //Database fetch
     process: number; //Processing data
@@ -69,8 +70,14 @@ export class RequestManager {
 
             for (const user of users) {
                 const urls = this.request.generateURLS(user);
-                this.actuallyDoStuff(user, urls);
-                await setTimeout(intervalBetweenRequests * urls.length); //eslint-disable-line no-await-in-loop
+                await this.actuallyDoStuff(user, urls); //eslint-disable-line no-await-in-loop
+                await setTimeout( //eslint-disable-line no-await-in-loop
+                    Math.max(
+                        (intervalBetweenRequests * urls.length) -
+                        this.instance.performance.latest!.total,
+                        0,
+                    ),
+                );
             }
         } catch (error) {
             await new RequestErrorHandler(error, this)
@@ -93,6 +100,7 @@ export class RequestManager {
             const performance: Performance = {
                 start: Date.now(),
                 uses: uses,
+                total: 0,
                 fetch: 0,
                 databaseFetch: 0,
                 process: 0,
@@ -123,6 +131,7 @@ export class RequestManager {
     }
 
     logPerformance(performance: Performance) {
+        performance.total = performance.modules - performance.start;
         performance.modules -= performance.save; //Turns the ms since the Jan 1st 1970 into relative
         performance.save -= performance.process;
         performance.process -= performance.databaseFetch;
