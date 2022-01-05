@@ -3,7 +3,7 @@ function isObject(value: unknown): value is Record<string, unknown> {
     return type === '[object Object]';
 }
 
-export function merge<
+export function deepMerge<
     Target extends Record<string, unknown>,
     Value extends Record<string, unknown>
 >(target: Target, object: Value) {
@@ -40,7 +40,7 @@ export function merge<
             isObject(target[key]) &&
             isObject(object[key])
         ) {
-            merge(
+            deepMerge(
                 target[key] as Record<string, unknown>,
                 object[key] as Record<string, unknown>,
             );
