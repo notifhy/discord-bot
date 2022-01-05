@@ -40,8 +40,9 @@ export interface DefenderModule extends BaseUserData {
         language: boolean;
         version: boolean;
     };
-    language: [];
-    version: [];
+    channel: string | null;
+    versions: string[];
+    languages: string[];
 }
 
 export interface FriendsModule extends BaseUserData {

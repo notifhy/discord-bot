@@ -46,6 +46,13 @@ export default {
         userAPIDataHistory: 500,
     },
     modules: {
+        defender: {
+            permissions: [
+                Permissions.FLAGS.EMBED_LINKS,
+                Permissions.FLAGS.SEND_MESSAGES,
+                Permissions.FLAGS.VIEW_CHANNEL,
+            ],
+        },
         friends: {
             permissions: [
                 Permissions.FLAGS.EMBED_LINKS,
@@ -75,7 +82,7 @@ export default {
         create: {
             api: 'CREATE TABLE IF NOT EXISTS "api" ("discordID" TEXT NOT NULL UNIQUE, "uuid" TEXT NOT NULL UNIQUE, "modules" TEXT NOT NULL DEFAULT \'[]\', "lastUpdated" INTEGER NOT NULL, "firstLogin" INTEGER, "lastLogin" INTEGER, "lastLogout" INTEGER, "version" TEXT, "language" TEXT NOT NULL, "gameType" TEXT, "gameMode" TEXT, "gameMap" TEXT, "lastClaimedReward" INTEGER, "rewardScore" INTEGER, "rewardHighScore" INTEGER, "totalDailyRewards" INTEGER, "totalRewards" INTEGER, "history" TEXT NOT NULL DEFAULT \'[]\')',
             config: 'CREATE TABLE IF NOT EXISTS "config" ("blockedGuilds" TEXT NOT NULL DEFAULT \'[]\', "blockedUsers" TEXT NOT NULL DEFAULT \'[]\', "devMode" TEXT NOT NULL DEFAULT \'false\', "enabled" TEXT NOT NULL DEFAULT \'true\')',
-            defender: 'CREATE TABLE IF NOT EXISTS "defender" ("discordID" TEXT NOT NULL UNIQUE, "alerts" TEXT NOT NULL DEFAULT \'{login: true,logout:true,language:true,version:true}\', "channel" TEXT DEFAULT null, "language" TEXT NOT NULL DEFAULT \'[]\', "version" TEXT NOT NULL DEFAULT \'[]\' )',
+            defender: 'CREATE TABLE IF NOT EXISTS "defender" ("discordID" TEXT NOT NULL UNIQUE, "alerts" TEXT NOT NULL DEFAULT \'{"login": true,"logout":true,"version":true,"language":true}\', "channel" TEXT DEFAULT null, "versions" TEXT NOT NULL DEFAULT \'[]\', "languages" TEXT NOT NULL DEFAULT \'[]\')',
             friends: 'CREATE TABLE IF NOT EXISTS "friends" ("discordID" TEXT NOT NULL UNIQUE, "channel" TEXT DEFAULT null )',
             rewards: 'CREATE TABLE IF NOT EXISTS "rewards" ("discordID" TEXT NOT NULL UNIQUE, "alertTime" INTEGER DEFAULT null, "claimNotification" INTEGER NOT NULL DEFAULT \'true\', "lastNotified" INTEGER NOT NULL DEFAULT 0, "milestones" TEXT NOT NULL DEFAULT \'true\', "notificationInterval" INTEGER NOT NULL DEFAULT 1800000)',
             users: 'CREATE TABLE IF NOT EXISTS "users" ("discordID" TEXT NOT NULL UNIQUE, "language" TEXT NOT NULL DEFAULT \'en-us\', "systemMessages" TEXT NOT NULL DEFAULT \'[]\')',

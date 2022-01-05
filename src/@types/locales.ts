@@ -92,6 +92,15 @@ export interface ModulesCommand {
             toggle: {
                 button: Button;
             } & ModuleData;
+            alerts: {
+                select: MessageSelectMenuOptions
+            } & ModuleData;
+            versions: {
+                select: MessageSelectMenuOptions
+            } & ModuleData;
+            languages: {
+                select: MessageSelectMenuOptions
+            } & ModuleData;
         };
     };
     friends: {
@@ -227,6 +236,15 @@ export interface Errors {
 /*
 Modules
 */
+export interface Defender {
+    login: Field;
+    logout: Field;
+    version: Field;
+    language: Field;
+    embed: BaseEmbed;
+    missingPermissions: Field;
+}
+
 export interface Friends {
     missingData: {
         footer: string;
@@ -261,6 +279,7 @@ export interface Rewards {
 }
 
 export interface Modules {
+    defender: Defender;
     friends: Friends;
     rewards: Rewards;
 }

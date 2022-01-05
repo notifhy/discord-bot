@@ -3,6 +3,7 @@ import type {
     CommandProperties,
 } from '../@types/client';
 import type {
+    DefenderModule,
     FriendsModule,
     RewardsModule,
     UserAPIData,
@@ -118,6 +119,21 @@ export const execute: CommandExecute = async (
         })
     ) as UserAPIData;
 
+    const getDefenderData = async () => (
+        await SQLite.getUser<DefenderModule>({
+            discordID: userData.discordID,
+            table: Constants.tables.defender,
+            columns: [
+                'discordID',
+                'alerts',
+                'channel',
+                'versions',
+                'languages',
+            ],
+            allowUndefined: false,
+        })
+    ) as DefenderModule;
+
     const getFriendsData = async () => (
         await SQLite.getUser<FriendsModule>({
             discordID: userData.discordID,
@@ -215,14 +231,24 @@ export const execute: CommandExecute = async (
                 const userAPIData = await getUserAPIData();
 
                 const moduleData =
-                    subCommand === 'friends'
+                    subCommand === 'defender'
+                        ? await getDefenderData()
+                        : subCommand === 'friends'
                         ? await getFriendsData()
                         : subCommand === 'rewards'
                         ? await getRewardsData()
                         : null!; //:)
 
+                const exceptions = {
+                    defender: ['channel'] as string[],
+                    friends: [] as string[],
+                    rewards: [] as string[],
+                };
+
                 const missingRequirements = Object.entries(moduleData)
-                    .filter(([, value]) => value === null)
+                    .filter(([key, value]) =>
+                        value === null &&
+                        exceptions[subCommand as keyof typeof exceptions].includes(key) === false)
                     .map(
                         ([name]) =>
                             locale.menu[name as keyof typeof locale.menu].label,
@@ -246,6 +272,63 @@ export const execute: CommandExecute = async (
                 });
 
                 components.push(component);
+                break;
+            }
+            case 'alerts': {
+                const alerts = (await getDefenderData()).alerts;
+
+                const menu =
+                    (locale.menu as ModulesCommand['defender']['menu']).alerts.select;
+
+                for (const value of menu.options!) {
+                    if (alerts[value.value as keyof typeof alerts] === true) {
+                        value.default = true;
+                    }
+                }
+
+                const component = new MessageSelectMenu(menu);
+
+                const row = new MessageActionRow().addComponents(component);
+
+                components.push(row);
+                break;
+            }
+            case 'versions': {
+                const versions = (await getDefenderData()).versions;
+
+                const menu =
+                    (locale.menu as ModulesCommand['defender']['menu']).versions.select;
+
+                for (const value of menu.options!) {
+                    if (versions.includes(value.value)) {
+                        value.default = true;
+                    }
+                }
+
+                const component = new MessageSelectMenu(menu);
+
+                const row = new MessageActionRow().addComponents(component);
+
+                components.push(row);
+                break;
+            }
+            case 'languages': {
+                const versions = (await getDefenderData()).languages;
+
+                const menu =
+                    (locale.menu as ModulesCommand['defender']['menu']).languages.select;
+
+                for (const value of menu.options!) {
+                    if (versions.includes(value.value)) {
+                        value.default = true;
+                    }
+                }
+
+                const component = new MessageSelectMenu(menu);
+
+                const row = new MessageActionRow().addComponents(component);
+
+                components.push(row);
                 break;
             }
             case 'channel': {
@@ -376,6 +459,99 @@ export const execute: CommandExecute = async (
                     data: { modules: userAPIData.modules },
                 });
 
+                break;
+            }
+            case 'alerts': {
+                const selectedValues = (
+                    messageComponentInteraction as SelectMenuInteraction
+                ).values;
+
+                const base = {
+                    login: false,
+                    logout: false,
+                    version: false,
+                    language: false,
+                };
+
+                for (const value of selectedValues) {
+                    base[value as keyof typeof base] = true;
+                }
+
+                const updatedMenu =
+                    (locale.menu as ModulesCommand['defender']['menu']).alerts.select;
+
+                for (const option of updatedMenu.options!) {
+                    option.default = base[option.value as keyof typeof base] === true;
+                }
+
+                const component = new MessageSelectMenu(updatedMenu);
+
+                components.push(
+                    new MessageActionRow()
+                        .addComponents(component),
+                );
+
+                await SQLite.updateUser<DefenderModule>({
+                    discordID: userData.discordID,
+                    table: Constants.tables.defender,
+                    data: { alerts: base },
+                });
+                break;
+            }
+            case 'versions': {
+                const selectedValues = (
+                    messageComponentInteraction as SelectMenuInteraction
+                ).values;
+
+                const updatedMenu =
+                    (locale.menu as ModulesCommand['defender']['menu']).versions.select;
+
+                for (const value of updatedMenu.options!) {
+                    if (selectedValues.includes(value.value)) {
+                        value.default = true;
+                    }
+                }
+
+                const component = new MessageSelectMenu(updatedMenu);
+
+                components.push(
+                    new MessageActionRow()
+                        .addComponents(component),
+                );
+
+                await SQLite.updateUser<DefenderModule>({
+                    discordID: userData.discordID,
+                    table: Constants.tables.defender,
+                    data: { versions: selectedValues },
+                });
+                break;
+            }
+            case 'languages': {
+                const selectedValues = (
+                    messageComponentInteraction as SelectMenuInteraction
+                ).values;
+
+                const updatedMenu =
+                    (locale.menu as ModulesCommand['defender']['menu']).languages.select;
+
+                for (const value of updatedMenu.options!) {
+                    if (selectedValues.includes(value.value)) {
+                        value.default = true;
+                    }
+                }
+
+                const component = new MessageSelectMenu(updatedMenu);
+
+                components.push(
+                    new MessageActionRow()
+                        .addComponents(component),
+                );
+
+                await SQLite.updateUser<DefenderModule>({
+                    discordID: userData.discordID,
+                    table: Constants.tables.defender,
+                    data: { languages: selectedValues },
+                });
                 break;
             }
             case 'alertTime': {

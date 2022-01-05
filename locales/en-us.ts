@@ -76,7 +76,7 @@ export default {
         modules: {
             defender: {
                 title: 'Defender Module',
-                description: 'T',
+                description: 'The replacement to HyGuard - get notified on logins, logouts, version changes, and more',
                 menuPlaceholder: 'Defender Module Settings',
                 missingConfigField: {
                     name: 'Missing Configuration',
@@ -94,6 +94,189 @@ export default {
                             disable: 'Disable',
                             enableCustomID: 'toggle1',
                             disableCustomID: 'toggle0',
+                        },
+                    },
+                    alerts: {
+                        label: 'Alerts',
+                        description: 'Select alerts to receive for the defender module',
+                        longDescription: 'Toggle alerts for the defender module. You can individually toggle each type of notification.',
+                        value: 'alerts',
+                        emoji: Constants.emoji.hashtag,
+                        select: {
+                            customId: 'alerts',
+                            placeholder: 'Select your alerts',
+                            minValues: 0,
+                            maxValues: 4,
+                            disabled: false,
+                            options: [
+                                {
+                                    label: 'Login',
+                                    value: 'login',
+                                    description: 'Toggle login alerts',
+                                },
+                                {
+                                    label: 'Logout',
+                                    value: 'logout',
+                                    description: 'Toggle logout alerts',
+                                },
+                                {
+                                    label: 'Version',
+                                    value: 'version',
+                                    description: 'Toggle version alerts',
+                                },
+                                {
+                                    label: 'Language',
+                                    value: 'language',
+                                    description: 'Toggle language alerts',
+                                },
+                            ],
+                        },
+                    },
+                    channel: {
+                        label: 'Channel',
+                        description: 'Set a channel to send alerts to',
+                        longDescription: 'Due to limitations, you need to set a channel with /channel. You can also choose to leave this field empty; alerts will be sent via Direct Messages instead.',
+                        value: 'channel',
+                        emoji: Constants.emoji.hashtag,
+                        select: {
+                            customId: 'null',
+                            placeholder: 'Select a channel',
+                            disabled: true,
+                            options: [
+                                {
+                                    label: 'Disabled',
+                                    value: 'hello',
+                                    description: 'Disabled',
+                                },
+                            ],
+                        },
+                    },
+                    versions: {
+                        label: 'Versions',
+                        description: 'Select whitelisted version(s) of Minecraft',
+                        longDescription: 'Select whitelisted version(s) of Minecraft. If the bot detects you switching to a whitelisted version, it will not alert or notify you. Select none to get a notification on every version change.',
+                        value: 'versions',
+                        emoji: Constants.emoji.hashtag,
+                        select: {
+                            customId: 'versions',
+                            placeholder: 'Select your version(s) of Minecraft',
+                            minValues: 0,
+                            maxValues: 9,
+                            disabled: false,
+                            options: [
+                                {
+                                    label: '1.8',
+                                    value: '1.8',
+                                },
+                                {
+                                    label: '1.11',
+                                    value: '1.11',
+                                },
+                                {
+                                    label: '1.12',
+                                    value: '1.12',
+                                },
+                                {
+                                    label: '1.13',
+                                    value: '1.13',
+                                },
+                                {
+                                    label: '1.14',
+                                    value: '1.14',
+                                },
+                                {
+                                    label: '1.15',
+                                    value: '1.15',
+                                },
+                                {
+                                    label: '1.16',
+                                    value: '1.16',
+                                },
+                                {
+                                    label: '1.17',
+                                    value: '1.17',
+                                },
+                                {
+                                    label: '1.18',
+                                    value: '1.18',
+                                },
+                            ],
+                        },
+                    },
+                    languages: {
+                        label: 'Languages',
+                        description: 'Select whitelisted languages(s)',
+                        longDescription: 'Select whitelisted version(s) for use on Hypixel. If the bot detects you switching to a whitelisted language, it will not alert or notify you. Select none to get a notification on every language change.',
+                        value: 'languages',
+                        emoji: Constants.emoji.hashtag,
+                        select: {
+                            customId: 'languages',
+                            placeholder: 'Select your language(s)',
+                            minValues: 0,
+                            maxValues: 15,
+                            disabled: false,
+                            options: [
+                                {
+                                    label: 'English (English)',
+                                    value: 'ENGLISH',
+                                },
+                                {
+                                    label: 'Deutsch (German)',
+                                    value: 'German',
+                                },
+                                {
+                                    label: 'Français (French)',
+                                    value: 'FRENCH',
+                                },
+                                {
+                                    label: 'Nederlands (Dutch)',
+                                    value: 'DUTCH',
+                                },
+                                {
+                                    label: 'Español (Spanish)',
+                                    value: 'SPANISH',
+                                },
+                                {
+                                    label: '简体中文 (Chinese Simplified)',
+                                    value: 'CHINESE_SIMPLIFIED',
+                                },
+                                {
+                                    label: '繁體中文 (Chinese Traditional)',
+                                    value: 'CHINESE_TRADITIONAL',
+                                },
+                                {
+                                    label: 'Русский (Russian)',
+                                    value: 'RUSSIAN',
+                                },
+                                {
+                                    label: '日本語 (Japanese)',
+                                    value: 'JAPANESE',
+                                },
+                                {
+                                    label: 'Português (Portuguese Brasil)',
+                                    value: 'PORTUGUESE_BR',
+                                },
+                                {
+                                    label: 'Italiano (Italian)',
+                                    value: 'ITALIAN',
+                                },
+                                {
+                                    label: 'Pirate (English)',
+                                    value: 'PIRATE',
+                                },
+                                {
+                                    label: 'Português (Portuguese Portugal)',
+                                    value: 'PORTUGUESE',
+                                },
+                                {
+                                    label: '한국어 (Korean)',
+                                    value: 'KOREAN',
+                                },
+                                {
+                                    label: 'Ελληνική (Greek)',
+                                    value: 'GREEK',
+                                },
+                            ],
                         },
                     },
                 },
@@ -506,6 +689,32 @@ export default {
         },
     },
     modules: {
+        defender: {
+            login: {
+                name: 'Login Detected',
+                value: 'Your account logged in %{relative}% at %{time}%',
+            },
+            logout: {
+                name: 'Logout Detected',
+                value: 'Your account logged out %{relative}% at %{time}%',
+            },
+            version: {
+                name: 'Version Change Detected',
+                value: 'Your version changed from %{sVersion}% to %{pVersion}%',
+            },
+            language: {
+                name: 'Language Change Detected',
+                value: 'Your language changed from %{sLanguage}% to %{pLanguage}%',
+            },
+            embed: {
+                title: 'Alert',
+                description: 'Activity was detected on your account!',
+            },
+            missingPermissions: {
+                name: 'Defender Module Disabled',
+                value: 'The Defender module was disabled because this bot is missing the following permission(s) in the channel %{channel}%: %{missingPermissions}%.',
+            },
+        },
         friends: {
             missingData: {
                 title: 'Missing Data',
