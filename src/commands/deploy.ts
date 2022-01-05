@@ -13,7 +13,7 @@ import { Log } from '../util/Log';
 import { REST } from '@discordjs/rest';
 import { Routes } from 'discord-api-types/v9';
 import fs from 'node:fs/promises';
-import Constants from '../util/errors/Constants';
+import Constants from '../util/Constants';
 
 export const properties: CommandProperties = {
     name: 'deploy',

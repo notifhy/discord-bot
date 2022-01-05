@@ -16,7 +16,7 @@ import { RegionLocales } from '../../../../locales/localesHandler';
 import { arrayRemove, sendWebHook, timestamp } from '../../utility';
 import { SQLite } from '../../SQLite';
 import BaseErrorHandler from './BaseErrorHandler';
-import Constants from '../Constants';
+import Constants from '../../Constants';
 import ModuleError from '../ModuleError';
 
 export default class ModuleErrorHandler extends BaseErrorHandler {

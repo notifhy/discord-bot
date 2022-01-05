@@ -3,7 +3,7 @@ import {
     Tables,
 } from '../@types/database';
 import Database from 'better-sqlite3';
-import Constants from './errors/Constants';
+import Constants from './Constants';
 
 // eslint-disable-next-line no-warning-comments
 //TODO: Fix "any" after the rest is done

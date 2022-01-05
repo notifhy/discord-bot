@@ -9,7 +9,7 @@ import type {
 } from '../@types/database';
 import { compare } from '../util/utility';
 import { SQLite } from '../util/SQLite';
-import Constants from '../util/errors/Constants';
+import Constants from '../util/Constants';
 
 export class ModuleData {
     readonly currentUserAPIData: UserAPIData;

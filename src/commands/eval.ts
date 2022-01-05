@@ -8,7 +8,7 @@ import {
     Formatters,
 } from 'discord.js';
 import { Log } from '../util/Log';
-import Constants from '../util/errors/Constants';
+import Constants from '../util/Constants';
 
 export const properties: CommandProperties = {
     name: 'eval',

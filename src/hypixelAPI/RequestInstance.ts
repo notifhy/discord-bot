@@ -1,5 +1,5 @@
 import { Performance } from '../hypixelAPI/RequestManager';
-import Constants from '../util/errors/Constants';
+import Constants from '../util/Constants';
 
 export class RequestInstance {
     abortThreshold: number;

@@ -4,7 +4,7 @@ import type {
 } from '../@types/client';
 import { BetterEmbed } from '../util/utility';
 import { CommandInteraction } from 'discord.js';
-import Constants from '../util/errors/Constants';
+import Constants from '../util/Constants';
 
 export const properties: CommandProperties = {
     name: 'performance',

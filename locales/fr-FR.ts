@@ -1,4 +1,4 @@
-import Constants from '../src/util/errors/Constants';
+import Constants from '../src/util/Constants';
 
 export default {
     commands: {

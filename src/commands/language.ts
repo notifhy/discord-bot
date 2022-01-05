@@ -8,7 +8,7 @@ import { CommandInteraction } from 'discord.js';
 import { Log } from '../util/Log';
 import { RegionLocales } from '../../locales/localesHandler';
 import { SQLite } from '../util/SQLite';
-import Constants from '../util/errors/Constants';
+import Constants from '../util/Constants';
 
 export const properties: CommandProperties = {
     name: 'language',

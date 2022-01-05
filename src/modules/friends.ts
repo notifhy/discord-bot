@@ -16,7 +16,7 @@ import {
 import { ModuleHandler } from '../module/ModuleHandler';
 import { RegionLocales } from '../../locales/localesHandler';
 import { SQLite } from '../util/SQLite';
-import Constants from '../util/errors/Constants';
+import Constants from '../util/Constants';
 import ModuleError from '../util/errors/ModuleError';
 import { Log } from '../util/Log';
 
