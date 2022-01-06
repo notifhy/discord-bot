@@ -1,0 +1,1 @@
+## All images are original and subject to this repository's license.

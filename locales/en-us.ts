@@ -505,14 +505,6 @@ export default {
                             disabled: false,
                             options: [
                                 {
-                                    label: '10 minutes',
-                                    value: '600000',
-                                },
-                                {
-                                    label: '15 minutes',
-                                    value: '900000',
-                                },
-                                {
                                     label: '30 minutes',
                                     value: '1800000',
                                 },
