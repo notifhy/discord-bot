@@ -1,12 +1,9 @@
-import type {
-    CommandExecute,
-    CommandProperties,
-} from '../@types/client';
+import type { ClientCommand } from '../@types/client';
 import { BetterEmbed } from '../util/utility';
 import { CommandInteraction } from 'discord.js';
 import Constants from '../util/Constants';
 
-export const properties: CommandProperties = {
+export const properties: ClientCommand['properties'] = {
     name: 'performance',
     description: 'View system performance',
     usage: '/system',
@@ -20,7 +17,7 @@ export const properties: CommandProperties = {
     },
 };
 
-export const execute: CommandExecute = async (
+export const execute: ClientCommand['execute'] = async (
     interaction: CommandInteraction,
 ): Promise<void> => {
     const { instance } = interaction.client.hypixelAPI;

@@ -30,10 +30,6 @@ export function deepMerge<
                         (target[key] as unknown[])[i],
                         (object[key] as unknown[])[i],
                     );
-                } else {
-                    Array.from(
-                        new Set((target[key] as unknown[]).concat(object[key])),
-                    );
                 }
             }
         } else if (

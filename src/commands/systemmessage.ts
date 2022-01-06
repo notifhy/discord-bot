@@ -1,7 +1,4 @@
-import type {
-    CommandExecute,
-    CommandProperties,
-} from '../@types/client';
+import type { ClientCommand } from '../@types/client';
 import type { UserData } from '../@types/database';
 import {
     awaitComponent,
@@ -22,7 +19,7 @@ import { Log } from '../util/Log';
 import { SQLite } from '../util/SQLite';
 import Constants from '../util/Constants';
 
-export const properties: CommandProperties = {
+export const properties: ClientCommand['properties'] = {
     name: 'systemmessage',
     description: 'Adds a message to a user\'s system messages',
     usage: '/systemmessage',
@@ -36,19 +33,19 @@ export const properties: CommandProperties = {
         options: [
             {
                 name: 'id',
-                type: '3',
+                type: 3,
                 description: 'The user to message',
                 required: true,
             },
             {
                 name: 'name',
-                type: '3',
+                type: 3,
                 description: 'Title of the message',
                 required: true,
             },
             {
                 name: 'value',
-                type: '3',
+                type: 3,
                 description: 'Main content of the message',
                 required: true,
             },
@@ -56,7 +53,7 @@ export const properties: CommandProperties = {
     },
 };
 
-export const execute: CommandExecute = async (
+export const execute: ClientCommand['execute'] = async (
     interaction: CommandInteraction,
 ): Promise<void> => {
     const id = interaction.options.getString('id', true);

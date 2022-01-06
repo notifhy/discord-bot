@@ -1,7 +1,4 @@
-import type {
-    CommandExecute,
-    CommandProperties,
-} from '../@types/client';
+import type { ClientCommand } from '../@types/client';
 import type { Slothpixel } from '../@types/hypixel';
 import { BetterEmbed } from '../util/utility';
 import { CommandInteraction } from 'discord.js';
@@ -18,7 +15,7 @@ import { SQLite } from '../util/SQLite';
 import Constants from '../util/Constants';
 import HTTPError from '../util/errors/HTTPError';
 
-export const properties: CommandProperties = {
+export const properties: ClientCommand['properties'] = {
     name: 'register',
     description: 'Register and setup your profile',
     usage: '/register [username/uuid]',
@@ -32,7 +29,7 @@ export const properties: CommandProperties = {
         options: [
             {
                 name: 'player',
-                type: '3',
+                type: 3,
                 description: 'Your username or UUID',
                 required: true,
             },
@@ -40,7 +37,7 @@ export const properties: CommandProperties = {
     },
 };
 
-export const execute: CommandExecute = async (
+export const execute: ClientCommand['execute'] = async (
     interaction: CommandInteraction,
     { userData },
 ): Promise<void> => {

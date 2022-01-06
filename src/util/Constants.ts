@@ -33,9 +33,13 @@ export default {
     },
     emoji: {
         alert: '<:alert:928112368704192533>',
+        backward: '<:backward:928434575187783741>',
         celebration: '<:celebration:924365718726795304>',
         checkmark: '<:checkmark:924365737416601631>',
         clock: '<:clock:922981726676992070>',
+        forward: '<:forward:928434549883539456>',
+        fastBackward: '<:fastBackward:928432022551150632>',
+        fastForward: '<:fastForward:928431989634256897>',
         gear: '<:gear:928110894041432098>',
         hashtag: '<:channel:922980930379984956>',
         loop: '<:interval:922980170124628018>',

@@ -1,7 +1,4 @@
-import type {
-    CommandExecute,
-    CommandProperties,
-} from '../@types/client';
+import type { ClientCommand } from '../@types/client';
 import type {
     DefenderModule,
     FriendsModule,
@@ -25,14 +22,14 @@ import {
     MessageSelectMenu,
     SelectMenuInteraction,
 } from 'discord.js';
+import { Log } from '../util/Log';
 import { RegionLocales } from '../../locales/localesHandler';
 import { SQLite } from '../util/SQLite';
 import { ToggleButtons } from '../util/ToggleButtons';
 import CommandErrorHandler from '../util/errors/handlers/CommandErrorHandler';
 import Constants from '../util/Constants';
-import { Log } from '../util/Log';
 
-export const properties: CommandProperties = {
+export const properties: ClientCommand['properties'] = {
     name: 'modules',
     description: 'Add or remove modules for your Minecraft account',
     usage: '/modules [defender/friends/rewards]',
@@ -47,24 +44,24 @@ export const properties: CommandProperties = {
         options: [
             {
                 name: 'defender',
-                type: '1',
+                type: 1,
                 description: 'The replacement to HyGuard - get notified on logins, logouts, version changes, and more',
             },
             {
                 name: 'friends',
                 description: 'Know when your friends are online by sharing logins and logouts with each other',
-                type: '1',
+                type: 1,
             },
             {
                 name: 'rewards',
                 description: 'Never miss a daily reward again - get notifications to claim your daily reward at your convenience',
-                type: '1',
+                type: 1,
             },
         ],
     },
 };
 
-export const execute: CommandExecute = async (
+export const execute: ClientCommand['execute'] = async (
     interaction: CommandInteraction,
     { userData },
 ): Promise<void> => {
@@ -138,7 +135,10 @@ export const execute: CommandExecute = async (
         await SQLite.getUser<FriendsModule>({
             discordID: userData.discordID,
             table: Constants.tables.friends,
-            columns: ['discordID', 'channel'],
+            columns: [
+                'discordID',
+                'channel',
+            ],
             allowUndefined: false,
         })
     ) as FriendsModule;

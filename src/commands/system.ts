@@ -1,7 +1,4 @@
-import type {
-    CommandExecute,
-    CommandProperties,
-} from '../@types/client';
+import type { ClientCommand } from '../@types/client';
 import type { UserAPIData } from '../@types/database';
 import {
     BetterEmbed,
@@ -15,7 +12,7 @@ import { SQLite } from '../util/SQLite';
 import Constants from '../util/Constants';
 import process from 'node:process';
 
-export const properties: CommandProperties = {
+export const properties: ClientCommand['properties'] = {
     name: 'system',
     description: 'View system information to satiate the curious',
     usage: '/system',
@@ -29,7 +26,7 @@ export const properties: CommandProperties = {
     },
 };
 
-export const execute: CommandExecute = async (
+export const execute: ClientCommand['execute'] = async (
     interaction: CommandInteraction,
     { userData },
 ): Promise<void> => {

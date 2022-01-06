@@ -1,8 +1,4 @@
-import type {
-    CommandExecute,
-    CommandProperties,
-    ClientCommand,
-} from '../@types/client';
+import type { ClientCommand } from '../@types/client';
 import { BetterEmbed } from '../util/utility';
 import {
     clientID,
@@ -15,7 +11,7 @@ import { Routes } from 'discord-api-types/v9';
 import fs from 'node:fs/promises';
 import Constants from '../util/Constants';
 
-export const properties: CommandProperties = {
+export const properties: ClientCommand['properties'] = {
     name: 'deploy',
     description: 'Deploy commands',
     usage: '/deploy [global/local] [user/owner]',
@@ -77,7 +73,7 @@ export const properties: CommandProperties = {
     },
 };
 
-export const execute: CommandExecute = async (
+export const execute: ClientCommand['execute'] = async (
     interaction: CommandInteraction,
 ): Promise<void> => {
     const commandFiles = (await fs.readdir(__dirname)).filter(file =>

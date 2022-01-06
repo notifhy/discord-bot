@@ -1,7 +1,4 @@
-import type {
-    CommandExecute,
-    CommandProperties,
-} from '../@types/client';
+import type { ClientCommand } from '../@types/client';
 import {
     BetterEmbed,
     cleanLength,
@@ -14,7 +11,7 @@ import { RequestManager } from '../hypixelAPI/RequestManager';
 import { RequestErrors } from '../hypixelAPI/RequestErrors';
 import Constants from '../util/Constants';
 
-export const properties: CommandProperties = {
+export const properties: ClientCommand['properties'] = {
     name: 'api',
     description: 'Configure the bot',
     usage: '/api [instance/toggle] <stats/>',
@@ -28,17 +25,17 @@ export const properties: CommandProperties = {
         options: [
             {
                 name: 'stats',
-                type: '1',
+                type: 1,
                 description: 'Returns some stats about the API Request Handler',
             },
             {
                 name: 'instance',
-                type: '1',
+                type: 1,
                 description: 'Modify data held by RequestInstance',
                 options: [
                     {
                         name: 'type',
-                        type: '3',
+                        type: 3,
                         description: 'The type to execute on',
                         required: true,
                         choices: [
@@ -62,7 +59,7 @@ export const properties: CommandProperties = {
                     },
                     {
                         name: 'value',
-                        type: '10',
+                        type: 10,
                         description: 'An integer as an input',
                         required: true,
                     },
@@ -70,12 +67,12 @@ export const properties: CommandProperties = {
             },
             {
                 name: 'set',
-                type: '1',
+                type: 1,
                 description: 'Set data for the API Request Handler',
                 options: [
                     {
                         name: 'category',
-                        type: '3',
+                        type: 3,
                         description: 'The category to execute on',
                         required: true,
                         choices: [
@@ -95,7 +92,7 @@ export const properties: CommandProperties = {
                     },
                     {
                         name: 'type',
-                        type: '3',
+                        type: 3,
                         description: 'The category to execute on',
                         required: true,
                         choices: [
@@ -115,7 +112,7 @@ export const properties: CommandProperties = {
                     },
                     {
                         name: 'value',
-                        type: '10',
+                        type: 10,
                         description: 'An integer as an input',
                         required: false,
                         min_value: 0,
@@ -124,12 +121,12 @@ export const properties: CommandProperties = {
             },
             {
                 name: 'call',
-                type: '1',
+                type: 1,
                 description: 'Call a function from the API Request Handler',
                 options: [
                     {
                         name: 'method',
-                        type: '3',
+                        type: 3,
                         description: 'The method to call',
                         required: true,
                         choices: [
@@ -149,7 +146,7 @@ export const properties: CommandProperties = {
                     },
                     {
                         name: 'value',
-                        type: '5',
+                        type: 5,
                         description:
                             'A value used for isGlobal in addRateLimit()',
                         required: false,
@@ -162,7 +159,7 @@ export const properties: CommandProperties = {
 
 type errorTypes = 'abort' | 'rateLimit' | 'error';
 
-export const execute: CommandExecute = async (
+export const execute: ClientCommand['execute'] = async (
     interaction: CommandInteraction,
 ): Promise<void> => {
     switch (interaction.options.getSubcommand()) {

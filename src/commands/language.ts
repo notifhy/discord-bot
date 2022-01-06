@@ -1,7 +1,4 @@
-import type {
-    CommandExecute,
-    CommandProperties,
-} from '../@types/client';
+import type { ClientCommand } from '../@types/client';
 import type { UserData } from '../@types/database';
 import { BetterEmbed } from '../util/utility';
 import { CommandInteraction } from 'discord.js';
@@ -10,7 +7,7 @@ import { RegionLocales } from '../../locales/localesHandler';
 import { SQLite } from '../util/SQLite';
 import Constants from '../util/Constants';
 
-export const properties: CommandProperties = {
+export const properties: ClientCommand['properties'] = {
     name: 'language',
     description: 'Set a language for this bot',
     usage: '/language [language]',
@@ -24,7 +21,7 @@ export const properties: CommandProperties = {
         options: [
             {
                 name: 'language',
-                type: '3',
+                type: 3,
                 description: 'The language to use for this bot',
                 required: true,
                 choices: [
@@ -42,7 +39,7 @@ export const properties: CommandProperties = {
     },
 };
 
-export const execute: CommandExecute = async (
+export const execute: ClientCommand['execute'] = async (
     interaction: CommandInteraction,
     { userData },
 ): Promise<void> => {

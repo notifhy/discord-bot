@@ -1,14 +1,10 @@
-import type {
-    CommandExecute,
-    CommandProperties,
-    ClientCommand,
-} from '../@types/client';
+import type { ClientCommand } from '../@types/client';
 import { BetterEmbed } from '../util/utility';
 import { CommandInteraction } from 'discord.js';
 import { RegionLocales } from '../../locales/localesHandler';
 import Constants from '../util/Constants';
 
-export const properties: CommandProperties = {
+export const properties: ClientCommand['properties'] = {
     name: 'help',
     description: 'Displays helpful information and available commands',
     usage: '/help [commands/information] <command>',
@@ -22,12 +18,12 @@ export const properties: CommandProperties = {
         options: [
             {
                 name: 'commands',
-                type: '1',
+                type: 1,
                 description: 'Displays information about commands',
                 options: [
                     {
                         name: 'command',
-                        type: '3',
+                        type: 3,
                         description:
                             'A command to get info about. This parameter is completely optional',
                         required: false,
@@ -37,13 +33,13 @@ export const properties: CommandProperties = {
             {
                 name: 'information',
                 description: 'Returns information about this bot ',
-                type: '1',
+                type: 1,
             },
         ],
     },
 };
 
-export const execute: CommandExecute = async (
+export const execute: ClientCommand['execute'] = async (
     interaction: CommandInteraction,
     { userData },
 ): Promise<void> => {

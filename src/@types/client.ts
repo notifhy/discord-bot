@@ -1,6 +1,7 @@
 /* eslint-disable no-unused-vars */
 import type { ClientModule } from './modules';
 import type {
+    ApplicationCommandData,
     Collection,
     CommandInteraction,
 } from 'discord.js';
@@ -32,32 +33,26 @@ export interface ClientEvent {
     execute(...parameters: unknown[]): Promise<void> | void;
 }
 
-export interface CommandProperties {
-    name: string;
-    description: string;
-    cooldown: number;
-    ephemeral: boolean;
-    noDM: boolean;
-    ownerOnly: boolean;
-    structure: object;
-    usage: string;
-}
-
-export interface CommandExecuteUserData {
-    userData: UserData;
-    userAPIData?: UserAPIData;
-}
-
-export interface CommandExecute {
-    (
-        interaction: CommandInteraction,
-        user: CommandExecuteUserData,
-    ): Promise<void>;
-}
-
 export interface ClientCommand {
-    properties: CommandProperties;
-    execute: CommandExecute;
+    properties: {
+        name: string;
+        description: string;
+        cooldown: number;
+        ephemeral: boolean;
+        noDM: boolean;
+        ownerOnly: boolean;
+        structure: ApplicationCommandData;
+        usage: string;
+    };
+    execute: {
+        (
+            interaction: CommandInteraction,
+            user: {
+                userData: UserData;
+                userAPIData?: UserAPIData;
+            },
+        ): Promise<void>;
+    };
 }
 
 declare module 'discord.js' {

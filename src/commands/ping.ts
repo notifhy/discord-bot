@@ -1,7 +1,4 @@
-import type {
-    CommandExecute,
-    CommandProperties,
-} from '../@types/client';
+import type { ClientCommand } from '../@types/client';
 import { BetterEmbed } from '../util/utility';
 import {
     ColorResolvable,
@@ -12,7 +9,7 @@ import { Log } from '../util/Log';
 import { RegionLocales } from '../../locales/localesHandler';
 import Constants from '../util/Constants';
 
-export const properties: CommandProperties = {
+export const properties: ClientCommand['properties'] = {
     name: 'ping',
     description: 'Returns the ping of the bot',
     usage: '/ping',
@@ -26,7 +23,7 @@ export const properties: CommandProperties = {
     },
 };
 
-export const execute: CommandExecute = async (
+export const execute: ClientCommand['execute'] = async (
     interaction: CommandInteraction,
     { userData },
 ): Promise<void> => {

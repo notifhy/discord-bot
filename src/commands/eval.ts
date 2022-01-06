@@ -1,7 +1,4 @@
-import type {
-    CommandExecute,
-    CommandProperties,
-} from '../@types/client';
+import type { ClientCommand } from '../@types/client';
 import { BetterEmbed } from '../util/utility';
 import {
     CommandInteraction,
@@ -10,7 +7,7 @@ import {
 import { Log } from '../util/Log';
 import Constants from '../util/Constants';
 
-export const properties: CommandProperties = {
+export const properties: ClientCommand['properties'] = {
     name: 'eval',
     description: 'Evaluates a string',
     usage: '/eval [string]',
@@ -32,7 +29,7 @@ export const properties: CommandProperties = {
     },
 };
 
-export const execute: CommandExecute = async (
+export const execute: ClientCommand['execute'] = async (
     interaction: CommandInteraction,
 ): Promise<void> => {
     const input = interaction.options.getString('string', true);

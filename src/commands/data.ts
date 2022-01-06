@@ -1,7 +1,4 @@
-import type {
-    CommandExecute,
-    CommandProperties,
-} from '../@types/client';
+import type { ClientCommand } from '../@types/client';
 import type {
     FriendsModule,
     RewardsModule,
@@ -29,7 +26,7 @@ import { SQLite } from '../util/SQLite';
 import CommandErrorHandler from '../util/errors/handlers/CommandErrorHandler';
 import Constants from '../util/Constants';
 
-export const properties: CommandProperties = {
+export const properties: ClientCommand['properties'] = {
     name: 'data',
     description: 'View and/or delete all data stored or used by this bot',
     usage: '/data [delete/view]',
@@ -43,22 +40,22 @@ export const properties: CommandProperties = {
         options: [
             {
                 name: 'delete',
-                type: '1',
+                type: 1,
                 description: 'Delete all of your data - there is a confirmation step to prevent accidents',
             },
             {
                 name: 'view',
                 description: 'View some or all of your data',
-                type: '2',
+                type: 2,
                 options: [
                     {
                         name: 'all',
-                        type: '1',
+                        type: 1,
                         description: 'Returns a file with all of your data',
                     },
                     {
                         name: 'history',
-                        type: '1',
+                        type: 1,
                         description:
                             'Returns an interface that shows your player history',
                     },
@@ -68,7 +65,7 @@ export const properties: CommandProperties = {
     },
 };
 
-export const execute: CommandExecute = async (
+export const execute: ClientCommand['execute'] = async (
     interaction: CommandInteraction,
     { userData },
 ): Promise<void> => {
@@ -242,21 +239,21 @@ export const execute: CommandExecute = async (
 
         const fastLeftButton = new MessageButton(base)
             .setCustomId('fastBackward')
-            .setLabel('<<')
+            .setEmoji(Constants.emoji.fastBackward)
             .setDisabled(true);
 
         const leftButton = new MessageButton(base)
             .setCustomId('backward')
-            .setLabel('<')
+            .setEmoji(Constants.emoji.backward)
             .setDisabled(true);
 
         const rightButton = new MessageButton(base)
             .setCustomId('forward')
-            .setLabel('>');
+            .setEmoji(Constants.emoji.forward);
 
         const fastRightButton = new MessageButton(base)
             .setCustomId('fastForward')
-            .setLabel('>>');
+            .setEmoji(Constants.emoji.fastForward);
 
         rightButton.disabled =
             userAPIData.history.length <= Constants.defaults.menuFastIncrements;

@@ -1,6 +1,5 @@
 import type {
-    CommandExecute,
-    CommandProperties,
+    ClientCommand,
     Config,
 } from '../@types/client';
 import { BetterEmbed } from '../util/utility';
@@ -12,7 +11,7 @@ import { Log } from '../util/Log';
 import { SQLite } from '../util/SQLite';
 import Constants from '../util/Constants';
 
-export const properties: CommandProperties = {
+export const properties: ClientCommand['properties'] = {
     name: 'config',
     description: 'Configure the bot',
     usage: '/config [api/blockguild/blockuser/devmode]',
@@ -26,17 +25,17 @@ export const properties: CommandProperties = {
         options: [
             {
                 name: 'api',
-                type: '1',
+                type: 1,
                 description: 'Toggle API commands and functions',
             },
             {
                 name: 'blockguild',
                 description: 'Blacklists the bot from joining specific guilds',
-                type: '1',
+                type: 1,
                 options: [
                     {
                         name: 'guild',
-                        type: '3',
+                        type: 3,
                         description: "The guild's ID",
                         required: true,
                     },
@@ -45,11 +44,11 @@ export const properties: CommandProperties = {
             {
                 name: 'blockuser',
                 description: 'Blacklists users from using this bot',
-                type: '1',
+                type: 1,
                 options: [
                     {
                         name: 'user',
-                        type: '3',
+                        type: 3,
                         description: "The user's ID",
                         required: true,
                     },
@@ -57,14 +56,14 @@ export const properties: CommandProperties = {
             },
             {
                 name: 'devmode',
-                type: '1',
+                type: 1,
                 description: 'Toggle Developer Mode',
             },
         ],
     },
 };
 
-export const execute: CommandExecute = async (
+export const execute: ClientCommand['execute'] = async (
     interaction: CommandInteraction,
 ): Promise<void> => {
     const config = await SQLite.queryGet<Config>({

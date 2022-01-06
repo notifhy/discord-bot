@@ -1,13 +1,10 @@
-import type {
-    CommandExecute,
-    CommandProperties,
-} from '../@types/client';
+import type { ClientCommand } from '../@types/client';
 import { BetterEmbed } from '../util/utility';
 import { CommandInteraction } from 'discord.js';
 import { Log } from '../util/Log';
 import Constants from '../util/Constants';
 
-export const properties: CommandProperties = {
+export const properties: ClientCommand['properties'] = {
     name: 'botstatus',
     description: 'Set a custom status',
     usage: '/botstatus [set/clear] <string>',
@@ -21,17 +18,17 @@ export const properties: CommandProperties = {
         options: [
             {
                 name: 'clear',
-                type: '1',
+                type: 1,
                 description: 'Clear the custom status',
             },
             {
                 name: 'set',
                 description: 'Set a custom status',
-                type: '1',
+                type: 1,
                 options: [
                     {
                         name: 'string',
-                        type: '3',
+                        type: 3,
                         description: 'The status to display',
                         required: false,
                     },
@@ -41,7 +38,7 @@ export const properties: CommandProperties = {
     },
 };
 
-export const execute: CommandExecute = async (
+export const execute: ClientCommand['execute'] = async (
     interaction: CommandInteraction,
 ): Promise<void> => {
     const responseEmbed = new BetterEmbed(interaction)

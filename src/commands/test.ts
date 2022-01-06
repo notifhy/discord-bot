@@ -1,10 +1,7 @@
-import type {
-    CommandExecute,
-    CommandProperties,
-} from '../@types/client';
+import type { ClientCommand } from '../@types/client';
 import { CommandInteraction } from 'discord.js';
 
-export const properties: CommandProperties = {
+export const properties: ClientCommand['properties'] = {
     name: 'test',
     description: 'Does stuff',
     usage: '/test',
@@ -18,17 +15,17 @@ export const properties: CommandProperties = {
         options: [
             {
                 name: 'delete',
-                type: '2',
+                type: 2,
                 description: 'Delete all of your data',
                 options: [
                     {
                         name: 'view',
                         description: 'Returns a file with all of your data',
-                        type: '1',
+                        type: 1,
                         options: [
                             {
                                 name: 'command',
-                                type: '3',
+                                type: 3,
                                 description:
                                     'A command to get info about. This parameter is completely optional',
                                 required: false,
@@ -41,7 +38,7 @@ export const properties: CommandProperties = {
     },
 };
 
-export const execute: CommandExecute = async (
+export const execute: ClientCommand['execute'] = async (
     interaction: CommandInteraction,
 ): Promise<void> => {
     throw new SyntaxError('hello hello hello hello');
