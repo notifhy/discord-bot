@@ -51,5 +51,5 @@ export function deepMerge<
         }
     }
 
-    return target;
+    return target as Target & Value;
 }
