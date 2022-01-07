@@ -71,8 +71,8 @@ export const execute = async ({
             const login = {
                 name: locale.login.name,
                 value: replace(locale.login.value, {
-                    relative: relative,
-                    time: time,
+                    relative: relative!,
+                    time: time!,
                 }),
             };
 
@@ -99,8 +99,8 @@ export const execute = async ({
                 const logout = {
                     name: locale.logout.name,
                     value: replace(locale.logout.value, {
-                        relative: relative,
-                        time: time,
+                        relative: relative!,
+                        time: time!,
                     }),
                 };
 

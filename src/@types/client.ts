@@ -42,7 +42,6 @@ export interface ClientCommand {
         noDM: boolean;
         ownerOnly: boolean;
         structure: ApplicationCommandData;
-        usage: string;
     };
     execute: {
         (

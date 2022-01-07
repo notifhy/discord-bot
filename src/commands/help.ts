@@ -7,7 +7,6 @@ import Constants from '../util/Constants';
 export const properties: ClientCommand['properties'] = {
     name: 'help',
     description: 'Displays helpful information and available commands',
-    usage: '/help [commands/information] <command>',
     cooldown: 5_000,
     ephemeral: true,
     noDM: false,
@@ -99,13 +98,6 @@ export const execute: ClientCommand['execute'] = async (
         }
 
         commandSearchEmbed.addField(
-            locale.specific.usage.name,
-            replace(locale.specific.usage.value, {
-                commandUsage: command.properties.usage,
-            }),
-        );
-
-        commandSearchEmbed.addField(
             locale.specific.cooldown.name,
             replace(locale.specific.cooldown.value, {
                 commandCooldown: command.properties.cooldown / Constants.ms.second,
@@ -135,13 +127,12 @@ export const execute: ClientCommand['execute'] = async (
         );
         const allCommandsEmbed = new BetterEmbed(interaction)
             .setColor(Constants.colors.normal)
-            .setTitle(locale.all.title)
-            .setDescription(locale.all.description);
+            .setTitle(locale.all.title);
 
         for (const command of commandsCollection.values()) {
             allCommandsEmbed.addField(
                 replace(locale.all.field.name, {
-                    commandUsage: command.properties.usage,
+                    commandName: command.properties.name,
                 }),
                 replace(locale.all.field.value, {
                     commandDescription: command.properties.description,

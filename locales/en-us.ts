@@ -34,9 +34,8 @@ export default {
             },
             all: {
                 title: 'Commands',
-                description: 'Arguments in brackets are required. Arguments in arrows are sometimes required based on the previous argument. You can use the command /help [command] [a command] to see more about a specific command.',
                 field: {
-                    name: '**%{commandUsage}%**',
+                    name: '**/%{commandName}%**',
                     value: '%{commandDescription}%',
                 },
             },
@@ -47,10 +46,6 @@ export default {
                 },
                 title: '/%{command}%',
                 description: '%{commandDescription}%',
-                usage: {
-                    name: 'Usage',
-                    value: '%{commandUsage}%',
-                },
                 cooldown: {
                     name: 'Command Cooldown',
                     value: '%{commandCooldown}% second(s)',
@@ -217,26 +212,6 @@ export default {
                             disabled: false,
                             options: [
                                 {
-                                    label: 'English (English)',
-                                    value: 'ENGLISH',
-                                },
-                                {
-                                    label: 'Deutsch (German)',
-                                    value: 'German',
-                                },
-                                {
-                                    label: 'Français (French)',
-                                    value: 'FRENCH',
-                                },
-                                {
-                                    label: 'Nederlands (Dutch)',
-                                    value: 'DUTCH',
-                                },
-                                {
-                                    label: 'Español (Spanish)',
-                                    value: 'SPANISH',
-                                },
-                                {
                                     label: '简体中文 (Chinese Simplified)',
                                     value: 'CHINESE_SIMPLIFIED',
                                 },
@@ -245,35 +220,67 @@ export default {
                                     value: 'CHINESE_TRADITIONAL',
                                 },
                                 {
-                                    label: 'Русский (Russian)',
-                                    value: 'RUSSIAN',
+                                    label: 'Čeština (Czech)',
+                                    value: 'CZECH',
                                 },
                                 {
-                                    label: '日本語 (Japanese)',
-                                    value: 'JAPANESE',
+                                    label: 'Nederlands (Dutch)',
+                                    value: 'DUTCH',
                                 },
                                 {
-                                    label: 'Português (Portuguese Brasil)',
-                                    value: 'PORTUGUESE_BR',
-                                },
-                                {
-                                    label: 'Italiano (Italian)',
-                                    value: 'ITALIAN',
+                                    label: 'English (English)',
+                                    value: 'ENGLISH',
                                 },
                                 {
                                     label: 'Pirate (English)',
                                     value: 'PIRATE',
                                 },
                                 {
-                                    label: 'Português (Portuguese Portugal)',
-                                    value: 'PORTUGUESE',
+                                    label: 'Suomi (Finnish)',
+                                    value: 'FINNISH',
+                                },
+                                {
+                                    label: 'Français (French)',
+                                    value: 'FRENCH',
+                                },
+                                {
+                                    label: 'Deutsch (German)',
+                                    value: 'German',
+                                },
+                                {
+                                    label: 'Ελληνική (Greek)',
+                                    value: 'TURKISH',
+                                },
+                                {
+                                    label: 'Italiano (Italian)',
+                                    value: 'ITALIAN',
+                                },
+                                {
+                                    label: '日本語 (Japanese)',
+                                    value: 'JAPANESE',
                                 },
                                 {
                                     label: '한국어 (Korean)',
                                     value: 'KOREAN',
                                 },
                                 {
-                                    label: 'Ελληνική (Greek)',
+                                    label: 'Português (Portuguese Brasil)',
+                                    value: 'PORTUGUESE_BR',
+                                },
+                                {
+                                    label: 'Português (Portuguese Portugal)',
+                                    value: 'PORTUGUESE',
+                                },
+                                {
+                                    label: 'Русский (Russian)',
+                                    value: 'RUSSIAN',
+                                },
+                                {
+                                    label: 'Español (Spanish)',
+                                    value: 'SPANISH',
+                                },
+                                {
+                                    label: 'Türkçe (Turkish)',
                                     value: 'GREEK',
                                 },
                             ],
@@ -558,6 +565,60 @@ export default {
             embed2: {
                 title: '🏓 Ping!',
                 description: 'Websocket heartbeat is %{wsPing}%ms. Roundtrip latency is %{rtPing}%ms.',
+            },
+        },
+        player: {
+            invalid: {
+                title: 'Invalid Input',
+                description: 'The username/UUID provided is invalid! The username cannot contain invalid characters. UUIDs must match the following regex: `/^[0-9a-f]{8}[0-9a-f]{4}[1-5][0-9a-f]{3}[89AB][0-9a-f]{3}[0-9a-f]{12}$/i`. You can test this regex with [__this__](https://regex101.com/r/A866mm/1) site.',
+            },
+            notFound: {
+                title: 'Not Found',
+                description: "That %{inputType}% doesn't seem to be valid. Check to see if you spelt it wrong.",
+            },
+            unknown: 'Unknown',
+            status: {
+                online: 'online',
+                offline: 'offline',
+                embed: {
+                    title: 'Status',
+                    description: '%{username}% is %{status}%',
+                    field1: {
+                        name: 'Identity',
+                        value: 'UUID: %{uuid}%\nTwitter: %{TWITTER}%\nInstagram: %{INSTAGRAM}%\nTwitch: %{TWITCH}%\nDiscord: %{DISCORD}%\nHypixel: %{HYPIXEL}%',
+                    },
+                    field2: {
+                        name: 'Last Login & Logout',
+                        value: 'Last Login: %{lastLogin}%\nLast Logout: %{lastLogout}%',
+                    },
+                    field3: {
+                        name: 'Settings',
+                        value: 'Language: %{language}%\nVersion: %{version}%',
+                    },
+                    onlineField: {
+                        name: 'Session',
+                        value: 'Playtime: %{playTime}%\nGame Type: %{gameType}%\nGame Mode: %{gameMode}%\nGame Map: %{gameMap}%',
+                    },
+                    offlineField: {
+                        name: 'Last Session',
+                        value: 'Last Playtime: %{playTime}%\nLast Game Type: %{gameType}%',
+                    },
+                },
+            },
+            recentGames: {
+                playTime: 'Play Time: ',
+                elapsed: 'Elapsed: ',
+                gameMode: 'Mode: ',
+                gameMap: 'Map: ',
+                inProgress: 'In Progress',
+                embed: {
+                    title: 'Recent Games - %{username}%',
+                    description: '• Showing %{start}% to %{end}% out of %{total}%\n• Saves up to 100 events\n• Saves events for up to 3 days',
+                    field: {
+                        name: '%{gameType}% | %{date}%',
+                        value: 'Game Start: %{start}%\nGame End: %{end}%\n%{playTime}%%{mode}%%{map}%',
+                    },
+                },
             },
         },
         register: {

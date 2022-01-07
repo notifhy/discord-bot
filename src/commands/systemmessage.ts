@@ -22,7 +22,6 @@ import Constants from '../util/Constants';
 export const properties: ClientCommand['properties'] = {
     name: 'systemmessage',
     description: 'Adds a message to a user\'s system messages',
-    usage: '/systemmessage',
     cooldown: 0,
     ephemeral: true,
     noDM: false,

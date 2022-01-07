@@ -7,7 +7,6 @@ import Constants from '../util/Constants';
 export const properties: ClientCommand['properties'] = {
     name: 'botstatus',
     description: 'Set a custom status',
-    usage: '/botstatus [set/clear] <string>',
     cooldown: 0,
     ephemeral: true,
     noDM: false,

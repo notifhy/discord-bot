@@ -99,9 +99,8 @@ export function camelToNormal(input: string) {
 export function cleanDate(ms: number | Date): string | null {
     const newDate = new Date(ms);
     if (
-        !ms ||
         ms < 0 ||
-        Object.prototype.toString.call(newDate) !== '[object Date]'
+        !isDate(newDate)
     ) {
         return null;
     }
@@ -118,7 +117,7 @@ export function cleanLength(
     ms: number | null,
     rejectZero?: boolean,
 ): string | null {
-    if (ms === null || isNaN(ms)) {
+    if (!isNumber(ms)) {
         return null;
     }
 
@@ -192,9 +191,8 @@ export function formattedUnix({
 }): string | null {
     const newDate = new Date(ms);
     if (
-        !ms ||
         ms < 0 ||
-        Object.prototype.toString.call(newDate) !== '[object Date]'
+        !isDate(newDate)
     ) {
         return null;
     }
@@ -336,13 +334,32 @@ export const slashCommandResolver = (interaction: CommandInteraction) => {
     return commandOptions.join(' ');
 };
 
-export function timeAgo(ms: number): number | null {
-    if (ms < 0 || ms === null || isNaN(ms)) {
+export function timeAgo(ms: unknown): number | null {
+    if (
+        !isNumber(ms) ||
+        ms < 0
+    ) {
         return null;
     }
+
     return Date.now() - ms;
 }
 
-export function timestamp(ms: number, style?: typeof Formatters.TimestampStylesString) {
+export function timestamp(ms: unknown, style?: typeof Formatters.TimestampStylesString) {
+    if (
+        !isNumber(ms) ||
+        ms < 0
+    ) {
+        return null;
+    }
+
     return Formatters.time(Math.round(ms / 1000), style ?? 'f');
+}
+
+function isDate(value: unknown): value is Date {
+    return Object.prototype.toString.call(value) === '[object Date]';
+}
+
+function isNumber(value: unknown): value is number {
+    return typeof value === 'number';
 }

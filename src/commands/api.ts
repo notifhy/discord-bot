@@ -14,7 +14,6 @@ import Constants from '../util/Constants';
 export const properties: ClientCommand['properties'] = {
     name: 'api',
     description: 'Configure the bot',
-    usage: '/api [instance/toggle] <stats/>',
     cooldown: 0,
     ephemeral: true,
     noDM: false,

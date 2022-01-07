@@ -11,7 +11,6 @@ import Constants from '../util/Constants';
 export const properties: ClientCommand['properties'] = {
     name: 'reload',
     description: 'Reloads all imports or a single import',
-    usage: '/reload [all/single] <type>',
     cooldown: 0,
     ephemeral: true,
     noDM: false,

@@ -98,6 +98,7 @@ export default {
     urls: {
         linkDiscord: 'https://i.imgur.com/gGKd2s8.gif',
         hypixel: 'https://api.hypixel.net/',
+        playerDB: 'https://playerdb.co/api/player/minecraft/',
         slothpixel: 'https://api.slothpixel.me/api/',
     },
 };

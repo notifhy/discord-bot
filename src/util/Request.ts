@@ -10,16 +10,13 @@ export class Request {
     readonly abortThreshold: number;
     readonly maxAborts: number;
 
-    constructor({
-        maxAborts,
-        abortThreshold,
-    }: {
+    constructor(config?: {
         maxAborts?: number;
         abortThreshold?: number;
     }) {
         this.aborts = 0;
-        this.abortThreshold = abortThreshold ?? 2500;
-        this.maxAborts = maxAborts ?? 1;
+        this.abortThreshold = config?.abortThreshold ?? 2500;
+        this.maxAborts = config?.maxAborts ?? 1;
     }
 
     request(url: string, fetchOptions?: RequestInit): Promise<Response> {

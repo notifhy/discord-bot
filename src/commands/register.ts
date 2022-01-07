@@ -1,5 +1,5 @@
 import type { ClientCommand } from '../@types/client';
-import type { Slothpixel } from '../@types/hypixel';
+import type { SlothpixelPlayer } from '../@types/hypixel';
 import { BetterEmbed } from '../util/utility';
 import { CommandInteraction } from 'discord.js';
 import {
@@ -18,7 +18,6 @@ import HTTPError from '../util/errors/HTTPError';
 export const properties: ClientCommand['properties'] = {
     name: 'register',
     description: 'Register and setup your profile',
-    usage: '/register [username/uuid]',
     cooldown: 15_000,
     ephemeral: true,
     noDM: false,
@@ -98,7 +97,7 @@ export const execute: ClientCommand['execute'] = async (
         language,
         rewards: { streak_current, streak_best, claimed_daily, claimed },
         links: { DISCORD },
-    } = (await response.json()) as Slothpixel;
+    } = (await response.json()) as SlothpixelPlayer;
 
     if (DISCORD === null) {
         const unlinkedEmbed = new BetterEmbed(interaction)

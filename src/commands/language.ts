@@ -10,7 +10,6 @@ import Constants from '../util/Constants';
 export const properties: ClientCommand['properties'] = {
     name: 'language',
     description: 'Set a language for this bot',
-    usage: '/language [language]',
     cooldown: 10_000,
     ephemeral: true,
     noDM: false,

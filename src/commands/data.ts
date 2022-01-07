@@ -29,9 +29,8 @@ import Constants from '../util/Constants';
 export const properties: ClientCommand['properties'] = {
     name: 'data',
     description: 'View and/or delete all data stored or used by this bot',
-    usage: '/data [delete/view]',
     cooldown: 30_000,
-    ephemeral: true, //Temporary, file preview fails with this on. MessageAttachment is also bugged, completely broken. Doesn't attach ID.
+    ephemeral: true, //File preview fails with ephemeral
     noDM: false,
     ownerOnly: false,
     structure: {
@@ -259,7 +258,7 @@ export const execute: ClientCommand['execute'] = async (
             userAPIData.history.length <= Constants.defaults.menuFastIncrements;
 
         fastRightButton.disabled =
-            userAPIData.history.length <= Constants.defaults.menuFastIncrements;
+            userAPIData.history.length <= Constants.defaults.menuIncrements;
 
         const epoch = /^\d{13,}$/gm;
 

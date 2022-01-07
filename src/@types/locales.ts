@@ -60,13 +60,13 @@ export interface Data {
 export interface Help {
     information: BaseEmbed;
     all: {
+        title: string;
         field: Field;
-    } & BaseEmbed;
+    };
     specific: {
         invalid: BaseEmbed;
         title: string;
         description: string;
-        usage: Field;
         cooldown: Field;
         dm: Field;
         owner: Field;
@@ -160,6 +160,33 @@ export interface Ping {
     embed2: BaseEmbed;
 }
 
+export interface Player {
+    invalid: BaseEmbed;
+    notFound: BaseEmbed;
+    unknown: string;
+    status: {
+        online: string;
+        offline: string;
+        embed: {
+            field1: Field;
+            field2: Field;
+            field3: Field;
+            onlineField: Field;
+            offlineField: Field;
+        } & BaseEmbed;
+    }
+    recentGames: {
+        playTime: string;
+        elapsed: string;
+        gameMode: string;
+        gameMap: string;
+        inProgress: string;
+        embed: {
+            field: Field;
+        } & BaseEmbed;
+    }
+}
+
 export interface Register {
     invalid: BaseEmbed;
     notFound: BaseEmbed;
@@ -188,6 +215,7 @@ export interface Commands {
     language: Language;
     modules: ModulesCommand;
     ping: Ping;
+    player: Player;
     register: Register;
     system: System;
 }

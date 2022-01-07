@@ -6,7 +6,6 @@ import Constants from '../util/Constants';
 export const properties: ClientCommand['properties'] = {
     name: 'performance',
     description: 'View system performance',
-    usage: '/system',
     cooldown: 0,
     ephemeral: true,
     noDM: false,

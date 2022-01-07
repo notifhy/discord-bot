@@ -15,7 +15,6 @@ import process from 'node:process';
 export const properties: ClientCommand['properties'] = {
     name: 'system',
     description: 'View system information to satiate the curious',
-    usage: '/system',
     cooldown: 10000,
     ephemeral: true,
     noDM: false,

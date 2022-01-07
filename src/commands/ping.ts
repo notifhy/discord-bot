@@ -12,7 +12,6 @@ import Constants from '../util/Constants';
 export const properties: ClientCommand['properties'] = {
     name: 'ping',
     description: 'Returns the ping of the bot',
-    usage: '/ping',
     cooldown: 5_000,
     ephemeral: true,
     noDM: false,

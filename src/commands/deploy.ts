@@ -14,7 +14,6 @@ import Constants from '../util/Constants';
 export const properties: ClientCommand['properties'] = {
     name: 'deploy',
     description: 'Deploy commands',
-    usage: '/deploy [global/local] [user/owner]',
     cooldown: 0,
     ephemeral: true,
     noDM: false,

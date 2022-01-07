@@ -4,7 +4,6 @@ import { CommandInteraction } from 'discord.js';
 export const properties: ClientCommand['properties'] = {
     name: 'test',
     description: 'Does stuff',
-    usage: '/test',
     cooldown: 0,
     ephemeral: true,
     noDM: false,

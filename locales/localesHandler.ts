@@ -19,8 +19,7 @@ export class RegionLocales {
             locale2 = 'en-us';
         }
 
-        const fetched: Locale = locales[locale2 as keyof Locales];
-        return fetched;
+        return locales[locale2 as keyof Locales];
     }
 
     static replace(input: string, parameters?: Parameters): string {

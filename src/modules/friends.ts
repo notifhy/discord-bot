@@ -170,8 +170,8 @@ export const execute = async ({
             })
             .setDescription(replace(locale.login.description, {
                 mention: Formatters.userMention(userAPIData.discordID),
-                relative: relative,
-                time: time,
+                relative: relative!,
+                time: time!,
             }));
 
             notifications.push(login);
@@ -186,8 +186,8 @@ export const execute = async ({
             })
             .setDescription(replace(locale.logout.description, {
                 mention: Formatters.userMention(userAPIData.discordID),
-                relative: relative,
-                time: time,
+                relative: relative!,
+                time: time!,
             }));
 
             //lastLogout seems to change twice sometimes on a single logout, this is a fix for that
