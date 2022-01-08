@@ -25,6 +25,21 @@ export default {
                     description: '• Showing %{start}% to %{end}% out of %{total}%\n• Saves up to %{max}% events',
                 },
                 null: 'None',
+                keys: {
+                    firstLogin: 'First Login: ',
+                    lastLogin: 'Last Login: ',
+                    lastLogout: 'Last Logout: ',
+                    version: 'Version: ',
+                    language: 'Language: ',
+                    lastClaimedReward: 'Last Claimed Reward: ',
+                    rewardScore: 'Daily Rewards Streak: ',
+                    rewardHighScore: 'Best Daily Reward Streak: ',
+                    totalDailyRewards: 'Total Daily Rewards: ',
+                    totalRewards: 'Total Rewards: ',
+                    gameType: 'Game Type: ',
+                    gameMode: 'Mode: ',
+                    gameMap: 'Map: ',
+                },
             },
         },
         help: {
@@ -264,7 +279,7 @@ export default {
                                     value: 'KOREAN',
                                 },
                                 {
-                                    label: 'Português (Portuguese Brasil)',
+                                    label: 'Português do Brasil (Portuguese Brasil)',
                                     value: 'PORTUGUESE_BR',
                                 },
                                 {
@@ -505,7 +520,7 @@ export default {
                         description: 'Set the timeout between pings',
                         longDescription: 'Set how long the bot should wait before pinging you again.',
                         value: 'notificationInterval',
-                        emoji: Constants.emoji.loop,
+                        emoji: Constants.emoji.interval,
                         select: {
                             customId: 'notificationInterval',
                             placeholder: 'Select a time',

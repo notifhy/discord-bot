@@ -10,7 +10,7 @@ export interface BaseUserData {
     discordID: string;
 }
 
-export interface History extends Partial<CleanHypixelPlayer> {
+export interface History extends Partial<CleanHypixelPlayer>, Partial<CleanHypixelStatus> {
     date: number;
 }
 

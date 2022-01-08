@@ -1,8 +1,8 @@
+import { Tables } from '../@types/database';
 import {
     ColorResolvable,
     Permissions,
 } from 'discord.js';
-import { Tables } from '../@types/database';
 
 export default {
     colors: {
@@ -14,37 +14,23 @@ export default {
         off: '#555555' as ColorResolvable,
     },
     defaults: {
-        friends: {
-            channel: null,
-        },
-        rewards: {
-            alertTime: null,
-            claimNotification: true,
-            lastNotified: 0,
-            milestones: true,
-            notificationInterval: 1_000 * 60 * 30,
-        },
-        users: {
-            language: 'en-us',
-            systemMessages: [],
-        },
         menuIncrements: 5,
         menuFastIncrements: 20,
     },
     emoji: {
-        alert: '<:alert:928112368704192533>',
+        alert: '<:alert:929126565240000513>',
         backward: '<:backward:928525709004111892>',
-        celebration: '<:celebration:924365718726795304>',
-        checkmark: '<:checkmark:924365737416601631>',
-        clock: '<:clock:922981726676992070>',
+        celebration: '<:celebration:929126553445613568>',
+        checkmark: '<:checkmark:929126538597765151>',
+        clock: '<:clock:929126524785922139>',
         forward: '<:forward:928525657829412864>',
         fastBackward: '<:fastBackward:928525727035441175>',
         fastForward: '<:fastForward:928525679509786665>',
-        gear: '<:gear:928110894041432098>',
-        hashtag: '<:channel:922980930379984956>',
-        loop: '<:interval:922980170124628018>',
-        power: '<:toggle:922945383104135228>',
-        speech: '<:speech:928110050130681876>',
+        gear: '<:gear:929126504791691265>',
+        hashtag: '<:hashtag:929126488194813973>',
+        interval: '<:interval:929126473724477500>',
+        power: '<:toggle:929126460134944858>',
+        speech: '<:speech:929126444704100382>',
     },
     limits: {
         embedDescription: 4096,

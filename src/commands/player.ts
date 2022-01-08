@@ -248,7 +248,9 @@ export const execute: ClientCommand['execute'] = async (
                     username: username,
                 }))
                 .setDescription(replace(locale.recentGames.embed.description, {
-                    start: position + 1,
+                    start: position >= shownData.length
+                        ? position
+                        : position + 1,
                     end: position + shownData.length,
                     total: recentGames.length,
                 }))

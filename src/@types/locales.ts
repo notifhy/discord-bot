@@ -54,6 +54,21 @@ export interface Data {
     history: {
         embed: BaseEmbed;
         null: string;
+        keys: {
+            firstLogin: string;
+            lastLogin: string;
+            lastLogout: string;
+            version: string;
+            language: string;
+            lastClaimedReward: string;
+            rewardScore: string;
+            rewardHighScore: string;
+            totalDailyRewards: string;
+            totalRewards: string;
+            gameType: string;
+            gameMode: string;
+            gameMap: string;
+        };
     };
 }
 

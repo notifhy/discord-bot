@@ -7,7 +7,7 @@ import type {
 import {
     awaitComponent,
     BetterEmbed,
-    camelToNormal,
+    capitolToNormal,
     disableComponents,
     timestamp,
 } from '../util/utility';
@@ -260,6 +260,7 @@ export const execute: ClientCommand['execute'] = async (
         fastRightButton.disabled =
             userAPIData.history.length <= Constants.defaults.menuIncrements;
 
+        const keys = locale.history.keys;
         const epoch = /^\d{13,}$/gm;
 
         const paginator = (position: number): BetterEmbed => {
@@ -274,9 +275,9 @@ export const execute: ClientCommand['execute'] = async (
                 value: Object.entries(event)
                     .map(
                         ([key, value]) =>
-                        (String(value).match(epoch)
-                            ? `${camelToNormal(key)}: ${timestamp(value, 'T')}` //Time values (logins, logouts etc)
-                            : `${camelToNormal(key)}: ${value ?? locale.history.null}`), //Anything else
+                        `${keys[key as keyof typeof keys]} ${String(value).match(epoch)
+                            ? timestamp(value, 'T')
+                            : capitolToNormal(value) ?? locale.history.null}`,
                     )
                     .join('\n'),
             }));
@@ -285,7 +286,9 @@ export const execute: ClientCommand['execute'] = async (
                 .setColor(Constants.colors.normal)
                 .setTitle(locale.history.embed.title)
                 .setDescription(replace(locale.history.embed.description, {
-                    start: position + 1,
+                    start: position >= userAPIData.history.length
+                        ? position
+                        : position + 1,
                     end: position + shownData.length,
                     total: userAPIData.history.length,
                     max: Constants.limits.userAPIDataHistory,

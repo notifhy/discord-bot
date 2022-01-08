@@ -37,7 +37,7 @@ export async function awaitComponent(
     } catch (error) {
         if (
             error instanceof Error &&
-            (error as Error &{ code: string })
+            (error as Error & { code: string })
                 ?.code === 'INTERACTION_COLLECTOR_ERROR'
         ) {
             return null;
@@ -49,15 +49,14 @@ export async function awaitComponent(
 
 type Footer =
     | {
-          name: string;
-          imageURL?: string;
-      }
+        name: string;
+        imageURL?: string;
+    }
     | CommandInteraction;
 
 export class BetterEmbed extends MessageEmbed {
     constructor(footer?: Footer) {
         super();
-        super.setTimestamp();
 
         if (footer instanceof CommandInteraction) {
             const interaction = footer;
@@ -88,12 +87,34 @@ export class BetterEmbed extends MessageEmbed {
     }
 }
 
-//Modified from https://stackoverflow.com/a/4149671
-export function camelToNormal(input: string) {
-    return input
-        .split(/(?=[A-Z])/)
-        .map(section => section.charAt(0).toUpperCase() + section.slice(1))
-        .join(' ');
+export function capitolToNormal(item: string | null) {
+    function containsLowerCase(string: string): boolean {
+        let lowerCase = false;
+
+        for (let i = 0; i < string.length; i += 1) {
+            const character = string.charAt(i);
+            if (character === character.toLowerCase()) {
+                lowerCase = true;
+                break;
+            }
+        }
+
+        return lowerCase;
+    }
+
+    return typeof item === 'string'
+        ? item
+            .toLowerCase()
+            .split(' ')
+            .map(value => {
+                if (containsLowerCase(value)) {
+                    return value.charAt(0).toUpperCase() + value.slice(1);
+                }
+
+                return value;
+            })
+            .join(' ')
+        : item;
 }
 
 export function cleanDate(ms: number | Date): string | null {
@@ -137,10 +158,10 @@ export function cleanLength(
     return days > 0
         ? `${days}d ${hours}h ${minutes}m ${seconds}s`
         : hours > 0
-        ? `${hours}h ${minutes}m ${seconds}s`
-        : minutes > 0
-        ? `${minutes}m ${seconds}s`
-        : `${seconds}s`;
+            ? `${hours}h ${minutes}m ${seconds}s`
+            : minutes > 0
+                ? `${minutes}m ${seconds}s`
+                : `${seconds}s`;
 }
 
 export function cleanRound(number: number, decimals?: number) {
@@ -197,11 +218,9 @@ export function formattedUnix({
         return null;
     }
 
-    return `${
-        utc === true ? `UTC${createOffset()} ` : ''
-    }${newDate.toLocaleTimeString('en-IN', { hour12: true })}${
-        date === true ? `, ${cleanDate(ms)}` : ''
-    }`;
+    return `${utc === true ? `UTC${createOffset()} ` : ''
+        }${newDate.toLocaleTimeString('en-IN', { hour12: true })}${date === true ? `, ${cleanDate(ms)}` : ''
+        }`;
 }
 
 export function disableComponents(messageActionRows: MessageActionRow[]) {
