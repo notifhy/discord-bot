@@ -12,8 +12,8 @@ import {
     TextBasedChannel,
     WebhookClient,
 } from 'discord.js';
-import Constants from './Constants';
 import { Log } from './Log';
+import Constants from './Constants';
 
 export function arrayRemove(array: unknown[], item: unknown) {
     array.splice(
@@ -104,6 +104,7 @@ export function capitolToNormal(item: string | null) {
 
     return typeof item === 'string'
         ? item
+            .replaceAll('_', ' ')
             .toLowerCase()
             .split(' ')
             .map(value => {
@@ -132,6 +133,21 @@ export function cleanDate(ms: number | Date): string | null {
         ),
         year = newDate.getFullYear();
     return `${month} ${day}, ${year}`;
+}
+
+export function cleanGameMode(mode: string | null) {
+    if (mode === null) {
+        return null;
+    }
+
+    if (mode === 'LOBBY') {
+        return 'Lobby';
+    }
+
+    const gameMode = Constants.games.find(({ key }) =>
+        (Array.isArray(key) ? key.includes(mode) : key === mode));
+
+    return gameMode?.name ?? mode;
 }
 
 export function cleanLength(

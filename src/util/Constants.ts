@@ -3,6 +3,12 @@ import {
     ColorResolvable,
     Permissions,
 } from 'discord.js';
+import games from '../../assets/games.json';
+
+/**
+ * Hypixel Mode translations courtesy of the Slothpixel project (with some modifications)
+ * https://github.com/slothpixel/hypixelconstants
+ */
 
 export default {
     colors: {
@@ -32,11 +38,12 @@ export default {
         power: '<:toggle:929126460134944858>',
         speech: '<:speech:929126444704100382>',
     },
+    games: games,
     limits: {
         embedDescription: 4096,
         embedField: 1024,
         performanceHistory: 50,
-        userAPIDataHistory: 500,
+        userAPIDataHistory: 1000,
     },
     modules: {
         defender: {

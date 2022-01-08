@@ -8,6 +8,7 @@ import {
     awaitComponent,
     BetterEmbed,
     capitolToNormal,
+    cleanGameMode,
     disableComponents,
     timestamp,
 } from '../util/utility';
@@ -275,9 +276,13 @@ export const execute: ClientCommand['execute'] = async (
                 value: Object.entries(event)
                     .map(
                         ([key, value]) =>
-                        `${keys[key as keyof typeof keys]} ${String(value).match(epoch)
-                            ? timestamp(value, 'T')
-                            : capitolToNormal(value) ?? locale.history.null}`,
+                            `${keys[key as keyof typeof keys]} ${String(value).match(epoch)
+                                ? timestamp(value, 'T')
+                                : (
+                                    key === 'gameMode'
+                                        ? cleanGameMode(value) ?? locale.history.null
+                                        : capitolToNormal(value) ?? locale.history.null
+                                )}`,
                     )
                     .join('\n'),
             }));
