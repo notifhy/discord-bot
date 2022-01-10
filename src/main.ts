@@ -12,6 +12,7 @@ import {
     Sweepers,
 } from 'discord.js';
 import { discordAPIkey } from '../config.json';
+import { Log } from './util/Log';
 import { RequestManager } from './hypixelAPI/RequestManager';
 import { SQLite } from './util/SQLite';
 import ErrorHandler from './util/errors/handlers/ErrorHandler';
@@ -19,17 +20,17 @@ import fs from 'node:fs/promises';
 import process from 'node:process';
 
 process.on('exit', code => {
-    console.warn(`Exiting with code ${code}`);
+    Log.log(`Exiting with code ${code}`);
 });
 
 process.on('unhandledRejection', async error => {
-    console.error('unhandledRejection', error);
+    Log.error('unhandledRejection', error);
     await new ErrorHandler(error).systemNotify();
     process.exit(0);
 });
 
 process.on('uncaughtException', async error => {
-    console.error('uncaughtException', error);
+    Log.error('uncaughtException', error);
     await new ErrorHandler(error).systemNotify();
     process.exit(0);
 });

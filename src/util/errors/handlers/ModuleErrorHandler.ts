@@ -122,6 +122,11 @@ export default class ModuleErrorHandler extends BaseErrorHandler {
                         value: replace(locale[50007].value, cleanModule),
                     };
                     break;
+                    case DiscordConstants.APIErrors.MISSING_PERMISSIONS: message = { //Missing permission(s)
+                        name: replace(locale[50013].name, cleanModule),
+                        value: replace(locale[50013].value, cleanModule),
+                    };
+                    break;
                     //No default
                 }
 

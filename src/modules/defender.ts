@@ -1,5 +1,5 @@
 import type { DefenderModule, UserAPIData, UserData } from '../@types/database';
-import { arrayRemove, BetterEmbed, timestamp } from '../util/utility';
+import { arrayRemove, BetterEmbed, cleanGameType, timestamp } from '../util/utility';
 import { ColorResolvable, EmbedFieldData, Formatters, TextChannel } from 'discord.js';
 import { Log } from '../util/Log';
 import { RegionLocales } from '../../locales/localesHandler';
@@ -34,6 +34,7 @@ export const execute = async ({
                 columns: [
                     'alerts',
                     'channel',
+                    'gameTypes',
                     'languages',
                     'versions',
                 ],
@@ -58,7 +59,7 @@ export const execute = async ({
         const { replace } = RegionLocales;
 
         const fields: EmbedFieldData[] = [];
-        let threat: ColorResolvable = Constants.colors.normal;
+        let color: ColorResolvable = Constants.colors.normal;
 
         if (
             differences.primary.lastLogin &&
@@ -78,7 +79,7 @@ export const execute = async ({
 
             fields.push(login);
 
-            threat = Constants.colors.on;
+            color = Constants.colors.on;
         }
 
         if (
@@ -109,10 +110,10 @@ export const execute = async ({
                     (differences.primary.lastLogin ?? 0)
                 ) {
                     fields.unshift(logout);
-                    threat = Constants.colors.off;
+                    color = Constants.colors.off;
                 } else {
                     fields.push(logout);
-                    threat = Constants.colors.on;
+                    color = Constants.colors.on;
                 }
             }
         }
@@ -135,7 +136,37 @@ export const execute = async ({
             };
 
             fields.push(version);
-            threat = Constants.colors.ok;
+            color = Constants.colors.ok;
+        }
+
+        if (
+            defenderModule.alerts.gameType === true &&
+            (
+                (
+                    differences.primary.gameType &&
+                    defenderModule.gameTypes.includes(differences.primary.gameType)
+                ) ||
+                (
+                    differences.secondary.gameType &&
+                    defenderModule.gameTypes.includes(differences.secondary.gameType)
+                )
+            )
+        ) {
+            const language = {
+                name: locale.gameType.name,
+                value: replace(locale.gameType.value, {
+                    sGameType:
+                        cleanGameType(differences.secondary.gameType ?? null) ??
+                            locale.gameType.null,
+                    pGameType:
+                        cleanGameType(differences.primary.gameType ?? null) ??
+                            locale.gameType.null,
+                }),
+            };
+
+            fields.push(language);
+
+            color = Constants.colors.warning;
         }
 
         if (
@@ -153,7 +184,7 @@ export const execute = async ({
             };
 
             fields.push(language);
-            threat = Constants.colors.warning;
+            color = Constants.colors.warning;
         }
 
         if (fields.length === 0) {
@@ -175,7 +206,7 @@ export const execute = async ({
                 Log.error(userAPIData.discordID, `Defender Module: Missing ${missingPermissions.join(', ')}`);
 
                 const newModules =
-                    arrayRemove(userAPIData.modules, 'defender') as string[];
+                    arrayRemove(userAPIData.modules, 'defender');
 
                 await SQLite.updateUser<UserAPIData>({
                     discordID: userAPIData.discordID,
@@ -209,7 +240,7 @@ export const execute = async ({
         }
 
         const alertEmbed = new BetterEmbed()
-            .setColor(threat)
+            .setColor(color)
             .setTitle(locale.embed.title)
             .addFields(fields.reverse());
 

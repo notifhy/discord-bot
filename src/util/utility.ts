@@ -15,7 +15,7 @@ import {
 import { Log } from './Log';
 import Constants from './Constants';
 
-export function arrayRemove(array: unknown[], item: unknown) {
+export function arrayRemove<Type extends unknown[]>(array: Type, item: unknown) {
     array.splice(
         array.indexOf(item),
         1,
@@ -57,6 +57,7 @@ type Footer =
 export class BetterEmbed extends MessageEmbed {
     constructor(footer?: Footer) {
         super();
+        super.setTimestamp();
 
         if (footer instanceof CommandInteraction) {
             const interaction = footer;
@@ -144,10 +145,21 @@ export function cleanGameMode(mode: string | null) {
         return 'Lobby';
     }
 
-    const gameMode = Constants.games.find(({ key }) =>
+    const gameMode = Constants.clean.modes.find(({ key }) =>
         (Array.isArray(key) ? key.includes(mode) : key === mode));
 
     return gameMode?.name ?? mode;
+}
+
+export function cleanGameType(type: string | null) {
+    if (type === null) {
+        return null;
+    }
+
+    const gameType = Constants.clean.gameTypes.find(({ type_name: key }) =>
+        key === type);
+
+    return gameType?.clean_name ?? type;
 }
 
 export function cleanLength(

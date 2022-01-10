@@ -1,0 +1,118 @@
+[
+    {
+        "type_name": "QUAKECRAFT",
+        "clean_name": "Quake"
+    },
+    {
+        "type_name": "WALLS",
+        "clean_name": "Walls"
+    },
+    {
+        "type_name": "PAINTBALL",
+        "clean_name": "Paintball"
+    },
+    {
+        "type_name": "SURVIVAL_GAMES",
+        "clean_name": "Blitz Survival Games"
+    },
+    {
+        "type_name": "TNTGAMES",
+        "clean_name": "TNT Games"
+    },
+    {
+        "type_name": "VAMPIREZ",
+        "clean_name": "VampireZ"
+    },
+    {
+        "type_name": "WALLS3",
+        "clean_name": "Mega Walls"
+    },
+    {
+        "type_name": "ARCADE",
+        "clean_name": "Arcade"
+    },
+    {
+        "type_name": "ARENA",
+        "clean_name": "Arena"
+    },
+    {
+        "type_name": "UHC",
+        "clean_name": "UHC Champions"
+    },
+    {
+        "type_name": "MCGO",
+        "clean_name": "Cops and Crims"
+    },
+    {
+        "type_name": "BATTLEGROUND",
+        "clean_name": "Warlords"
+    },
+    {
+        "type_name": "SUPER_SMASH",
+        "clean_name": "Smash Heroes"
+    },
+    {
+        "type_name": "GINGERBREAD",
+        "clean_name": "Turbo Kart Racers"
+    },
+    {
+        "type_name": "HOUSING",
+        "clean_name": "Housing"
+    },
+    {
+        "type_name": "SKYWARS",
+        "clean_name": "SkyWars"
+    },
+    {
+        "type_name": "TRUE_COMBAT",
+        "clean_name": "Crazy Walls"
+    },
+    {
+        "type_name": "SPEED_UHC",
+        "clean_name": "Speed UHC"
+    },
+    {
+        "type_name": "SKYCLASH",
+        "clean_name": "SkyClash"
+    },
+    {
+        "type_name": "LEGACY",
+        "clean_name": "Classic Games"
+    },
+    {
+        "type_name": "PROTOTYPE",
+        "clean_name": "Prototype"
+    },
+    {
+        "type_name": "BEDWARS",
+        "clean_name": "Bed Wars"
+    },
+    {
+        "type_name": "MURDER_MYSTERY",
+        "clean_name": "Murder Mystery"
+    },
+    {
+        "type_name": "BUILD_BATTLE",
+        "clean_name": "Build Battle"
+    },
+    {
+        "type_name": "DUELS",
+        "clean_name": "Duels"
+    },
+    {
+        "type_name": "SKYBLOCK",
+        "clean_name": "SkyBlock"
+    },
+    {
+        "type_name": "PIT",
+        "clean_name": "Pit"
+    },
+    {
+        "type_name": "REPLAY",
+        "clean_name": "Replay"
+    },
+    {
+        "type_name": "SMP",
+        "clean_name": "SMP"
+    }
+]

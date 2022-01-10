@@ -3,14 +3,14 @@ import {
     ColorResolvable,
     Permissions,
 } from 'discord.js';
-import games from '../../assets/games.json';
-
-/**
- * Hypixel Mode translations courtesy of the Slothpixel project (with some modifications)
- * https://github.com/slothpixel/hypixelconstants
- */
+import gameTypes from '../../assets/gameTypes.json';
+import modes from '../../assets/modes.json';
 
 export default {
+    clean: {
+        gameTypes: gameTypes,
+        modes: modes,
+    },
     colors: {
         error: '#AA0000' as ColorResolvable,
         warning: '#FF5555' as ColorResolvable,
@@ -38,7 +38,6 @@ export default {
         power: '<:toggle:929126460134944858>',
         speech: '<:speech:929126444704100382>',
     },
-    games: games,
     limits: {
         embedDescription: 4096,
         embedField: 1024,
@@ -80,12 +79,57 @@ export default {
         friends: 'friends' as Tables,
         rewards: 'rewards' as Tables,
         create: {
-            api: 'CREATE TABLE IF NOT EXISTS "api" ("discordID" TEXT NOT NULL UNIQUE, "uuid" TEXT NOT NULL UNIQUE, "modules" TEXT NOT NULL DEFAULT \'[]\', "lastUpdated" INTEGER NOT NULL, "firstLogin" INTEGER, "lastLogin" INTEGER, "lastLogout" INTEGER, "version" TEXT, "language" TEXT NOT NULL, "gameType" TEXT, "gameMode" TEXT, "gameMap" TEXT, "lastClaimedReward" INTEGER, "rewardScore" INTEGER, "rewardHighScore" INTEGER, "totalDailyRewards" INTEGER, "totalRewards" INTEGER, "history" TEXT NOT NULL DEFAULT \'[]\')',
-            config: 'CREATE TABLE IF NOT EXISTS "config" ("blockedGuilds" TEXT NOT NULL DEFAULT \'[]\', "blockedUsers" TEXT NOT NULL DEFAULT \'[]\', "devMode" TEXT NOT NULL DEFAULT \'false\', "enabled" TEXT NOT NULL DEFAULT \'true\')',
-            defender: 'CREATE TABLE IF NOT EXISTS "defender" ("discordID" TEXT NOT NULL UNIQUE, "alerts" TEXT NOT NULL DEFAULT \'{"login": true,"logout":true,"version":true,"language":true}\', "channel" TEXT DEFAULT null, "versions" TEXT NOT NULL DEFAULT \'[]\', "languages" TEXT NOT NULL DEFAULT \'[]\')',
-            friends: 'CREATE TABLE IF NOT EXISTS "friends" ("discordID" TEXT NOT NULL UNIQUE, "channel" TEXT DEFAULT null )',
-            rewards: 'CREATE TABLE IF NOT EXISTS "rewards" ("discordID" TEXT NOT NULL UNIQUE, "alertTime" INTEGER DEFAULT null, "claimNotification" INTEGER NOT NULL DEFAULT \'true\', "lastNotified" INTEGER NOT NULL DEFAULT 0, "milestones" TEXT NOT NULL DEFAULT \'true\', "notificationInterval" INTEGER NOT NULL DEFAULT 1800000)',
-            users: 'CREATE TABLE IF NOT EXISTS "users" ("discordID" TEXT NOT NULL UNIQUE, "language" TEXT NOT NULL DEFAULT \'en-us\', "systemMessages" TEXT NOT NULL DEFAULT \'[]\')',
+            api: `CREATE TABLE IF NOT EXISTS "api" (
+                "discordID" TEXT NOT NULL UNIQUE,
+                "uuid" TEXT NOT NULL UNIQUE,
+                "modules" TEXT NOT NULL DEFAULT '[]',
+                "lastUpdated" INTEGER NOT NULL,
+                "firstLogin" INTEGER,
+                "lastLogin" INTEGER,
+                "lastLogout" INTEGER,
+                "version" TEXT,
+                "language" TEXT NOT NULL,
+                "gameType" TEXT,
+                "gameMode" TEXT,
+                "gameMap" TEXT,
+                "lastClaimedReward" INTEGER,
+                "rewardScore" INTEGER,
+                "rewardHighScore" INTEGER,
+                "totalDailyRewards" INTEGER,
+                "totalRewards" INTEGER,
+                "history" TEXT NOT NULL DEFAULT '[]'
+            )`,
+            config: `CREATE TABLE IF NOT EXISTS "config" (
+                "blockedGuilds" TEXT NOT NULL DEFAULT '[]',
+                "blockedUsers" TEXT NOT NULL DEFAULT '[]',
+                "devMode" TEXT NOT NULL DEFAULT 'false',
+                "enabled" TEXT NOT NULL DEFAULT 'true'
+            )`,
+            defender: `CREATE TABLE IF NOT EXISTS "defender" (
+                "discordID" TEXT NOT NULL UNIQUE,
+                "alerts" TEXT NOT NULL DEFAULT '{"login": true,"logout":true,"version":true,"gameTypes":true,"language":true}',
+                "gameTypes" TEXT NOT NULL DEFAULT '[]',
+                "channel" TEXT DEFAULT null,
+                "languages" TEXT NOT NULL DEFAULT '[]',
+                "versions" TEXT NOT NULL DEFAULT '[]'
+            )`,
+            friends: `CREATE TABLE IF NOT EXISTS "friends" (
+                "discordID" TEXT NOT NULL UNIQUE,
+                "channel" TEXT DEFAULT null
+            )`,
+            rewards: `CREATE TABLE IF NOT EXISTS "rewards" (
+                "discordID" TEXT NOT NULL UNIQUE,
+                "alertTime" INTEGER DEFAULT null,
+                "claimNotification" INTEGER NOT NULL DEFAULT 'true',
+                "lastNotified" INTEGER NOT NULL DEFAULT 0,
+                "milestones" TEXT NOT NULL DEFAULT 'true',
+                "notificationInterval" INTEGER NOT NULL DEFAULT 1800000
+            )`,
+            users: `CREATE TABLE IF NOT EXISTS "users" (
+                "discordID" TEXT NOT NULL UNIQUE,
+                "language" TEXT NOT NULL DEFAULT 'en-us',
+                "systemMessages" TEXT NOT NULL DEFAULT '[]'
+            )`,
         },
     },
     urls: {

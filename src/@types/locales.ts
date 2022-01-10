@@ -110,10 +110,16 @@ export interface ModulesCommand {
             alerts: {
                 select: MessageSelectMenuOptions
             } & ModuleData;
-            versions: {
+            channel: {
+                select: MessageSelectMenuOptions
+            } & ModuleData;
+            gameTypes: {
                 select: MessageSelectMenuOptions
             } & ModuleData;
             languages: {
+                select: MessageSelectMenuOptions
+            } & ModuleData;
+            versions: {
                 select: MessageSelectMenuOptions
             } & ModuleData;
         };
@@ -158,11 +164,11 @@ export interface ModulesCommand {
             claimNotification: {
                 button: Button;
             } & ModuleData;
-            notificationInterval: {
-                select: MessageSelectMenuOptions
-            } & ModuleData;
             milestones: {
                 button: Button;
+            } & ModuleData;
+            notificationInterval: {
+                select: MessageSelectMenuOptions
             } & ModuleData;
         };
     };
@@ -260,6 +266,7 @@ export interface ModuleErrors {
     10013: Field,
     50001: Field,
     50007: Field,
+    50013: Field,
 }
 
 export interface SystemMessages {
@@ -280,10 +287,13 @@ export interface Errors {
 Modules
 */
 export interface Defender {
+    gameType: {
+        null: string;
+    } & Field;
     login: Field;
     logout: Field;
-    version: Field;
     language: Field;
+    version: Field;
     embed: {
         title: string;
     };

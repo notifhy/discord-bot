@@ -31,7 +31,7 @@ export default {
                     lastLogout: 'Last Logout: ',
                     version: 'Version: ',
                     language: 'Language: ',
-                    lastClaimedReward: 'Last Claimed Reward: ',
+                    lastClaimedReward: 'Last Reward Claimed: ',
                     rewardScore: 'Daily Rewards Streak: ',
                     rewardHighScore: 'Best Daily Reward Streak: ',
                     totalDailyRewards: 'Total Daily Rewards: ',
@@ -86,7 +86,7 @@ export default {
         modules: {
             defender: {
                 title: 'Defender Module',
-                description: 'The replacement to HyGuard - get notified on logins, logouts, version changes, and more',
+                description: 'The replacement for HyGuard - get notified on logins, logouts, version changes, and more',
                 menuPlaceholder: 'Defender Module Settings',
                 missingConfigField: {
                     name: 'Missing Configuration',
@@ -116,7 +116,7 @@ export default {
                             customId: 'alerts',
                             placeholder: 'Select your alerts',
                             minValues: 0,
-                            maxValues: 4,
+                            maxValues: 5,
                             disabled: false,
                             options: [
                                 {
@@ -133,6 +133,11 @@ export default {
                                     label: 'Version',
                                     value: 'version',
                                     description: 'Toggle version alerts',
+                                },
+                                {
+                                    label: 'Game Type',
+                                    value: 'gameType',
+                                    description: 'Toggle game type alerts',
                                 },
                                 {
                                     label: 'Language',
@@ -161,54 +166,118 @@ export default {
                             ],
                         },
                     },
-                    versions: {
-                        label: 'Whitelisted Version(s)',
-                        description: 'Select whitelisted version(s) of Minecraft',
-                        longDescription: 'Select whitelisted version(s) of Minecraft. If the bot detects you switching to a whitelisted version, it will not alert or notify you. Select none to get a notification on every version change.',
-                        value: 'versions',
-                        emoji: Constants.emoji.gear,
+                    gameTypes: {
+                        label: 'Blacklisted Game Type(s)',
+                        description: 'Select blacklisted game type(s)',
+                        longDescription: 'Select blacklisted game type(s). If the bot detects your account playing these games, you will be notified.',
+                        value: 'gameTypes',
+                        emoji: Constants.emoji.speech,
                         select: {
-                            customId: 'versions',
+                            customId: 'gameTypes',
                             placeholder: 'None',
                             minValues: 0,
-                            maxValues: 9,
+                            maxValues: 25,
                             disabled: false,
                             options: [
                                 {
-                                    label: '1.8',
-                                    value: '1.8',
+                                    label: 'Arcade',
+                                    value: 'ARCADE',
                                 },
                                 {
-                                    label: '1.11',
-                                    value: '1.11',
+                                    label: 'Arena',
+                                    value: 'ARENA',
                                 },
                                 {
-                                    label: '1.12',
-                                    value: '1.12',
+                                    label: 'Bed Wars',
+                                    value: 'BEDWARS',
                                 },
                                 {
-                                    label: '1.13',
-                                    value: '1.13',
+                                    label: 'Blitz Survival Games',
+                                    value: 'SURVIVAL_GAMES',
                                 },
                                 {
-                                    label: '1.14',
-                                    value: '1.14',
+                                    label: 'Build Battle',
+                                    value: 'BUILD_BATTLE',
                                 },
                                 {
-                                    label: '1.15',
-                                    value: '1.15',
+                                    label: 'Cops and Crims',
+                                    value: 'MCGO',
                                 },
                                 {
-                                    label: '1.16',
-                                    value: '1.16',
+                                    label: 'Duels',
+                                    value: 'DUELS',
                                 },
                                 {
-                                    label: '1.17',
-                                    value: '1.17',
+                                    label: 'Housing',
+                                    value: 'HOUSING',
                                 },
                                 {
-                                    label: '1.18',
-                                    value: '1.18',
+                                    label: 'Mega Walls',
+                                    value: 'WALLS3',
+                                },
+                                {
+                                    label: 'Murder Mystery',
+                                    value: 'MURDER_MYSTERY',
+                                },
+                                {
+                                    label: 'Paintball',
+                                    value: 'PAINTBALL',
+                                },
+                                {
+                                    label: 'Pit',
+                                    value: 'PIT',
+                                },
+                                {
+                                    label: 'Prototype',
+                                    value: 'PROTOTYPE',
+                                },
+                                {
+                                    label: 'Quake',
+                                    value: 'QUAKECRAFT',
+                                },
+                                {
+                                    label: 'SkyBlock',
+                                    value: 'SKYBLOCK',
+                                },
+                                {
+                                    label: 'SkyWars',
+                                    value: 'SKYWARS',
+                                },
+                                {
+                                    label: 'Smash Heroes',
+                                    value: 'SUPER_SMASH',
+                                },
+                                {
+                                    label: 'SMP',
+                                    value: 'SMP',
+                                },
+                                {
+                                    label: 'Speed UHC',
+                                    value: 'SPEED_UHC',
+                                },
+                                {
+                                    label: 'Walls',
+                                    value: 'WALLS',
+                                },
+                                {
+                                    label: 'TNT Games',
+                                    value: 'TNTGAMES',
+                                },
+                                {
+                                    label: 'Turbo Kart Racers',
+                                    value: 'GINGERBREAD',
+                                },
+                                {
+                                    label: 'VampireZ',
+                                    value: 'VAMPIREZ',
+                                },
+                                {
+                                    label: 'UHC Champions',
+                                    value: 'UHC',
+                                },
+                                {
+                                    label: 'Warlords',
+                                    value: 'BATTLEGROUND',
                                 },
                             ],
                         },
@@ -297,6 +366,58 @@ export default {
                                 {
                                     label: 'Türkçe (Turkish)',
                                     value: 'GREEK',
+                                },
+                            ],
+                        },
+                    },
+                    versions: {
+                        label: 'Whitelisted Version(s)',
+                        description: 'Select whitelisted version(s) of Minecraft',
+                        longDescription: 'Select whitelisted version(s) of Minecraft. If the bot detects you switching to a whitelisted version, it will not alert or notify you. Select none to get a notification on every version change.',
+                        value: 'versions',
+                        emoji: Constants.emoji.gear,
+                        select: {
+                            customId: 'versions',
+                            placeholder: 'None',
+                            minValues: 0,
+                            maxValues: 9,
+                            disabled: false,
+                            options: [
+                                {
+                                    label: '1.8',
+                                    value: '1.8',
+                                },
+                                {
+                                    label: '1.11',
+                                    value: '1.11',
+                                },
+                                {
+                                    label: '1.12',
+                                    value: '1.12',
+                                },
+                                {
+                                    label: '1.13',
+                                    value: '1.13',
+                                },
+                                {
+                                    label: '1.14',
+                                    value: '1.14',
+                                },
+                                {
+                                    label: '1.15',
+                                    value: '1.15',
+                                },
+                                {
+                                    label: '1.16',
+                                    value: '1.16',
+                                },
+                                {
+                                    label: '1.17',
+                                    value: '1.17',
+                                },
+                                {
+                                    label: '1.18',
+                                    value: '1.18',
                                 },
                             ],
                         },
@@ -515,6 +636,19 @@ export default {
                             disableCustomID: 'claimNotification0',
                         },
                     },
+                    milestones: {
+                        label: 'Reward Milestones',
+                        description: 'Receive a congratulation on achieving streak milestones',
+                        longDescription: `Receive a DM congratulating you when you hit a daily streak listed in the following: ${Constants.modules.rewards.milestones.join(', ')}`,
+                        value: 'milestones',
+                        emoji: Constants.emoji.celebration,
+                        button: {
+                            enable: 'Enable',
+                            disable: 'Disable',
+                            enableCustomID: 'milestones1',
+                            disableCustomID: 'milestones0',
+                        },
+                    },
                     notificationInterval: {
                         label: 'Notification Interval',
                         description: 'Set the timeout between pings',
@@ -555,19 +689,6 @@ export default {
                                     value: '21600000',
                                 },
                             ],
-                        },
-                    },
-                    milestones: {
-                        label: 'Reward Milestones',
-                        description: 'Receive a congratulation on achieving streak milestones',
-                        longDescription: `Receive a DM congratulating you when you hit a daily streak listed in the following: ${Constants.modules.rewards.milestones.join(', ')}`,
-                        value: 'milestones',
-                        emoji: Constants.emoji.celebration,
-                        button: {
-                            enable: 'Enable',
-                            disable: 'Disable',
-                            enableCustomID: 'milestones1',
-                            disableCustomID: 'milestones0',
                         },
                     },
                 },
@@ -746,6 +867,10 @@ export default {
                 name: '%{cleanModule}% Module Disabled',
                 value: 'The %{cleanModule}% module was disabled because the bot was unable to DM you. Please check your privacy settings and enable direct messages. Then, reenable this module with /modules. [Code 50007](https://discord.com/developers/docs/topics/opcodes-and-status-codes#json "Opcodes and Status codes")',
             },
+            50013: {
+                name: '%{cleanModule}% Module Disabled',
+                value: 'The %{cleanModule}% module was disabled because the bot lacked permission(s) to perform an action. Discord does not specify the missing permission(s), so this is all we know. [Code 50013](https://discord.com/developers/docs/topics/opcodes-and-status-codes#json "Opcodes and Status codes")',
+            },
         },
         systemMessages: {
             embed: {
@@ -758,6 +883,11 @@ export default {
     },
     modules: {
         defender: {
+            gameType: {
+                name: 'Blacklisted Game Change Detected',
+                value: 'Your account changed games from %{sGameType}% to %{pGameType}%',
+                null: 'None',
+            },
             login: {
                 name: 'Login Detected',
                 value: 'Your account logged in %{relative}% at %{time}%',
@@ -766,13 +896,13 @@ export default {
                 name: 'Logout Detected',
                 value: 'Your account logged out %{relative}% at %{time}%',
             },
-            version: {
-                name: 'Version Change Detected',
-                value: 'Your version changed from %{sVersion}% to %{pVersion}%',
-            },
             language: {
                 name: 'Language Change Detected',
                 value: 'Your language changed from %{sLanguage}% to %{pLanguage}%',
+            },
+            version: {
+                name: 'Version Change Detected',
+                value: 'Your version changed from %{sVersion}% to %{pVersion}%',
             },
             embed: {
                 title: 'Alert',

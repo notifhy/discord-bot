@@ -9,6 +9,7 @@ import {
     BetterEmbed,
     capitolToNormal,
     cleanGameMode,
+    cleanGameType,
     disableComponents,
     timestamp,
 } from '../util/utility';
@@ -279,7 +280,9 @@ export const execute: ClientCommand['execute'] = async (
                             `${keys[key as keyof typeof keys]} ${String(value).match(epoch)
                                 ? timestamp(value, 'T')
                                 : (
-                                    key === 'gameMode'
+                                    key === 'gameType'
+                                        ? cleanGameType(value) ?? locale.history.null
+                                        : key === 'gameMode'
                                         ? cleanGameMode(value) ?? locale.history.null
                                         : capitolToNormal(value) ?? locale.history.null
                                 )}`,

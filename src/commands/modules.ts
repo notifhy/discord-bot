@@ -123,8 +123,9 @@ export const execute: ClientCommand['execute'] = async (
                 'discordID',
                 'alerts',
                 'channel',
-                'versions',
+                'gameTypes',
                 'languages',
+                'versions',
             ],
             allowUndefined: false,
         })
@@ -290,6 +291,52 @@ export const execute: ClientCommand['execute'] = async (
                 components.push(row);
                 break;
             }
+            case 'channel': {
+                const component = new MessageSelectMenu(
+                    (
+                        locale.menu as ModulesCommand['friends']['menu'] |
+                        ModulesCommand['defender']['menu']
+                    ).channel.select,
+                );
+                const row = new MessageActionRow().addComponents(component);
+
+                components.push(row);
+                break;
+            }
+            case 'gameTypes': {
+                const games = (await getDefenderData()).gameTypes;
+
+                const menu =
+                    (locale.menu as ModulesCommand['defender']['menu']).gameTypes.select;
+
+                for (const value of menu.options!) {
+                    value.default = games.includes(value.value);
+                }
+
+                const component = new MessageSelectMenu(menu);
+
+                const row = new MessageActionRow().addComponents(component);
+
+                components.push(row);
+                break;
+            }
+            case 'languages': {
+                const languages = (await getDefenderData()).languages;
+
+                const menu =
+                    (locale.menu as ModulesCommand['defender']['menu']).languages.select;
+
+                for (const value of menu.options!) {
+                    value.default = languages.includes(value.value);
+                }
+
+                const component = new MessageSelectMenu(menu);
+
+                const row = new MessageActionRow().addComponents(component);
+
+                components.push(row);
+                break;
+            }
             case 'versions': {
                 const versions = (await getDefenderData()).versions;
 
@@ -302,34 +349,6 @@ export const execute: ClientCommand['execute'] = async (
 
                 const component = new MessageSelectMenu(menu);
 
-                const row = new MessageActionRow().addComponents(component);
-
-                components.push(row);
-                break;
-            }
-            case 'languages': {
-                const versions = (await getDefenderData()).languages;
-
-                const menu =
-                    (locale.menu as ModulesCommand['defender']['menu']).languages.select;
-
-                for (const value of menu.options!) {
-                    value.default = versions.includes(value.value);
-                }
-
-                const component = new MessageSelectMenu(menu);
-
-                const row = new MessageActionRow().addComponents(component);
-
-                components.push(row);
-                break;
-            }
-            case 'channel': {
-                const component = new MessageSelectMenu(
-                    (
-                        locale.menu as ModulesCommand['friends']['menu']
-                    ).channel.select,
-                );
                 const row = new MessageActionRow().addComponents(component);
 
                 components.push(row);
@@ -455,6 +474,7 @@ export const execute: ClientCommand['execute'] = async (
                     login: false,
                     logout: false,
                     version: false,
+                    gameType: false,
                     language: false,
                 };
 
@@ -486,7 +506,7 @@ export const execute: ClientCommand['execute'] = async (
                 });
                 break;
             }
-            case 'versions': {
+            case 'gameTypes': {
                 const selectedValues = (
                     messageComponentInteraction as SelectMenuInteraction
                 ).values;
@@ -494,8 +514,8 @@ export const execute: ClientCommand['execute'] = async (
                 //@ts-expect-error typings not available
                 const updatedMenu = structuredClone(
                     (locale.menu as ModulesCommand['defender']['menu']
-                    ).versions.select,
-                ) as ModulesCommand['defender']['menu']['versions']['select'];
+                    ).gameTypes.select,
+                ) as ModulesCommand['defender']['menu']['gameTypes']['select'];
 
                 for (const value of updatedMenu.options!) {
                     value.default = selectedValues.includes(value.value);
@@ -511,7 +531,7 @@ export const execute: ClientCommand['execute'] = async (
                 await SQLite.updateUser<DefenderModule>({
                     discordID: userData.discordID,
                     table: Constants.tables.defender,
-                    data: { versions: selectedValues },
+                    data: { gameTypes: selectedValues },
                 });
                 break;
             }
@@ -541,6 +561,35 @@ export const execute: ClientCommand['execute'] = async (
                     discordID: userData.discordID,
                     table: Constants.tables.defender,
                     data: { languages: selectedValues },
+                });
+                break;
+            }
+            case 'versions': {
+                const selectedValues = (
+                    messageComponentInteraction as SelectMenuInteraction
+                ).values;
+
+                //@ts-expect-error typings not available
+                const updatedMenu = structuredClone(
+                    (locale.menu as ModulesCommand['defender']['menu']
+                    ).versions.select,
+                ) as ModulesCommand['defender']['menu']['versions']['select'];
+
+                for (const value of updatedMenu.options!) {
+                    value.default = selectedValues.includes(value.value);
+                }
+
+                const component = new MessageSelectMenu(updatedMenu);
+
+                components.push(
+                    new MessageActionRow()
+                        .addComponents(component),
+                );
+
+                await SQLite.updateUser<DefenderModule>({
+                    discordID: userData.discordID,
+                    table: Constants.tables.defender,
+                    data: { versions: selectedValues },
                 });
                 break;
             }
@@ -596,6 +645,31 @@ export const execute: ClientCommand['execute'] = async (
                 });
                 break;
             }
+            case 'milestones1':
+            case 'milestones0': {
+                const userRewardData = await getRewardsData();
+
+                const flipped = userRewardData.milestones === false;
+
+                const component = new ToggleButtons({
+                    allDisabled: false,
+                    enabled: flipped,
+                    buttonLocale: (
+                        locale.menu as ModulesCommand['rewards']['menu']
+                    ).milestones.button,
+                });
+
+                components.push(component);
+
+                await SQLite.updateUser<
+                    RewardsModule
+                >({
+                    discordID: userData.discordID,
+                    table: Constants.tables.rewards,
+                    data: { milestones: flipped },
+                });
+                break;
+            }
             case 'notificationInterval': {
                 const time = (
                     messageComponentInteraction as SelectMenuInteraction
@@ -621,31 +695,6 @@ export const execute: ClientCommand['execute'] = async (
                     discordID: userData.discordID,
                     table: Constants.tables.rewards,
                     data: { notificationInterval: Number(time) },
-                });
-                break;
-            }
-            case 'milestones1':
-            case 'milestones0': {
-                const userRewardData = await getRewardsData();
-
-                const flipped = userRewardData.milestones === false;
-
-                const component = new ToggleButtons({
-                    allDisabled: false,
-                    enabled: flipped,
-                    buttonLocale: (
-                        locale.menu as ModulesCommand['rewards']['menu']
-                    ).milestones.button,
-                });
-
-                components.push(component);
-
-                await SQLite.updateUser<
-                    RewardsModule
-                >({
-                    discordID: userData.discordID,
-                    table: Constants.tables.rewards,
-                    data: { milestones: flipped },
                 });
                 break;
             }

@@ -37,10 +37,12 @@ export interface DefenderModule extends BaseUserData {
     alerts: {
         login: boolean;
         logout: boolean;
-        language: boolean;
         version: boolean;
+        gameType: boolean;
+        language: boolean;
     };
     channel: string | null;
+    gameTypes: string[];
     versions: string[];
     languages: string[];
 }
