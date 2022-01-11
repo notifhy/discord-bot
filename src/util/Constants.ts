@@ -37,6 +37,8 @@ export default {
         interval: '<:interval:929126473724477500>',
         power: '<:toggle:929126460134944858>',
         speech: '<:speech:929126444704100382>',
+        swords: '<:swords:930282221779161178>',
+        version: '<:version:930282181228625990>',
     },
     limits: {
         embedDescription: 4096,

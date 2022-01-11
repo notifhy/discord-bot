@@ -171,7 +171,7 @@ export default {
                         description: 'Select blacklisted game type(s)',
                         longDescription: 'Select blacklisted game type(s). If the bot detects your account playing these games, you will be notified.',
                         value: 'gameTypes',
-                        emoji: Constants.emoji.speech,
+                        emoji: Constants.emoji.swords,
                         select: {
                             customId: 'gameTypes',
                             placeholder: 'None',
@@ -375,7 +375,7 @@ export default {
                         description: 'Select whitelisted version(s) of Minecraft',
                         longDescription: 'Select whitelisted version(s) of Minecraft. If the bot detects you switching to a whitelisted version, it will not alert or notify you. Select none to get a notification on every version change.',
                         value: 'versions',
-                        emoji: Constants.emoji.gear,
+                        emoji: Constants.emoji.version,
                         select: {
                             customId: 'versions',
                             placeholder: 'None',
