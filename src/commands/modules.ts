@@ -10,6 +10,10 @@ import type {
     ModulesCommand,
 } from '../@types/locales';
 import {
+    combiner,
+    structures as baseStructures,
+} from '../util/structures';
+import {
     BetterEmbed,
     disableComponents,
 } from '../util/utility';
@@ -68,6 +72,10 @@ export const execute: ClientCommand['execute'] = async (
     const locale = RegionLocales.locale(userData.language).commands.modules[
         subCommand as keyof Locale['commands']['modules']
     ];
+
+    const structures =
+        baseStructures[subCommand as keyof typeof baseStructures];
+
     const replace = RegionLocales.replace;
 
     const mainEmbed = new BetterEmbed(interaction)
@@ -91,7 +99,11 @@ export const execute: ClientCommand['execute'] = async (
         for (const item in menuData) {
             //@ts-expect-error hasOwn typing not implemented yet
             if (Object.hasOwn(menuData, item)) {
-                const itemData = menuData[item as keyof typeof menuData];
+                const itemData = {
+                    ...menuData[item as keyof typeof menuData],
+                    ...structures[item as keyof typeof structures],
+                };
+
                 menu.addOptions([
                     {
                         label: itemData.label,
@@ -266,9 +278,20 @@ export const execute: ClientCommand['execute'] = async (
                 const component = new ToggleButtons({
                     allDisabled: missingRequirements.length > 0,
                     enabled: userAPIData.modules.includes(subCommand),
-                    buttonLocale: (
-                        locale.menu as ModulesCommand['friends']['menu'] | ModulesCommand['rewards']['menu']
-                    ).toggle.button,
+                    buttonLocale: {
+                        ...(
+                            locale as
+                            ModulesCommand['defender'] |
+                            ModulesCommand['friends'] |
+                            ModulesCommand['rewards']
+                        ).menu.toggle.button,
+                        ...(
+                            structures as
+                            typeof baseStructures['defender'] |
+                            typeof baseStructures['friends'] |
+                            typeof baseStructures['rewards']
+                        ).toggle.button,
+                    },
                 });
 
                 components.push(component);
@@ -277,8 +300,10 @@ export const execute: ClientCommand['execute'] = async (
             case 'alerts': {
                 const alerts = (await getDefenderData()).alerts;
 
-                const menu =
-                    (locale.menu as ModulesCommand['defender']['menu']).alerts.select;
+                const menu = combiner(
+                    (locale as ModulesCommand['defender']).menu.alerts,
+                    (structures as typeof baseStructures['defender']).alerts,
+                ).select;
 
                 for (const value of menu.options!) {
                     value.default = alerts[value.value as keyof typeof alerts];
@@ -292,12 +317,12 @@ export const execute: ClientCommand['execute'] = async (
                 break;
             }
             case 'channel': {
-                const component = new MessageSelectMenu(
-                    (
-                        locale.menu as ModulesCommand['friends']['menu'] |
-                        ModulesCommand['defender']['menu']
-                    ).channel.select,
-                );
+                const menu = combiner(
+                    (locale as ModulesCommand['friends']).menu.channel,
+                    (structures as typeof baseStructures['friends']).channel,
+                ).select;
+
+                const component = new MessageSelectMenu(menu);
                 const row = new MessageActionRow().addComponents(component);
 
                 components.push(row);
@@ -306,8 +331,10 @@ export const execute: ClientCommand['execute'] = async (
             case 'gameTypes': {
                 const games = (await getDefenderData()).gameTypes;
 
-                const menu =
-                    (locale.menu as ModulesCommand['defender']['menu']).gameTypes.select;
+                const menu = combiner(
+                    (locale as ModulesCommand['defender']).menu.gameTypes,
+                    (structures as typeof baseStructures['defender']).gameTypes,
+                ).select;
 
                 for (const value of menu.options!) {
                     value.default = games.includes(value.value);
@@ -323,8 +350,10 @@ export const execute: ClientCommand['execute'] = async (
             case 'languages': {
                 const languages = (await getDefenderData()).languages;
 
-                const menu =
-                    (locale.menu as ModulesCommand['defender']['menu']).languages.select;
+                const menu = combiner(
+                    (locale as ModulesCommand['defender']).menu.languages,
+                    (structures as typeof baseStructures['defender']).languages,
+                ).select;
 
                 for (const value of menu.options!) {
                     value.default = languages.includes(value.value);
@@ -340,8 +369,10 @@ export const execute: ClientCommand['execute'] = async (
             case 'versions': {
                 const versions = (await getDefenderData()).versions;
 
-                const menu =
-                    (locale.menu as ModulesCommand['defender']['menu']).versions.select;
+                const menu = combiner(
+                    (locale as ModulesCommand['defender']).menu.versions,
+                    (structures as typeof baseStructures['defender']).versions,
+                ).select;
 
                 for (const value of menu.options!) {
                     value.default = versions.includes(value.value);
@@ -356,10 +387,13 @@ export const execute: ClientCommand['execute'] = async (
             }
             case 'alertTime': {
                 const userRewardData = await getRewardsData();
-                const component = new MessageSelectMenu(
-                    (locale.menu as ModulesCommand['rewards']['menu']
-                    ).alertTime.select,
-                );
+
+                const menu = combiner(
+                    (locale as ModulesCommand['rewards']).menu.alertTime,
+                    (structures as typeof baseStructures['rewards']).alertTime,
+                ).select;
+
+                const component = new MessageSelectMenu(menu);
 
                 for (const value of component.options!) {
                     value.default = Number(value.value) === userRewardData.alertTime;
@@ -376,28 +410,13 @@ export const execute: ClientCommand['execute'] = async (
                 const component = new ToggleButtons({
                     allDisabled: false,
                     enabled: userRewardData.claimNotification,
-                    buttonLocale: (
-                        locale.menu as ModulesCommand['rewards']['menu']
-                    ).claimNotification.button,
+                    buttonLocale: {
+                        ...(locale as ModulesCommand['rewards']).menu.claimNotification.button,
+                        ...(structures as typeof baseStructures['rewards']).claimNotification.button,
+                    },
                 });
 
                 components.push(component);
-                break;
-            }
-            case 'notificationInterval': {
-                const userRewardData = await getRewardsData();
-                const component = new MessageSelectMenu(
-                    (locale.menu as ModulesCommand['rewards']['menu']
-                    ).notificationInterval.select,
-                );
-
-                for (const value of component.options!) {
-                    value.default = Number(value.value) === userRewardData.notificationInterval;
-                }
-
-                const row = new MessageActionRow().addComponents(component);
-
-                components.push(row);
                 break;
             }
             case 'milestones': {
@@ -406,12 +425,32 @@ export const execute: ClientCommand['execute'] = async (
                 const component = new ToggleButtons({
                     allDisabled: false,
                     enabled: userRewardData.milestones,
-                    buttonLocale: (
-                        locale.menu as ModulesCommand['rewards']['menu']
-                    ).milestones.button,
+                    buttonLocale: {
+                        ...(locale as ModulesCommand['rewards']).menu.claimNotification.button,
+                        ...(structures as typeof baseStructures['rewards']).milestones.button,
+                    },
                 });
 
                 components.push(component);
+                break;
+            }
+            case 'notificationInterval': {
+                const userRewardData = await getRewardsData();
+
+                const menu = combiner(
+                    (locale as ModulesCommand['rewards']).menu.notificationInterval,
+                    (structures as typeof baseStructures['rewards']).notificationInterval,
+                ).select;
+
+                const component = new MessageSelectMenu(menu);
+
+                for (const value of component.options!) {
+                    value.default = Number(value.value) === userRewardData.notificationInterval;
+                }
+
+                const row = new MessageActionRow().addComponents(component);
+
+                components.push(row);
                 break;
             }
             //No default
@@ -450,9 +489,20 @@ export const execute: ClientCommand['execute'] = async (
                 const component = new ToggleButtons({
                     allDisabled: false,
                     enabled: userAPIData.modules.includes(subCommand),
-                    buttonLocale: (
-                        locale.menu as ModulesCommand['friends']['menu']
-                    ).toggle.button,
+                    buttonLocale: {
+                        ...(
+                            locale as
+                            ModulesCommand['defender'] |
+                            ModulesCommand['friends'] |
+                            ModulesCommand['rewards']
+                        ).menu.toggle.button,
+                        ...(
+                            structures as
+                            typeof baseStructures['defender'] |
+                            typeof baseStructures['friends'] |
+                            typeof baseStructures['rewards']
+                        ).toggle.button,
+                    },
                 });
 
                 components.push(component);
@@ -482,11 +532,10 @@ export const execute: ClientCommand['execute'] = async (
                     base[value as keyof typeof base] = true;
                 }
 
-                //@ts-expect-error typings not available
-                const updatedMenu = structuredClone(
-                    (locale.menu as ModulesCommand['defender']['menu']
-                    ).alerts.select,
-                ) as ModulesCommand['defender']['menu']['alerts']['select'];
+                const updatedMenu = combiner(
+                    (locale as ModulesCommand['defender']).menu.alerts,
+                    (structures as typeof baseStructures['defender']).alerts,
+                ).select;
 
                 for (const option of updatedMenu.options!) {
                     option.default = base[option.value as keyof typeof base] === true;
@@ -511,11 +560,10 @@ export const execute: ClientCommand['execute'] = async (
                     messageComponentInteraction as SelectMenuInteraction
                 ).values;
 
-                //@ts-expect-error typings not available
-                const updatedMenu = structuredClone(
-                    (locale.menu as ModulesCommand['defender']['menu']
-                    ).gameTypes.select,
-                ) as ModulesCommand['defender']['menu']['gameTypes']['select'];
+                const updatedMenu = combiner(
+                    (locale as ModulesCommand['defender']).menu.gameTypes,
+                    (structures as typeof baseStructures['defender']).gameTypes,
+                ).select;
 
                 for (const value of updatedMenu.options!) {
                     value.default = selectedValues.includes(value.value);
@@ -540,11 +588,10 @@ export const execute: ClientCommand['execute'] = async (
                     messageComponentInteraction as SelectMenuInteraction
                 ).values;
 
-                //@ts-expect-error typings not available
-                const updatedMenu = structuredClone(
-                    (locale.menu as ModulesCommand['defender']['menu']
-                    ).languages.select,
-                ) as ModulesCommand['defender']['menu']['languages']['select'];
+                const updatedMenu = combiner(
+                    (locale as ModulesCommand['defender']).menu.languages,
+                    (structures as typeof baseStructures['defender']).languages,
+                ).select;
 
                 for (const value of updatedMenu.options!) {
                     value.default = selectedValues.includes(value.value);
@@ -569,11 +616,10 @@ export const execute: ClientCommand['execute'] = async (
                     messageComponentInteraction as SelectMenuInteraction
                 ).values;
 
-                //@ts-expect-error typings not available
-                const updatedMenu = structuredClone(
-                    (locale.menu as ModulesCommand['defender']['menu']
-                    ).versions.select,
-                ) as ModulesCommand['defender']['menu']['versions']['select'];
+                const updatedMenu = combiner(
+                    (locale as ModulesCommand['defender']).menu.versions,
+                    (structures as typeof baseStructures['defender']).versions,
+                ).select;
 
                 for (const value of updatedMenu.options!) {
                     value.default = selectedValues.includes(value.value);
@@ -598,11 +644,10 @@ export const execute: ClientCommand['execute'] = async (
                     messageComponentInteraction as SelectMenuInteraction
                 ).values[0];
 
-                //@ts-expect-error typings not available
-                const updatedMenu = structuredClone(
-                    (locale.menu as ModulesCommand['rewards']['menu']
-                    ).alertTime.select,
-                ) as ModulesCommand['rewards']['menu']['alertTime']['select'];
+                const updatedMenu = combiner(
+                    (locale as ModulesCommand['rewards']).menu.alertTime,
+                    (structures as typeof baseStructures['rewards']).alertTime,
+                ).select;
 
                 for (const value of updatedMenu.options!) {
                     value.default = value.value === time;
@@ -631,9 +676,10 @@ export const execute: ClientCommand['execute'] = async (
                 const component = new ToggleButtons({
                     allDisabled: false,
                     enabled: flipped,
-                    buttonLocale: (
-                        locale.menu as ModulesCommand['rewards']['menu']
-                    ).claimNotification.button,
+                    buttonLocale: {
+                        ...(locale as ModulesCommand['rewards']).menu.claimNotification.button,
+                        ...(structures as typeof baseStructures['rewards']).claimNotification.button,
+                    },
                 });
 
                 components.push(component);
@@ -654,9 +700,10 @@ export const execute: ClientCommand['execute'] = async (
                 const component = new ToggleButtons({
                     allDisabled: false,
                     enabled: flipped,
-                    buttonLocale: (
-                        locale.menu as ModulesCommand['rewards']['menu']
-                    ).milestones.button,
+                    buttonLocale: {
+                        ...(locale as ModulesCommand['rewards']).menu.claimNotification.button,
+                        ...(structures as typeof baseStructures['rewards']).milestones.button,
+                    },
                 });
 
                 components.push(component);
@@ -675,11 +722,10 @@ export const execute: ClientCommand['execute'] = async (
                     messageComponentInteraction as SelectMenuInteraction
                 ).values[0];
 
-                //@ts-expect-error structuredClone not typed yet
-                const updatedMenu = structuredClone(
-                    (locale.menu as ModulesCommand['rewards']['menu']).notificationInterval
-                        .select,
-                ) as ModulesCommand['rewards']['menu']['notificationInterval']['select'];
+                const updatedMenu = combiner(
+                    (locale as ModulesCommand['rewards']).menu.notificationInterval,
+                    (structures as typeof baseStructures['rewards']).notificationInterval,
+                ).select;
 
                 for (const value of updatedMenu.options!) {
                     value.default = value.value === time;

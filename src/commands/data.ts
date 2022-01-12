@@ -273,7 +273,7 @@ export const execute: ClientCommand['execute'] = async (
             );
 
             const fields = shownData.map(({ date, ...event }) => ({
-                name: `${timestamp(date, 'D')}${timestamp(date, 'T')}`,
+                name: `${timestamp(date, 'D')} ${timestamp(date, 'T')}`,
                 value: Object.entries(event)
                     .map(
                         ([key, value]) =>

@@ -1,23 +1,50 @@
-import type { MessageSelectMenuOptions } from 'discord.js';
-import { Button } from '../util/ToggleButtons';
+import type { MessageSelectMenuOptions, MessageSelectOptionData } from 'discord.js';
 
 /*
-Misc. Interfaces
+Universal Module Data Separation Stuff
 */
-export interface ModuleButton {
-    [key: string]: string | boolean;
+export interface SelectMenuTopLocale {
     label: string;
-    id: string;
-    style: string;
-    invert: boolean;
+    description: string;
+    longDescription: string;
 }
 
-export interface ModuleButtons {
-    [key: string]: ModuleButton;
-    enable: ModuleButton;
-    disable: ModuleButton;
-    settings: ModuleButton;
+export interface SelectMenuTopStructure {
+    value: string;
 }
+
+// eslint-disable-next-line @typescript-eslint/no-empty-interface
+export interface SelectMenuOptionLocale extends Omit<MessageSelectOptionData, 'value'> {
+
+}
+
+// eslint-disable-next-line @typescript-eslint/no-empty-interface
+export interface SelectMenuOptionStructure extends Omit<MessageSelectOptionData, 'label'> {
+
+}
+
+export interface SelectMenuLocale extends Omit<MessageSelectMenuOptions, 'customId' | 'options'> {
+    options: SelectMenuOptionLocale[]
+}
+
+export interface SelectMenuStructure extends Omit<MessageSelectMenuOptions, 'options'> {
+    options: SelectMenuOptionStructure[],
+}
+
+/*
+Toggle Buttons
+*/
+
+export interface LocaleButton {
+    enable: string;
+    disable: string;
+}
+
+export interface ButtonData {
+    enableCustomID: string;
+    disableCustomID: string;
+}
+
 
 /*
 General Interfaces
@@ -30,14 +57,6 @@ export interface BaseEmbed {
 export interface Field {
     name: string;
     value: string;
-}
-
-export interface ModuleData {
-    label: string;
-    description: string;
-    longDescription: string;
-    value: string;
-    emoji: string;
 }
 
 /*
@@ -105,23 +124,23 @@ export interface ModulesCommand {
         };
         menu: {
             toggle: {
-                button: Button;
-            } & ModuleData;
+                button: LocaleButton;
+            } & SelectMenuTopLocale;
             alerts: {
-                select: MessageSelectMenuOptions
-            } & ModuleData;
+                select: SelectMenuLocale
+            } & SelectMenuTopLocale;
             channel: {
-                select: MessageSelectMenuOptions
-            } & ModuleData;
+                select: SelectMenuLocale
+            } & SelectMenuTopLocale;
             gameTypes: {
-                select: MessageSelectMenuOptions
-            } & ModuleData;
+                select: SelectMenuLocale
+            } & SelectMenuTopLocale;
             languages: {
-                select: MessageSelectMenuOptions
-            } & ModuleData;
+                select: SelectMenuLocale
+            } & SelectMenuTopLocale;
             versions: {
-                select: MessageSelectMenuOptions
-            } & ModuleData;
+                select: SelectMenuLocale
+            } & SelectMenuTopLocale;
         };
     };
     friends: {
@@ -134,11 +153,11 @@ export interface ModulesCommand {
         };
         menu: {
             toggle: {
-                button: Button;
-            } & ModuleData;
+                button: LocaleButton;
+            } & SelectMenuTopLocale;
             channel: {
-                select: MessageSelectMenuOptions
-            } & ModuleData;
+                select: SelectMenuLocale
+            } & SelectMenuTopLocale;
         };
     };
     rewards: {
@@ -151,25 +170,20 @@ export interface ModulesCommand {
         };
         menu: {
             toggle: {
-                button: {
-                    enable: string;
-                    disable: string;
-                    enableCustomID: string;
-                    disableCustomID: string;
-                }
-            } & ModuleData;
+                button: LocaleButton
+            } & SelectMenuTopLocale;
             alertTime: {
-                select: MessageSelectMenuOptions
-            } & ModuleData;
+                select: SelectMenuLocale
+            } & SelectMenuTopLocale;
             claimNotification: {
-                button: Button;
-            } & ModuleData;
+                button: LocaleButton;
+            } & SelectMenuTopLocale;
             milestones: {
-                button: Button;
-            } & ModuleData;
+                button: LocaleButton;
+            } & SelectMenuTopLocale;
             notificationInterval: {
-                select: MessageSelectMenuOptions
-            } & ModuleData;
+                select: SelectMenuLocale
+            } & SelectMenuTopLocale;
         };
     };
 }

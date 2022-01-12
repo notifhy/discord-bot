@@ -3,14 +3,10 @@ import {
     MessageActionRow,
     MessageButton,
 } from 'discord.js';
-
-export type Button = {
-    readonly enable: string;
-    readonly disable: string;
-    readonly enableCustomID: string;
-    readonly disableCustomID: string;
-}
-
+import type {
+    ButtonData,
+    LocaleButton,
+} from '../@types/locales';
 
 export class ToggleButtons extends MessageActionRow {
     constructor({
@@ -20,7 +16,7 @@ export class ToggleButtons extends MessageActionRow {
     }: {
         allDisabled: boolean;
         enabled: boolean;
-        buttonLocale: Button;
+        buttonLocale: LocaleButton & ButtonData;
     }) {
         super();
         const enable = new MessageButton()

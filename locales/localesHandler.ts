@@ -4,8 +4,8 @@ import type {
     LocaleTree,
     Parameters,
 } from '../src/@types/locales';
-import en from './en-us';
-import fr from './fr-FR';
+import en from './en-us.json';
+import fr from './fr-FR.json';
 
 const locales: Locales = {
     'en-us': en,
