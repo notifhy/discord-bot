@@ -1,13 +1,13 @@
 import type { ClientCommand } from '../@types/client';
 import type { SlothpixelPlayer } from '../@types/hypixel';
-import { BetterEmbed } from '../util/utility';
-import { CommandInteraction } from 'discord.js';
-import {
+import type {
     DefenderModule,
     FriendsModule,
     RewardsModule,
     UserAPIData,
 } from '../@types/database';
+import { BetterEmbed } from '../util/utility';
+import { CommandInteraction } from 'discord.js';
 import { Log } from '../util/Log';
 import { RegionLocales } from '../../locales/localesHandler';
 import { Request } from '../util/Request';

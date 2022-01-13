@@ -415,12 +415,6 @@ export const structures = {
                 disabled: false,
                 options: [
                     {
-                        value: '600000',
-                    },
-                    {
-                        value: '900000',
-                    },
-                    {
                         value: '1800000',
                     },
                     {

@@ -666,7 +666,7 @@
                 "title": "Oops",
                 "description": "An error occurred while executing the command /%{commandName}%! This error has been automatically forwarded for review. It should be resolved soon. Sorry.",
                 "field": {
-                    "name": "Interaction ID",
+                    "name": "Incident ID",
                     "value": "%{id}%"
                 }
             }

@@ -1,5 +1,6 @@
 import type { ClientCommand } from '../@types/client';
 import type {
+    DefenderModule,
     FriendsModule,
     RewardsModule,
     UserAPIData,
@@ -188,6 +189,12 @@ export const execute: ClientCommand['execute'] = async (
                 columns: ['*'],
                 allowUndefined: true,
             })!,
+            SQLite.getUser<DefenderModule>({
+                discordID: userData.discordID,
+                table: Constants.tables.defender,
+                columns: ['*'],
+                allowUndefined: true,
+            })!,
             SQLite.getUser<FriendsModule>({
                 discordID: userData.discordID,
                 table: Constants.tables.friends,
@@ -205,8 +212,9 @@ export const execute: ClientCommand['execute'] = async (
         const allUserData = {
             userData: userData,
             userAPIData: data[0],
-            friends: data[1],
-            rewards: data[2],
+            defender: data[1],
+            friends: data[2],
+            rewards: data[3],
         };
 
         await interaction.editReply({

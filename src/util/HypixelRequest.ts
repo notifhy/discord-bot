@@ -11,24 +11,25 @@ import HTTPError from './errors/HTTPError';
 import RateLimitError from './errors/RateLimitError';
 
 export class HypixelRequest {
-    readonly maxAborts?: number;
-    readonly abortThreshold?: number;
+    readonly config: {
+        maxAborts?: number,
+        abortThreshold?: number,
+    } | undefined;
 
     constructor(
-        init?: {
+        config?: {
             maxAborts?: number,
             abortThreshold?: number,
         },
     ) {
-        this.maxAborts = init?.maxAborts;
-        this.abortThreshold = init?.abortThreshold;
+        this.config = config;
     }
 
     async call(url: string): Promise<HypixelAPIOk> {
         const response = (
             await new Request({
-                maxAborts: this.maxAborts,
-                abortThreshold: this.abortThreshold,
+                maxAborts: this.config?.maxAborts,
+                abortThreshold: this.config?.abortThreshold,
             }).request(url, {
                 headers: { 'API-Key': hypixelAPIkey },
             })

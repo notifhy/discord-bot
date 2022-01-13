@@ -1,8 +1,6 @@
-import Constants from '../../Constants';
 import { Log } from '../../Log';
-import {
-    BetterEmbed,
-} from '../../utility';
+import { MessageEmbed, SnowflakeUtil } from 'discord.js';
+import Constants from '../../Constants';
 
 export default class BaseErrorHandler {
     readonly error: unknown;
@@ -10,16 +8,13 @@ export default class BaseErrorHandler {
 
     constructor(error: unknown) {
         this.error = error;
-        this.incidentID = Math.random()
-            .toString(36)
-            .substring(2, 10)
-            .toUpperCase();
+        this.incidentID = SnowflakeUtil.generate();
     }
 
     errorEmbed() {
-        return new BetterEmbed({
-            name: this.incidentID,
-        }).setColor(Constants.colors.error);
+        return new MessageEmbed()
+            .setColor(Constants.colors.error)
+            .setFooter({ text: `ID ${this.incidentID}` });
     }
 
     errorStackEmbed(error?: unknown) {

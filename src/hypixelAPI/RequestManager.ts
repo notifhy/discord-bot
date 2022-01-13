@@ -74,7 +74,7 @@ export class RequestManager {
                 await setTimeout( //eslint-disable-line no-await-in-loop
                     Math.max(
                         (intervalBetweenRequests * urls.length) -
-                        this.instance.performance.latest!.total,
+                        (this.instance.performance.latest?.total ?? 0),
                         0,
                     ),
                 );
@@ -131,8 +131,8 @@ export class RequestManager {
     }
 
     logPerformance(performance: Performance) {
-        performance.total = performance.modules - performance.start;
-        performance.modules -= performance.save; //Turns the ms since the Jan 1st 1970 into relative
+        performance.total = performance.modules - performance.start; //Turns the ms since the Jan 1st 1970 into relative
+        performance.modules -= performance.save;
         performance.save -= performance.process;
         performance.process -= performance.databaseFetch;
         performance.databaseFetch -= performance.fetch;

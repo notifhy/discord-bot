@@ -83,17 +83,14 @@ export const execute: ClientCommand['execute'] = async (
         .setTitle(locale.title)
         .setDescription(locale.description);
 
-    const mainMenu = ({
-        defaultV,
-        disabled,
-    }: {
-        defaultV?: string;
+    const mainMenu = (data?: {
+        default?: string;
         disabled?: boolean;
     }) => {
         const menu = new MessageSelectMenu()
             .setCustomId('main')
             .setPlaceholder(locale.menuPlaceholder)
-            .setDisabled(disabled ?? false);
+            .setDisabled(data?.disabled ?? false);
 
         const menuData = locale.menu;
         for (const item in menuData) {
@@ -109,7 +106,7 @@ export const execute: ClientCommand['execute'] = async (
                         label: itemData.label,
                         value: itemData.value,
                         description: itemData.description,
-                        default: Boolean(defaultV === itemData.value),
+                        default: data?.default === itemData.value,
                         emoji: itemData.emoji,
                     },
                 ]);
@@ -171,7 +168,7 @@ export const execute: ClientCommand['execute'] = async (
 
     const reply = await interaction.editReply({
         embeds: [mainEmbed],
-        components: [mainMenu({})],
+        components: [mainMenu()],
     });
 
     await interaction.client.channels.fetch(interaction.channelId);
@@ -192,6 +189,7 @@ export const execute: ClientCommand['execute'] = async (
         async (i: SelectMenuInteraction | ButtonInteraction) => {
             try {
                 await i.deferUpdate();
+
                 if (
                     i.customId === 'main' &&
                     i.isSelectMenu()
@@ -234,7 +232,7 @@ export const execute: ClientCommand['execute'] = async (
 
         const components = [
             mainMenu({
-                defaultV: selected,
+                default: selected,
             }),
         ];
 
@@ -467,7 +465,7 @@ export const execute: ClientCommand['execute'] = async (
     ) {
         const components = [
             mainMenu({
-                defaultV: selected,
+                default: selected,
             }),
         ];
 

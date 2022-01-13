@@ -8,6 +8,7 @@ import {
     ColorResolvable,
     CommandInteraction,
     GuildChannel,
+    MessageEmbed,
     TextChannel,
 } from 'discord.js';
 import {
@@ -103,7 +104,7 @@ export default class CommandErrorHandler extends BaseErrorHandler {
     }
 
     async userNotify() {
-        const { commandName, id } = this.interaction;
+        const { commandName } = this.interaction;
 
         const locale = RegionLocales
             .locale(this.locale)
@@ -119,7 +120,7 @@ export default class CommandErrorHandler extends BaseErrorHandler {
                 const embed1 = (constraint as Locale['errors']['constraintErrors']['cooldown']).embed1;
                 const embed2 = (constraint as Locale['errors']['constraintErrors']['cooldown']).embed2;
 
-                const command = this.interaction.client.commands.get(this.interaction.commandName);
+                const command = this.interaction.client.commands.get(commandName);
 
                 this.constraintResolver(
                     embed1.title,
@@ -134,7 +135,7 @@ export default class CommandErrorHandler extends BaseErrorHandler {
                 this.constraintResolver(
                     embed2.title,
                     RegionLocales.replace(embed2.description, {
-                        commandName: this.interaction.commandName,
+                        commandName: commandName,
                     }),
                     Constants.colors.on,
                 );
@@ -152,7 +153,8 @@ export default class CommandErrorHandler extends BaseErrorHandler {
             return;
         }
 
-        const embed = this.errorEmbed()
+        const embed = new MessageEmbed()
+        .setColor(Constants.colors.error)
             .setTitle(locale.commandErrors.embed.title)
             .setDescription(replace(locale.commandErrors.embed.description, {
                 commandName: commandName,
@@ -160,7 +162,7 @@ export default class CommandErrorHandler extends BaseErrorHandler {
             .addField(
                 locale.commandErrors.embed.field.name,
                 replace(locale.commandErrors.embed.field.value, {
-                    id: id,
+                    id: this.incidentID,
                 }),
             );
 

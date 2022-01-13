@@ -19,7 +19,7 @@ export class Request {
         this.maxAborts = config?.maxAborts ?? 1;
     }
 
-    request(url: string, fetchOptions?: RequestInit): Promise<Response> {
+    async request(url: string, fetchOptions?: RequestInit): Promise<Response> {
         const controller = new AbortController();
         const abortTimeout = setTimeout(
             () => controller.abort(),
@@ -27,7 +27,7 @@ export class Request {
         ).unref();
 
         try {
-            return fetch(url, {
+            return await fetch(url, {
                 signal: controller.signal,
                 ...fetchOptions,
             });

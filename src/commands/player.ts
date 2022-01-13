@@ -1,7 +1,25 @@
 import type { ClientCommand } from '../@types/client';
-import type { PlayerDB, SlothpixelPlayer, SlothpixelRecentGames, SlothpixelStatus } from '../@types/hypixel';
-import { BetterEmbed, cleanLength, disableComponents, timestamp } from '../util/utility';
-import { CommandInteraction, Constants as DiscordConstants, Formatters, Message, MessageActionRow, MessageButton, MessageComponentInteraction } from 'discord.js';
+import type {
+    PlayerDB,
+    SlothpixelPlayer,
+    SlothpixelRecentGames,
+    SlothpixelStatus,
+} from '../@types/hypixel';
+import {
+    BetterEmbed,
+    cleanLength,
+    disableComponents,
+    timestamp,
+} from '../util/utility';
+import {
+    CommandInteraction,
+    Constants as DiscordConstants,
+    Formatters,
+    Message,
+    MessageActionRow,
+    MessageButton,
+    MessageComponentInteraction,
+} from 'discord.js';
 import { Log } from '../util/Log';
 import { RegionLocales } from '../../locales/localesHandler';
 import { Request } from '../util/Request';
