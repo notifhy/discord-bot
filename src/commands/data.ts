@@ -31,29 +31,29 @@ import Constants from '../util/Constants';
 
 export const properties: ClientCommand['properties'] = {
     name: 'data',
-    description: 'View and/or delete all data stored or used by this bot',
+    description: 'View and/or delete data stored or used by this bot',
     cooldown: 30_000,
     ephemeral: true, //File preview fails with ephemeral
     noDM: false,
     ownerOnly: false,
     structure: {
         name: 'data',
-        description: 'View and/or delete all data stored or used by this bot',
+        description: 'View and/or delete data stored or used by this bot',
         options: [
             {
                 name: 'delete',
                 type: 1,
-                description: 'Delete all of your data - there is a confirmation step to prevent accidents',
+                description: 'Delete your data - there is a confirmation step to prevent accidents',
             },
             {
                 name: 'view',
-                description: 'View some or all of your data',
+                description: 'View some or all of your player data',
                 type: 2,
                 options: [
                     {
                         name: 'all',
                         type: 1,
-                        description: 'Returns a file with all of your data',
+                        description: 'Returns a file with all of your player data',
                     },
                     {
                         name: 'history',
@@ -289,11 +289,11 @@ export const execute: ClientCommand['execute'] = async (
                                 ? timestamp(value, 'T')
                                 : (
                                     key === 'gameType'
-                                        ? cleanGameType(value) ?? locale.history.null
+                                        ? cleanGameType(value)
                                         : key === 'gameMode'
-                                        ? cleanGameMode(value) ?? locale.history.null
-                                        : capitolToNormal(value) ?? locale.history.null
-                                )}`,
+                                        ? cleanGameMode(value)
+                                        : capitolToNormal(value)
+                                ) ?? locale.history.null}`,
                     )
                     .join('\n'),
             }));
