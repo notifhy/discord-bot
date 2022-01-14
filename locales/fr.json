@@ -76,10 +76,10 @@
         "language": {
             "alreadySet": {
                 "title": "Already Set",
-                "description": "%{locale}% is already your set language!"
+                "description": "%{language}% is already your set language!"
             },
             "title": "Language Set",
-            "description": "Your language has been changed to `%{locale}%`!"
+            "description": "Your language has been changed to `%{language}%`!"
         },
         "modules": {
             "defender": {
@@ -549,7 +549,7 @@
             },
             "embed2": {
                 "title": "🏓 Ping!",
-                "description": "Websocket heartbeat is %{wsPing}%ms. Roundtrip latency is %{rtPing}%ms."
+                "description": "Websocket heartbeat is %{wsPing}%ms. Roundtrip latency is %{rtPing}%ms. FRENCH"
             }
         },
         "player": {

@@ -96,7 +96,9 @@ export default class ModuleErrorHandler extends BaseErrorHandler {
                     },
                 )) as UserData;
 
-                const locale = RegionLocales.locale(userData.language).errors.moduleErrors;
+                const locale = RegionLocales.locale(
+                    userData.localeOverride ?? userData.localeOverride,
+                ).errors.moduleErrors;
                 const { replace } = RegionLocales;
                 const cleanModule = { cleanModule: this.cleanModule };
                 let message: Field | undefined;

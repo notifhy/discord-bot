@@ -7,7 +7,6 @@ import type {
     UserAPIData,
 } from '../@types/database';
 import { BetterEmbed } from '../util/utility';
-import { CommandInteraction } from 'discord.js';
 import { Log } from '../util/Log';
 import { RegionLocales } from '../../locales/localesHandler';
 import { Request } from '../util/Request';
@@ -37,10 +36,10 @@ export const properties: ClientCommand['properties'] = {
 };
 
 export const execute: ClientCommand['execute'] = async (
-    interaction: CommandInteraction,
-    { userData },
+    interaction,
+    locale,
 ): Promise<void> => {
-    const locale = RegionLocales.locale(userData.language).commands.register;
+    const text = RegionLocales.locale(locale).commands.register;
     const replace = RegionLocales.replace;
 
     const inputUUID =
@@ -55,8 +54,8 @@ export const execute: ClientCommand['execute'] = async (
     ) {
         const invalidEmbed = new BetterEmbed(interaction)
             .setColor(Constants.colors.normal)
-            .setTitle(locale.invalid.title)
-            .setDescription(locale.invalid.description);
+            .setTitle(text.invalid.title)
+            .setDescription(text.invalid.description);
         await interaction.editReply({ embeds: [invalidEmbed] });
         return;
     }
@@ -67,9 +66,9 @@ export const execute: ClientCommand['execute'] = async (
     if (response.status === 404) {
         const notFoundEmbed = new BetterEmbed(interaction)
             .setColor(Constants.colors.warning)
-            .setTitle(locale.notFound.title)
+            .setTitle(text.notFound.title)
             .setDescription(
-                replace(locale.notFound.description, {
+                replace(text.notFound.description, {
                     inputType: inputType,
                 }),
             );
@@ -102,8 +101,8 @@ export const execute: ClientCommand['execute'] = async (
     if (DISCORD === null) {
         const unlinkedEmbed = new BetterEmbed(interaction)
             .setColor(Constants.colors.warning)
-            .setTitle(locale.unlinked.title)
-            .setDescription(locale.unlinked.description)
+            .setTitle(text.unlinked.title)
+            .setDescription(text.unlinked.description)
             .setImage(Constants.urls.linkDiscord);
 
         Log.command(interaction, 'Not linked');
@@ -115,8 +114,8 @@ export const execute: ClientCommand['execute'] = async (
     if (DISCORD !== interaction.user.tag) {
         const mismatchedEmbed = new BetterEmbed(interaction)
             .setColor(Constants.colors.warning)
-            .setTitle(locale.mismatched.title)
-            .setDescription(locale.mismatched.description)
+            .setTitle(text.mismatched.title)
+            .setDescription(text.mismatched.description)
             .setImage(Constants.urls.linkDiscord);
 
         Log.command(interaction, 'Mismatch');
@@ -169,9 +168,9 @@ export const execute: ClientCommand['execute'] = async (
 
     const registeredEmbed = new BetterEmbed(interaction)
         .setColor(Constants.colors.normal)
-        .setTitle(locale.title)
-        .setDescription(locale.description)
-        .addField(locale.field.name, locale.field.value);
+        .setTitle(text.title)
+        .setDescription(text.description)
+        .addField(text.field.name, text.field.value);
 
     Log.command(interaction, 'Success');
 

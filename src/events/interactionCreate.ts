@@ -2,10 +2,7 @@ import type {
     EventProperties,
     ClientCommand,
 } from '../@types/client';
-import type {
-    UserAPIData,
-    UserData,
-} from '../@types/database';
+import type { UserData } from '../@types/database';
 import {
     BetterEmbed,
     slashCommandResolver,
@@ -18,7 +15,7 @@ import {
 } from 'discord.js';
 import { Log } from '../util/Log';
 import { ownerID } from '../../config.json';
-import { RegionLocales } from '../../locales/localesHandler';
+import { locales, RegionLocales } from '../../locales/localesHandler';
 import { SQLite } from '../util/SQLite';
 import CommandErrorHandler from '../util/errors/handlers/CommandErrorHandler';
 import Constants from '../util/Constants';
@@ -32,13 +29,18 @@ export const properties: EventProperties = {
 export const execute = async (
     interaction: CommandInteraction,
 ): Promise<void> => {
+    let userData;
+
     try {
         if (interaction.isCommand()) {
             const command: ClientCommand | undefined =
                 interaction.client.commands.get(interaction.commandName);
+
             if (command === undefined) {
                 return;
             }
+
+            console.log(interaction.locale);
 
             Log.command(interaction, slashCommandResolver(interaction));
 
@@ -46,16 +48,7 @@ export const execute = async (
                 ephemeral: command.properties.ephemeral,
             });
 
-            const userAPIData = (
-                await SQLite.getUser<UserAPIData>({
-                    discordID: interaction.user.id,
-                    table: Constants.tables.api,
-                    columns: ['*'],
-                    allowUndefined: true,
-                },
-            ));
-
-            let userData = (
+            userData = (
                 await SQLite.getUser<UserData>({
                     discordID: interaction.user.id,
                     table: Constants.tables.users,
@@ -74,25 +67,43 @@ export const execute = async (
                 })
             )!;
 
-            await checkSystemMessages(interaction, userData);
+            if (
+                interaction.locale !== userData.locale &&
+                Object.keys(locales).includes(interaction.locale)
+            ) {
+                await SQLite.updateUser<UserData>({
+                    discordID: interaction.user.id,
+                    table: Constants.tables.users,
+                    data: {
+                        locale: interaction.locale,
+                    },
+                });
+
+                userData.locale = interaction.locale;
+            }
+
+            const locale = userData.localeOverride ??
+                userData.locale;
+
+            await checkSystemMessages(interaction, userData, locale);
+
             generalConstraints(interaction, command);
             cooldownConstraint(interaction, command);
-            await command.execute(interaction, {
-                userData,
-                userAPIData,
-            });
+
+            await command.execute(
+                interaction,
+                locale,
+            );
         }
     } catch (error) {
-        const userData = (
-            await SQLite.getUser<UserData>({
-                discordID: interaction.user.id,
-                table: Constants.tables.users,
-                columns: ['language'],
-                allowUndefined: true,
-            },
-        ).catch(() => ({}))) as UserData;
+        const handler = new CommandErrorHandler(
+            error,
+            interaction,
+            userData?.localeOverride ??
+            userData?.locale ??
+            Constants.defaults.language,
+        );
 
-        const handler = new CommandErrorHandler(error, interaction, userData?.language);
         await handler.systemNotify();
         await handler.userNotify();
     }
@@ -101,26 +112,30 @@ export const execute = async (
 async function checkSystemMessages(
     interaction: CommandInteraction,
     userData: UserData,
+    locale: string,
 ) {
-    const locale = RegionLocales.locale(userData.language).errors.systemMessages;
+    const text = RegionLocales.locale(locale).errors.systemMessages;
+
     if (userData.systemMessages.length > 0) {
-        const systemMessages = new BetterEmbed({ name: locale.embed.footer })
+        const systemMessages = new BetterEmbed({ name: text.embed.footer })
             .setColor(Constants.colors.normal)
-            .setTitle(locale.embed.title)
-            .setDescription(locale.embed.description);
+            .setTitle(text.embed.title)
+            .setDescription(text.embed.description);
 
         for (const message of userData.systemMessages) {
             systemMessages.addField(message.name, message.value);
         }
 
-        try { //Add a way to send a file instead if there are more than 25 fields/oer 6k chars?
+        systemMessages.fields.splice(25);
+
+        try { //Add a way to send a file instead if there are more than 25 fields/over 6k chars?
             await interaction.user.send({ embeds: [systemMessages] });
         } catch (error) {
             if (
                 (error as DiscordAPIError).code ===
                     DiscordConstants.APIErrors.CANNOT_MESSAGE_USER
             ) {
-                systemMessages.description += locale.failedDM;
+                systemMessages.description += text.failedDM;
 
                 Log.command(interaction, 'Code 50007 while sending system message(s)');
 
@@ -132,7 +147,7 @@ async function checkSystemMessages(
         }
 
         await SQLite.updateUser<UserData>({
-            discordID: userData.discordID,
+            discordID: interaction.user.id,
             table: Constants.tables.users,
             data: { systemMessages: [] },
         });

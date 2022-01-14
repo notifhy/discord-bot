@@ -363,26 +363,9 @@ export interface Locale {
 }
 
 export interface Locales {
-    'en-us': Locale;
-    'fr-FR': Locale;
+    'en-US': Locale;
+    'fr': Locale;
 }
-
-export type LocaleTree =
-    | Locale
-    | Commands
-    | Help
-    | Language
-    | ModulesCommand
-    | Ping
-    | Register
-    | System
-    | Errors
-    | CommandErrors
-    | ConstraintErrors
-    | ModuleErrors
-    | SystemMessages
-    | Modules
-    | Friends;
 
 export interface Parameters {
     [index: string]: string | number;

@@ -4,6 +4,7 @@ import type {
     FriendsModule,
     RewardsModule,
     UserAPIData,
+    UserData,
 } from '../@types/database';
 import {
     awaitComponent,
@@ -16,7 +17,6 @@ import {
 } from '../util/utility';
 import { Buffer } from 'node:buffer';
 import {
-    CommandInteraction,
     Constants as DiscordConstants,
     Message,
     MessageActionRow,
@@ -33,7 +33,7 @@ export const properties: ClientCommand['properties'] = {
     name: 'data',
     description: 'View and/or delete data stored or used by this bot',
     cooldown: 30_000,
-    ephemeral: true, //File preview fails with ephemeral
+    ephemeral: true,
     noDM: false,
     ownerOnly: false,
     structure: {
@@ -68,10 +68,10 @@ export const properties: ClientCommand['properties'] = {
 };
 
 export const execute: ClientCommand['execute'] = async (
-    interaction: CommandInteraction,
-    { userData },
+    interaction,
+    locale,
 ): Promise<void> => {
-    const locale = RegionLocales.locale(userData.language).commands.data;
+    const text = RegionLocales.locale(locale).commands.data;
     const { replace } = RegionLocales;
 
     switch (interaction.options.getSubcommand()) {
@@ -89,17 +89,17 @@ export const execute: ClientCommand['execute'] = async (
     async function dataDelete() {
         const confirmEmbed = new BetterEmbed(interaction)
             .setColor(Constants.colors.normal)
-            .setTitle(locale.delete.confirm.title)
-            .setDescription(locale.delete.confirm.description);
+            .setTitle(text.delete.confirm.title)
+            .setDescription(text.delete.confirm.description);
 
         const yesButton = new MessageButton()
             .setCustomId('true')
-            .setLabel(locale.delete.yesButton)
+            .setLabel(text.delete.yesButton)
             .setStyle(DiscordConstants.MessageButtonStyles.SUCCESS);
 
         const noButton = new MessageButton()
             .setCustomId('false')
-            .setLabel(locale.delete.noButton)
+            .setLabel(text.delete.noButton)
             .setStyle(DiscordConstants.MessageButtonStyles.DANGER);
 
         const buttonRow = new MessageActionRow().addComponents(
@@ -138,27 +138,27 @@ export const execute: ClientCommand['execute'] = async (
         } else if (button.customId === 'true') {
             Promise.all([
                 SQLite.deleteUser({
-                    discordID: userData.discordID,
+                    discordID: interaction.user.id,
                     table: Constants.tables.users,
                 }),
                 SQLite.deleteUser({
-                    discordID: userData.discordID,
+                    discordID: interaction.user.id,
                     table: Constants.tables.api,
                 }),
                 SQLite.deleteUser({
-                    discordID: userData.discordID,
+                    discordID: interaction.user.id,
                     table: Constants.tables.friends,
                 }),
                 SQLite.deleteUser({
-                    discordID: userData.discordID,
+                    discordID: interaction.user.id,
                     table: Constants.tables.rewards,
                 }),
             ]);
 
             const deleted = new BetterEmbed(interaction)
                 .setColor(Constants.colors.normal)
-                .setTitle(locale.delete.deleted.title)
-                .setDescription(locale.delete.deleted.description);
+                .setTitle(text.delete.deleted.title)
+                .setDescription(text.delete.deleted.description);
 
             Log.command(interaction, 'Accepted data deletion');
 
@@ -169,8 +169,8 @@ export const execute: ClientCommand['execute'] = async (
         } else {
             const aborted = new BetterEmbed(interaction)
                 .setColor(Constants.colors.normal)
-                .setTitle(locale.delete.aborted.title)
-                .setDescription(locale.delete.aborted.description);
+                .setTitle(text.delete.aborted.title)
+                .setDescription(text.delete.aborted.description);
 
             Log.command(interaction, 'Aborted data deletion');
 
@@ -183,26 +183,32 @@ export const execute: ClientCommand['execute'] = async (
 
     async function viewAll() {
         const data = await Promise.all([
+            SQLite.getUser<UserData>({
+                discordID: interaction.user.id,
+                table: Constants.tables.users,
+                columns: ['*'],
+                allowUndefined: true,
+            })!,
             SQLite.getUser<UserAPIData>({
-                discordID: userData.discordID,
+                discordID: interaction.user.id,
                 table: Constants.tables.api,
                 columns: ['*'],
                 allowUndefined: true,
             })!,
             SQLite.getUser<DefenderModule>({
-                discordID: userData.discordID,
+                discordID: interaction.user.id,
                 table: Constants.tables.defender,
                 columns: ['*'],
                 allowUndefined: true,
             })!,
             SQLite.getUser<FriendsModule>({
-                discordID: userData.discordID,
+                discordID: interaction.user.id,
                 table: Constants.tables.friends,
                 columns: ['*'],
                 allowUndefined: true,
             })!,
             SQLite.getUser<RewardsModule>({
-                discordID: userData.discordID,
+                discordID: interaction.user.id,
                 table: Constants.tables.rewards,
                 columns: ['*'],
                 allowUndefined: true,
@@ -210,11 +216,11 @@ export const execute: ClientCommand['execute'] = async (
         ]);
 
         const allUserData = {
-            userData: userData,
-            userAPIData: data[0],
-            defender: data[1],
-            friends: data[2],
-            rewards: data[3],
+            userData: data[0],
+            userAPIData: data[1],
+            defender: data[2],
+            friends: data[3],
+            rewards: data[4],
         };
 
         await interaction.editReply({
@@ -234,7 +240,7 @@ export const execute: ClientCommand['execute'] = async (
             await SQLite.getUser<
                 UserAPIData
             >({
-                discordID: userData.discordID,
+                discordID: interaction.user.id,
                 table: Constants.tables.api,
                 columns: ['*'],
                 allowUndefined: false,
@@ -270,7 +276,7 @@ export const execute: ClientCommand['execute'] = async (
         fastRightButton.disabled =
             userAPIData.history.length <= Constants.defaults.menuIncrements;
 
-        const keys = locale.history.keys;
+        const keys = text.history.keys;
         const epoch = /^\d{13,}$/gm;
 
         const paginator = (position: number): BetterEmbed => {
@@ -293,15 +299,15 @@ export const execute: ClientCommand['execute'] = async (
                                         : key === 'gameMode'
                                         ? cleanGameMode(value)
                                         : capitolToNormal(value)
-                                ) ?? locale.history.null}`,
+                                ) ?? text.history.null}`,
                     )
                     .join('\n'),
             }));
 
             return new BetterEmbed(interaction)
                 .setColor(Constants.colors.normal)
-                .setTitle(locale.history.embed.title)
-                .setDescription(replace(locale.history.embed.description, {
+                .setTitle(text.history.embed.title)
+                .setDescription(replace(text.history.embed.description, {
                     start: position >= userAPIData.history.length
                         ? position
                         : position + 1,
@@ -381,7 +387,7 @@ export const execute: ClientCommand['execute'] = async (
                     components: [buttons],
                 });
             } catch (error) {
-                const handler = new CommandErrorHandler(error, interaction, userData.language);
+                const handler = new CommandErrorHandler(error, interaction, locale);
                 await handler.systemNotify();
                 await handler.userNotify();
             }
@@ -397,7 +403,7 @@ export const execute: ClientCommand['execute'] = async (
                     components: disabledRows,
                 });
             } catch (error) {
-                const handler = new CommandErrorHandler(error, interaction, userData.language);
+                const handler = new CommandErrorHandler(error, interaction, locale);
                 await handler.systemNotify();
                 await handler.userNotify();
             }

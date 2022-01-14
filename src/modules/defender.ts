@@ -49,13 +49,16 @@ export const execute = async ({
                 table: Constants.tables.users,
                 allowUndefined: false,
                 columns: [
-                    'language',
+                    'locale',
+                    'localeOverride',
                     'systemMessages',
                 ],
             })
         ) as UserData;
 
-        const locale = RegionLocales.locale(userData.language).modules.defender;
+        const locale = RegionLocales.locale(
+            userData.localeOverride ?? userData.locale,
+        ).modules.defender;
         const { replace } = RegionLocales;
 
         const fields: EmbedFieldData[] = [];

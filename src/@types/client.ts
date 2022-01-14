@@ -1,15 +1,11 @@
 /* eslint-disable no-unused-vars */
 import type { ClientModule } from './modules';
 import type {
-    ApplicationCommandData,
+    ChatInputApplicationCommandData,
     Collection,
     CommandInteraction,
 } from 'discord.js';
 import type { RequestManager } from '../hypixelAPI/RequestManager';
-import type {
-    UserAPIData,
-    UserData,
-} from './database';
 
 export interface WebhookConfig {
     id: string;
@@ -41,15 +37,12 @@ export interface ClientCommand {
         ephemeral: boolean;
         noDM: boolean;
         ownerOnly: boolean;
-        structure: ApplicationCommandData;
+        structure: ChatInputApplicationCommandData;
     };
     execute: {
         (
             interaction: CommandInteraction,
-            user: {
-                userData: UserData;
-                userAPIData?: UserAPIData;
-            },
+            locale: string,
         ): Promise<void>;
     };
 }

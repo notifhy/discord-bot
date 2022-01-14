@@ -12,7 +12,6 @@ import {
     timestamp,
 } from '../util/utility';
 import {
-    CommandInteraction,
     Constants as DiscordConstants,
     Formatters,
     Message,
@@ -69,12 +68,12 @@ export const properties: ClientCommand['properties'] = {
 };
 
 export const execute: ClientCommand['execute'] = async (
-    interaction: CommandInteraction,
-    { userData },
+    interaction,
+    locale,
 ): Promise<void> => {
-    const locale = RegionLocales.locale(userData.language).commands.player;
+    const text = RegionLocales.locale(locale).commands.player;
     const replace = RegionLocales.replace;
-    const unknown = locale.unknown;
+    const unknown = text.unknown;
 
     const inputUUID =
         /^[0-9a-f]{8}(-?)[0-9a-f]{4}(-?)[1-5][0-9a-f]{3}(-?)[89AB][0-9a-f]{3}(-?)[0-9a-f]{12}$/i;
@@ -88,8 +87,8 @@ export const execute: ClientCommand['execute'] = async (
     ) {
         const invalidEmbed = new BetterEmbed(interaction)
             .setColor(Constants.colors.normal)
-            .setTitle(locale.invalid.title)
-            .setDescription(locale.invalid.description);
+            .setTitle(text.invalid.title)
+            .setDescription(text.invalid.description);
 
         Log.command(interaction, 'Invalid user:', input);
 
@@ -147,17 +146,17 @@ export const execute: ClientCommand['execute'] = async (
 
         const statusEmbed = new BetterEmbed(interaction)
             .setColor(Constants.colors.normal)
-            .setTitle(locale.status.embed.title)
+            .setTitle(text.status.embed.title)
             .setDescription(
-                replace(locale.status.embed.field1.value, {
+                replace(text.status.embed.field1.value, {
                     username: username,
                     status: online === true
-                        ? locale.status.online
-                        : locale.status.offline,
+                        ? text.status.online
+                        : text.status.offline,
                 }))
             .addField(
-                locale.status.embed.field1.name,
-                replace(locale.status.embed.field1.value, {
+                text.status.embed.field1.name,
+                replace(text.status.embed.field1.value, {
                     uuid: uuid,
                     TWITTER: TWITTER ?? unknown,
                     INSTAGRAM: INSTAGRAM ?? unknown,
@@ -168,8 +167,8 @@ export const execute: ClientCommand['execute'] = async (
                         : unknown,
                 }))
             .addField(
-                locale.status.embed.field2.name,
-                replace(locale.status.embed.field2.value, {
+                text.status.embed.field2.name,
+                replace(text.status.embed.field2.value, {
                     lastLogin: timestamp(last_login, 'F') ?? unknown,
                     lastLogout: timestamp(last_logout, 'F') ?? unknown,
                 }));
@@ -177,8 +176,8 @@ export const execute: ClientCommand['execute'] = async (
         if (online === true) {
             statusEmbed
                 .addField(
-                    locale.status.embed.onlineField.name,
-                    replace(locale.status.embed.onlineField.value, {
+                    text.status.embed.onlineField.name,
+                    replace(text.status.embed.onlineField.value, {
                         playTime: cleanLength(
                             Date.now() - Number(last_login),
                         ) ?? unknown,
@@ -189,8 +188,8 @@ export const execute: ClientCommand['execute'] = async (
         } else {
             statusEmbed
                 .addField(
-                    locale.status.embed.offlineField.name,
-                    replace(locale.status.embed.offlineField.value, {
+                    text.status.embed.offlineField.name,
+                    replace(text.status.embed.offlineField.value, {
                         playTime: cleanLength(
                             Number(last_logout) - Number(last_login),
                         ) ?? unknown,
@@ -200,8 +199,8 @@ export const execute: ClientCommand['execute'] = async (
 
         statusEmbed
             .addField(
-                locale.status.embed.field3.name,
-                replace(locale.status.embed.field3.value, {
+                text.status.embed.field3.name,
+                replace(text.status.embed.field3.value, {
                     language: language ?? 'ENGLISH',
                     version: mc_version ?? unknown,
                 }));
@@ -241,31 +240,31 @@ export const execute: ClientCommand['execute'] = async (
             );
 
             const fields = shownData.map(({ date, ended, gameType, mode, map }) => ({
-                name: replace(locale.recentGames.embed.field.name, {
+                name: replace(text.recentGames.embed.field.name, {
                     gameType: gameType,
                     date: timestamp(date, 'D') ?? unknown,
                 }),
-                value: replace(locale.recentGames.embed.field.value, {
+                value: replace(text.recentGames.embed.field.value, {
                     start: timestamp(date, 'T') ?? unknown,
-                    end: timestamp(ended, 'T') ?? locale.recentGames.inProgress,
+                    end: timestamp(ended, 'T') ?? text.recentGames.inProgress,
                     playTime: ended
-                        ? `${locale.recentGames.playTime}${cleanLength(ended - date)}`
-                        : `${locale.recentGames.elapsed}${cleanLength(Date.now() - date)}`,
+                        ? `${text.recentGames.playTime}${cleanLength(ended - date)}`
+                        : `${text.recentGames.elapsed}${cleanLength(Date.now() - date)}`,
                     mode: mode
-                        ? `\n${locale.recentGames.gameMode}${mode}`
+                        ? `\n${text.recentGames.gameMode}${mode}`
                         : '',
                     map: map
-                        ? `\n${locale.recentGames.gameMap}${map}`
+                        ? `\n${text.recentGames.gameMap}${map}`
                         : '',
                 }),
             }));
 
             return new BetterEmbed(interaction)
                 .setColor(Constants.colors.normal)
-                .setTitle(replace(locale.recentGames.embed.title, {
+                .setTitle(replace(text.recentGames.embed.title, {
                     username: username,
                 }))
-                .setDescription(replace(locale.recentGames.embed.description, {
+                .setDescription(replace(text.recentGames.embed.description, {
                     start: position >= shownData.length
                         ? position
                         : position + 1,
@@ -368,7 +367,7 @@ export const execute: ClientCommand['execute'] = async (
                     components: [buttons],
                 });
             } catch (error) {
-                const handler = new CommandErrorHandler(error, interaction, userData.language);
+                const handler = new CommandErrorHandler(error, interaction, locale);
                 await handler.systemNotify();
                 await handler.userNotify();
             }
@@ -384,7 +383,7 @@ export const execute: ClientCommand['execute'] = async (
                     components: disabledRows,
                 });
             } catch (error) {
-                const handler = new CommandErrorHandler(error, interaction, userData.language);
+                const handler = new CommandErrorHandler(error, interaction, locale);
                 await handler.systemNotify();
                 await handler.userNotify();
             }
@@ -413,9 +412,9 @@ export const execute: ClientCommand['execute'] = async (
     async function notFound() {
         const notFoundEmbed = new BetterEmbed(interaction)
             .setColor(Constants.colors.warning)
-            .setTitle(locale.notFound.title)
+            .setTitle(text.notFound.title)
             .setDescription(
-                replace(locale.notFound.description, {
+                replace(text.notFound.description, {
                     inputType: inputType,
                 }),
             );

@@ -20,6 +20,7 @@ export default {
         off: '#555555' as ColorResolvable,
     },
     defaults: {
+        language: 'en-US',
         menuIncrements: 5,
         menuFastIncrements: 20,
     },

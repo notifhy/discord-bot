@@ -58,13 +58,16 @@ export const execute = async ({
                 table: Constants.tables.users,
                 allowUndefined: false,
                 columns: [
-                    'language',
+                    'locale',
+                    'localeOverride',
                     'systemMessages',
                 ],
             })
         ) as UserData;
 
-        const locale = RegionLocales.locale(userData.language).modules.friends;
+        const locale = RegionLocales.locale(
+            userData.localeOverride ?? userData.locale,
+        ).modules.friends;
         const { replace } = RegionLocales;
 
         if (

@@ -19,7 +19,6 @@ import {
 } from '../util/utility';
 import {
     ButtonInteraction,
-    CommandInteraction,
     Message,
     MessageActionRow,
     MessageComponentInteraction,
@@ -65,11 +64,11 @@ export const properties: ClientCommand['properties'] = {
 };
 
 export const execute: ClientCommand['execute'] = async (
-    interaction: CommandInteraction,
-    { userData },
+    interaction,
+    locale,
 ): Promise<void> => {
     const subCommand = interaction.options.getSubcommand(true);
-    const locale = RegionLocales.locale(userData.language).commands.modules[
+    const text = RegionLocales.locale(locale).commands.modules[
         subCommand as keyof Locale['commands']['modules']
     ];
 
@@ -80,8 +79,8 @@ export const execute: ClientCommand['execute'] = async (
 
     const mainEmbed = new BetterEmbed(interaction)
         .setColor(Constants.colors.normal)
-        .setTitle(locale.title)
-        .setDescription(locale.description);
+        .setTitle(text.title)
+        .setDescription(text.description);
 
     const mainMenu = (data?: {
         default?: string;
@@ -89,10 +88,10 @@ export const execute: ClientCommand['execute'] = async (
     }) => {
         const menu = new MessageSelectMenu()
             .setCustomId('main')
-            .setPlaceholder(locale.menuPlaceholder)
+            .setPlaceholder(text.menuPlaceholder)
             .setDisabled(data?.disabled ?? false);
 
-        const menuData = locale.menu;
+        const menuData = text.menu;
         for (const item in menuData) {
             //@ts-expect-error hasOwn typing not implemented yet
             if (Object.hasOwn(menuData, item)) {
@@ -117,7 +116,7 @@ export const execute: ClientCommand['execute'] = async (
 
     const getUserAPIData = async () => (
         await SQLite.getUser<UserAPIData>({
-            discordID: userData.discordID,
+            discordID: interaction.user.id,
             table: Constants.tables.api,
             columns: ['discordID', 'modules'],
             allowUndefined: false,
@@ -126,7 +125,7 @@ export const execute: ClientCommand['execute'] = async (
 
     const getDefenderData = async () => (
         await SQLite.getUser<DefenderModule>({
-            discordID: userData.discordID,
+            discordID: interaction.user.id,
             table: Constants.tables.defender,
             columns: [
                 'discordID',
@@ -142,7 +141,7 @@ export const execute: ClientCommand['execute'] = async (
 
     const getFriendsData = async () => (
         await SQLite.getUser<FriendsModule>({
-            discordID: userData.discordID,
+            discordID: interaction.user.id,
             table: Constants.tables.friends,
             columns: [
                 'discordID',
@@ -154,7 +153,7 @@ export const execute: ClientCommand['execute'] = async (
 
     const getRewardsData = async () => (
         await SQLite.getUser<RewardsModule>({
-            discordID: userData.discordID,
+            discordID: interaction.user.id,
             table: Constants.tables.rewards,
             allowUndefined: false,
             columns: [
@@ -199,7 +198,7 @@ export const execute: ClientCommand['execute'] = async (
                     await dataUpdate(i);
                 }
             } catch (error) {
-                const handler = new CommandErrorHandler(error, interaction, userData.language);
+                const handler = new CommandErrorHandler(error, interaction, locale);
                 await handler.systemNotify();
                 await handler.userNotify();
             }
@@ -215,7 +214,7 @@ export const execute: ClientCommand['execute'] = async (
                 components: disabledComponents,
             });
         } catch (error) {
-            const handler = new CommandErrorHandler(error, interaction, userData.language);
+            const handler = new CommandErrorHandler(error, interaction, locale);
             await handler.systemNotify();
             await handler.userNotify();
         }
@@ -225,8 +224,8 @@ export const execute: ClientCommand['execute'] = async (
         selected = selectMenuInteraction.values[0];
 
         mainEmbed.setField(
-            locale.menu[selected as keyof typeof locale['menu']].label,
-            locale.menu[selected as keyof typeof locale['menu']]
+            text.menu[selected as keyof typeof text['menu']].label,
+            text.menu[selected as keyof typeof text['menu']]
                 .longDescription,
         );
 
@@ -261,13 +260,13 @@ export const execute: ClientCommand['execute'] = async (
                         exceptions[subCommand as keyof typeof exceptions].includes(key) === false)
                     .map(
                         ([name]) =>
-                            locale.menu[name as keyof typeof locale.menu].label,
+                            text.menu[name as keyof typeof text.menu].label,
                     );
 
                 if (missingRequirements.length > 0) {
                     mainEmbed.addField(
-                        locale.missingConfigField.name,
-                        replace(locale.missingConfigField.value, {
+                        text.missingConfigField.name,
+                        replace(text.missingConfigField.value, {
                             missingRequirements: missingRequirements.join(', '),
                         }),
                     );
@@ -278,7 +277,7 @@ export const execute: ClientCommand['execute'] = async (
                     enabled: userAPIData.modules.includes(subCommand),
                     buttonLocale: {
                         ...(
-                            locale as
+                            text as
                             ModulesCommand['defender'] |
                             ModulesCommand['friends'] |
                             ModulesCommand['rewards']
@@ -299,7 +298,7 @@ export const execute: ClientCommand['execute'] = async (
                 const alerts = (await getDefenderData()).alerts;
 
                 const menu = combiner(
-                    (locale as ModulesCommand['defender']).menu.alerts,
+                    (text as ModulesCommand['defender']).menu.alerts,
                     (structures as typeof baseStructures['defender']).alerts,
                 ).select;
 
@@ -316,7 +315,7 @@ export const execute: ClientCommand['execute'] = async (
             }
             case 'channel': {
                 const menu = combiner(
-                    (locale as ModulesCommand['friends']).menu.channel,
+                    (text as ModulesCommand['friends']).menu.channel,
                     (structures as typeof baseStructures['friends']).channel,
                 ).select;
 
@@ -330,7 +329,7 @@ export const execute: ClientCommand['execute'] = async (
                 const games = (await getDefenderData()).gameTypes;
 
                 const menu = combiner(
-                    (locale as ModulesCommand['defender']).menu.gameTypes,
+                    (text as ModulesCommand['defender']).menu.gameTypes,
                     (structures as typeof baseStructures['defender']).gameTypes,
                 ).select;
 
@@ -349,7 +348,7 @@ export const execute: ClientCommand['execute'] = async (
                 const languages = (await getDefenderData()).languages;
 
                 const menu = combiner(
-                    (locale as ModulesCommand['defender']).menu.languages,
+                    (text as ModulesCommand['defender']).menu.languages,
                     (structures as typeof baseStructures['defender']).languages,
                 ).select;
 
@@ -368,7 +367,7 @@ export const execute: ClientCommand['execute'] = async (
                 const versions = (await getDefenderData()).versions;
 
                 const menu = combiner(
-                    (locale as ModulesCommand['defender']).menu.versions,
+                    (text as ModulesCommand['defender']).menu.versions,
                     (structures as typeof baseStructures['defender']).versions,
                 ).select;
 
@@ -387,7 +386,7 @@ export const execute: ClientCommand['execute'] = async (
                 const userRewardData = await getRewardsData();
 
                 const menu = combiner(
-                    (locale as ModulesCommand['rewards']).menu.alertTime,
+                    (text as ModulesCommand['rewards']).menu.alertTime,
                     (structures as typeof baseStructures['rewards']).alertTime,
                 ).select;
 
@@ -409,7 +408,7 @@ export const execute: ClientCommand['execute'] = async (
                     allDisabled: false,
                     enabled: userRewardData.claimNotification,
                     buttonLocale: {
-                        ...(locale as ModulesCommand['rewards']).menu.claimNotification.button,
+                        ...(text as ModulesCommand['rewards']).menu.claimNotification.button,
                         ...(structures as typeof baseStructures['rewards']).claimNotification.button,
                     },
                 });
@@ -424,7 +423,7 @@ export const execute: ClientCommand['execute'] = async (
                     allDisabled: false,
                     enabled: userRewardData.milestones,
                     buttonLocale: {
-                        ...(locale as ModulesCommand['rewards']).menu.claimNotification.button,
+                        ...(text as ModulesCommand['rewards']).menu.claimNotification.button,
                         ...(structures as typeof baseStructures['rewards']).milestones.button,
                     },
                 });
@@ -436,7 +435,7 @@ export const execute: ClientCommand['execute'] = async (
                 const userRewardData = await getRewardsData();
 
                 const menu = combiner(
-                    (locale as ModulesCommand['rewards']).menu.notificationInterval,
+                    (text as ModulesCommand['rewards']).menu.notificationInterval,
                     (structures as typeof baseStructures['rewards']).notificationInterval,
                 ).select;
 
@@ -489,7 +488,7 @@ export const execute: ClientCommand['execute'] = async (
                     enabled: userAPIData.modules.includes(subCommand),
                     buttonLocale: {
                         ...(
-                            locale as
+                            text as
                             ModulesCommand['defender'] |
                             ModulesCommand['friends'] |
                             ModulesCommand['rewards']
@@ -531,7 +530,7 @@ export const execute: ClientCommand['execute'] = async (
                 }
 
                 const updatedMenu = combiner(
-                    (locale as ModulesCommand['defender']).menu.alerts,
+                    (text as ModulesCommand['defender']).menu.alerts,
                     (structures as typeof baseStructures['defender']).alerts,
                 ).select;
 
@@ -547,7 +546,7 @@ export const execute: ClientCommand['execute'] = async (
                 );
 
                 await SQLite.updateUser<DefenderModule>({
-                    discordID: userData.discordID,
+                    discordID: interaction.user.id,
                     table: Constants.tables.defender,
                     data: { alerts: base },
                 });
@@ -559,7 +558,7 @@ export const execute: ClientCommand['execute'] = async (
                 ).values;
 
                 const updatedMenu = combiner(
-                    (locale as ModulesCommand['defender']).menu.gameTypes,
+                    (text as ModulesCommand['defender']).menu.gameTypes,
                     (structures as typeof baseStructures['defender']).gameTypes,
                 ).select;
 
@@ -575,7 +574,7 @@ export const execute: ClientCommand['execute'] = async (
                 );
 
                 await SQLite.updateUser<DefenderModule>({
-                    discordID: userData.discordID,
+                    discordID: interaction.user.id,
                     table: Constants.tables.defender,
                     data: { gameTypes: selectedValues },
                 });
@@ -587,7 +586,7 @@ export const execute: ClientCommand['execute'] = async (
                 ).values;
 
                 const updatedMenu = combiner(
-                    (locale as ModulesCommand['defender']).menu.languages,
+                    (text as ModulesCommand['defender']).menu.languages,
                     (structures as typeof baseStructures['defender']).languages,
                 ).select;
 
@@ -603,7 +602,7 @@ export const execute: ClientCommand['execute'] = async (
                 );
 
                 await SQLite.updateUser<DefenderModule>({
-                    discordID: userData.discordID,
+                    discordID: interaction.user.id,
                     table: Constants.tables.defender,
                     data: { languages: selectedValues },
                 });
@@ -615,7 +614,7 @@ export const execute: ClientCommand['execute'] = async (
                 ).values;
 
                 const updatedMenu = combiner(
-                    (locale as ModulesCommand['defender']).menu.versions,
+                    (text as ModulesCommand['defender']).menu.versions,
                     (structures as typeof baseStructures['defender']).versions,
                 ).select;
 
@@ -631,7 +630,7 @@ export const execute: ClientCommand['execute'] = async (
                 );
 
                 await SQLite.updateUser<DefenderModule>({
-                    discordID: userData.discordID,
+                    discordID: interaction.user.id,
                     table: Constants.tables.defender,
                     data: { versions: selectedValues },
                 });
@@ -643,7 +642,7 @@ export const execute: ClientCommand['execute'] = async (
                 ).values[0];
 
                 const updatedMenu = combiner(
-                    (locale as ModulesCommand['rewards']).menu.alertTime,
+                    (text as ModulesCommand['rewards']).menu.alertTime,
                     (structures as typeof baseStructures['rewards']).alertTime,
                 ).select;
 
@@ -659,7 +658,7 @@ export const execute: ClientCommand['execute'] = async (
                 );
 
                 await SQLite.updateUser<RewardsModule>({
-                    discordID: userData.discordID,
+                    discordID: interaction.user.id,
                     table: Constants.tables.rewards,
                     data: { alertTime: Number(time) },
                 });
@@ -675,7 +674,7 @@ export const execute: ClientCommand['execute'] = async (
                     allDisabled: false,
                     enabled: flipped,
                     buttonLocale: {
-                        ...(locale as ModulesCommand['rewards']).menu.claimNotification.button,
+                        ...(text as ModulesCommand['rewards']).menu.claimNotification.button,
                         ...(structures as typeof baseStructures['rewards']).claimNotification.button,
                     },
                 });
@@ -683,7 +682,7 @@ export const execute: ClientCommand['execute'] = async (
                 components.push(component);
 
                 await SQLite.updateUser<RewardsModule>({
-                    discordID: userData.discordID,
+                    discordID: interaction.user.id,
                     table: Constants.tables.rewards,
                     data: { claimNotification: flipped },
                 });
@@ -699,7 +698,7 @@ export const execute: ClientCommand['execute'] = async (
                     allDisabled: false,
                     enabled: flipped,
                     buttonLocale: {
-                        ...(locale as ModulesCommand['rewards']).menu.claimNotification.button,
+                        ...(text as ModulesCommand['rewards']).menu.claimNotification.button,
                         ...(structures as typeof baseStructures['rewards']).milestones.button,
                     },
                 });
@@ -709,7 +708,7 @@ export const execute: ClientCommand['execute'] = async (
                 await SQLite.updateUser<
                     RewardsModule
                 >({
-                    discordID: userData.discordID,
+                    discordID: interaction.user.id,
                     table: Constants.tables.rewards,
                     data: { milestones: flipped },
                 });
@@ -721,7 +720,7 @@ export const execute: ClientCommand['execute'] = async (
                 ).values[0];
 
                 const updatedMenu = combiner(
-                    (locale as ModulesCommand['rewards']).menu.notificationInterval,
+                    (text as ModulesCommand['rewards']).menu.notificationInterval,
                     (structures as typeof baseStructures['rewards']).notificationInterval,
                 ).select;
 
@@ -736,7 +735,7 @@ export const execute: ClientCommand['execute'] = async (
                 );
 
                 await SQLite.updateUser<RewardsModule>({
-                    discordID: userData.discordID,
+                    discordID: interaction.user.id,
                     table: Constants.tables.rewards,
                     data: { notificationInterval: Number(time) },
                 });

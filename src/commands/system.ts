@@ -5,7 +5,6 @@ import {
     cleanLength,
     cleanRound,
 } from '../util/utility';
-import { CommandInteraction } from 'discord.js';
 import { keyLimit } from '../../config.json';
 import { RegionLocales } from '../../locales/localesHandler';
 import { SQLite } from '../util/SQLite';
@@ -26,10 +25,10 @@ export const properties: ClientCommand['properties'] = {
 };
 
 export const execute: ClientCommand['execute'] = async (
-    interaction: CommandInteraction,
-    { userData },
+    interaction,
+    locale,
 ): Promise<void> => {
-    const locale = RegionLocales.locale(userData.language).commands.system;
+    const text = RegionLocales.locale(locale).commands.system;
     const { replace } = RegionLocales;
 
     const { instance } = interaction.client.hypixelAPI;
@@ -57,29 +56,29 @@ export const execute: ClientCommand['execute'] = async (
 
     const responseEmbed = new BetterEmbed(interaction)
         .setColor(Constants.colors.normal)
-        .setTitle(locale.embed.title)
+        .setTitle(text.embed.title)
         .addFields([
             {
-                name: locale.embed.field1.name,
-                value: replace(locale.embed.field1.value, {
+                name: text.embed.field1.name,
+                value: replace(text.embed.field1.value, {
                     uptime: cleanLength(process.uptime() * 1000)!,
                 }),
             },
             {
-                name: locale.embed.field2.name,
-                value: replace(locale.embed.field2.value, {
+                name: text.embed.field2.name,
+                value: replace(text.embed.field2.value, {
                     memoryMegaBytes: cleanRound(memoryMegaBytes, 1),
                 }),
             },
             {
-                name: locale.embed.field3.name,
-                value: replace(locale.embed.field3.value, {
+                name: text.embed.field3.name,
+                value: replace(text.embed.field3.value, {
                     servers: interaction.client.guilds.cache.size,
                 }),
             },
             {
-                name: locale.embed.field4.name,
-                value: replace(locale.embed.field4.value, {
+                name: text.embed.field4.name,
+                value: replace(text.embed.field4.value, {
                     users: interaction.client.guilds.cache.reduce(
                         (acc, guild) => acc + guild.memberCount,
                         0,
@@ -87,14 +86,14 @@ export const execute: ClientCommand['execute'] = async (
                 }),
             },
             {
-                name: locale.embed.field5.name,
-                value: replace(locale.embed.field5.value, {
+                name: text.embed.field5.name,
+                value: replace(text.embed.field5.value, {
                     registeredUsers: userCount,
                 }),
             },
             {
-                name: locale.embed.field6.name,
-                value: replace(locale.embed.field6.value, {
+                name: text.embed.field6.name,
+                value: replace(text.embed.field6.value, {
                     instanceUses: instance.instanceUses,
                     updateInterval: cleanLength(updateInterval)!,
                 }),

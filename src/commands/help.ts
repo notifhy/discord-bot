@@ -1,6 +1,5 @@
 import type { ClientCommand } from '../@types/client';
 import { BetterEmbed } from '../util/utility';
-import { CommandInteraction } from 'discord.js';
 import { RegionLocales } from '../../locales/localesHandler';
 import Constants from '../util/Constants';
 
@@ -39,11 +38,11 @@ export const properties: ClientCommand['properties'] = {
 };
 
 export const execute: ClientCommand['execute'] = async (
-    interaction: CommandInteraction,
-    { userData },
+    interaction,
+    locale,
 ): Promise<void> => {
     const replace = RegionLocales.replace;
-    const locale = RegionLocales.locale(userData.language).commands.help;
+    const text = RegionLocales.locale(locale).commands.help;
 
     if (interaction.options.getSubcommand() === 'information') {
         await information();
@@ -56,8 +55,8 @@ export const execute: ClientCommand['execute'] = async (
     async function information() {
         const informationEmbed = new BetterEmbed(interaction)
             .setColor(Constants.colors.normal)
-            .setTitle(locale.information.title)
-            .setDescription(locale.information.description);
+            .setTitle(text.information.title)
+            .setDescription(text.information.description);
 
         await interaction.editReply({ embeds: [informationEmbed] });
     }
@@ -73,9 +72,9 @@ export const execute: ClientCommand['execute'] = async (
         if (command === undefined) {
             commandSearchEmbed
                 .setColor(Constants.colors.warning)
-                .setTitle(locale.specific.invalid.title)
+                .setTitle(text.specific.invalid.title)
                 .setDescription(
-                    replace(locale.specific.invalid.description, {
+                    replace(text.specific.invalid.description, {
                         command: commandArg,
                     }),
                 );
@@ -84,37 +83,37 @@ export const execute: ClientCommand['execute'] = async (
         }
 
         commandSearchEmbed.setTitle(
-            replace(locale.specific.title, {
+            replace(text.specific.title, {
                 command: commandArg,
             }),
         );
 
         if (command.properties.description) {
             commandSearchEmbed.setDescription(
-                replace(locale.specific.description, {
+                replace(text.specific.description, {
                     commandDescription: command.properties.description,
                 }),
             );
         }
 
         commandSearchEmbed.addField(
-            locale.specific.cooldown.name,
-            replace(locale.specific.cooldown.value, {
+            text.specific.cooldown.name,
+            replace(text.specific.cooldown.value, {
                 commandCooldown: command.properties.cooldown / Constants.ms.second,
             }),
         );
 
         if (command.properties.noDM === true) {
             commandSearchEmbed.addField(
-                locale.specific.dm.name,
-                replace(locale.specific.dm.value),
+                text.specific.dm.name,
+                replace(text.specific.dm.value),
             );
         }
 
         if (command.properties.ownerOnly === true) {
             commandSearchEmbed.addField(
-                locale.specific.owner.name,
-                replace(locale.specific.owner.value),
+                text.specific.owner.name,
+                replace(text.specific.owner.value),
             );
         }
 
@@ -127,14 +126,14 @@ export const execute: ClientCommand['execute'] = async (
         );
         const allCommandsEmbed = new BetterEmbed(interaction)
             .setColor(Constants.colors.normal)
-            .setTitle(locale.all.title);
+            .setTitle(text.all.title);
 
         for (const command of commandsCollection.values()) {
             allCommandsEmbed.addField(
-                replace(locale.all.field.name, {
+                replace(text.all.field.name, {
                     commandName: command.properties.name,
                 }),
-                replace(locale.all.field.value, {
+                replace(text.all.field.value, {
                     commandDescription: command.properties.description,
                 }),
             );

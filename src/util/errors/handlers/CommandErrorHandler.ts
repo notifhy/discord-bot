@@ -106,14 +106,14 @@ export default class CommandErrorHandler extends BaseErrorHandler {
     async userNotify() {
         const { commandName } = this.interaction;
 
-        const locale = RegionLocales
+        const text = RegionLocales
             .locale(this.locale)
             .errors;
 
         const { replace } = RegionLocales;
 
         if (this.error instanceof ConstraintError) {
-            const constraint = locale
+            const constraint = text
                 .constraintErrors[this.error.message as keyof Locale['errors']['constraintErrors']];
 
             if (this.error.message === 'cooldown') {
@@ -155,13 +155,13 @@ export default class CommandErrorHandler extends BaseErrorHandler {
 
         const embed = new MessageEmbed()
         .setColor(Constants.colors.error)
-            .setTitle(locale.commandErrors.embed.title)
-            .setDescription(replace(locale.commandErrors.embed.description, {
+            .setTitle(text.commandErrors.embed.title)
+            .setDescription(replace(text.commandErrors.embed.description, {
                 commandName: commandName,
             }))
             .addField(
-                locale.commandErrors.embed.field.name,
-                replace(locale.commandErrors.embed.field.value, {
+                text.commandErrors.embed.field.name,
+                replace(text.commandErrors.embed.field.value, {
                     id: this.incidentID,
                 }),
             );

@@ -2,7 +2,6 @@ import type { ClientCommand } from '../@types/client';
 import { BetterEmbed } from '../util/utility';
 import {
     ColorResolvable,
-    CommandInteraction,
     Message,
 } from 'discord.js';
 import { Log } from '../util/Log';
@@ -23,15 +22,15 @@ export const properties: ClientCommand['properties'] = {
 };
 
 export const execute: ClientCommand['execute'] = async (
-    interaction: CommandInteraction,
-    { userData },
+    interaction,
+    locale,
 ): Promise<void> => {
-    const locale = RegionLocales.locale(userData.language).commands.ping;
+    const text = RegionLocales.locale(locale).commands.ping;
     const replace = RegionLocales.replace;
 
     const initialPingEmbed = new BetterEmbed(interaction)
         .setColor(Constants.colors.normal)
-        .setTitle(locale.embed1.title);
+        .setTitle(text.embed1.title);
 
     const sentReply = await interaction.editReply({
         embeds: [initialPingEmbed],
@@ -51,9 +50,9 @@ export const execute: ClientCommand['execute'] = async (
 
     const pingEmbed = new BetterEmbed(interaction)
         .setColor(embedColor)
-        .setTitle(locale.embed2.title)
+        .setTitle(text.embed2.title)
         .setDescription(
-            replace(locale.embed2.description, {
+            replace(text.embed2.description, {
                 wsPing: interaction.client.ws.ping,
                 rtPing: roundTripDelay,
             }),

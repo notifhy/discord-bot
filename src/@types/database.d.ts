@@ -15,7 +15,8 @@ export interface History extends Partial<CleanHypixelPlayer>, Partial<CleanHypix
 }
 
 export interface UserData extends BaseUserData {
-    language: string;
+    locale: string;
+    localeOverride: string | null;
     systemMessages: Field[];
 }
 

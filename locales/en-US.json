@@ -76,10 +76,10 @@
         "language": {
             "alreadySet": {
                 "title": "Already Set",
-                "description": "%{language}% is already your set language!"
+                "description": "%{locale}% is already your set language!"
             },
             "title": "Language Set",
-            "description": "Your language has been changed to `%{language}%`!"
+            "description": "Your language has been changed to `%{locale}%`!"
         },
         "modules": {
             "defender": {
