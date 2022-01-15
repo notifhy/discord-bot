@@ -23,6 +23,7 @@ export class RegionLocales {
 
     static replace(input: string, parameters?: Parameters): string {
         let replaced: string = input;
+
         for (const parameter in parameters) {
             //@ts-expect-error hasOwn not implemented in typings.
             if (Object.hasOwn(parameters, parameter)) {

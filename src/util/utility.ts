@@ -156,10 +156,10 @@ export function cleanGameType(type: string | null) {
         return null;
     }
 
-    const gameType = Constants.clean.gameTypes.find(({ type_name: key }) =>
-        key === type);
+    const gameType =
+        Constants.clean.gameTypes[type as keyof typeof Constants.clean.gameTypes];
 
-    return gameType?.clean_name ?? type;
+    return gameType ?? type;
 }
 
 export function cleanLength(

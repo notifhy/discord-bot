@@ -6,21 +6,21 @@ import {
     cleanRound,
 } from '../util/utility';
 import { keyLimit } from '../../config.json';
-import { RegionLocales } from '../../locales/localesHandler';
+import { RegionLocales } from '../../locales/RegionLocales';
 import { SQLite } from '../util/SQLite';
 import Constants from '../util/Constants';
 import process from 'node:process';
 
 export const properties: ClientCommand['properties'] = {
     name: 'system',
-    description: 'View system information to satiate the curious',
+    description: 'View system information, including how often your data will be refreshed',
     cooldown: 10000,
     ephemeral: true,
     noDM: false,
     ownerOnly: false,
     structure: {
         name: 'system',
-        description: 'View system information to satiate the curious',
+        description: 'View system information',
     },
 };
 

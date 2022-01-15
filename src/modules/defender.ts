@@ -2,7 +2,7 @@ import type { DefenderModule, UserAPIData, UserData } from '../@types/database';
 import { arrayRemove, BetterEmbed, cleanGameType, timestamp } from '../util/utility';
 import { ColorResolvable, EmbedFieldData, Formatters, TextChannel } from 'discord.js';
 import { Log } from '../util/Log';
-import { RegionLocales } from '../../locales/localesHandler';
+import { RegionLocales } from '../../locales/RegionLocales';
 import { ModuleHandler } from '../module/ModuleHandler';
 import { SQLite } from '../util/SQLite';
 import Constants from '../util/Constants';

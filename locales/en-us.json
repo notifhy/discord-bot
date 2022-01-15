@@ -691,7 +691,7 @@
             "cooldown": {
                 "embed1": {
                     "title": "Cooldown",
-                    "description": "You are executing commands too quickly! This cooldown of this command is %{cooldown}% seconds. This message will turn green in %{timeLeft}% seconds once the cooldown expires."
+                    "description": "You are executing commands too quickly! The cooldown of this command is %{cooldown}% seconds. This message will turn green in %{timeLeft}% seconds once the cooldown expires."
                 },
                 "embed2": {
                     "title": "Cooldown Over",

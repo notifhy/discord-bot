@@ -14,7 +14,7 @@ import {
     timestamp,
 } from '../util/utility';
 import { ModuleHandler } from '../module/ModuleHandler';
-import { RegionLocales } from '../../locales/localesHandler';
+import { RegionLocales } from '../../locales/RegionLocales';
 import { SQLite } from '../util/SQLite';
 import Constants from '../util/Constants';
 import ModuleError from '../util/errors/ModuleError';
@@ -40,9 +40,7 @@ export const execute = async ({
         }
 
         const friendModule = (
-            await SQLite.getUser<
-                FriendsModule
-            >({
+            await SQLite.getUser<FriendsModule>({
                 discordID: userAPIData.discordID,
                 table: Constants.tables.friends,
                 allowUndefined: false,
@@ -51,9 +49,7 @@ export const execute = async ({
         ) as FriendsModule;
 
         const userData = (
-            await SQLite.getUser<
-                UserData
-            >({
+            await SQLite.getUser<UserData>({
                 discordID: userAPIData.discordID,
                 table: Constants.tables.users,
                 allowUndefined: false,

@@ -24,21 +24,21 @@ import {
     MessageComponentInteraction,
 } from 'discord.js';
 import { Log } from '../util/Log';
-import { RegionLocales } from '../../locales/localesHandler';
+import { RegionLocales } from '../../locales/RegionLocales';
 import { SQLite } from '../util/SQLite';
 import CommandErrorHandler from '../util/errors/handlers/CommandErrorHandler';
 import Constants from '../util/Constants';
 
 export const properties: ClientCommand['properties'] = {
     name: 'data',
-    description: 'View and/or delete data stored or used by this bot',
+    description: 'View and/or delete your data stored by this bot',
     cooldown: 30_000,
     ephemeral: true,
     noDM: false,
     ownerOnly: false,
     structure: {
         name: 'data',
-        description: 'View and/or delete data stored or used by this bot',
+        description: 'View and/or delete your data stored by this bot',
         options: [
             {
                 name: 'delete',
@@ -186,33 +186,33 @@ export const execute: ClientCommand['execute'] = async (
             SQLite.getUser<UserData>({
                 discordID: interaction.user.id,
                 table: Constants.tables.users,
-                columns: ['*'],
                 allowUndefined: true,
-            })!,
+                columns: ['*'],
+            }),
             SQLite.getUser<UserAPIData>({
                 discordID: interaction.user.id,
                 table: Constants.tables.api,
-                columns: ['*'],
                 allowUndefined: true,
-            })!,
+                columns: ['*'],
+            }),
             SQLite.getUser<DefenderModule>({
                 discordID: interaction.user.id,
                 table: Constants.tables.defender,
-                columns: ['*'],
                 allowUndefined: true,
-            })!,
+                columns: ['*'],
+            }),
             SQLite.getUser<FriendsModule>({
                 discordID: interaction.user.id,
                 table: Constants.tables.friends,
-                columns: ['*'],
                 allowUndefined: true,
-            })!,
+                columns: ['*'],
+            }),
             SQLite.getUser<RewardsModule>({
                 discordID: interaction.user.id,
                 table: Constants.tables.rewards,
-                columns: ['*'],
                 allowUndefined: true,
-            })!,
+                columns: ['*'],
+            }),
         ]);
 
         const allUserData = {
@@ -236,16 +236,13 @@ export const execute: ClientCommand['execute'] = async (
     }
 
     async function viewHistory() {
-        const userAPIData = (
-            await SQLite.getUser<
-                UserAPIData
-            >({
+        const userAPIData =
+            await SQLite.getUser<UserAPIData>({
                 discordID: interaction.user.id,
                 table: Constants.tables.api,
                 columns: ['*'],
                 allowUndefined: false,
-            })
-        ) as UserAPIData;
+            });
 
         const base = new MessageButton()
             .setStyle(

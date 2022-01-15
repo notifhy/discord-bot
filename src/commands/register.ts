@@ -8,7 +8,7 @@ import type {
 } from '../@types/database';
 import { BetterEmbed } from '../util/utility';
 import { Log } from '../util/Log';
-import { RegionLocales } from '../../locales/localesHandler';
+import { RegionLocales } from '../../locales/RegionLocales';
 import { Request } from '../util/Request';
 import { SQLite } from '../util/SQLite';
 import Constants from '../util/Constants';
@@ -16,14 +16,14 @@ import HTTPError from '../util/errors/HTTPError';
 
 export const properties: ClientCommand['properties'] = {
     name: 'register',
-    description: 'Register and setup your profile',
+    description: 'Register and setup your profile to begin using the modules that this bot offers',
     cooldown: 15_000,
     ephemeral: true,
     noDM: false,
     ownerOnly: false,
     structure: {
         name: 'register',
-        description: 'Register to begin using the modules this bot offers',
+        description: 'Register to begin using the modules that this bot offers',
         options: [
             {
                 name: 'player',

@@ -4,7 +4,7 @@ import type {
 } from '../@types/database';
 import { BetterEmbed } from '../util/utility';
 import { ModuleHandler } from '../module/ModuleHandler';
-import { RegionLocales } from '../../locales/localesHandler';
+import { RegionLocales } from '../../locales/RegionLocales';
 import { SQLite } from '../util/SQLite';
 import Constants from '../util/Constants';
 import ModuleError from '../util/errors/ModuleError';

@@ -15,7 +15,7 @@ import {
 } from 'discord.js';
 import { Log } from '../util/Log';
 import { ownerID } from '../../config.json';
-import { locales, RegionLocales } from '../../locales/localesHandler';
+import { locales, RegionLocales } from '../../locales/RegionLocales';
 import { SQLite } from '../util/SQLite';
 import CommandErrorHandler from '../util/errors/handlers/CommandErrorHandler';
 import Constants from '../util/Constants';
@@ -40,7 +40,6 @@ export const execute = async (
                 return;
             }
 
-            console.log(interaction.locale);
 
             Log.command(interaction, slashCommandResolver(interaction));
 
@@ -52,20 +51,19 @@ export const execute = async (
                 await SQLite.getUser<UserData>({
                     discordID: interaction.user.id,
                     table: Constants.tables.users,
-                    columns: ['*'],
                     allowUndefined: true,
+                    columns: ['*'],
                 },
             ));
 
-            userData ??= (
+            userData ??=
                 await SQLite.newUser<UserData>({
                     table: Constants.tables.users,
                     returnNew: true,
                     data: {
                         discordID: interaction.user.id,
                     },
-                })
-            )!;
+                });
 
             if (
                 interaction.locale !== userData.locale &&
@@ -86,7 +84,6 @@ export const execute = async (
                 userData.locale;
 
             await checkSystemMessages(interaction, userData, locale);
-
             generalConstraints(interaction, command);
             cooldownConstraint(interaction, command);
 
@@ -114,9 +111,9 @@ async function checkSystemMessages(
     userData: UserData,
     locale: string,
 ) {
-    const text = RegionLocales.locale(locale).errors.systemMessages;
-
     if (userData.systemMessages.length > 0) {
+        const text = RegionLocales.locale(locale).errors.systemMessages;
+
         const systemMessages = new BetterEmbed({ name: text.embed.footer })
             .setColor(Constants.colors.normal)
             .setTitle(text.embed.title)

@@ -21,6 +21,35 @@ type JSONize<Type> = {
             : Property;
 }
 
+type GetType<B> = {
+    query: string;
+    allowUndefined?: B;
+}
+
+type GetUserType<B> = {
+    discordID: string;
+    table: Tables;
+    allowUndefined?: B;
+    columns: string[];
+}
+
+type NewUserType<Type, B> = {
+    table: Tables;
+    returnNew?: B;
+    data: Partial<Type>;
+}
+
+type UpdateUserType<Type, B> = {
+    discordID: string;
+    table: Tables;
+    returnNew?: B;
+    data: Partial<Type>;
+}
+
+/* eslint-disable no-unused-vars */
+/* eslint-disable @typescript-eslint/no-unused-vars */
+/* eslint-disable consistent-return */
+
 export class SQLite {
     static createTablesIfNotExists(): Promise<void> {
         return new Promise<void>(resolve => {
@@ -48,36 +77,39 @@ export class SQLite {
         });
     }
 
-    static queryGet<Type>({
-        query,
-        allowUndefined = false,
-    }: {
+    static queryGet<Type>(config: GetType<false>): Promise<Type>
+    static queryGet<Type>(config: GetType<true>): Promise<Type | void>
+    static queryGet<Type>(config: GetType<boolean>): Promise<Type | void>
+    static queryGet<Type>(config: {
         query: string;
         allowUndefined?: boolean;
-    }): Promise<Type> {
+    }): Promise<Type | void> {
         /*
          *const string = '2';
          *const output = await queryGet(`SELECT tests FROM test WHERE tests = '${string}' `);
          *SELECT * FROM ${table}
          */
 
-        return new Promise<Type>(resolve => {
+        return new Promise(resolve => {
             const db = new Database(`${__dirname}/../../database.db`);
-            const rawData = db.prepare(query).get() as Record<string, unknown>;
+            const rawData = db.prepare(config.query).get() as Record<string, unknown>;
             db.close();
 
             if (
-                allowUndefined === false &&
+                (
+                    config.allowUndefined === false ||
+                    config.allowUndefined === undefined
+                ) &&
                 rawData === undefined
             ) {
                 throw new RangeError(
-                    `The query ${query} returned an undefined value`,
+                    `The query ${config.query} returned an undefined value`,
                 );
             }
 
             const data = this.JSONize(rawData);
 
-            resolve(data as Type);
+            resolve(data as Type | undefined);
         });
     }
 
@@ -123,31 +155,25 @@ export class SQLite {
         });
     }
 
-    static async getUser<Type>({
-        discordID,
-        table,
-        allowUndefined,
-        columns,
-    }: {
+    static async getUser<Type>(config: GetUserType<false>): Promise<Type>
+    static async getUser<Type>(config: GetUserType<true>): Promise<Type | void>
+    static async getUser<Type>(config: GetUserType<boolean>): Promise<Type | void>
+    static async getUser<Type>(config: {
         discordID: string;
         table: Tables;
-        allowUndefined: boolean;
+        allowUndefined?: boolean;
         columns: string[];
-    }): Promise<Type | undefined> {
+    }): Promise<Type | void> {
         const query = `SELECT ${
-            columns?.join(', ') ?? '*'
-        } FROM ${table} WHERE discordID = '${discordID}'`;
+            config.columns?.join(', ') ?? '*'
+        } FROM ${config.table} WHERE discordID = '${config.discordID}'`;
 
         const data = await this.queryGet<Type>({
             query: query,
-            allowUndefined: allowUndefined,
+            allowUndefined: config.allowUndefined ?? false,
         });
 
-        if (data === undefined) {
-            return;
-        }
-
-        return data; //eslint-disable-line consistent-return
+        return data;
     }
 
     static async getAllUsers<Type>({
@@ -163,94 +189,97 @@ export class SQLite {
         return userData as Type[];
     }
 
-    static async newUser<Type extends Omit<BaseUserData, never>>({
-        table,
-        returnNew = false,
-        data,
-    }: {
+    static async newUser<Type extends Omit<BaseUserData, never>>(config: NewUserType<Type, false>): Promise<void>;
+    static async newUser<Type extends Omit<BaseUserData, never>>(config: NewUserType<Type, true>): Promise<Type>;
+    static async newUser<Type extends Omit<BaseUserData, never>>(config: NewUserType<Type, boolean>): Promise<Type | void>;
+    static async newUser<Type extends Omit<BaseUserData, never>>(config: {
         table: Tables;
         returnNew?: boolean;
         data: Partial<Type>;
-    }): Promise<void | Type> {
+    }): Promise<Type | void> {
         const values: string[] = [];
-        const keys = Object.keys(data);
+        const keys = Object.keys(config.data);
 
         keys.forEach(() => {
             values.push('?');
         });
 
         const dataArray = this.unJSONize(
-            data as Record<
+            config.data as Record<
                 string,
                 Array<unknown> | boolean | null | number | string | undefined
             >,
         );
 
         await this.queryRun({
-            query: `INSERT INTO ${table} (${keys.join(', ')}) VALUES(${values.join(', ')})`,
+            query: `INSERT INTO ${config.table} (${keys.join(', ')}) VALUES(${values.join(', ')})`,
             data: Object.values(dataArray),
         });
 
-        if (returnNew === false) {
+        if (
+            config.returnNew === false ||
+            config.returnNew === undefined
+        ) {
             return;
         }
 
-        const returnQuery = `SELECT * FROM ${table} WHERE discordID = '${data.discordID}'`;
+        const returnQuery = `SELECT * FROM ${config.table} WHERE discordID = '${config.data.discordID}'`;
 
         const newUserData = await this.queryGet<Type>({
             query: returnQuery,
             allowUndefined: false,
         });
 
-        return newUserData; //eslint-disable-line consistent-return
+        return newUserData;
     }
 
-    static async updateUser<Type extends Omit<BaseUserData, never>>({
-        discordID,
-        table,
-        returnNew,
-        data,
-    }: {
+    static async updateUser<Type extends Omit<BaseUserData, never>>(config: UpdateUserType<Type, false>): Promise<void>
+    static async updateUser<Type extends Omit<BaseUserData, never>>(config: UpdateUserType<Type, true>): Promise<Type>
+    static async updateUser<Type extends Omit<BaseUserData, never>>(config: UpdateUserType<Type, boolean>): Promise<Type | void>
+    static async updateUser<Type extends Omit<BaseUserData, never>>(config: {
         discordID: string;
         table: Tables;
         returnNew?: boolean;
         data: Partial<Type>;
-    }): Promise<void | Type> {
+    }): Promise<Type | void> {
         const setQuery: string[] = [];
 
-        for (const key in data) {
+        for (const key in config.data) {
             //@ts-expect-error Types not added yet
-            if (Object.hasOwn(data, key)) {
+            if (Object.hasOwn(config.data, key)) {
                 setQuery.push(`${key} = ?`);
             }
         }
 
         const dataArray = this.unJSONize(
-            data as Record<
+            config.data as Record<
                 string,
                 Array<unknown> | boolean | null | number | string | undefined
             >,
         );
 
         await this.queryRun({
-            query: `UPDATE ${table} SET ${setQuery.join(
+            query: `UPDATE ${config.table} SET ${setQuery.join(
                 ', ',
-            )} WHERE discordID = '${discordID}'`,
+            )} WHERE discordID = '${config.discordID}'`,
             data: Object.values(dataArray),
         });
 
-        if (returnNew === false) {
+        if (
+            config.returnNew === false ||
+            config.returnNew === undefined
+        ) {
             return;
         }
 
-        const returnQuery = `SELECT * FROM ${table} WHERE discordID = '${discordID}'`;
+        const returnQuery = `SELECT * FROM ${config.table} WHERE discordID = '${config.discordID}'`;
 
         const newUserData = await this.queryGet<Type>({
             query: returnQuery,
             allowUndefined: false,
         });
 
-        return newUserData; //eslint-disable-line consistent-return
+        return newUserData;
     }
 
     static async deleteUser({

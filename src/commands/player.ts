@@ -20,7 +20,7 @@ import {
     MessageComponentInteraction,
 } from 'discord.js';
 import { Log } from '../util/Log';
-import { RegionLocales } from '../../locales/localesHandler';
+import { RegionLocales } from '../../locales/RegionLocales';
 import { Request } from '../util/Request';
 import Constants from '../util/Constants';
 import HTTPError from '../util/errors/HTTPError';
@@ -28,14 +28,14 @@ import CommandErrorHandler from '../util/errors/handlers/CommandErrorHandler';
 
 export const properties: ClientCommand['properties'] = {
     name: 'player',
-    description: 'View data on almost any Hypixel player',
+    description: 'View basic data on almost any Hypixel player',
     cooldown: 10_000,
     ephemeral: true,
     noDM: false,
     ownerOnly: false,
     structure: {
         name: 'player',
-        description: 'View data on almost any Hypixel player',
+        description: 'View basic data on almost any Hypixel player',
         options: [
             {
                 name: 'status',
@@ -148,7 +148,7 @@ export const execute: ClientCommand['execute'] = async (
             .setColor(Constants.colors.normal)
             .setTitle(text.status.embed.title)
             .setDescription(
-                replace(text.status.embed.field1.value, {
+                replace(text.status.embed.description, {
                     username: username,
                     status: online === true
                         ? text.status.online

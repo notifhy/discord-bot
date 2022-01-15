@@ -12,7 +12,7 @@ import {
     fatalWebhook,
     ownerID,
 } from '../../../../config.json';
-import { RegionLocales } from '../../../../locales/localesHandler';
+import { RegionLocales } from '../../../../locales/RegionLocales';
 import { arrayRemove, sendWebHook, timestamp } from '../../utility';
 import { SQLite } from '../../SQLite';
 import BaseErrorHandler from './BaseErrorHandler';

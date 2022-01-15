@@ -27,7 +27,7 @@ export const execute = async (client: Client) => {
             } else {
                 const users = (
                     await SQLite.getAllUsers({
-                        table: 'api',
+                        table: Constants.tables.api,
                         columns: ['discordID'],
                     })
                 ).length;

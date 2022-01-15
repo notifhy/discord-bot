@@ -19,7 +19,7 @@ import {
 import BaseErrorHandler from './BaseErrorHandler';
 import ConstraintError from '../ConstraintError';
 import Constants from '../../Constants';
-import { RegionLocales } from '../../../../locales/localesHandler';
+import { RegionLocales } from '../../../../locales/RegionLocales';
 import {
     BaseEmbed,
     Locale,

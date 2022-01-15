@@ -47,7 +47,7 @@ export class RequestManager {
                 await setTimeout(this.instance.resumeAfter - Date.now());
             }
 
-            const allUsers = (
+            const allUsers =
                 await SQLite.getAllUsers<
                     UserAPIData
                 >({
@@ -59,8 +59,7 @@ export class RequestManager {
                         'lastLogin',
                         'lastLogout',
                     ],
-                })
-            ) as UserAPIData[];
+                });
 
             const users = allUsers.filter(user => user.modules.length > 0);
 

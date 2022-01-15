@@ -26,7 +26,7 @@ import {
     SelectMenuInteraction,
 } from 'discord.js';
 import { Log } from '../util/Log';
-import { RegionLocales } from '../../locales/localesHandler';
+import { RegionLocales } from '../../locales/RegionLocales';
 import { SQLite } from '../util/SQLite';
 import { ToggleButtons } from '../util/ToggleButtons';
 import CommandErrorHandler from '../util/errors/handlers/CommandErrorHandler';
@@ -114,19 +114,20 @@ export const execute: ClientCommand['execute'] = async (
         return new MessageActionRow().addComponents(menu);
     };
 
-    const getUserAPIData = async () => (
-        await SQLite.getUser<UserAPIData>({
+    const getUserAPIData = () => (
+        SQLite.getUser<UserAPIData>({
             discordID: interaction.user.id,
             table: Constants.tables.api,
             columns: ['discordID', 'modules'],
             allowUndefined: false,
         })
-    ) as UserAPIData;
+    );
 
-    const getDefenderData = async () => (
-        await SQLite.getUser<DefenderModule>({
+    const getDefenderData = () => (
+       SQLite.getUser<DefenderModule>({
             discordID: interaction.user.id,
             table: Constants.tables.defender,
+            allowUndefined: false,
             columns: [
                 'discordID',
                 'alerts',
@@ -135,19 +136,18 @@ export const execute: ClientCommand['execute'] = async (
                 'languages',
                 'versions',
             ],
-            allowUndefined: false,
         })
-    ) as DefenderModule;
+    );
 
     const getFriendsData = async () => (
         await SQLite.getUser<FriendsModule>({
             discordID: interaction.user.id,
             table: Constants.tables.friends,
+            allowUndefined: false,
             columns: [
                 'discordID',
                 'channel',
             ],
-            allowUndefined: false,
         })
     ) as FriendsModule;
 
