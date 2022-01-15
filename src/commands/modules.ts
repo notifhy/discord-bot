@@ -9,10 +9,8 @@ import type {
     Locale,
     ModulesCommand,
 } from '../@types/locales';
-import {
-    combiner,
-    structures as baseStructures,
-} from '../util/structures';
+import baseStructures,
+{ combiner } from '../util/Structures';
 import {
     BetterEmbed,
     disableComponents,
