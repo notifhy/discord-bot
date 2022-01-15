@@ -16,7 +16,9 @@ export class RequestErrors {
         total: number;
     };
 
-    readonly rateLimit: { isGlobal: boolean } & typeof this.abort;
+    readonly rateLimit: {
+        isGlobal: boolean
+    } & typeof this.abort;
 
     readonly error: typeof this.abort;
 
@@ -92,7 +94,8 @@ export class RequestErrors {
 
         this[type].total += 1;
 
-        this[type].lastMinute += 1; //Adding a type to the count
+        this[type].lastMinute += 1; //Adding a count to the error type
+
         setTimeout(() => {
             this[type].lastMinute -= 1; //Removing a type from the count
         }, Constants.ms.minute);
