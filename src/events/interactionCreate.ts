@@ -29,7 +29,7 @@ export const properties: EventProperties = {
 export const execute = async (
     interaction: CommandInteraction,
 ): Promise<void> => {
-    let userData;
+    let userData: UserData | void;
 
     try {
         if (interaction.isCommand()) {
@@ -46,14 +46,13 @@ export const execute = async (
                 ephemeral: command.properties.ephemeral,
             });
 
-            userData = (
+            userData =
                 await SQLite.getUser<UserData>({
                     discordID: interaction.user.id,
                     table: Constants.tables.users,
                     allowUndefined: true,
                     columns: ['*'],
-                },
-            ));
+                });
 
             userData ??=
                 await SQLite.newUser<UserData>({
@@ -64,22 +63,7 @@ export const execute = async (
                     },
                 });
 
-            if (
-                interaction.locale !== userData.locale &&
-                userData.localeOverride === false &&
-                Object.keys(locales).includes(interaction.locale)
-            ) {
-                await SQLite.updateUser<UserData>({
-                    discordID: interaction.user.id,
-                    table: Constants.tables.users,
-                    data: {
-                        locale: interaction.locale,
-                    },
-                });
-
-                userData.locale = interaction.locale;
-            }
-
+            await updateLocale(interaction, userData);
             await checkSystemMessages(interaction, userData, userData.locale);
             generalConstraints(interaction, command);
             cooldownConstraint(interaction, command);
@@ -101,6 +85,27 @@ export const execute = async (
         await handler.userNotify();
     }
 };
+
+async function updateLocale(
+    interaction: CommandInteraction,
+    userData: UserData,
+) {
+    if (
+        interaction.locale !== userData.locale &&
+        userData.localeOverride === false &&
+        Object.keys(locales).includes(interaction.locale)
+    ) {
+        await SQLite.updateUser<UserData>({
+            discordID: interaction.user.id,
+            table: Constants.tables.users,
+            data: {
+                locale: interaction.locale,
+            },
+        });
+
+        userData.locale = interaction.locale;
+    }
+}
 
 async function checkSystemMessages(
     interaction: CommandInteraction,
