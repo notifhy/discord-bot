@@ -45,15 +45,13 @@ export const execute: ClientCommand['execute'] = async (
     interaction,
     locale,
 ): Promise<void> => {
-    const userData = (
+    const userData =
         await SQLite.getUser<UserData>({
             discordID: interaction.user.id,
             table: Constants.tables.users,
-            columns: ['*'],
+            columns: ['localeOverride'],
             allowUndefined: false,
-        },
-        )
-    )!;
+        });
 
     const rawNewLocale = interaction.options.getString('language', true);
     const newLocale = rawNewLocale === 'Auto'

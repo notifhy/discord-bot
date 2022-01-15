@@ -103,33 +103,19 @@ export default class ModuleErrorHandler extends BaseErrorHandler {
                     userData.locale ?? userData.localeOverride,
                 ).errors.moduleErrors;
                 const { replace } = RegionLocales;
+                const { APIErrors } = DiscordConstants;
+
                 const cleanModule = { cleanModule: this.cleanModule };
                 let message: Field | undefined;
 
                 switch (this.error.raw.code) {
-                    case DiscordConstants.APIErrors.UNKNOWN_CHANNEL: message = { //Unknown channel
-                        name: replace(locale[10003].name, cleanModule),
-                        value: replace(locale[10003].value, cleanModule),
-                    };
-                    break;
-                    case DiscordConstants.APIErrors.UNKNOWN_USER: message = { //Unknown user
-                        name: replace(locale[10013].name, cleanModule),
-                        value: replace(locale[10013].value, cleanModule),
-                    };
-                    break;
-                    case DiscordConstants.APIErrors.MISSING_ACCESS: message = { //Unable to access channel, server, etc.
-                        name: replace(locale[50001].name, cleanModule),
-                        value: replace(locale[50001].value, cleanModule),
-                    };
-                    break;
-                    case DiscordConstants.APIErrors.CANNOT_MESSAGE_USER: message = { //Cannot send messages to this user
-                        name: replace(locale[50007].name, cleanModule),
-                        value: replace(locale[50007].value, cleanModule),
-                    };
-                    break;
-                    case DiscordConstants.APIErrors.MISSING_PERMISSIONS: message = { //Missing permission(s)
-                        name: replace(locale[50013].name, cleanModule),
-                        value: replace(locale[50013].value, cleanModule),
+                    case APIErrors.UNKNOWN_CHANNEL: //Unknown channel
+                    case APIErrors.UNKNOWN_USER: //Unknown user
+                    case APIErrors.MISSING_ACCESS: //Unable to access channel, server, etc.
+                    case APIErrors.CANNOT_MESSAGE_USER: //Cannot send messages to this user
+                    case APIErrors.MISSING_PERMISSIONS: message = { //Missing permission(s)
+                        name: replace(locale[this.error.raw.code].name, cleanModule),
+                        value: replace(locale[this.error.raw.code].value, cleanModule),
                     };
                     break;
                     //No default

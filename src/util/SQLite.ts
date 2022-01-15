@@ -26,11 +26,11 @@ type GetType<B> = {
     allowUndefined?: B;
 }
 
-type GetUserType<B> = {
+type GetUserType<T, B> = {
     discordID: string;
     table: Tables;
     allowUndefined?: B;
-    columns: string[];
+    columns: (keyof T | '*')[];
 }
 
 type NewUserType<Type, B> = {
@@ -155,14 +155,14 @@ export class SQLite {
         });
     }
 
-    static async getUser<Type>(config: GetUserType<false>): Promise<Type>
-    static async getUser<Type>(config: GetUserType<true>): Promise<Type | void>
-    static async getUser<Type>(config: GetUserType<boolean>): Promise<Type | void>
+    static async getUser<Type>(config: GetUserType<Type, false>): Promise<Type>
+    static async getUser<Type>(config: GetUserType<Type, true>): Promise<Type | void>
+    static async getUser<Type>(config: GetUserType<Type, boolean>): Promise<Type | void>
     static async getUser<Type>(config: {
         discordID: string;
         table: Tables;
         allowUndefined?: boolean;
-        columns: string[];
+        columns: (keyof Type | '*')[];
     }): Promise<Type | void> {
         const query = `SELECT ${
             config.columns?.join(', ') ?? '*'
@@ -181,7 +181,7 @@ export class SQLite {
         columns,
     }: {
         table: Tables;
-        columns: string[];
+        columns: (keyof Type | '*')[];
     }): Promise<Type[]> {
         const query = `SELECT ${columns?.join(', ') ?? '*'} FROM ${table}`;
         const userData = await this.queryGetAll<Type>(query);
