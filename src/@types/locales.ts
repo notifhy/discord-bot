@@ -276,11 +276,11 @@ export interface ConstraintErrors {
 }
 
 export interface ModuleErrors {
-    10003: Field,
-    10013: Field,
-    50001: Field,
-    50007: Field,
-    50013: Field,
+    '10003': Field,
+    '10013': Field,
+    '50001': Field,
+    '50007': Field,
+    '50013': Field,
 }
 
 export interface SystemMessages {

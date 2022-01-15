@@ -24,10 +24,8 @@ export const execute = async ({
             return;
         }
 
-        const defenderModule = (
-            await SQLite.getUser<
-                DefenderModule
-            >({
+        const defenderModule =
+            await SQLite.getUser<DefenderModule>({
                 discordID: userAPIData.discordID,
                 table: Constants.tables.defender,
                 allowUndefined: false,
@@ -38,13 +36,10 @@ export const execute = async ({
                     'languages',
                     'versions',
                 ],
-            })
-        ) as DefenderModule;
+            });
 
-        const userData = (
-            await SQLite.getUser<
-                UserData
-            >({
+        const userData =
+            await SQLite.getUser<UserData>({
                 discordID: userAPIData.discordID,
                 table: Constants.tables.users,
                 allowUndefined: false,
@@ -53,8 +48,7 @@ export const execute = async ({
                     'localeOverride',
                     'systemMessages',
                 ],
-            })
-        ) as UserData;
+            });
 
         const locale = RegionLocales.locale(
             userData.localeOverride ?? userData.locale,

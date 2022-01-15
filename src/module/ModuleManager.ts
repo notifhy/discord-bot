@@ -37,16 +37,13 @@ export class ModuleManager {
 
     async process(performance: Performance) {
         try {
-            const currentUserAPIData = (
-                await SQLite.getUser<
-                    UserAPIData
-                >({
+            const currentUserAPIData =
+                await SQLite.getUser<UserAPIData>({
                     discordID: this.discordID,
                     table: Constants.tables.api,
-                    columns: ['*'],
                     allowUndefined: false,
-                })
-            ) as UserAPIData;
+                    columns: ['*'],
+                });
 
             performance.databaseFetch = Date.now();
 

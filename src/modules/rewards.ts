@@ -21,10 +21,8 @@ export const execute = async ({
 }: ModuleHandler,
 ): Promise<void> => {
     try {
-        const rewardsModule = (
-            await SQLite.getUser<
-                RewardsModule
-            >({
+        const rewardsModule =
+            await SQLite.getUser<RewardsModule>({
                 discordID: userAPIData.discordID,
                 table: Constants.tables.rewards,
                 allowUndefined: false,
@@ -35,11 +33,10 @@ export const execute = async ({
                     'milestones',
                     'notificationInterval',
                 ],
-            })
-        ) as RewardsModule;
+            });
 
-        const userData = (
-            await SQLite.getUser({
+        const userData =
+            await SQLite.getUser<UserData>({
                 discordID: userAPIData.discordID,
                 table: Constants.tables.users,
                 allowUndefined: false,
@@ -47,8 +44,7 @@ export const execute = async ({
                     'locale',
                     'localeOverride',
                 ],
-            })
-        ) as UserData;
+            });
 
         const locale = RegionLocales.locale(
             userData.locale ?? userData.localeOverride,

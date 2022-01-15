@@ -91,13 +91,16 @@ export default class ModuleErrorHandler extends BaseErrorHandler {
                     await SQLite.getUser<UserData>({
                         discordID: this.discordID,
                         table: Constants.tables.users,
-                        columns: ['language'],
                         allowUndefined: false,
+                        columns: [
+                            'locale',
+                            'localeOverride',
+                        ],
                     },
                 )) as UserData;
 
                 const locale = RegionLocales.locale(
-                    userData.localeOverride ?? userData.localeOverride,
+                    userData.locale ?? userData.localeOverride,
                 ).errors.moduleErrors;
                 const { replace } = RegionLocales;
                 const cleanModule = { cleanModule: this.cleanModule };

@@ -40,7 +40,6 @@ export const execute = async (
                 return;
             }
 
-
             Log.command(interaction, slashCommandResolver(interaction));
 
             await interaction.deferReply({

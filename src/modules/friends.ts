@@ -39,16 +39,15 @@ export const execute = async ({
             return; //If the login/logout aren't in differences
         }
 
-        const friendModule = (
+        const friendModule =
             await SQLite.getUser<FriendsModule>({
                 discordID: userAPIData.discordID,
                 table: Constants.tables.friends,
                 allowUndefined: false,
                 columns: ['channel'],
-            })
-        ) as FriendsModule;
+            });
 
-        const userData = (
+        const userData =
             await SQLite.getUser<UserData>({
                 discordID: userAPIData.discordID,
                 table: Constants.tables.users,
@@ -58,8 +57,7 @@ export const execute = async ({
                     'localeOverride',
                     'systemMessages',
                 ],
-            })
-        ) as UserData;
+            });
 
         const locale = RegionLocales.locale(
             userData.localeOverride ?? userData.locale,
@@ -124,9 +122,7 @@ export const execute = async ({
             const newModules =
                 arrayRemove(userAPIData.modules, 'friends') as string[];
 
-            await SQLite.updateUser<
-            UserAPIData
-            >({
+            await SQLite.updateUser<UserAPIData>({
                 discordID: userAPIData.discordID,
                 table: Constants.tables.api,
                 data: {
@@ -142,9 +138,7 @@ export const execute = async ({
                 }),
             };
 
-            await SQLite.updateUser<
-                UserData
-            >({
+            await SQLite.updateUser<UserData>({
                 discordID: userAPIData.discordID,
                 table: Constants.tables.users,
                 data: {

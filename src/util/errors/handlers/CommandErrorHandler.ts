@@ -125,8 +125,8 @@ export default class CommandErrorHandler extends BaseErrorHandler {
                 this.constraintResolver(
                     embed1.title,
                     RegionLocales.replace(embed1.description, {
-                        cooldown: (command?.properties.cooldown ?? 0) / 1000,
-                        timeLeft: cleanRound(this.error.cooldown! / 1000, 1),
+                        cooldown: (command?.properties.cooldown ?? 0) / Constants.ms.second,
+                        timeLeft: cleanRound(this.error.cooldown! / Constants.ms.second, 1),
                     }),
                 );
 
