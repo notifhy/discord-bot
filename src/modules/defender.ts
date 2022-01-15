@@ -45,14 +45,11 @@ export const execute = async ({
                 allowUndefined: false,
                 columns: [
                     'locale',
-                    'localeOverride',
                     'systemMessages',
                 ],
             });
 
-        const locale = RegionLocales.locale(
-            userData.localeOverride ?? userData.locale,
-        ).modules.defender;
+        const locale = RegionLocales.locale(userData.locale).modules.defender;
         const { replace } = RegionLocales;
 
         const fields: EmbedFieldData[] = [];

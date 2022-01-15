@@ -40,15 +40,10 @@ export const execute = async ({
                 discordID: userAPIData.discordID,
                 table: Constants.tables.users,
                 allowUndefined: false,
-                columns: [
-                    'locale',
-                    'localeOverride',
-                ],
+                columns: ['locale'],
             });
 
-        const locale = RegionLocales.locale(
-            userData.locale ?? userData.localeOverride,
-        ).modules.rewards;
+        const locale = RegionLocales.locale(userData.locale).modules.rewards;
         const { replace } = RegionLocales;
 
         const date = Date.now();

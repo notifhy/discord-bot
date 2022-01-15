@@ -54,14 +54,11 @@ export const execute = async ({
                 allowUndefined: false,
                 columns: [
                     'locale',
-                    'localeOverride',
                     'systemMessages',
                 ],
             });
 
-        const locale = RegionLocales.locale(
-            userData.localeOverride ?? userData.locale,
-        ).modules.friends;
+        const locale = RegionLocales.locale(userData.locale).modules.friends;
         const { replace } = RegionLocales;
 
         if (

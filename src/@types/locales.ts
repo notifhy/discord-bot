@@ -108,9 +108,9 @@ export interface Help {
 }
 
 export interface Language {
-    alreadySet: BaseEmbed;
-    title: string;
-    description: string;
+    alreadyRemoved: BaseEmbed;
+    reset: BaseEmbed;
+    set: BaseEmbed;
 }
 
 export interface ModulesCommand {

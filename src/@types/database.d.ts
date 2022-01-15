@@ -16,7 +16,7 @@ export interface History extends Partial<CleanHypixelPlayer>, Partial<CleanHypix
 
 export interface UserData extends BaseUserData {
     locale: string;
-    localeOverride: string | null;
+    localeOverride: boolean;
     systemMessages: Field[];
 }
 
@@ -33,7 +33,6 @@ export interface UserAPIData
 /*
 Module Specifics
 */
-
 export interface DefenderModule extends BaseUserData {
     alerts: {
         login: boolean;

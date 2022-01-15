@@ -74,12 +74,18 @@
             }
         },
         "language": {
-            "alreadySet": {
-                "title": "Already Set",
-                "description": "%{locale}% is already your set language!"
+            "alreadyRemoved": {
+                "title": "Override Already Removed",
+                "description": "Your language override was already removed!"
             },
-            "title": "Language Set",
-            "description": "Your language has been changed to `%{locale}%`!"
+            "reset": {
+                "title": "Override Reset",
+                "description": "Your language override has been removed! Your language will now be automatically determined."
+            },
+            "set": {
+                "title": "Override Set",
+                "description": "Your language override has been changed to `%{locale}%`!"
+            }
         },
         "modules": {
             "defender": {

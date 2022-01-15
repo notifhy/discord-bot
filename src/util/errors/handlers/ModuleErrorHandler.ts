@@ -92,16 +92,11 @@ export default class ModuleErrorHandler extends BaseErrorHandler {
                         discordID: this.discordID,
                         table: Constants.tables.users,
                         allowUndefined: false,
-                        columns: [
-                            'locale',
-                            'localeOverride',
-                        ],
+                        columns: ['locale'],
                     },
                 )) as UserData;
 
-                const locale = RegionLocales.locale(
-                    userData.locale ?? userData.localeOverride,
-                ).errors.moduleErrors;
+                const locale = RegionLocales.locale(userData.locale).errors.moduleErrors;
                 const { replace } = RegionLocales;
                 const { APIErrors } = DiscordConstants;
 

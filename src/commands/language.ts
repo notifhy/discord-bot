@@ -43,7 +43,6 @@ export const properties: ClientCommand['properties'] = {
 
 export const execute: ClientCommand['execute'] = async (
     interaction,
-    locale,
 ): Promise<void> => {
     const userData =
         await SQLite.getUser<UserData>({
@@ -53,27 +52,25 @@ export const execute: ClientCommand['execute'] = async (
             allowUndefined: false,
         });
 
-    const rawNewLocale = interaction.options.getString('language', true);
-    const newLocale = rawNewLocale === 'Auto'
-        ? null
-        : rawNewLocale;
+    const newLocale = interaction.options.getString('language', true);
+    const rawNewLocale = newLocale === 'Auto' ? interaction.locale : newLocale;
 
-    const text = RegionLocales.locale(newLocale ?? locale).commands.language;
+    const text = RegionLocales.locale(rawNewLocale).commands.language;
     const replace = RegionLocales.replace;
 
-    if (newLocale === userData.localeOverride) {
-        const alreadySetEmbed = new BetterEmbed(interaction)
+    if (
+        newLocale === 'Auto' &&
+        userData.localeOverride === false
+    ) {
+        const alreadyRemovedEmbed = new BetterEmbed(interaction)
             .setColor(Constants.colors.warning)
-            .setTitle(text.alreadySet.title)
-            .setDescription(
-                replace(text.alreadySet.description, {
-                    locale: rawNewLocale,
-                }),
-            );
+            .setTitle(text.alreadyRemoved.title)
+            .setDescription(text.alreadyRemoved.description);
 
-        Log.command(interaction, `Locale already set: ${rawNewLocale}`);
+        Log.command(interaction, 'Locale already set to auto');
 
-        await interaction.editReply({ embeds: [alreadySetEmbed] });
+        await interaction.editReply({ embeds: [alreadyRemovedEmbed] });
+
         return;
     }
 
@@ -81,20 +78,31 @@ export const execute: ClientCommand['execute'] = async (
         discordID: interaction.user.id,
         table: Constants.tables.users,
         data: {
-            localeOverride: newLocale,
+            locale: rawNewLocale,
+            localeOverride: newLocale !== 'Auto',
         },
     });
 
     const languageEmbed = new BetterEmbed(interaction)
-        .setColor(Constants.colors.normal)
-        .setTitle(text.title)
-        .setDescription(
-            replace(text.description, {
-                locale: rawNewLocale,
-            }),
-        );
+        .setColor(Constants.colors.normal);
 
-    Log.command(interaction, `Locale set to ${rawNewLocale}`);
+    if (newLocale === 'Auto') {
+        languageEmbed
+            .setTitle(text.reset.title)
+            .setDescription(text.reset.description);
+
+        Log.command(interaction, 'Locale reset');
+    } else {
+        languageEmbed
+            .setTitle(text.set.title)
+            .setDescription(
+                replace(text.set.description, {
+                    locale: newLocale,
+                }),
+            );
+
+        Log.command(interaction, `Locale set to ${newLocale}`);
+    }
 
     await interaction.editReply({ embeds: [languageEmbed] });
 };

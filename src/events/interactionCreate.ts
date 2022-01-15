@@ -66,6 +66,7 @@ export const execute = async (
 
             if (
                 interaction.locale !== userData.locale &&
+                userData.localeOverride === false &&
                 Object.keys(locales).includes(interaction.locale)
             ) {
                 await SQLite.updateUser<UserData>({
@@ -79,23 +80,19 @@ export const execute = async (
                 userData.locale = interaction.locale;
             }
 
-            const locale = userData.localeOverride ??
-                userData.locale;
-
-            await checkSystemMessages(interaction, userData, locale);
+            await checkSystemMessages(interaction, userData, userData.locale);
             generalConstraints(interaction, command);
             cooldownConstraint(interaction, command);
 
             await command.execute(
                 interaction,
-                locale,
+                userData.locale,
             );
         }
     } catch (error) {
         const handler = new CommandErrorHandler(
             error,
             interaction,
-            userData?.localeOverride ??
             userData?.locale ??
             Constants.defaults.language,
         );

@@ -74,12 +74,18 @@
             }
         },
         "language": {
-            "alreadySet": {
-                "title": "Already Set",
-                "description": "%{language}% is already your set language!"
+            "alreadyRemoved": {
+                "title": "Override Already Removed",
+                "description": "Your language override was already removed!"
             },
-            "title": "Language Set",
-            "description": "Your language has been changed to `%{language}%`!"
+            "reset": {
+                "title": "Override Reset",
+                "description": "Your language override has been removed! Your language will now be automatically determined."
+            },
+            "set": {
+                "title": "Override Set",
+                "description": "Your language override has been changed to `%{locale}%`!"
+            }
         },
         "modules": {
             "defender": {
@@ -334,7 +340,7 @@
             },
             "friends": {
                 "title": "Friends Module",
-                "description": "Know when your friends are online without asking or logging onto Hypixel by sharing logins and logouts with each other. This module sends your logins and logouts to a specified channel; have your friends set this module up to share with each other. ",
+                "description": "Know when your friends are online without asking or logging onto Hypixel by sharing logins and logouts with each other. This module sends your logins and logouts to a specified channel; have your friends set this module up to the same channel and share them with each other.",
                 "menuPlaceholder": "Friend Module Settings",
                 "missingConfigField": {
                     "name": "Missing Configuration",
@@ -549,7 +555,7 @@
             },
             "embed2": {
                 "title": "🏓 Ping!",
-                "description": "Websocket heartbeat is %{wsPing}%ms. Roundtrip latency is %{rtPing}%ms. FRENCH"
+                "description": "Websocket heartbeat is %{wsPing}%ms. Roundtrip latency is %{rtPing}%ms."
             }
         },
         "player": {
@@ -691,7 +697,7 @@
             "cooldown": {
                 "embed1": {
                     "title": "Cooldown",
-                    "description": "You are executing commands too quickly! This cooldown of this command is %{cooldown}% seconds. This message will turn green in %{timeLeft}% seconds once the cooldown expires."
+                    "description": "You are executing commands too quickly! The cooldown of this command is %{cooldown}% seconds. This message will turn green in %{timeLeft}% seconds once the cooldown expires."
                 },
                 "embed2": {
                     "title": "Cooldown Over",
@@ -702,29 +708,29 @@
         "moduleErrors": {
             "10003": {
                 "name": "%{cleanModule}% Module Disabled",
-                "value": "The %{cleanModule}% module was disabled because the set channel was not fetchable. [Code 10003](https://discord.com/developers/docs/topics/opcodes-and-status-codes#json \"Opcodes and Status codes\")"
+                "value": "The %{cleanModule}% module was disabled because the set channel was not fetchable. [Code 10003](https://discord.com/developers/docs/topics/opcodes-and-status-codes#json-json-error-codes \"Opcodes and Status codes\")"
             },
             "10013": {
                 "name": "%{cleanModule}% Module Disabled",
-                "value": "The %{cleanModule}% module was disabled because your account was not fetchable. [Code 10013](https://discord.com/developers/docs/topics/opcodes-and-status-codes#json \"Opcodes and Status codes\")"
+                "value": "The %{cleanModule}% module was disabled because your account was not fetchable. [Code 10013](https://discord.com/developers/docs/topics/opcodes-and-status-codes#json-json-error-codes \"Opcodes and Status codes\")"
             },
             "50001": {
                 "name": "%{cleanModule}% Module Disabled",
-                "value": "The %{cleanModule}% module was disabled because the set channel, server, or user was not reachable. Please check to see if this bot can access the set channel. [Code 50001](https://discord.com/developers/docs/topics/opcodes-and-status-codes#json \"Opcodes and Status codes\")"
+                "value": "The %{cleanModule}% module was disabled because the set channel, server, or user was not reachable. Please check to see if this bot can access the set channel. [Code 50001](https://discord.com/developers/docs/topics/opcodes-and-status-codes#json-json-error-codes \"Opcodes and Status codes\")"
             },
             "50007": {
                 "name": "%{cleanModule}% Module Disabled",
-                "value": "The %{cleanModule}% module was disabled because the bot was unable to DM you. Please check your privacy settings and enable direct messages. Then, reenable this module with /modules. [Code 50007](https://discord.com/developers/docs/topics/opcodes-and-status-codes#json \"Opcodes and Status codes\")"
+                "value": "The %{cleanModule}% module was disabled because the bot was unable to DM you. Please check your privacy settings and enable direct messages. Then, reenable this module with /modules. [Code 50007](https://discord.com/developers/docs/topics/opcodes-and-status-codes#json-json-error-codes \"Opcodes and Status codes\")"
             },
             "50013": {
                 "name": "%{cleanModule}% Module Disabled",
-                "value": "The %{cleanModule}% module was disabled because the bot lacked permission(s) to perform an action. Discord does not specify the missing permission(s), so this is all we know. [Code 50013](https://discord.com/developers/docs/topics/opcodes-and-status-codes#json \"Opcodes and Status codes\")"
+                "value": "The %{cleanModule}% module was disabled because the bot lacked permission(s) to perform an action. Discord does not specify the missing permission(s), so this is all we know. [Code 50013](https://discord.com/developers/docs/topics/opcodes-and-status-codes#json-json-error-codes \"Opcodes and Status codes\")"
             }
         },
         "systemMessages": {
             "embed": {
                 "title": "System Message",
-                "description": "This message is part of this bot's automatic mailbox system. These system messages are queued when the bot requires your attention and are sent when you execute a command.",
+                "description": "This message or messages are part of this bot's automatic mailbox system. These system messages are queued when the bot requires your attention and are sent when you execute a command.",
                 "footer": "System Message"
             },
             "failedDM": " Your direct messages were disabled, so this message was sent here instead."
