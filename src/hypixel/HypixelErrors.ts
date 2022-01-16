@@ -2,7 +2,7 @@ import {
     clearTimeout,
     setTimeout,
 } from 'node:timers';
-import Constants from '../../util/Constants';
+import Constants from '../util/Constants';
 
 type ErrorType = {
     baseTimeout: number;
@@ -12,7 +12,7 @@ type ErrorType = {
     total: number;
 }
 
-export class RequestErrors {
+export class HypixelErrors {
     config: {
         resumeAfter: number,
         keyPercentage: number,

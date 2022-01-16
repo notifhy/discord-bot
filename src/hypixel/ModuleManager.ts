@@ -1,16 +1,18 @@
-import type { Differences } from '../../@types/modules';
+import type { Differences } from '../@types/modules';
 import type {
     CleanHypixelPlayer,
     CleanHypixelStatus,
-} from '../../@types/hypixel';
+} from '../@types/hypixel';
 import type {
     History,
     UserAPIData,
-} from '../../@types/database';
+} from '../@types/database';
 import { Client, Snowflake } from 'discord.js';
-import { compare } from '../../util/utility';
-import { SQLite } from '../../util/SQLite';
-import Constants from '../../util/Constants';
+import { compare } from '../util/utility';
+import { SQLite } from '../util/SQLite';
+import Constants from '../util/Constants';
+import ModuleError from '../util/errors/ModuleError';
+import ModuleErrorHandler from '../util/errors/handlers/ModuleErrorHandler';
 
 export class ModuleManager {
     client: Client;
@@ -78,20 +80,28 @@ export class ModuleManager {
             userAPIData: UserAPIData,
         },
     ) {
-        const promises: Promise<void>[] = [];
+        try {
+            const promises: Promise<void>[] = [];
 
-        for (const module of userAPIData.modules) {
-            promises.push(
-                this.client.modules
-                    .get(module)!
-                    .execute({
-                        client: this.client,
-                        differences: differences,
-                        userAPIData: userAPIData,
-                    }),
-            );
+            for (const module of userAPIData.modules) {
+                promises.push(
+                    this.client.modules
+                        .get(module)!
+                        .execute({
+                            client: this.client,
+                            differences: differences,
+                            userAPIData: userAPIData,
+                        }),
+                );
+            }
+
+            await Promise.all(promises);
+        } catch (error) {
+            await new ModuleErrorHandler(
+                error as ModuleError,
+                userAPIData.discordID,
+            )
+                .systemNotify();
         }
-
-        await Promise.all(promises);
     }
 }

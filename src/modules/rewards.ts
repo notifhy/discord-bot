@@ -1,24 +1,24 @@
+import type { ClientModule } from '../@types/modules';
 import type {
     RewardsModule,
     UserData,
 } from '../@types/database';
 import { BetterEmbed } from '../util/utility';
-import { ModuleHandler } from '../module/ModuleHandler';
 import { RegionLocales } from '../../locales/RegionLocales';
 import { SQLite } from '../util/SQLite';
 import Constants from '../util/Constants';
 import ModuleError from '../util/errors/ModuleError';
 
-export const properties = {
+export const properties: ClientModule['properties'] = {
     name: 'rewards',
     cleanName: 'Rewards',
 };
 
-export const execute = async ({
+export const execute: ClientModule['execute'] = async ({
     client,
     differences,
     userAPIData,
-}: ModuleHandler,
+},
 ): Promise<void> => {
     try {
         const rewardsModule =

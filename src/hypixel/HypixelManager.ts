@@ -1,30 +1,42 @@
 import type { UserAPIData } from '../@types/database';
 import { Client } from 'discord.js';
 import { keyLimit } from '../../config.json';
-import { ModuleManager } from './module/ModuleManager';
+import { ModuleManager } from './ModuleManager';
 import {
     Performance,
     RequestManager,
-} from './request/RequestManager';
+} from './RequestManager';
 import { setTimeout } from 'node:timers/promises';
 import { SQLite } from '../util/SQLite';
 import Constants from '../util/Constants';
+import ErrorHandler from '../util/errors/handlers/ErrorHandler';
+import RequestErrorHandler from '../util/errors/handlers/RequestErrorHandler';
+import { HypixelErrors } from './HypixelErrors';
 
 /* eslint-disable no-await-in-loop */
 
-export class DataManager {
+export class HypixelManager {
     client: Client;
     module: ModuleManager;
     request: RequestManager;
+    errors: HypixelErrors;
 
     constructor(client: Client) {
         this.client = client;
         this.module = new ModuleManager(client);
         this.request = new RequestManager();
+        this.errors = new HypixelErrors(this.request);
     }
 
     async ready() {
-        while (true) await this.refresh();
+        while (true) {
+            try {
+                await this.refresh();
+            } catch (error) {
+                await new RequestErrorHandler(error, this)
+                    .systemNotify();
+            }
+        }
     }
 
     private async refresh() {
@@ -46,6 +58,13 @@ export class DataManager {
         ).filter(user => user.modules.length > 0);
 
         for (const user of users) {
+            if (
+                this.request.resumeAfter > Date.now() ||
+                this.client.config.enabled === false
+            ) {
+                return;
+            }
+
             const urls = this.request.getURLs(user);
 
             const performance = {
@@ -57,13 +76,20 @@ export class DataManager {
             const data = await this.request.request(user, urls);
             performance.fetch = Date.now();
 
-            const payload = await ModuleManager.process(user.discordID, data);
-            performance.process = Date.now();
+            try {
+                const payload =
+                    await ModuleManager.process(user.discordID, data);
+                performance.process = Date.now();
 
-            await this.module.execute(payload);
-            performance.modules = Date.now();
+                await this.module.execute(payload);
+                performance.modules = Date.now();
 
-            this.updatePerformance(performance);
+                this.updatePerformance(performance);
+            } catch (error) {
+                this.errors.addError();
+                await new ErrorHandler(error, `ID: ${user.discordID}`)
+                    .systemNotify();
+            }
 
             const timeout = this.getTimeout(urls);
             await setTimeout(timeout);

@@ -11,9 +11,9 @@ import {
     Options,
     Sweepers,
 } from 'discord.js';
+import { HypixelManager } from './hypixel/HypixelManager';
 import { discordAPIkey } from '../config.json';
 import { Log } from './util/Log';
-import { RequestManager } from './hypixelAPI/RequestManager';
 import { SQLite } from './util/SQLite';
 import ErrorHandler from './util/errors/handlers/ErrorHandler';
 import fs from 'node:fs/promises';
@@ -95,7 +95,7 @@ client.commands = new Collection();
 client.cooldowns = new Collection();
 client.customStatus = null;
 client.events = new Collection();
-client.hypixelAPI = new RequestManager(client);
+client.hypixel = new HypixelManager(client);
 client.modules = new Collection();
 
 (async () => {

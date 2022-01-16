@@ -1,23 +1,23 @@
+import type { ClientModule } from '../@types/modules';
 import type { DefenderModule, UserAPIData, UserData } from '../@types/database';
 import { arrayRemove, BetterEmbed, cleanGameType, timestamp } from '../util/utility';
 import { ColorResolvable, EmbedFieldData, Formatters, TextChannel } from 'discord.js';
 import { Log } from '../util/Log';
 import { RegionLocales } from '../../locales/RegionLocales';
-import { ModuleHandler } from '../module/ModuleHandler';
 import { SQLite } from '../util/SQLite';
 import Constants from '../util/Constants';
 import ModuleError from '../util/errors/ModuleError';
 
-export const properties = {
+export const properties: ClientModule['properties'] = {
     name: 'defender',
     cleanName: 'Defender',
 };
 
-export const execute = async ({
+export const execute: ClientModule['execute'] = async ({
     client,
     differences,
     userAPIData,
-}: ModuleHandler,
+},
 ): Promise<void> => {
     try {
         if (Object.keys(differences.primary).length === 0) { //A bit more future proof

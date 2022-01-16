@@ -7,8 +7,8 @@ import {
 import { CommandInteraction } from 'discord.js';
 import { keyLimit } from '../../config.json';
 import { Log } from '../util/Log';
-import { RequestManager } from '../hypixelAPI/RequestManager';
-import { RequestErrors } from '../hypixelAPI/RequestErrors';
+import { RequestManager } from '../hypixel/RequestManager';
+import { HypixelErrors } from '../hypixel/HypixelErrors';
 import Constants from '../util/Constants';
 
 export const properties: ClientCommand['properties'] = {
@@ -192,15 +192,16 @@ export const execute: ClientCommand['execute'] = async (
 };
 
 async function stats(interaction: CommandInteraction) {
-    const { abort, rateLimit, error } = interaction.client.hypixelAPI.errors;
-    const { instanceUses, resumeAfter, keyPercentage } =
-        interaction.client.hypixelAPI.instance;
+    const { abort, rateLimit, error } =
+        interaction.client.hypixel.errors;
+    const { uses, resumeAfter, keyPercentage } =
+        interaction.client.hypixel.request;
 
     const statsEmbed = new BetterEmbed(interaction)
         .setColor(Constants.colors.normal)
         .setDescription(
             JSON.stringify(
-                interaction.client.hypixelAPI.instance.performance,
+                interaction.client.hypixel.request.performance,
             ).slice(0, Constants.limits.embedDescription),
         )
         .addField(
@@ -234,7 +235,7 @@ async function stats(interaction: CommandInteraction) {
                 keyPercentage * keyLimit,
                 1,
             )} or ${cleanRound(keyPercentage * 100, 1)}%
-            Instance Queries: ${instanceUses}`,
+            Instance Queries: ${uses}`,
         );
 
     await interaction.editReply({
@@ -251,8 +252,8 @@ async function instance(
         throw new Error('Too high, must be below 1');
     }
 
-    interaction.client.hypixelAPI.instance[
-        type as keyof Omit<RequestManager['instance'], 'baseURL' | 'performance'>
+    interaction.client.hypixel.request[
+        type as keyof Omit<RequestManager, 'baseURL' | 'getURLs' | 'hypixelRequest' | 'performance' | 'request'>
     ] = value;
 
     const setEmbed = new BetterEmbed(interaction)
@@ -275,14 +276,14 @@ async function set(
     type: string,
     value: number,
 ) {
-    interaction.client.hypixelAPI.errors[category][
-        type as keyof RequestErrors[errorTypes]
+    interaction.client.hypixel.errors[category][
+        type as keyof HypixelErrors[errorTypes]
     ] = value;
     const setEmbed = new BetterEmbed(interaction)
         .setColor(Constants.colors.normal)
         .setTitle('Updated Value!')
         .setDescription(
-            `<RequestErrors>.${category}.${type} is now ${value}.`,
+            `<HypixelErrors>.${category}.${type} is now ${value}.`,
         );
 
     Log.command(interaction, setEmbed.description);
@@ -297,7 +298,7 @@ async function call(
     type: string,
     value: boolean | null,
 ) {
-    const hypixelModuleErrors = interaction.client.hypixelAPI.errors;
+    const hypixelModuleErrors = interaction.client.hypixel.errors;
     if (type === 'addAbort' || type === 'addError') {
         hypixelModuleErrors[type]();
     } else if (type === 'addRateLimit') {
@@ -309,7 +310,7 @@ async function call(
     const callEmbed = new BetterEmbed(interaction)
         .setColor(Constants.colors.normal)
         .setTitle('Executed!')
-        .setDescription(`Executed <RequestErrors>.${type}`);
+        .setDescription(`Executed <HypixelErrors>.${type}`);
 
     Log.command(interaction, callEmbed.description);
 

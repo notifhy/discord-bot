@@ -1,3 +1,4 @@
+import type { ClientModule } from '../@types/modules';
 import type {
     FriendsModule,
     UserAPIData,
@@ -13,23 +14,22 @@ import {
     BetterEmbed,
     timestamp,
 } from '../util/utility';
-import { ModuleHandler } from '../module/ModuleHandler';
 import { RegionLocales } from '../../locales/RegionLocales';
 import { SQLite } from '../util/SQLite';
 import Constants from '../util/Constants';
 import ModuleError from '../util/errors/ModuleError';
 import { Log } from '../util/Log';
 
-export const properties = {
+export const properties: ClientModule['properties'] = {
     name: 'friends',
     cleanName: 'Friends',
 };
 
-export const execute = async ({
+export const execute: ClientModule['execute'] = async ({
     client,
     differences,
     userAPIData,
-}: ModuleHandler,
+},
 ): Promise<void> => {
     try {
         if (

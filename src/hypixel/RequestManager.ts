@@ -3,12 +3,11 @@ import type {
     CleanHypixelStatus,
     RawHypixelPlayer,
     RawHypixelStatus,
-} from '../../@types/hypixel';
-import type { UserAPIData } from '../../@types/database';
-import { HypixelRequest } from '../../util/HypixelRequest';
-import { Log } from '../../util/Log';
-import { RequestErrors } from './RequestErrors';
-import Constants from '../../util/Constants';
+} from '../@types/hypixel';
+import type { UserAPIData } from '../@types/database';
+import { HypixelRequest } from '../util/HypixelRequest';
+import { Log } from '../util/Log';
+import Constants from '../util/Constants';
 
 export type Performance = {
     start: number;
@@ -33,8 +32,6 @@ export class RequestManager {
         history: Performance[];
     };
 
-    errors: RequestErrors;
-
     hypixelRequest: HypixelRequest;
 
     constructor() {
@@ -50,8 +47,6 @@ export class RequestManager {
             latest: null,
             history: [],
         };
-
-        this.errors = new RequestErrors(this);
 
         this.hypixelRequest = new HypixelRequest(this);
     }

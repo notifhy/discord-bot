@@ -5,7 +5,7 @@ import type {
     Collection,
     CommandInteraction,
 } from 'discord.js';
-import type { RequestManager } from '../hypixelAPI/RequestManager';
+import type { HypixelManager } from '../hypixel/HypixelManager';
 
 export interface WebhookConfig {
     id: string;
@@ -54,7 +54,7 @@ declare module 'discord.js' {
         config: Config;
         customStatus: string | null;
         events: Collection<string, ClientEvent>;
-        hypixelAPI: RequestManager;
+        hypixel: HypixelManager;
         modules: Collection<string, ClientModule>;
     }
 }
