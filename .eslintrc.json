@@ -126,7 +126,7 @@
       "accessor-pairs": "warn",
       "array-callback-return": "error",
       "consistent-return": "error",
-      "curly": ["error"],
+      "curly": ["error", "multi-line", "consistent"],
       "dot-location": ["error", "property"],
       "dot-notation": "error",
       "eqeqeq": "error",
@@ -183,7 +183,7 @@
       "keyword-spacing": "error",
       "max-depth": "error",
       "max-len": ["error", {
-        "code": 150,
+        "code": 80,
         "ignoreComments": true,
         "ignoreTemplateLiterals": true,
         "ignoreStrings": true,

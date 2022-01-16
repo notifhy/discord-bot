@@ -1,5 +1,6 @@
 import type { CleanHypixelPlayer, CleanHypixelStatus } from './hypixel';
-import { ModuleHandler } from '../module/ModuleHandler';
+import type { Client } from 'discord.js';
+import type { UserAPIData } from './database';
 
 export type ModuleNames = 'defender' | 'friend' | 'rewards';
 
@@ -13,10 +14,15 @@ export interface ClientModule {
         name: string;
         cleanName: string;
     };
-    execute({
-        client,
-        differences,
-        userAPIData,
-    }: ModuleHandler
+    execute(
+        {
+            client,
+            differences,
+            userAPIData,
+        }: {
+            client: Client,
+            differences: Differences,
+            userAPIData: UserAPIData,
+        }
     ): Promise<void>;
 }
