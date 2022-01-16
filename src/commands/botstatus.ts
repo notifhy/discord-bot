@@ -11,6 +11,7 @@ export const properties: ClientCommand['properties'] = {
     ephemeral: true,
     noDM: false,
     ownerOnly: true,
+    requireRegistration: false,
     structure: {
         name: 'botstatus',
         description: 'Set a custom for the bot',

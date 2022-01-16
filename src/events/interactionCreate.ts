@@ -2,7 +2,7 @@ import type {
     EventProperties,
     ClientCommand,
 } from '../@types/client';
-import type { UserData } from '../@types/database';
+import type { UserAPIData, UserData } from '../@types/database';
 import {
     BetterEmbed,
     slashCommandResolver,
@@ -65,7 +65,7 @@ export const execute = async (
 
             await updateLocale(interaction, userData);
             await checkSystemMessages(interaction, userData, userData.locale);
-            generalConstraints(interaction, command);
+            await generalConstraints(interaction, command);
             cooldownConstraint(interaction, command);
 
             await command.execute(
@@ -152,11 +152,12 @@ async function checkSystemMessages(
     }
 }
 
-function generalConstraints(
+async function generalConstraints(
     interaction: CommandInteraction,
     command: ClientCommand,
 ) {
     const { blockedUsers, devMode } = interaction.client.config;
+    const { ownerOnly, requireRegistration, noDM } = command.properties;
 
     if (blockedUsers.includes(interaction.user.id)) {
         throw new ConstraintError('blockedUsers');
@@ -170,14 +171,28 @@ function generalConstraints(
     }
 
     if (
-        command.properties.ownerOnly === true &&
+        ownerOnly === true &&
         ownerID.includes(interaction.user.id) === false
     ) {
         throw new ConstraintError('owner');
     }
 
+    if (requireRegistration === true) {
+        const data =
+            await SQLite.getUser<UserAPIData>({
+                discordID: interaction.user.id,
+                table: Constants.tables.api,
+                allowUndefined: true,
+                columns: ['discordID'],
+            });
+
+        if (data === undefined) {
+            throw new ConstraintError('register');
+        }
+    }
+
     if (
-        command.properties.noDM === true &&
+        noDM === true &&
         !interaction.inGuild()
     ) {
         throw new ConstraintError('dm');

@@ -10,6 +10,7 @@ export const properties: ClientCommand['properties'] = {
     ephemeral: true,
     noDM: false,
     ownerOnly: true,
+    requireRegistration: false,
     structure: {
         name: 'performance',
         description: 'View system performance',

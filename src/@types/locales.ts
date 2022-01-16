@@ -268,6 +268,7 @@ export interface ConstraintErrors {
     blockedUsers: BaseEmbed,
     devMode: BaseEmbed,
     owner: BaseEmbed,
+    register: BaseEmbed;
     dm: BaseEmbed,
     cooldown: {
         embed1: BaseEmbed,

@@ -37,6 +37,7 @@ export const properties: ClientCommand['properties'] = {
     ephemeral: true,
     noDM: false,
     ownerOnly: false,
+    requireRegistration: true,
     structure: {
         name: 'modules',
         description:

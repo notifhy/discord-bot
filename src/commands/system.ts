@@ -18,6 +18,7 @@ export const properties: ClientCommand['properties'] = {
     ephemeral: true,
     noDM: false,
     ownerOnly: false,
+    requireRegistration: false,
     structure: {
         name: 'system',
         description: 'View system information',

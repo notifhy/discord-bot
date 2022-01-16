@@ -10,6 +10,7 @@ export const properties: ClientCommand['properties'] = {
     ephemeral: true,
     noDM: false,
     ownerOnly: false,
+    requireRegistration: false,
     structure: {
         name: 'help',
         description: 'Displays helpful information and available commands',

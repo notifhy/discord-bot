@@ -139,7 +139,7 @@
                     "channel": {
                         "label": "Channel",
                         "description": "Set a channel to send alerts to",
-                        "longDescription": "Due to limitations, you need to set a channel with /channel. You can also choose to leave this field empty; alerts will be sent via Direct Messages instead",
+                        "longDescription": "Set a channel to send alerts to. Due to limitations, you need to set a channel with /channel. You can also choose to leave this field empty; alerts will be sent via Direct Messages instead.",
                         "select": {
                             "placeholder": "Select a channel",
                             "options": [
@@ -359,7 +359,7 @@
                     "channel": {
                         "label": "Channel",
                         "description": "Set a channel to send logins and logouts to",
-                        "longDescription": "Due to limitations, you need to set a channel with /channel",
+                        "longDescription": "Set a channel to send logins and logouts to. Due to limitations, you need to set a channel with /channel.",
                         "select": {
                             "placeholder": "Select a channel",
                             "options": [
@@ -509,7 +509,7 @@
                     "milestones": {
                         "label": "Reward Milestones",
                         "description": "Receive a congratulation on achieving streak milestones",
-                        "longDescription": "Receive a DM congratulating you when you hit a daily streak of 7, 30, 60, 90, 100, 150, 200, 250, 300, 365, 500, 750, or 1000",
+                        "longDescription": "Receive a DM congratulating you when you hit a daily streak of 7, 30, 60, 90, 100, 150, 200, 250, 300, 365, 500, 750, or 1000.",
                         "button": {
                             "enable": "Enable",
                             "disable": "Disable"
@@ -689,6 +689,10 @@
             "owner": {
                 "title": "Insufficient Permissions",
                 "description": "You cannot execute this command without being an owner!"
+            },
+            "register": {
+                "title": "Missing Registration",
+                "description": "You must register with /register before using this command!"
             },
             "dm": {
                 "title": "DM Channel",

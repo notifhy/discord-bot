@@ -21,6 +21,7 @@ export const properties: ClientCommand['properties'] = {
     ephemeral: true,
     noDM: false,
     ownerOnly: false,
+    requireRegistration: false,
     structure: {
         name: 'register',
         description: 'Register to begin using the modules that this bot offers',

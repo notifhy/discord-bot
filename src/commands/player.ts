@@ -33,6 +33,7 @@ export const properties: ClientCommand['properties'] = {
     ephemeral: true,
     noDM: false,
     ownerOnly: false,
+    requireRegistration: false,
     structure: {
         name: 'player',
         description: 'View basic data on almost any Hypixel player',

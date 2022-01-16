@@ -37,6 +37,7 @@ export interface ClientCommand {
         ephemeral: boolean,
         noDM: boolean,
         ownerOnly: boolean,
+        requireRegistration: boolean,
         structure: ChatInputApplicationCommandData,
     },
     execute: {
