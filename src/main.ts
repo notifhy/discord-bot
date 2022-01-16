@@ -26,13 +26,13 @@ process.on('exit', code => {
 process.on('unhandledRejection', async error => {
     Log.error('unhandledRejection', error);
     await new ErrorHandler(error).systemNotify();
-    process.exit(0);
+    process.exit(1);
 });
 
 process.on('uncaughtException', async error => {
     Log.error('uncaughtException', error);
     await new ErrorHandler(error).systemNotify();
-    process.exit(0);
+    process.exit(1);
 });
 
 const client = new Client({
