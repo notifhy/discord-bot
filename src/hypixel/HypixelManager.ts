@@ -41,7 +41,7 @@ export class HypixelManager {
 
     private async refresh() {
         if (this.request.resumeAfter > Date.now()) {
-            await setTimeout(this.request.resumeAfter);
+            await setTimeout(this.request.resumeAfter - Date.now());
         }
 
         const users = (
@@ -91,15 +91,16 @@ export class HypixelManager {
                     .systemNotify();
             }
 
-            const timeout = this.getTimeout(urls);
+            const timeout = this.getTimeout(urls, performance);
             await setTimeout(timeout);
         }
     }
 
-    private getTimeout(urls: string[]) {
+    private getTimeout(urls: string[], performance: Performance) {
         const keyQueryLimit = keyLimit * this.request.keyPercentage;
         const intervalBetweenRequests = (60 / keyQueryLimit) * 1000;
-        return intervalBetweenRequests * urls.length;
+        const total = intervalBetweenRequests * urls.length;
+        return Math.max(total - performance.total, 0);
     }
 
     private updatePerformance(performance: Performance) {
