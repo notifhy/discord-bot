@@ -18,6 +18,7 @@ export const properties: ClientCommand['properties'] = {
     ephemeral: true,
     noDM: false,
     ownerOnly: false,
+    requireRegistration: false,
     structure: {
         name: 'system',
         description: 'View system information',
@@ -31,13 +32,13 @@ export const execute: ClientCommand['execute'] = async (
     const text = RegionLocales.locale(locale).commands.system;
     const { replace } = RegionLocales;
 
-    const { instance } = interaction.client.hypixelAPI;
+    const { request } = interaction.client.hypixel;
 
     const memoryMegaBytes =
         process.memoryUsage.rss() / (2 ** 20);
 
     const keyQueryLimit =
-        keyLimit * instance.keyPercentage;
+        keyLimit * request.keyPercentage;
 
     const intervalBetweenRequests =
         (60 / keyQueryLimit) * Constants.ms.second;
@@ -94,7 +95,7 @@ export const execute: ClientCommand['execute'] = async (
             {
                 name: text.embed.field6.name,
                 value: replace(text.embed.field6.value, {
-                    instanceUses: instance.instanceUses,
+                    uses: request.uses,
                     updateInterval: cleanLength(updateInterval)!,
                 }),
             },

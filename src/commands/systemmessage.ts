@@ -26,6 +26,7 @@ export const properties: ClientCommand['properties'] = {
     ephemeral: true,
     noDM: false,
     ownerOnly: true,
+    requireRegistration: false,
     structure: {
         name: 'systemmessage',
         description: 'Message a user',

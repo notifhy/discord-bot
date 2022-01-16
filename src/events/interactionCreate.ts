@@ -2,7 +2,7 @@ import type {
     EventProperties,
     ClientCommand,
 } from '../@types/client';
-import type { UserData } from '../@types/database';
+import type { UserAPIData, UserData } from '../@types/database';
 import {
     BetterEmbed,
     slashCommandResolver,
@@ -29,7 +29,7 @@ export const properties: EventProperties = {
 export const execute = async (
     interaction: CommandInteraction,
 ): Promise<void> => {
-    let userData;
+    let userData: UserData | void;
 
     try {
         if (interaction.isCommand()) {
@@ -46,14 +46,13 @@ export const execute = async (
                 ephemeral: command.properties.ephemeral,
             });
 
-            userData = (
+            userData =
                 await SQLite.getUser<UserData>({
                     discordID: interaction.user.id,
                     table: Constants.tables.users,
                     allowUndefined: true,
                     columns: ['*'],
-                },
-            ));
+                });
 
             userData ??=
                 await SQLite.newUser<UserData>({
@@ -64,24 +63,9 @@ export const execute = async (
                     },
                 });
 
-            if (
-                interaction.locale !== userData.locale &&
-                userData.localeOverride === false &&
-                Object.keys(locales).includes(interaction.locale)
-            ) {
-                await SQLite.updateUser<UserData>({
-                    discordID: interaction.user.id,
-                    table: Constants.tables.users,
-                    data: {
-                        locale: interaction.locale,
-                    },
-                });
-
-                userData.locale = interaction.locale;
-            }
-
+            await updateLocale(interaction, userData);
             await checkSystemMessages(interaction, userData, userData.locale);
-            generalConstraints(interaction, command);
+            await generalConstraints(interaction, command);
             cooldownConstraint(interaction, command);
 
             await command.execute(
@@ -101,6 +85,27 @@ export const execute = async (
         await handler.userNotify();
     }
 };
+
+async function updateLocale(
+    interaction: CommandInteraction,
+    userData: UserData,
+) {
+    if (
+        interaction.locale !== userData.locale &&
+        userData.localeOverride === false &&
+        Object.keys(locales).includes(interaction.locale)
+    ) {
+        await SQLite.updateUser<UserData>({
+            discordID: interaction.user.id,
+            table: Constants.tables.users,
+            data: {
+                locale: interaction.locale,
+            },
+        });
+
+        userData.locale = interaction.locale;
+    }
+}
 
 async function checkSystemMessages(
     interaction: CommandInteraction,
@@ -147,11 +152,12 @@ async function checkSystemMessages(
     }
 }
 
-function generalConstraints(
+async function generalConstraints(
     interaction: CommandInteraction,
     command: ClientCommand,
 ) {
     const { blockedUsers, devMode } = interaction.client.config;
+    const { ownerOnly, requireRegistration, noDM } = command.properties;
 
     if (blockedUsers.includes(interaction.user.id)) {
         throw new ConstraintError('blockedUsers');
@@ -165,14 +171,28 @@ function generalConstraints(
     }
 
     if (
-        command.properties.ownerOnly === true &&
+        ownerOnly === true &&
         ownerID.includes(interaction.user.id) === false
     ) {
         throw new ConstraintError('owner');
     }
 
+    if (requireRegistration === true) {
+        const data =
+            await SQLite.getUser<UserAPIData>({
+                discordID: interaction.user.id,
+                table: Constants.tables.api,
+                allowUndefined: true,
+                columns: ['discordID'],
+            });
+
+        if (data === undefined) {
+            throw new ConstraintError('register');
+        }
+    }
+
     if (
-        command.properties.noDM === true &&
+        noDM === true &&
         !interaction.inGuild()
     ) {
         throw new ConstraintError('dm');

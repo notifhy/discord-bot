@@ -23,6 +23,14 @@ export default {
         language: 'en-US',
         menuIncrements: 5,
         menuFastIncrements: 20,
+        performance: {
+            start: 0, //Date.now()
+            uses: 0, //uses
+            total: 0,
+            fetch: 0,
+            process: 0,
+            modules: 0,
+        },
     },
     emoji: {
         alert: '<:alert:929126565240000513>',
@@ -65,7 +73,19 @@ export default {
         rewards: {
             hypixelTimezone: 'EST5EDT',
             milestones: [
-                7, 30, 60, 90, 100, 150, 200, 250, 300, 365, 500, 750, 1000,
+                7,
+                30,
+                60,
+                90,
+                100,
+                150,
+                200,
+                250,
+                300,
+                365,
+                500,
+                750,
+                1000,
             ],
         },
     },

@@ -34,7 +34,7 @@ export function combiner(
     } & SelectMenuLocale & SelectMenuStructure;
 }
 
-export const structures = {
+export default {
     defender: {
         toggle: {
             value: 'toggle',
@@ -205,7 +205,7 @@ export const structures = {
                         value: 'FRENCH',
                     },
                     {
-                        value: 'German',
+                        value: 'GERMAN',
                     },
                     {
                         value: 'TURKISH',

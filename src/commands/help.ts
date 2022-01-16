@@ -10,6 +10,7 @@ export const properties: ClientCommand['properties'] = {
     ephemeral: true,
     noDM: false,
     ownerOnly: false,
+    requireRegistration: false,
     structure: {
         name: 'help',
         description: 'Displays helpful information and available commands',
@@ -99,7 +100,9 @@ export const execute: ClientCommand['execute'] = async (
         commandSearchEmbed.addField(
             text.specific.cooldown.name,
             replace(text.specific.cooldown.value, {
-                commandCooldown: command.properties.cooldown / Constants.ms.second,
+                commandCooldown:
+                    command.properties.cooldown /
+                    Constants.ms.second,
             }),
         );
 

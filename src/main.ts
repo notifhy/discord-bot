@@ -11,9 +11,9 @@ import {
     Options,
     Sweepers,
 } from 'discord.js';
+import { HypixelManager } from './hypixel/HypixelManager';
 import { discordAPIkey } from '../config.json';
 import { Log } from './util/Log';
-import { RequestManager } from './hypixelAPI/RequestManager';
 import { SQLite } from './util/SQLite';
 import ErrorHandler from './util/errors/handlers/ErrorHandler';
 import fs from 'node:fs/promises';
@@ -26,13 +26,13 @@ process.on('exit', code => {
 process.on('unhandledRejection', async error => {
     Log.error('unhandledRejection', error);
     await new ErrorHandler(error).systemNotify();
-    process.exit(0);
+    process.exit(1);
 });
 
 process.on('uncaughtException', async error => {
     Log.error('uncaughtException', error);
     await new ErrorHandler(error).systemNotify();
-    process.exit(0);
+    process.exit(1);
 });
 
 const client = new Client({
@@ -95,7 +95,7 @@ client.commands = new Collection();
 client.cooldowns = new Collection();
 client.customStatus = null;
 client.events = new Collection();
-client.hypixelAPI = new RequestManager(client);
+client.hypixel = new HypixelManager(client);
 client.modules = new Collection();
 
 (async () => {

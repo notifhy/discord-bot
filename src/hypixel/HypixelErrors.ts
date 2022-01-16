@@ -2,26 +2,35 @@ import {
     clearTimeout,
     setTimeout,
 } from 'node:timers';
-import { RequestInstance } from './RequestInstance';
 import Constants from '../util/Constants';
 
-export class RequestErrors {
-    instance: RequestInstance;
+type ErrorType = {
+    baseTimeout: number;
+    lastMinute: number;
+    resetTimeout: number | undefined;
+    timeout: number;
+    total: number;
+}
 
-    readonly abort: {
-        baseTimeout: number;
-        lastMinute: number;
-        resetTimeout: number | undefined;
-        timeout: number;
-        total: number;
+export class HypixelErrors {
+    config: {
+        resumeAfter: number,
+        keyPercentage: number,
     };
 
-    readonly rateLimit: { isGlobal: boolean } & typeof this.abort;
+    readonly abort: ErrorType;
 
-    readonly error: typeof this.abort;
+    readonly rateLimit: {
+        isGlobal: boolean
+    } & ErrorType;
 
-    constructor(instance: RequestInstance) {
-        this.instance = instance;
+    readonly error: ErrorType;
+
+    constructor(config: {
+        resumeAfter: number,
+        keyPercentage: number,
+    }) {
+        this.config = config;
 
         this.abort = {
             baseTimeout: 0, //The timeout each type starts out with
@@ -68,7 +77,7 @@ export class RequestErrors {
         }
 
         this.rateLimit.isGlobal = rateLimitGlobal ?? this.rateLimit.isGlobal;
-        this.instance.keyPercentage -= 0.05;
+        this.config.keyPercentage -= 0.05;
         this.base({
             type: 'rateLimit',
         });
@@ -81,8 +90,8 @@ export class RequestErrors {
     }
 
     private base({ type }: { type: 'abort' | 'rateLimit' | 'error' }) {
-        this.instance.resumeAfter = Math.max(
-            this.instance.resumeAfter,
+        this.config.resumeAfter = Math.max(
+            this.config.resumeAfter,
             Date.now() + this[type].timeout,
         ); //Sets the new delay by setting <Instance>.resumeAfter
 
@@ -92,7 +101,8 @@ export class RequestErrors {
 
         this[type].total += 1;
 
-        this[type].lastMinute += 1; //Adding a type to the count
+        this[type].lastMinute += 1; //Adding a count to the error type
+
         setTimeout(() => {
             this[type].lastMinute -= 1; //Removing a type from the count
         }, Constants.ms.minute);

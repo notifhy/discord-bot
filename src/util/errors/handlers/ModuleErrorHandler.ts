@@ -96,7 +96,11 @@ export default class ModuleErrorHandler extends BaseErrorHandler {
                     },
                 )) as UserData;
 
-                const locale = RegionLocales.locale(userData.locale).errors.moduleErrors;
+                const locale = RegionLocales
+                    .locale(userData.locale)
+                    .errors
+                    .moduleErrors;
+
                 const { replace } = RegionLocales;
                 const { APIErrors } = DiscordConstants;
 
@@ -109,8 +113,12 @@ export default class ModuleErrorHandler extends BaseErrorHandler {
                     case APIErrors.MISSING_ACCESS: //Unable to access channel, server, etc.
                     case APIErrors.CANNOT_MESSAGE_USER: //Cannot send messages to this user
                     case APIErrors.MISSING_PERMISSIONS: message = { //Missing permission(s)
-                        name: replace(locale[this.error.raw.code].name, cleanModule),
-                        value: replace(locale[this.error.raw.code].value, cleanModule),
+                        name:
+                            replace(locale[this.error.raw.code].name,
+                            cleanModule),
+                        value:
+                            replace(locale[this.error.raw.code].value,
+                            cleanModule),
                     };
                     break;
                     //No default

@@ -33,6 +33,7 @@ export const properties: ClientCommand['properties'] = {
     ephemeral: true,
     noDM: false,
     ownerOnly: false,
+    requireRegistration: false,
     structure: {
         name: 'player',
         description: 'View basic data on almost any Hypixel player',
@@ -239,25 +240,26 @@ export const execute: ClientCommand['execute'] = async (
                 position + Constants.defaults.menuIncrements,
             );
 
-            const fields = shownData.map(({ date, ended, gameType, mode, map }) => ({
-                name: replace(text.recentGames.embed.field.name, {
-                    gameType: gameType,
-                    date: timestamp(date, 'D') ?? unknown,
-                }),
-                value: replace(text.recentGames.embed.field.value, {
-                    start: timestamp(date, 'T') ?? unknown,
-                    end: timestamp(ended, 'T') ?? text.recentGames.inProgress,
-                    playTime: ended
-                        ? `${text.recentGames.playTime}${cleanLength(ended - date)}`
-                        : `${text.recentGames.elapsed}${cleanLength(Date.now() - date)}`,
-                    mode: mode
-                        ? `\n${text.recentGames.gameMode}${mode}`
-                        : '',
-                    map: map
-                        ? `\n${text.recentGames.gameMap}${map}`
-                        : '',
-                }),
-            }));
+            const fields =
+                shownData.map(({ date, ended, gameType, mode, map }) => ({
+                    name: replace(text.recentGames.embed.field.name, {
+                        gameType: gameType,
+                        date: timestamp(date, 'D') ?? unknown,
+                    }),
+                    value: replace(text.recentGames.embed.field.value, {
+                        start: timestamp(date, 'T') ?? unknown,
+                        end: timestamp(ended, 'T') ?? text.recentGames.inProgress,
+                        playTime: ended
+                            ? `${text.recentGames.playTime}${cleanLength(ended - date)}`
+                            : `${text.recentGames.elapsed}${cleanLength(Date.now() - date)}`,
+                        mode: mode
+                            ? `\n${text.recentGames.gameMode}${mode}`
+                            : '',
+                        map: map
+                            ? `\n${text.recentGames.gameMap}${map}`
+                            : '',
+                    }),
+                }));
 
             return new BetterEmbed(interaction)
                 .setColor(Constants.colors.normal)
@@ -367,7 +369,9 @@ export const execute: ClientCommand['execute'] = async (
                     components: [buttons],
                 });
             } catch (error) {
-                const handler = new CommandErrorHandler(error, interaction, locale);
+                const handler =
+                    new CommandErrorHandler(error, interaction, locale);
+
                 await handler.systemNotify();
                 await handler.userNotify();
             }
@@ -383,7 +387,9 @@ export const execute: ClientCommand['execute'] = async (
                     components: disabledRows,
                 });
             } catch (error) {
-                const handler = new CommandErrorHandler(error, interaction, locale);
+                const handler =
+                    new CommandErrorHandler(error, interaction, locale);
+
                 await handler.systemNotify();
                 await handler.userNotify();
             }

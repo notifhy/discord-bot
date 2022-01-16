@@ -120,13 +120,18 @@ export default class CommandErrorHandler extends BaseErrorHandler {
                 const embed1 = (constraint as Locale['errors']['constraintErrors']['cooldown']).embed1;
                 const embed2 = (constraint as Locale['errors']['constraintErrors']['cooldown']).embed2;
 
-                const command = this.interaction.client.commands.get(commandName);
+                const command =
+                    this.interaction.client.commands.get(commandName);
 
                 this.constraintResolver(
                     embed1.title,
                     RegionLocales.replace(embed1.description, {
-                        cooldown: (command?.properties.cooldown ?? 0) / Constants.ms.second,
-                        timeLeft: cleanRound(this.error.cooldown! / Constants.ms.second, 1),
+                        cooldown:
+                            (command?.properties.cooldown ?? 0) /
+                            Constants.ms.second,
+                        timeLeft:
+                            cleanRound(this.error.cooldown! /
+                            Constants.ms.second, 1),
                     }),
                 );
 

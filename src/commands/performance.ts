@@ -10,6 +10,7 @@ export const properties: ClientCommand['properties'] = {
     ephemeral: true,
     noDM: false,
     ownerOnly: true,
+    requireRegistration: false,
     structure: {
         name: 'performance',
         description: 'View system performance',
@@ -19,16 +20,12 @@ export const properties: ClientCommand['properties'] = {
 export const execute: ClientCommand['execute'] = async (
     interaction: CommandInteraction,
 ): Promise<void> => {
-    const { instance } = interaction.client.hypixelAPI;
-
     const {
         fetch: fetchPerformance,
-        databaseFetch: databaseFetchPerformance,
         process: processPerformance,
-        save: savePerformance,
         modules: modulePerformance,
         total,
-    } = instance.performance.latest!;
+    } = interaction.client.hypixel.request.performance.latest!;
 
     const responseEmbed = new BetterEmbed(interaction)
         .setColor(Constants.colors.normal)
@@ -40,14 +37,8 @@ export const execute: ClientCommand['execute'] = async (
                 `Hypixel API Fetch: ${
                     fetchPerformance
                 }ms
-                Database Fetch: ${
-                    databaseFetchPerformance
-                }ms
                 Process Data: ${
                     processPerformance
-                }ms
-                Save Data: ${
-                    savePerformance
                 }ms
                 Module Execution: ${
                     modulePerformance

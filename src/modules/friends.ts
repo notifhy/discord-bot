@@ -1,3 +1,4 @@
+import type { ClientModule } from '../@types/modules';
 import type {
     FriendsModule,
     UserAPIData,
@@ -13,24 +14,22 @@ import {
     BetterEmbed,
     timestamp,
 } from '../util/utility';
-import { ModuleHandler } from '../module/ModuleHandler';
 import { RegionLocales } from '../../locales/RegionLocales';
 import { SQLite } from '../util/SQLite';
 import Constants from '../util/Constants';
 import ModuleError from '../util/errors/ModuleError';
 import { Log } from '../util/Log';
 
-export const properties = {
+export const properties: ClientModule['properties'] = {
     name: 'friends',
     cleanName: 'Friends',
 };
 
-export const execute = async ({
+export const execute: ClientModule['execute'] = async ({
     client,
     differences,
     userAPIData,
-}: ModuleHandler,
-): Promise<void> => {
+}): Promise<void> => {
     try {
         if (
             differences.primary.lastLogin === undefined &&
@@ -184,7 +183,8 @@ export const execute = async ({
             const lastEvent = userAPIData.history[1]; //First item in array is this event, so it checks the second item
             //@ts-expect-error hasOwn typing not implemented yet - https://github.com/microsoft/TypeScript/issues/44253
             const duplicationCheck = Object.hasOwn(lastEvent, 'lastLogout') &&
-                differences.primary.lastLogout - lastEvent.lastLogout! < Constants.ms.second * 2.5;
+                differences.primary.lastLogout - lastEvent.lastLogout! <
+                Constants.ms.second * 2.5;
 
             if (duplicationCheck === false) {
                 if (

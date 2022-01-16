@@ -9,22 +9,22 @@ import {
     keyLimit,
     ownerID,
 } from '../../../../config.json';
-import { RequestManager } from '../../../hypixelAPI/RequestManager';
+import { FetchError } from 'node-fetch';
 import AbortError from '../AbortError';
 import BaseErrorHandler from './BaseErrorHandler';
 import HTTPError from '../HTTPError';
 import RateLimitError from '../RateLimitError';
-import { FetchError } from 'node-fetch';
+import { HypixelManager } from '../../../hypixel/HypixelManager';
 
 export default class RequestErrorHandler extends BaseErrorHandler {
-    readonly requestManager: RequestManager;
+    readonly hypixelManager: HypixelManager;
     readonly timeout: string | null;
 
-    constructor(error: unknown, requestManager: RequestManager) {
+    constructor(error: unknown, hypixelManager: HypixelManager) {
         super(error);
-        this.requestManager = requestManager;
+        this.hypixelManager = hypixelManager;
 
-        const { errors } = this.requestManager;
+        const { errors } = this.hypixelManager;
 
         if (this.error instanceof AbortError) {
             errors.addAbort();
@@ -39,7 +39,7 @@ export default class RequestErrorHandler extends BaseErrorHandler {
 
         this.errorLog();
 
-        const { resumeAfter } = this.requestManager.instance;
+        const { resumeAfter } = this.hypixelManager.request;
 
         this.timeout = cleanLength(resumeAfter - Date.now(), true);
     }
@@ -54,17 +54,16 @@ export default class RequestErrorHandler extends BaseErrorHandler {
 
     private statusEmbed() {
         const {
-            instanceUses,
-            keyPercentage,
-        } = this.requestManager.instance;
-
-        const {
             errors: {
                 abort,
                 rateLimit,
                 error,
             },
-        } = this.requestManager;
+            request: {
+                keyPercentage,
+                uses,
+            },
+        } = this.hypixelManager;
 
         const embed = this.errorEmbed()
             .setTitle('Degraded Performance')
@@ -114,7 +113,7 @@ export default class RequestErrorHandler extends BaseErrorHandler {
                     value: `Dedicated Queries: ${cleanRound(
                         keyPercentage * keyLimit,
                     )} or ${cleanRound(keyPercentage * 100)}%
-                    Instance Queries: ${instanceUses}`,
+                    Instance Queries: ${uses}`,
                 },
             ]);
 

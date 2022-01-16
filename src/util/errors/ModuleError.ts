@@ -8,9 +8,9 @@ export default class ModuleError extends Error {
         cleanModule,
         module,
     }: {
-        error: unknown;
-        cleanModule: string;
-        module: string;
+        error: unknown,
+        cleanModule: string,
+        module: string,
     }) {
         super((error as Error)?.message);
         this.cleanModule = cleanModule;

@@ -31,14 +31,15 @@ import Constants from '../util/Constants';
 
 export const properties: ClientCommand['properties'] = {
     name: 'data',
-    description: 'View and/or delete your data stored by this bot',
+    description: 'View or delete your data stored by this bot',
     cooldown: 30_000,
     ephemeral: true,
     noDM: false,
     ownerOnly: false,
+    requireRegistration: true,
     structure: {
         name: 'data',
-        description: 'View and/or delete your data stored by this bot',
+        description: 'View or delete your data stored by this bot',
         options: [
             {
                 name: 'delete',
@@ -384,7 +385,8 @@ export const execute: ClientCommand['execute'] = async (
                     components: [buttons],
                 });
             } catch (error) {
-                const handler = new CommandErrorHandler(error, interaction, locale);
+                const handler =
+                    new CommandErrorHandler(error, interaction, locale);
                 await handler.systemNotify();
                 await handler.userNotify();
             }
@@ -400,7 +402,8 @@ export const execute: ClientCommand['execute'] = async (
                     components: disabledRows,
                 });
             } catch (error) {
-                const handler = new CommandErrorHandler(error, interaction, locale);
+                const handler =
+                    new CommandErrorHandler(error, interaction, locale);
                 await handler.systemNotify();
                 await handler.userNotify();
             }

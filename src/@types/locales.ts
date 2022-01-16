@@ -4,13 +4,13 @@ import type { MessageSelectMenuOptions, MessageSelectOptionData } from 'discord.
 Universal Module Data Separation Stuff
 */
 export interface SelectMenuTopLocale {
-    label: string;
-    description: string;
-    longDescription: string;
+    label: string,
+    description: string,
+    longDescription: string,
 }
 
 export interface SelectMenuTopStructure {
-    value: string;
+    value: string,
 }
 
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
@@ -24,7 +24,7 @@ export interface SelectMenuOptionStructure extends Omit<MessageSelectOptionData,
 }
 
 export interface SelectMenuLocale extends Omit<MessageSelectMenuOptions, 'customId' | 'options'> {
-    options: SelectMenuOptionLocale[]
+    options: SelectMenuOptionLocale[],
 }
 
 export interface SelectMenuStructure extends Omit<MessageSelectMenuOptions, 'options'> {
@@ -36,13 +36,13 @@ Toggle Buttons
 */
 
 export interface LocaleButton {
-    enable: string;
-    disable: string;
+    enable: string,
+    disable: string,
 }
 
 export interface ButtonData {
-    enableCustomID: string;
-    disableCustomID: string;
+    enableCustomID: string,
+    disableCustomID: string,
 }
 
 
@@ -50,13 +50,13 @@ export interface ButtonData {
 General Interfaces
 */
 export interface BaseEmbed {
-    title: string;
-    description: string;
+    title: string,
+    description: string,
 }
 
 export interface Field {
-    name: string;
-    value: string;
+    name: string,
+    value: string,
 }
 
 /*
@@ -64,195 +64,195 @@ Command Interface
 */
 export interface Data {
     delete: {
-        confirm: BaseEmbed;
-        deleted: BaseEmbed;
-        aborted: BaseEmbed;
-        yesButton: string;
-        noButton: string;
-    };
+        confirm: BaseEmbed,
+        deleted: BaseEmbed,
+        aborted: BaseEmbed,
+        yesButton: string,
+        noButton: string,
+    },
     history: {
-        embed: BaseEmbed;
-        null: string;
+        embed: BaseEmbed,
+        null: string,
         keys: {
-            firstLogin: string;
-            lastLogin: string;
-            lastLogout: string;
-            version: string;
-            language: string;
-            lastClaimedReward: string;
-            rewardScore: string;
-            rewardHighScore: string;
-            totalDailyRewards: string;
-            totalRewards: string;
-            gameType: string;
-            gameMode: string;
-            gameMap: string;
-        };
-    };
+            firstLogin: string,
+            lastLogin: string,
+            lastLogout: string,
+            version: string,
+            language: string,
+            lastClaimedReward: string,
+            rewardScore: string,
+            rewardHighScore: string,
+            totalDailyRewards: string,
+            totalRewards: string,
+            gameType: string,
+            gameMode: string,
+            gameMap: string,
+        },
+    },
 }
 
 export interface Help {
-    information: BaseEmbed;
+    information: BaseEmbed,
     all: {
-        title: string;
-        field: Field;
-    };
+        title: string,
+        field: Field,
+    },
     specific: {
-        invalid: BaseEmbed;
-        title: string;
-        description: string;
-        cooldown: Field;
-        dm: Field;
-        owner: Field;
-    };
+        invalid: BaseEmbed,
+        title: string,
+        description: string,
+        cooldown: Field,
+        dm: Field,
+        owner: Field,
+    },
 }
 
 export interface Language {
-    alreadyRemoved: BaseEmbed;
-    reset: BaseEmbed;
-    set: BaseEmbed;
+    alreadyRemoved: BaseEmbed,
+    reset: BaseEmbed,
+    set: BaseEmbed,
 }
 
 export interface ModulesCommand {
     defender: {
-        title: string;
-        description: string;
-        menuPlaceholder: string;
+        title: string,
+        description: string,
+        menuPlaceholder: string,
         missingConfigField: {
-            name: string;
-            value: string;
-        };
+            name: string,
+            value: string,
+        },
         menu: {
             toggle: {
-                button: LocaleButton;
-            } & SelectMenuTopLocale;
+                button: LocaleButton,
+            } & SelectMenuTopLocale,
             alerts: {
-                select: SelectMenuLocale
-            } & SelectMenuTopLocale;
+                select: SelectMenuLocale,
+            } & SelectMenuTopLocale,
             channel: {
-                select: SelectMenuLocale
-            } & SelectMenuTopLocale;
+                select: SelectMenuLocale,
+            } & SelectMenuTopLocale,
             gameTypes: {
-                select: SelectMenuLocale
-            } & SelectMenuTopLocale;
+                select: SelectMenuLocale,
+            } & SelectMenuTopLocale,
             languages: {
-                select: SelectMenuLocale
-            } & SelectMenuTopLocale;
+                select: SelectMenuLocale,
+            } & SelectMenuTopLocale,
             versions: {
-                select: SelectMenuLocale
-            } & SelectMenuTopLocale;
-        };
-    };
+                select: SelectMenuLocale,
+            } & SelectMenuTopLocale,
+        },
+    },
     friends: {
-        title: string;
-        description: string;
-        menuPlaceholder: string;
+        title: string,
+        description: string,
+        menuPlaceholder: string,
         missingConfigField: {
-            name: string;
-            value: string;
-        };
+            name: string,
+            value: string,
+        },
         menu: {
             toggle: {
-                button: LocaleButton;
-            } & SelectMenuTopLocale;
+                button: LocaleButton,
+            } & SelectMenuTopLocale,
             channel: {
                 select: SelectMenuLocale
-            } & SelectMenuTopLocale;
-        };
-    };
+            } & SelectMenuTopLocale,
+        },
+    },
     rewards: {
-        title: string;
-        description: string;
-        menuPlaceholder: string;
+        title: string,
+        description: string,
+        menuPlaceholder: string,
         missingConfigField: {
-            name: string;
-            value: string;
-        };
+            name: string,
+            value: string,
+        },
         menu: {
             toggle: {
                 button: LocaleButton
-            } & SelectMenuTopLocale;
+            } & SelectMenuTopLocale,
             alertTime: {
-                select: SelectMenuLocale
-            } & SelectMenuTopLocale;
+                select: SelectMenuLocale,
+            } & SelectMenuTopLocale,
             claimNotification: {
-                button: LocaleButton;
-            } & SelectMenuTopLocale;
+                button: LocaleButton,
+            } & SelectMenuTopLocale,
             milestones: {
-                button: LocaleButton;
-            } & SelectMenuTopLocale;
+                button: LocaleButton,
+            } & SelectMenuTopLocale,
             notificationInterval: {
-                select: SelectMenuLocale
-            } & SelectMenuTopLocale;
-        };
-    };
+                select: SelectMenuLocale,
+            } & SelectMenuTopLocale,
+        },
+    },
 }
 
 export interface Ping {
     embed1: {
-        title: string;
-    };
-    embed2: BaseEmbed;
+        title: string,
+    },
+    embed2: BaseEmbed,
 }
 
 export interface Player {
-    invalid: BaseEmbed;
-    notFound: BaseEmbed;
-    unknown: string;
+    invalid: BaseEmbed,
+    notFound: BaseEmbed,
+    unknown: string,
     status: {
-        online: string;
-        offline: string;
+        online: string,
+        offline: string,
         embed: {
-            field1: Field;
-            field2: Field;
-            field3: Field;
-            onlineField: Field;
-            offlineField: Field;
-        } & BaseEmbed;
+            field1: Field,
+            field2: Field,
+            field3: Field,
+            onlineField: Field,
+            offlineField: Field,
+        } & BaseEmbed,
     }
     recentGames: {
-        playTime: string;
-        elapsed: string;
-        gameMode: string;
-        gameMap: string;
-        inProgress: string;
+        playTime: string,
+        elapsed: string,
+        gameMode: string,
+        gameMap: string,
+        inProgress: string,
         embed: {
-            field: Field;
-        } & BaseEmbed;
+            field: Field,
+        } & BaseEmbed,
     }
 }
 
 export interface Register {
-    invalid: BaseEmbed;
-    notFound: BaseEmbed;
-    unlinked: BaseEmbed;
-    mismatched: BaseEmbed;
-    title: string;
-    description: string;
-    field: Field;
+    invalid: BaseEmbed,
+    notFound: BaseEmbed,
+    unlinked: BaseEmbed,
+    mismatched: BaseEmbed,
+    title: string,
+    description: string,
+    field: Field,
 }
 
 export interface System {
     embed: {
-        title: string;
-        field1: Field;
-        field2: Field;
-        field3: Field;
-        field4: Field;
-        field5: Field;
-        field6: Field;
+        title: string,
+        field1: Field,
+        field2: Field,
+        field3: Field,
+        field4: Field,
+        field5: Field,
+        field6: Field,
     }
 }
 
 export interface Commands {
-    data: Data;
-    help: Help;
-    language: Language;
-    modules: ModulesCommand;
-    ping: Ping;
-    player: Player;
-    register: Register;
-    system: System;
+    data: Data,
+    help: Help,
+    language: Language,
+    modules: ModulesCommand,
+    ping: Ping,
+    player: Player,
+    register: Register,
+    system: System,
 }
 
 /*
@@ -260,19 +260,20 @@ Errors
 */
 export interface CommandErrors {
     embed: {
-        field: Field
-    } & BaseEmbed
+        field: Field,
+    } & BaseEmbed,
 }
 
 export interface ConstraintErrors {
-    blockedUsers: BaseEmbed;
-    devMode: BaseEmbed;
-    owner: BaseEmbed;
-    dm: BaseEmbed;
+    blockedUsers: BaseEmbed,
+    devMode: BaseEmbed,
+    owner: BaseEmbed,
+    register: BaseEmbed;
+    dm: BaseEmbed,
     cooldown: {
-        embed1: BaseEmbed;
-        embed2: BaseEmbed;
-    };
+        embed1: BaseEmbed,
+        embed2: BaseEmbed,
+    },
 }
 
 export interface ModuleErrors {
@@ -285,16 +286,16 @@ export interface ModuleErrors {
 
 export interface SystemMessages {
     embed: {
-        footer: string;
+        footer: string,
     } & BaseEmbed,
     failedDM: string,
 }
 
 export interface Errors {
-    commandErrors: CommandErrors;
-    constraintErrors: ConstraintErrors;
-    moduleErrors: ModuleErrors;
-    systemMessages: SystemMessages;
+    commandErrors: CommandErrors,
+    constraintErrors: ConstraintErrors,
+    moduleErrors: ModuleErrors,
+    systemMessages: SystemMessages,
 }
 
 /*
@@ -302,71 +303,71 @@ Modules
 */
 export interface Defender {
     gameType: {
-        null: string;
-    } & Field;
-    login: Field;
-    logout: Field;
-    language: Field;
-    version: Field;
+        null: string,
+    } & Field,
+    login: Field,
+    logout: Field,
+    language: Field,
+    version: Field,
     embed: {
-        title: string;
-    };
-    missingPermissions: Field;
+        title: string,
+    },
+    missingPermissions: Field,
 }
 
 export interface Friends {
     missingData: {
-        footer: string;
-    } & BaseEmbed;
+        footer: string,
+    } & BaseEmbed,
     receivedData: {
-        footer: string;
-    } & BaseEmbed;
-    missingPermissions: Field;
+        footer: string,
+    } & BaseEmbed,
+    missingPermissions: Field,
     suppressNext: {
-        footer: string;
-    } & BaseEmbed;
+        footer: string,
+    } & BaseEmbed,
     login: {
-        description: string;
-    };
+        description: string,
+    },
     logout: {
-        description: string;
-    };
+        description: string,
+    },
 }
 
 export interface Rewards {
     claimedNotification: {
-        footer: string;
-    } & BaseEmbed;
+        footer: string,
+    } & BaseEmbed,
     milestone: {
-        footer: string;
-    } & BaseEmbed;
+        footer: string,
+    } & BaseEmbed,
     rewardReminder: {
-        title: string;
-        footer: string;
-        description: string[];
-    };
+        title: string,
+        footer: string,
+        description: string[],
+    },
 }
 
 export interface Modules {
-    defender: Defender;
-    friends: Friends;
-    rewards: Rewards;
+    defender: Defender,
+    friends: Friends,
+    rewards: Rewards,
 }
 
 /*
 Base
 */
 export interface Locale {
-    errors: Errors;
-    commands: Commands;
-    modules: Modules;
+    errors: Errors,
+    commands: Commands,
+    modules: Modules,
 }
 
 export interface Locales {
-    'en-US': Locale;
-    'fr': Locale;
+    'en-US': Locale,
+    'fr': Locale,
 }
 
 export interface Parameters {
-    [index: string]: string | number;
+    [index: string]: string | number,
 }

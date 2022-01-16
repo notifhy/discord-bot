@@ -14,9 +14,9 @@ export class ToggleButtons extends MessageActionRow {
         enabled,
         buttonLocale,
     }: {
-        allDisabled: boolean;
-        enabled: boolean;
-        buttonLocale: LocaleButton & ButtonData;
+        allDisabled: boolean,
+        enabled: boolean,
+        buttonLocale: LocaleButton & ButtonData,
     }) {
         super();
         const enable = new MessageButton()

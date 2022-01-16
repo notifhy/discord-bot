@@ -44,5 +44,5 @@ export const execute = async (client: Client) => {
         }
     }
 
-    await client.hypixelAPI.forever(); //eslint-disable-line no-await-in-loop
+    await client.hypixel.ready(); //eslint-disable-line no-await-in-loop
 };
