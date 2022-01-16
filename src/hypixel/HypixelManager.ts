@@ -42,6 +42,8 @@ export class HypixelManager {
     private async refresh() {
         if (this.request.resumeAfter > Date.now()) {
             await setTimeout(this.request.resumeAfter - Date.now());
+        } else if (this.client.config.enabled === false) {
+            await setTimeout(5_000); //Avoids blocking other processes
         }
 
         const users = (
