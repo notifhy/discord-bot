@@ -205,7 +205,7 @@ export default {
                         value: 'FRENCH',
                     },
                     {
-                        value: 'German',
+                        value: 'GERMAN',
                     },
                     {
                         value: 'TURKISH',
