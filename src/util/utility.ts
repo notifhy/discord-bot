@@ -15,7 +15,10 @@ import {
 import { Log } from './Log';
 import Constants from './Constants';
 
-export function arrayRemove<Type extends unknown[]>(array: Type, item: unknown) {
+export function arrayRemove<Type extends unknown[]>(
+    array: Type,
+    item: unknown,
+) {
     array.splice(
         array.indexOf(item),
         1,
@@ -49,9 +52,9 @@ export async function awaitComponent(
 
 type Footer =
     | {
-        name: string;
-        imageURL?: string;
-    }
+        name: string,
+        imageURL?: string,
+      }
     | CommandInteraction;
 
 export class BetterEmbed extends MessageEmbed {
@@ -156,8 +159,10 @@ export function cleanGameType(type: string | null) {
         return null;
     }
 
+    const gameTypes = Constants.clean.gameTypes;
+
     const gameType =
-        Constants.clean.gameTypes[type as keyof typeof Constants.clean.gameTypes];
+        gameTypes[type as keyof typeof Constants.clean.gameTypes];
 
     return gameType ?? type;
 }
@@ -234,9 +239,9 @@ export function formattedUnix({
     date = false,
     utc = true,
 }: {
-    ms?: number | Date;
-    date: boolean;
-    utc: boolean;
+    ms?: number | Date,
+    date: boolean,
+    utc: boolean,
 }): string | null {
     const newDate = new Date(ms);
     if (
@@ -324,10 +329,10 @@ export async function sendWebHook({
     webhook,
     suppressError = true,
 }: {
-    content?: string | null;
-    embeds: MessageEmbed[];
-    webhook: WebhookConfig;
-    suppressError?: boolean;
+    content?: string | null,
+    embeds: MessageEmbed[],
+    webhook: WebhookConfig,
+    suppressError?: boolean,
 }): Promise<void> {
     try {
         await new WebhookClient({ id: webhook.id, token: webhook.token }).send({
@@ -392,7 +397,10 @@ export function timeAgo(ms: unknown): number | null {
     return Date.now() - ms;
 }
 
-export function timestamp(ms: unknown, style?: typeof Formatters.TimestampStylesString) {
+export function timestamp(
+    ms: unknown,
+    style?: typeof Formatters.TimestampStylesString,
+) {
     if (
         !isNumber(ms) ||
         ms < 0

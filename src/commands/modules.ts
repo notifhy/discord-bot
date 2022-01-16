@@ -196,7 +196,8 @@ export const execute: ClientCommand['execute'] = async (
                     await dataUpdate(i);
                 }
             } catch (error) {
-                const handler = new CommandErrorHandler(error, interaction, locale);
+                const handler =
+                    new CommandErrorHandler(error, interaction, locale);
                 await handler.systemNotify();
                 await handler.userNotify();
             }
@@ -235,7 +236,7 @@ export const execute: ClientCommand['execute'] = async (
 
         switch (selected) {
             case 'toggle': {
-                const userAPIData = await getUserAPIData();
+                const { modules } = await getUserAPIData();
 
                 const moduleData =
                     subCommand === 'defender'
@@ -255,7 +256,8 @@ export const execute: ClientCommand['execute'] = async (
                 const missingRequirements = Object.entries(moduleData)
                     .filter(([key, value]) =>
                         value === null &&
-                        exceptions[subCommand as keyof typeof exceptions].includes(key) === false)
+                        exceptions[subCommand as keyof typeof exceptions]
+                            .includes(key) === false)
                     .map(
                         ([name]) =>
                             text.menu[name as keyof typeof text.menu].label,
@@ -272,7 +274,7 @@ export const execute: ClientCommand['execute'] = async (
 
                 const component = new ToggleButtons({
                     allDisabled: missingRequirements.length > 0,
-                    enabled: userAPIData.modules.includes(subCommand),
+                    enabled: modules.includes(subCommand),
                     buttonLocale: {
                         ...(
                             text as
@@ -293,7 +295,7 @@ export const execute: ClientCommand['execute'] = async (
                 break;
             }
             case 'alerts': {
-                const alerts = (await getDefenderData()).alerts;
+                const { alerts } = await getDefenderData();
 
                 const menu = combiner(
                     (text as ModulesCommand['defender']).menu.alerts,
@@ -324,7 +326,7 @@ export const execute: ClientCommand['execute'] = async (
                 break;
             }
             case 'gameTypes': {
-                const games = (await getDefenderData()).gameTypes;
+                const { gameTypes } = await getDefenderData();
 
                 const menu = combiner(
                     (text as ModulesCommand['defender']).menu.gameTypes,
@@ -332,7 +334,7 @@ export const execute: ClientCommand['execute'] = async (
                 ).select;
 
                 for (const value of menu.options!) {
-                    value.default = games.includes(value.value);
+                    value.default = gameTypes.includes(value.value);
                 }
 
                 const component = new MessageSelectMenu(menu);
@@ -343,7 +345,7 @@ export const execute: ClientCommand['execute'] = async (
                 break;
             }
             case 'languages': {
-                const languages = (await getDefenderData()).languages;
+                const { languages } = await getDefenderData();
 
                 const menu = combiner(
                     (text as ModulesCommand['defender']).menu.languages,
@@ -362,7 +364,7 @@ export const execute: ClientCommand['execute'] = async (
                 break;
             }
             case 'versions': {
-                const versions = (await getDefenderData()).versions;
+                const { versions } = await getDefenderData();
 
                 const menu = combiner(
                     (text as ModulesCommand['defender']).menu.versions,
@@ -381,7 +383,7 @@ export const execute: ClientCommand['execute'] = async (
                 break;
             }
             case 'alertTime': {
-                const userRewardData = await getRewardsData();
+                const { alertTime } = await getRewardsData();
 
                 const menu = combiner(
                     (text as ModulesCommand['rewards']).menu.alertTime,
@@ -391,7 +393,8 @@ export const execute: ClientCommand['execute'] = async (
                 const component = new MessageSelectMenu(menu);
 
                 for (const value of component.options!) {
-                    value.default = Number(value.value) === userRewardData.alertTime;
+                    value.default =
+                        Number(value.value) === alertTime;
                 }
 
                 const row = new MessageActionRow().addComponents(component);
@@ -400,11 +403,11 @@ export const execute: ClientCommand['execute'] = async (
                 break;
             }
             case 'claimNotification': {
-                const userRewardData = await getRewardsData();
+                const { claimNotification } = await getRewardsData();
 
                 const component = new ToggleButtons({
                     allDisabled: false,
-                    enabled: userRewardData.claimNotification,
+                    enabled: claimNotification,
                     buttonLocale: {
                         ...(text as ModulesCommand['rewards']).menu.claimNotification.button,
                         ...(structures as typeof baseStructures['rewards']).claimNotification.button,
@@ -415,11 +418,11 @@ export const execute: ClientCommand['execute'] = async (
                 break;
             }
             case 'milestones': {
-                const userRewardData = await getRewardsData();
+                const { milestones } = await getRewardsData();
 
                 const component = new ToggleButtons({
                     allDisabled: false,
-                    enabled: userRewardData.milestones,
+                    enabled: milestones,
                     buttonLocale: {
                         ...(text as ModulesCommand['rewards']).menu.claimNotification.button,
                         ...(structures as typeof baseStructures['rewards']).milestones.button,
@@ -430,7 +433,7 @@ export const execute: ClientCommand['execute'] = async (
                 break;
             }
             case 'notificationInterval': {
-                const userRewardData = await getRewardsData();
+                const { notificationInterval } = await getRewardsData();
 
                 const menu = combiner(
                     (text as ModulesCommand['rewards']).menu.notificationInterval,
@@ -440,7 +443,8 @@ export const execute: ClientCommand['execute'] = async (
                 const component = new MessageSelectMenu(menu);
 
                 for (const value of component.options!) {
-                    value.default = Number(value.value) === userRewardData.notificationInterval;
+                    value.default =
+                        Number(value.value) === notificationInterval;
                 }
 
                 const row = new MessageActionRow().addComponents(component);
@@ -533,7 +537,8 @@ export const execute: ClientCommand['execute'] = async (
                 ).select;
 
                 for (const option of updatedMenu.options!) {
-                    option.default = base[option.value as keyof typeof base] === true;
+                    option.default =
+                        base[option.value as keyof typeof base] === true;
                 }
 
                 const component = new MessageSelectMenu(updatedMenu);
@@ -703,9 +708,7 @@ export const execute: ClientCommand['execute'] = async (
 
                 components.push(component);
 
-                await SQLite.updateUser<
-                    RewardsModule
-                >({
+                await SQLite.updateUser<RewardsModule>({
                     discordID: interaction.user.id,
                     table: Constants.tables.rewards,
                     data: { milestones: flipped },

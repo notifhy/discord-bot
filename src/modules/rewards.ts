@@ -18,8 +18,7 @@ export const execute: ClientModule['execute'] = async ({
     client,
     differences,
     userAPIData,
-},
-): Promise<void> => {
+}): Promise<void> => {
     try {
         const rewardsModule =
             await SQLite.getUser<RewardsModule>({

@@ -11,8 +11,8 @@ export class Request {
     readonly maxAborts: number;
 
     constructor(config?: {
-        maxAborts?: number;
-        abortThreshold?: number;
+        maxAborts?: number,
+        abortThreshold?: number,
     }) {
         this.aborts = 0;
         this.abortThreshold = config?.abortThreshold ?? 2500;

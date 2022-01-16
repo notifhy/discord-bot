@@ -17,8 +17,7 @@ export const execute: ClientModule['execute'] = async ({
     client,
     differences,
     userAPIData,
-},
-): Promise<void> => {
+}): Promise<void> => {
     try {
         if (Object.keys(differences.primary).length === 0) { //A bit more future proof
             return;
@@ -85,7 +84,8 @@ export const execute: ClientModule['execute'] = async ({
             const lastEvent = userAPIData.history[1]; //First item in array is this event, so it checks the second item
             //@ts-expect-error hasOwn typing not implemented yet - https://github.com/microsoft/TypeScript/issues/44253
             const duplicationCheck = Object.hasOwn(lastEvent, 'lastLogout') &&
-                differences.primary.lastLogout - lastEvent.lastLogout! < Constants.ms.second * 2.5;
+                differences.primary.lastLogout - lastEvent.lastLogout! <
+                Constants.ms.second * 2.5;
 
             if (duplicationCheck === false) {
                 const relative = timestamp(differences.primary.lastLogout, 'R');
@@ -138,11 +138,13 @@ export const execute: ClientModule['execute'] = async ({
             (
                 (
                     differences.primary.gameType &&
-                    defenderModule.gameTypes.includes(differences.primary.gameType)
+                    defenderModule.gameTypes
+                        .includes(differences.primary.gameType)
                 ) ||
                 (
                     differences.secondary.gameType &&
-                    defenderModule.gameTypes.includes(differences.secondary.gameType)
+                    defenderModule.gameTypes
+                        .includes(differences.secondary.gameType)
                 )
             )
         ) {
@@ -167,7 +169,8 @@ export const execute: ClientModule['execute'] = async ({
             differences.primary.language &&
             differences.secondary.language &&
             defenderModule.alerts.language === true &&
-            defenderModule.languages.includes(differences.primary.language) === false
+            defenderModule.languages
+                .includes(differences.primary.language) === false
         ) {
             const language = {
                 name: locale.language.name,
@@ -213,7 +216,8 @@ export const execute: ClientModule['execute'] = async ({
                 const missingPermissionsField = {
                     name: `${timestamp(Date.now(), 'D')} - ${locale.missingPermissions.name}`,
                     value: replace(locale.missingPermissions.value, {
-                        channel: Formatters.channelMention(defenderModule.channel!),
+                        channel: Formatters
+                            .channelMention(defenderModule.channel!),
                         missingPermissions: missingPermissions.join(', '),
                     }),
                 };

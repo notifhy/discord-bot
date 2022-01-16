@@ -99,7 +99,9 @@ export const execute: ClientCommand['execute'] = async (
         commandSearchEmbed.addField(
             text.specific.cooldown.name,
             replace(text.specific.cooldown.value, {
-                commandCooldown: command.properties.cooldown / Constants.ms.second,
+                commandCooldown:
+                    command.properties.cooldown /
+                    Constants.ms.second,
             }),
         );
 

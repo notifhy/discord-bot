@@ -8,9 +8,9 @@ export default class RateLimitError extends HTTPError<Hypixel429> {
         json,
         response,
     }: {
-        message?: string | undefined;
-        json: Hypixel429 | null;
-        response: Response;
+        message?: string | undefined,
+        json: Hypixel429 | null,
+        response: Response,
     }) {
         super({
             message: message,

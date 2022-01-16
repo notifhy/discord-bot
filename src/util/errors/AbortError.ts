@@ -5,8 +5,8 @@ export default class AbortError extends HTTPError<never> {
         message,
         url,
     }: {
-        message?: string | undefined;
-        url: string;
+        message?: string | undefined,
+        url: string,
     }) {
         super({
             message: message,

@@ -22,28 +22,28 @@ type JSONize<Type> = {
 }
 
 type GetType<B> = {
-    query: string;
-    allowUndefined?: B;
+    query: string,
+    allowUndefined?: B,
 }
 
 type GetUserType<T, B> = {
-    discordID: string;
-    table: Tables;
-    allowUndefined?: B;
-    columns: (keyof T | '*')[];
+    discordID: string,
+    table: Tables,
+    allowUndefined?: B,
+    columns: (keyof T | '*')[],
 }
 
 type NewUserType<Type, B> = {
-    table: Tables;
-    returnNew?: B;
-    data: Partial<Type>;
+    table: Tables,
+    returnNew?: B,
+    data: Partial<Type>,
 }
 
 type UpdateUserType<Type, B> = {
-    discordID: string;
-    table: Tables;
-    returnNew?: B;
-    data: Partial<Type>;
+    discordID: string,
+    table: Tables,
+    returnNew?: B,
+    data: Partial<Type>,
 }
 
 /* eslint-disable no-unused-vars */
@@ -81,8 +81,8 @@ export class SQLite {
     static queryGet<Type>(config: GetType<true>): Promise<Type | void>
     static queryGet<Type>(config: GetType<boolean>): Promise<Type | void>
     static queryGet<Type>(config: {
-        query: string;
-        allowUndefined?: boolean;
+        query: string,
+        allowUndefined?: boolean,
     }): Promise<Type | void> {
         /*
          *const string = '2';
@@ -92,7 +92,8 @@ export class SQLite {
 
         return new Promise(resolve => {
             const db = new Database(`${__dirname}/../../database.db`);
-            const rawData = db.prepare(config.query).get() as Record<string, unknown>;
+            const rawData =
+                db.prepare(config.query).get() as Record<string, unknown>;
             db.close();
 
             if (
@@ -121,7 +122,8 @@ export class SQLite {
 
         return new Promise<Type[]>(resolve => {
             const db = new Database(`${__dirname}/../../database.db`);
-            const rawData = db.prepare(query).all() as Record<string, unknown>[];
+            const rawData =
+                db.prepare(query).all() as Record<string, unknown>[];
             db.close();
 
             const data = rawData.map(rawData1 =>
@@ -136,8 +138,8 @@ export class SQLite {
         query,
         data,
     }: {
-        query: string;
-        data?: (string | number | null)[];
+        query: string,
+        data?: (string | number | null)[],
     }): Promise<void> {
         /*
          *'CREATE TABLE IF NOT EXISTS servers(tests TEXT NOT NULL)'
@@ -155,13 +157,16 @@ export class SQLite {
         });
     }
 
-    static async getUser<Type>(config: GetUserType<Type, false>): Promise<Type>
-    static async getUser<Type>(config: GetUserType<Type, true>): Promise<Type | void>
-    static async getUser<Type>(config: GetUserType<Type, boolean>): Promise<Type | void>
+    static async getUser<Type>(
+        config: GetUserType<Type, false>): Promise<Type>
+    static async getUser<Type>(
+        config: GetUserType<Type, true>): Promise<Type | void>
+    static async getUser<Type>(
+        config: GetUserType<Type, boolean>): Promise<Type | void>
     static async getUser<Type>(config: {
-        discordID: string;
-        table: Tables;
-        allowUndefined?: boolean;
+        discordID: string,
+        table: Tables,
+        allowUndefined?: boolean,
         columns: (keyof Type | '*')[];
     }): Promise<Type | void> {
         const query = `SELECT ${
@@ -180,8 +185,8 @@ export class SQLite {
         table,
         columns,
     }: {
-        table: Tables;
-        columns: (keyof Type | '*')[];
+        table: Tables,
+        columns: (keyof Type | '*')[],
     }): Promise<Type[]> {
         const query = `SELECT ${columns?.join(', ') ?? '*'} FROM ${table}`;
         const userData = await this.queryGetAll<Type>(query);
@@ -189,13 +194,16 @@ export class SQLite {
         return userData as Type[];
     }
 
-    static async newUser<Type extends Omit<BaseUserData, never>>(config: NewUserType<Type, false>): Promise<void>;
-    static async newUser<Type extends Omit<BaseUserData, never>>(config: NewUserType<Type, true>): Promise<Type>;
-    static async newUser<Type extends Omit<BaseUserData, never>>(config: NewUserType<Type, boolean>): Promise<Type | void>;
+    static async newUser<Type extends Omit<BaseUserData, never>>(
+        config: NewUserType<Type, false>): Promise<void>;
+    static async newUser<Type extends Omit<BaseUserData, never>>(
+        config: NewUserType<Type, true>): Promise<Type>;
+    static async newUser<Type extends Omit<BaseUserData, never>>(
+        config: NewUserType<Type, boolean>): Promise<Type | void>;
     static async newUser<Type extends Omit<BaseUserData, never>>(config: {
-        table: Tables;
-        returnNew?: boolean;
-        data: Partial<Type>;
+        table: Tables,
+        returnNew?: boolean,
+        data: Partial<Type>,
     }): Promise<Type | void> {
         const values: string[] = [];
         const keys = Object.keys(config.data);
@@ -233,14 +241,17 @@ export class SQLite {
         return newUserData;
     }
 
-    static async updateUser<Type extends Omit<BaseUserData, never>>(config: UpdateUserType<Type, false>): Promise<void>
-    static async updateUser<Type extends Omit<BaseUserData, never>>(config: UpdateUserType<Type, true>): Promise<Type>
-    static async updateUser<Type extends Omit<BaseUserData, never>>(config: UpdateUserType<Type, boolean>): Promise<Type | void>
+    static async updateUser<Type extends Omit<BaseUserData, never>>(
+        config: UpdateUserType<Type, false>): Promise<void>
+    static async updateUser<Type extends Omit<BaseUserData, never>>(
+        config: UpdateUserType<Type, true>): Promise<Type>
+    static async updateUser<Type extends Omit<BaseUserData, never>>(
+        config: UpdateUserType<Type, boolean>): Promise<Type | void>
     static async updateUser<Type extends Omit<BaseUserData, never>>(config: {
-        discordID: string;
-        table: Tables;
-        returnNew?: boolean;
-        data: Partial<Type>;
+        discordID: string,
+        table: Tables,
+        returnNew?: boolean,
+        data: Partial<Type>,
     }): Promise<Type | void> {
         const setQuery: string[] = [];
 
@@ -286,8 +297,8 @@ export class SQLite {
         discordID,
         table,
     }: {
-        discordID: string;
-        table: Tables;
+        discordID: string,
+        table: Tables,
     }): Promise<void> {
         const query = `DELETE FROM ${table} WHERE discordID = ?`;
         await this.queryRun({
@@ -337,13 +348,20 @@ export class SQLite {
     static unJSONize(
         input: Record<
             string,
-            Array<unknown> | boolean | null | number | Record<string, unknown> | string | undefined>,
+            Array<unknown>
+                | boolean
+                | null
+                | number
+                | Record<string, unknown>
+                | string
+                | undefined>,
         ): JSONize<typeof input> {
         for (const key in input) {
             //@ts-expect-error Types not added yet
             if (Object.hasOwn(input, key)) {
                 try {
-                    const type = Object.prototype.toString.call(input[key] as string);
+                    const type =
+                        Object.prototype.toString.call(input[key] as string);
 
                     if (
                         type === '[object Array]' ||
@@ -361,15 +379,24 @@ export class SQLite {
         return input as JSONize<typeof input>;
     }
 
-    private static isArray(typeParam: string, value: unknown): value is Array<unknown> {
+    private static isArray(
+        typeParam: string,
+        value: unknown,
+    ): value is Array<unknown> {
         return typeParam === '[object Array]';
     }
 
-    private static isBoolean(typeParam: string, value: unknown): value is boolean {
+    private static isBoolean(
+        typeParam: string,
+        value: unknown,
+    ): value is boolean {
         return typeParam === '[object Boolean]';
     }
 
-    private static isObject(typeParam: string, value: unknown): value is Record<string, unknown> {
+    private static isObject(
+        typeParam: string,
+        value: unknown,
+    ): value is Record<string, unknown> {
         return typeParam === '[object Object]';
     }
 }

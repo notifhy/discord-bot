@@ -5,15 +5,15 @@ import type { UserAPIData } from './database';
 export type ModuleNames = 'defender' | 'friend' | 'rewards';
 
 export type Differences = {
-    primary: Partial<CleanHypixelPlayer & CleanHypixelStatus>;
-    secondary: Partial<CleanHypixelPlayer & CleanHypixelStatus>;
+    primary: Partial<CleanHypixelPlayer & CleanHypixelStatus>,
+    secondary: Partial<CleanHypixelPlayer & CleanHypixelStatus>,
 };
 
 export interface ClientModule {
     properties: {
-        name: string;
-        cleanName: string;
-    };
+        name: string,
+        cleanName: string,
+    },
     execute(
         {
             client,
@@ -24,5 +24,5 @@ export interface ClientModule {
             differences: Differences,
             userAPIData: UserAPIData,
         }
-    ): Promise<void>;
+    ): Promise<void>,
 }

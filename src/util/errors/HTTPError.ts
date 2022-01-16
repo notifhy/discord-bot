@@ -13,9 +13,9 @@ export default class HTTPError<JSON> extends Error {
         response,
         url,
     }: {
-        json?: JSON | null;
-        message?: string;
-        response?: Response;
+        json?: JSON | null,
+        message?: string,
+        response?: Response,
         url: string;
     }) {
         super(message ?? response?.statusText ?? 'Unknown');

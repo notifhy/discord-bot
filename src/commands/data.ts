@@ -384,7 +384,8 @@ export const execute: ClientCommand['execute'] = async (
                     components: [buttons],
                 });
             } catch (error) {
-                const handler = new CommandErrorHandler(error, interaction, locale);
+                const handler =
+                    new CommandErrorHandler(error, interaction, locale);
                 await handler.systemNotify();
                 await handler.userNotify();
             }
@@ -400,7 +401,8 @@ export const execute: ClientCommand['execute'] = async (
                     components: disabledRows,
                 });
             } catch (error) {
-                const handler = new CommandErrorHandler(error, interaction, locale);
+                const handler =
+                    new CommandErrorHandler(error, interaction, locale);
                 await handler.systemNotify();
                 await handler.userNotify();
             }
