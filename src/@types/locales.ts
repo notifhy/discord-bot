@@ -223,6 +223,7 @@ export interface Player {
 }
 
 export interface Register {
+    alreadyRegistered: BaseEmbed;
     invalid: BaseEmbed,
     notFound: BaseEmbed,
     unlinked: BaseEmbed,

@@ -4,7 +4,7 @@
             "delete": {
                 "confirm": {
                     "title": "Confirmation",
-                    "description": "Are you absolutely sure that you want to delete all of your data? All your data stored in the database will be wiped. This is irreversible. Please confirm with the buttons below. As a side note, you can view all of your data with /data view."
+                    "description": "Are you absolutely sure that you want to delete your data? This is irreversible. Please confirm with the buttons below.\n\nThis deletion will delete everything shown in /data view all. Historic or relevant data like guild IDs, user IDs, usernames, errors, and similar may remain in logs, blacklists, or similar."
                 },
                 "deleted": {
                     "title": "Deleted",
@@ -613,6 +613,10 @@
             }
         },
         "register": {
+            "alreadyRegistered": {
+                "title": "Already Registered",
+                "description": "You have already registered! If you want to unregister, use /data."
+            },
             "invalid": {
                 "title": "Invalid Input",
                 "description": "The username/UUID provided is invalid! The username cannot contain invalid characters. UUIDs must match the following regex: `/^[0-9a-f]{8}[0-9a-f]{4}[1-5][0-9a-f]{3}[89AB][0-9a-f]{3}[0-9a-f]{12}$/i`. You can test this regex with [__this__](https://regex101.com/r/A866mm/1) site."

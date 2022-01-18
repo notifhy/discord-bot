@@ -78,12 +78,12 @@ export class SQLite {
     }
 
     static queryGet<Type>(config: GetType<false>): Promise<Type>
-    static queryGet<Type>(config: GetType<true>): Promise<Type | void>
-    static queryGet<Type>(config: GetType<boolean>): Promise<Type | void>
+    static queryGet<Type>(config: GetType<true>): Promise<Type | undefined>
+    static queryGet<Type>(config: GetType<boolean>): Promise<Type | undefined>
     static queryGet<Type>(config: {
         query: string,
         allowUndefined?: boolean,
-    }): Promise<Type | void> {
+    }): Promise<Type | undefined> {
         /*
          *const string = '2';
          *const output = await queryGet(`SELECT tests FROM test WHERE tests = '${string}' `);
@@ -160,15 +160,15 @@ export class SQLite {
     static async getUser<Type>(
         config: GetUserType<Type, false>): Promise<Type>
     static async getUser<Type>(
-        config: GetUserType<Type, true>): Promise<Type | void>
+        config: GetUserType<Type, true>): Promise<Type | undefined>
     static async getUser<Type>(
-        config: GetUserType<Type, boolean>): Promise<Type | void>
+        config: GetUserType<Type, boolean>): Promise<Type | undefined>
     static async getUser<Type>(config: {
         discordID: string,
         table: Tables,
         allowUndefined?: boolean,
         columns: (keyof Type | '*')[];
-    }): Promise<Type | void> {
+    }): Promise<Type | undefined> {
         const query = `SELECT ${
             config.columns?.join(', ') ?? '*'
         } FROM ${config.table} WHERE discordID = '${config.discordID}'`;
@@ -195,16 +195,16 @@ export class SQLite {
     }
 
     static async newUser<Type extends Omit<BaseUserData, never>>(
-        config: NewUserType<Type, false>): Promise<void>;
+        config: NewUserType<Type, false>): Promise<undefined>;
     static async newUser<Type extends Omit<BaseUserData, never>>(
         config: NewUserType<Type, true>): Promise<Type>;
     static async newUser<Type extends Omit<BaseUserData, never>>(
-        config: NewUserType<Type, boolean>): Promise<Type | void>;
+        config: NewUserType<Type, boolean>): Promise<Type | undefined>;
     static async newUser<Type extends Omit<BaseUserData, never>>(config: {
         table: Tables,
         returnNew?: boolean,
         data: Partial<Type>,
-    }): Promise<Type | void> {
+    }): Promise<Type | undefined> {
         const values: string[] = [];
         const keys = Object.keys(config.data);
 
@@ -242,17 +242,17 @@ export class SQLite {
     }
 
     static async updateUser<Type extends Omit<BaseUserData, never>>(
-        config: UpdateUserType<Type, false>): Promise<void>
+        config: UpdateUserType<Type, false>): Promise<undefined>
     static async updateUser<Type extends Omit<BaseUserData, never>>(
         config: UpdateUserType<Type, true>): Promise<Type>
     static async updateUser<Type extends Omit<BaseUserData, never>>(
-        config: UpdateUserType<Type, boolean>): Promise<Type | void>
+        config: UpdateUserType<Type, boolean>): Promise<Type | undefined>
     static async updateUser<Type extends Omit<BaseUserData, never>>(config: {
         discordID: string,
         table: Tables,
         returnNew?: boolean,
         data: Partial<Type>,
-    }): Promise<Type | void> {
+    }): Promise<Type | undefined> {
         const setQuery: string[] = [];
 
         for (const key in config.data) {

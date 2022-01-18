@@ -43,6 +43,26 @@ export const execute: ClientCommand['execute'] = async (
     const text = RegionLocales.locale(locale).commands.register;
     const replace = RegionLocales.replace;
 
+    const userAPIData =
+        await SQLite.getUser<UserAPIData>({
+            discordID: interaction.user.id,
+            table: Constants.tables.api,
+            allowUndefined: true,
+            columns: ['discordID'],
+        });
+
+    if (userAPIData) {
+        const alreadyRegisteredEmbed = new BetterEmbed(interaction)
+            .setColor(Constants.colors.warning)
+            .setTitle(text.alreadyRegistered.title)
+            .setDescription(text.alreadyRegistered.description);
+
+        Log.command(interaction, 'Already registered');
+
+        await interaction.editReply({ embeds: [alreadyRegisteredEmbed] });
+        return;
+    }
+
     const inputUUID =
         /^[0-9a-f]{8}(-?)[0-9a-f]{4}(-?)[1-5][0-9a-f]{3}(-?)[89AB][0-9a-f]{3}(-?)[0-9a-f]{12}$/i;
     const inputUsername = /^[a-zA-Z0-9_-]{1,24}$/g;
@@ -57,12 +77,15 @@ export const execute: ClientCommand['execute'] = async (
             .setColor(Constants.colors.normal)
             .setTitle(text.invalid.title)
             .setDescription(text.invalid.description);
+
+        Log.command(interaction, 'Invalid input', input);
+
         await interaction.editReply({ embeds: [invalidEmbed] });
         return;
     }
 
     const url = `${Constants.urls.slothpixel}players/${input}`;
-    const response = await new Request({}).request(url);
+    const response = await new Request().request(url);
 
     if (response.status === 404) {
         const notFoundEmbed = new BetterEmbed(interaction)
