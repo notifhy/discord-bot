@@ -604,7 +604,7 @@
                 "inProgress": "In Progress",
                 "embed": {
                     "title": "Recent Games - %{username}%",
-                    "description": "• Showing %{start}% to %{end}% out of %{total}%\n• Saves up to 100 events\n• Saves events for up to 3 days",
+                    "description": "• Showing %{start}% to %{end}% out of %{total}%\n• Saves up to 100 events\n• Saves events for up to 3 days\n• Games may not show up for some players",
                     "field": {
                         "name": "%{gameType}% | %{date}%",
                         "value": "Game Start: %{start}%\nGame End: %{end}%\n%{playTime}%%{mode}%%{map}%"

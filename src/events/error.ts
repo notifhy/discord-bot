@@ -1,11 +1,11 @@
-import type { EventProperties } from '../@types/client';
+import type { ClientEvent } from '../@types/client';
 import { Log } from '../util/Log';
 
-export const properties: EventProperties = {
+export const properties: ClientEvent['properties'] = {
     name: 'error',
     once: false,
 };
 
-export const execute = (error: Error): void => {
+export const execute: ClientEvent['execute'] = (error: Error): void => {
     Log.error(`discord.js Error:`, error);
 };

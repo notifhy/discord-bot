@@ -19,13 +19,11 @@ export interface Config {
     enabled: boolean,
 }
 
-export interface EventProperties {
-    name: string,
-    once: boolean,
-}
-
 export interface ClientEvent {
-    properties: EventProperties,
+    properties: {
+        name: string,
+        once: boolean
+    },
     execute(...parameters: unknown[]): Promise<void> | void,
 }
 

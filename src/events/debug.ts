@@ -1,12 +1,12 @@
-import type { EventProperties } from '../@types/client';
+import type { ClientEvent } from '../@types/client';
 import { formattedUnix } from '../util/utility';
 
-export const properties: EventProperties = {
+export const properties: ClientEvent['properties'] = {
     name: 'debug',
     once: false,
 };
 
-export const execute = (info: string): void => {
+export const execute: ClientEvent['execute'] = (info: string): void => {
     return;
     console.log(`${formattedUnix({ date: true, utc: true })} |`, info);
 };

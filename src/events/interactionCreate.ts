@@ -1,6 +1,6 @@
 import type {
-    EventProperties,
     ClientCommand,
+    ClientEvent,
 } from '../@types/client';
 import type { UserAPIData, UserData } from '../@types/database';
 import {
@@ -21,12 +21,12 @@ import CommandErrorHandler from '../util/errors/handlers/CommandErrorHandler';
 import Constants from '../util/Constants';
 import ConstraintError from '../util/errors/ConstraintError';
 
-export const properties: EventProperties = {
+export const properties: ClientEvent['properties'] = {
     name: 'interactionCreate',
     once: false,
 };
 
-export const execute = async (
+export const execute: ClientEvent['execute'] = async (
     interaction: CommandInteraction,
 ): Promise<void> => {
     let userData: UserData | void;

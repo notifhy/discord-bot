@@ -1,16 +1,16 @@
 import type { Client } from 'discord.js';
-import type { EventProperties } from '../@types/client';
+import type { ClientEvent } from '../@types/client';
 import { Log } from '../util/Log';
 import { SQLite } from '../util/SQLite';
 import Constants from '../util/Constants';
 import ErrorHandler from '../util/errors/handlers/ErrorHandler';
 
-export const properties: EventProperties = {
+export const properties: ClientEvent['properties'] = {
     name: 'ready',
     once: true,
 };
 
-export const execute = async (client: Client) => {
+export const execute: ClientEvent['execute'] = async (client: Client) => {
     Log.log(
         `Logged in as ${client?.user?.tag}!`,
     );
