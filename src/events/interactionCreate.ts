@@ -64,12 +64,17 @@ export const execute = async (
                 });
 
             await updateLocale(interaction, userData);
-            await checkSystemMessages(interaction, userData, userData.locale);
             await generalConstraints(interaction, command);
             cooldownConstraint(interaction, command);
 
             await command.execute(
                 interaction,
+                userData.locale,
+            );
+
+            await checkSystemMessages(
+                interaction,
+                userData,
                 userData.locale,
             );
         }
@@ -104,51 +109,6 @@ async function updateLocale(
         });
 
         userData.locale = interaction.locale;
-    }
-}
-
-async function checkSystemMessages(
-    interaction: CommandInteraction,
-    userData: UserData,
-    locale: string,
-) {
-    if (userData.systemMessages.length > 0) {
-        const text = RegionLocales.locale(locale).errors.systemMessages;
-
-        const systemMessages = new BetterEmbed({ name: text.embed.footer })
-            .setColor(Constants.colors.normal)
-            .setTitle(text.embed.title)
-            .setDescription(text.embed.description);
-
-        for (const message of userData.systemMessages) {
-            systemMessages.addField(message.name, message.value);
-        }
-
-        systemMessages.fields.splice(25);
-
-        try { //Add a way to send a file instead if there are more than 25 fields/over 6k chars?
-            await interaction.user.send({ embeds: [systemMessages] });
-        } catch (error) {
-            if (
-                (error as DiscordAPIError).code ===
-                    DiscordConstants.APIErrors.CANNOT_MESSAGE_USER
-            ) {
-                systemMessages.description += text.failedDM;
-
-                Log.command(interaction, 'Code 50007 while sending system message(s)');
-
-                await interaction.channel!.send({
-                    content: interaction.user.toString(),
-                    embeds: [systemMessages],
-                });
-            }
-        }
-
-        await SQLite.updateUser<UserData>({
-            discordID: interaction.user.id,
-            table: Constants.tables.users,
-            data: { systemMessages: [] },
-        });
     }
 }
 
@@ -223,4 +183,47 @@ function cooldownConstraint(
     }
 
     timestamps.set(user.id, Date.now());
+}
+
+async function checkSystemMessages(
+    interaction: CommandInteraction,
+    userData: UserData,
+    locale: string,
+) {
+    if (userData.systemMessages.length > 0) {
+        const text = RegionLocales.locale(locale).errors.systemMessages;
+
+        const systemMessages = new BetterEmbed({ name: text.embed.footer })
+            .setColor(Constants.colors.normal)
+            .setTitle(text.embed.title)
+            .setDescription(text.embed.description);
+
+        for (const message of userData.systemMessages) {
+            systemMessages.addField(message.name, message.value);
+        }
+
+        systemMessages.fields.splice(25);
+
+        try { //Add a way to send a file instead if there are more than 25 fields/over 6k chars?
+            await interaction.user.send({ embeds: [systemMessages] });
+        } catch (error) {
+            if ((error as DiscordAPIError)?.code ===
+                DiscordConstants.APIErrors.CANNOT_MESSAGE_USER) {
+                systemMessages.description += text.failedDM;
+
+                Log.command(interaction, 'Code 50007 while sending system message(s)');
+
+                await interaction.followUp({
+                    content: interaction.user.toString(),
+                    embeds: [systemMessages],
+                });
+            }
+        }
+
+        await SQLite.updateUser<UserData>({
+            discordID: interaction.user.id,
+            table: Constants.tables.users,
+            data: { systemMessages: [] },
+        });
+    }
 }

@@ -58,14 +58,13 @@ export const execute: ClientCommand['execute'] = async (
 ): Promise<void> => {
     const id = interaction.options.getString('id', true);
 
-    const userData = (
+    const userData =
         await SQLite.getUser<UserData>({
             discordID: id,
             table: Constants.tables.users,
             columns: ['systemMessages'],
             allowUndefined: true,
-        },
-    )) as UserData | undefined;
+        });
 
     if (userData === undefined) {
         const notFoundEmbed = new BetterEmbed(interaction)
