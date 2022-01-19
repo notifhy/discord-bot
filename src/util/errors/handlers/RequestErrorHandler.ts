@@ -169,10 +169,10 @@ export default class RequestErrorHandler extends BaseErrorHandler {
 
         await sendWebHook({
             content:
-                this.timeout === null ||
-                !(this.error instanceof AbortError)
-                    ? null
-                    : `<@${ownerID.join('><@')}>`,
+                this.timeout !== null ||
+                this.error instanceof AbortError
+                    ? `<@${ownerID.join('><@')}>`
+                    : null,
             embeds: embeds,
             webhook:
                 this.error instanceof HTTPError ||
