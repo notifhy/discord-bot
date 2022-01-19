@@ -55,6 +55,8 @@ export const execute: ClientModule['execute'] = async ({
         ).getTime();
 
         const hypixelToClientOffset = hypixelTime - date;
+
+        //Next midnight
         const nextResetTime =
             new Date(hypixelTime).setHours(24, 0, 0, 0) - hypixelToClientOffset;
 
