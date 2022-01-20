@@ -27,13 +27,13 @@ export const properties: ClientModule['properties'] = {
 
 export const execute: ClientModule['execute'] = async ({
     client,
-    differences,
+    differences: { primary, secondary },
     userAPIData,
 }): Promise<void> => {
     try {
         if (
-            differences.primary.lastLogin === undefined &&
-            differences.primary.lastLogout === undefined
+            primary.lastLogin === undefined &&
+            primary.lastLogout === undefined
         ) {
             return; //If the login/logout aren't in differences
         }
@@ -61,8 +61,8 @@ export const execute: ClientModule['execute'] = async ({
         const { replace } = RegionLocales;
 
         if (
-            differences.primary.lastLogin === null ||
-            differences.primary.lastLogout === null
+            primary.lastLogin === null ||
+            primary.lastLogout === null
         ) {
             const user = await client.users.fetch(userAPIData.discordID);
             const undefinedData = new BetterEmbed({
@@ -80,10 +80,10 @@ export const execute: ClientModule['execute'] = async ({
         }
 
         if (
-            (differences.primary.lastLogin &&
-                differences.secondary.lastLogin === null) ||
-            (differences.primary.lastLogout &&
-                differences.secondary.lastLogout === null)
+            (primary.lastLogin &&
+                secondary.lastLogin === null) ||
+            (primary.lastLogout &&
+                secondary.lastLogout === null)
         ) {
             const user = await client.users.fetch(userAPIData.discordID);
             const undefinedData = new BetterEmbed({
@@ -150,9 +150,9 @@ export const execute: ClientModule['execute'] = async ({
 
         const notifications: MessageEmbed[] = [];
 
-        if (differences.primary.lastLogin) {
-            const relative = timestamp(differences.primary.lastLogin, 'R');
-            const time = timestamp(differences.primary.lastLogin, 'T');
+        if (primary.lastLogin) {
+            const relative = timestamp(primary.lastLogin, 'R');
+            const time = timestamp(primary.lastLogin, 'T');
 
             const login = new MessageEmbed({
                 color: Constants.colors.on,
@@ -166,9 +166,9 @@ export const execute: ClientModule['execute'] = async ({
             notifications.push(login);
         }
 
-        if (differences.primary.lastLogout) {
-            const relative = timestamp(differences.primary.lastLogout, 'R');
-            const time = timestamp(differences.primary.lastLogout, 'T');
+        if (primary.lastLogout) {
+            const relative = timestamp(primary.lastLogout, 'R');
+            const time = timestamp(primary.lastLogout, 'T');
 
             const logout = new MessageEmbed({
                 color: Constants.colors.off,
@@ -183,13 +183,13 @@ export const execute: ClientModule['execute'] = async ({
             const lastEvent = userAPIData.history[1]; //First item in array is this event, so it checks the second item
             //@ts-expect-error hasOwn typing not implemented yet - https://github.com/microsoft/TypeScript/issues/44253
             const duplicationCheck = Object.hasOwn(lastEvent, 'lastLogout') &&
-                differences.primary.lastLogout - lastEvent.lastLogout! <
+                primary.lastLogout - lastEvent.lastLogout! <
                 Constants.ms.second * 2.5;
 
             if (duplicationCheck === false) {
                 if (
-                    differences.primary.lastLogout >
-                    (differences.primary.lastLogin ?? 0)
+                    primary.lastLogout >
+                    (primary.lastLogin ?? 0)
                 ) {
                     notifications.push(logout);
                 } else {

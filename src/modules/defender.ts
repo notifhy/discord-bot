@@ -15,11 +15,11 @@ export const properties: ClientModule['properties'] = {
 
 export const execute: ClientModule['execute'] = async ({
     client,
-    differences,
+    differences: { primary, secondary },
     userAPIData,
 }): Promise<void> => {
     try {
-        if (Object.keys(differences.primary).length === 0) { //A bit more future proof
+        if (Object.keys(primary).length === 0) { //A bit more future proof
             return;
         }
 
@@ -55,12 +55,12 @@ export const execute: ClientModule['execute'] = async ({
         let color: ColorResolvable = Constants.colors.normal;
 
         if (
-            differences.primary.lastLogin &&
-            differences.secondary.lastLogin &&
+            primary.lastLogin &&
+            secondary.lastLogin &&
             defenderModule.alerts.login === true
         ) {
-            const relative = timestamp(differences.primary.lastLogin, 'R');
-            const time = timestamp(differences.primary.lastLogin, 'T');
+            const relative = timestamp(primary.lastLogin, 'R');
+            const time = timestamp(primary.lastLogin, 'T');
 
             const login = {
                 name: locale.login.name,
@@ -76,20 +76,20 @@ export const execute: ClientModule['execute'] = async ({
         }
 
         if (
-            differences.primary.lastLogout &&
-            differences.secondary.lastLogout &&
+            primary.lastLogout &&
+            secondary.lastLogout &&
             defenderModule.alerts.logout === true
         ) {
             //lastLogout seems to change twice sometimes on a single logout, this is a fix for that
             const lastEvent = userAPIData.history[1]; //First item in array is this event, so it checks the second item
             //@ts-expect-error hasOwn typing not implemented yet - https://github.com/microsoft/TypeScript/issues/44253
             const duplicationCheck = Object.hasOwn(lastEvent, 'lastLogout') &&
-                differences.primary.lastLogout - lastEvent.lastLogout! <
+                primary.lastLogout - lastEvent.lastLogout! <
                 Constants.ms.second * 2.5;
 
             if (duplicationCheck === false) {
-                const relative = timestamp(differences.primary.lastLogout, 'R');
-                const time = timestamp(differences.primary.lastLogout, 'T');
+                const relative = timestamp(primary.lastLogout, 'R');
+                const time = timestamp(primary.lastLogout, 'T');
 
                 const logout = {
                     name: locale.logout.name,
@@ -100,8 +100,8 @@ export const execute: ClientModule['execute'] = async ({
                 };
 
                 if (
-                    differences.primary.lastLogout >
-                    (differences.primary.lastLogin ?? 0)
+                    primary.lastLogout >
+                    (primary.lastLogin ?? 0)
                 ) {
                     fields.unshift(logout);
                     color = Constants.colors.off;
@@ -112,11 +112,11 @@ export const execute: ClientModule['execute'] = async ({
             }
         }
 
-        const cleanVersion = differences.primary.version?.match(/^1.\d+/m)?.[0];
+        const cleanVersion = primary.version?.match(/^1.\d+/m)?.[0];
 
         if (
-            differences.primary.version &&
-            differences.secondary.version &&
+            primary.version &&
+            secondary.version &&
             defenderModule.alerts.version === true &&
             cleanVersion &&
             defenderModule.versions.includes(cleanVersion) === false
@@ -124,8 +124,8 @@ export const execute: ClientModule['execute'] = async ({
             const version = {
                 name: locale.version.name,
                 value: replace(locale.version.value, {
-                    sVersion: differences.secondary.version,
-                    pVersion: differences.primary.version,
+                    sVersion: secondary.version,
+                    pVersion: primary.version,
                 }),
             };
 
@@ -137,14 +137,14 @@ export const execute: ClientModule['execute'] = async ({
             defenderModule.alerts.gameType === true &&
             (
                 (
-                    differences.primary.gameType &&
+                    primary.gameType &&
                     defenderModule.gameTypes
-                        .includes(differences.primary.gameType)
+                        .includes(primary.gameType)
                 ) ||
                 (
-                    differences.secondary.gameType &&
+                    secondary.gameType &&
                     defenderModule.gameTypes
-                        .includes(differences.secondary.gameType)
+                        .includes(secondary.gameType)
                 )
             )
         ) {
@@ -152,10 +152,10 @@ export const execute: ClientModule['execute'] = async ({
                 name: locale.gameType.name,
                 value: replace(locale.gameType.value, {
                     sGameType:
-                        cleanGameType(differences.secondary.gameType ?? null) ??
+                        cleanGameType(secondary.gameType ?? null) ??
                             locale.gameType.null,
                     pGameType:
-                        cleanGameType(differences.primary.gameType ?? null) ??
+                        cleanGameType(primary.gameType ?? null) ??
                             locale.gameType.null,
                 }),
             };
@@ -166,17 +166,17 @@ export const execute: ClientModule['execute'] = async ({
         }
 
         if (
-            differences.primary.language &&
-            differences.secondary.language &&
+            primary.language &&
+            secondary.language &&
             defenderModule.alerts.language === true &&
             defenderModule.languages
-                .includes(differences.primary.language) === false
+                .includes(primary.language) === false
         ) {
             const language = {
                 name: locale.language.name,
                 value: replace(locale.language.value, {
-                    sLanguage: differences.secondary.language,
-                    pLanguage: differences.primary.language,
+                    sLanguage: secondary.language,
+                    pLanguage: primary.language,
                 }),
             };
 
