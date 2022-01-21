@@ -52,8 +52,8 @@ export async function awaitComponent(
 
 type Footer =
     | {
-        name: string,
-        imageURL?: string,
+        text: string,
+        iconURL?: string,
       }
     | CommandInteraction;
 
@@ -67,7 +67,7 @@ export class BetterEmbed extends MessageEmbed {
             const avatar = interaction.user.displayAvatarURL({ dynamic: true });
             super.setFooter({ text: `/${interaction.commandName}`, iconURL: avatar });
         } else if (footer !== undefined) {
-            super.setFooter({ text: footer.name, iconURL: footer.imageURL });
+            super.setFooter({ text: footer.text, iconURL: footer.iconURL });
         }
     }
 

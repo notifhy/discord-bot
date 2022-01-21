@@ -237,7 +237,7 @@ export const execute: ClientModule['execute'] = async ({
             }
         }
 
-        const alertEmbed = new BetterEmbed()
+        const alertEmbed = new BetterEmbed({ text: locale.embed.footer })
             .setColor(color)
             .setTitle(locale.embed.title)
             .addFields(fields.reverse());

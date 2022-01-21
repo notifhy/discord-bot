@@ -87,7 +87,7 @@ export const execute: ClientModule['execute'] = async ({
                     )
                 ];
             const rewardNotification = new BetterEmbed({
-                name: locale.rewardReminder.footer,
+                text: locale.rewardReminder.footer,
             })
                 .setColor(Constants.colors.normal)
                 .setTitle(locale.rewardReminder.title)
@@ -122,7 +122,7 @@ export const execute: ClientModule['execute'] = async ({
                 milestone !== undefined
             ) {
                 const milestoneNotification = new BetterEmbed({
-                    name: locale.milestone.footer,
+                    text: locale.milestone.footer,
                 })
                     .setColor(Constants.colors.normal)
                     .setTitle(locale.milestone.title)
@@ -137,7 +137,7 @@ export const execute: ClientModule['execute'] = async ({
                 });
             } else if (rewardsModule.claimNotification === true) {
                 const claimedNotification = new BetterEmbed({
-                    name: locale.claimedNotification.footer,
+                    text: locale.claimedNotification.footer,
                 })
                     .setColor(Constants.colors.normal)
                     .setTitle(locale.claimedNotification.title)

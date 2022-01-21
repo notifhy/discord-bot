@@ -193,7 +193,7 @@ async function checkSystemMessages(
     if (userData.systemMessages.length > 0) {
         const text = RegionLocales.locale(locale).errors.systemMessages;
 
-        const systemMessages = new BetterEmbed({ name: text.embed.footer })
+        const systemMessages = new BetterEmbed({ text: text.embed.footer })
             .setColor(Constants.colors.normal)
             .setTitle(text.embed.title)
             .setDescription(text.embed.description);

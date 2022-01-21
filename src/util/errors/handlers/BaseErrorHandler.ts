@@ -1,6 +1,7 @@
 import { Log } from '../../Log';
-import { MessageEmbed, SnowflakeUtil } from 'discord.js';
+import { SnowflakeUtil } from 'discord.js';
 import Constants from '../../Constants';
+import { BetterEmbed } from '../../utility';
 
 export default class BaseErrorHandler {
     readonly error: unknown;
@@ -12,9 +13,8 @@ export default class BaseErrorHandler {
     }
 
     errorEmbed() {
-        return new MessageEmbed()
-            .setColor(Constants.colors.error)
-            .setFooter({ text: `ID ${this.incidentID}` });
+        return new BetterEmbed({ text: this.incidentID })
+            .setColor(Constants.colors.error);
     }
 
     errorStackEmbed(error?: unknown) {

@@ -66,7 +66,7 @@ export const execute: ClientModule['execute'] = async ({
         ) {
             const user = await client.users.fetch(userAPIData.discordID);
             const undefinedData = new BetterEmbed({
-                name: locale.missingData.footer,
+                text: locale.missingData.footer,
             })
                 .setColor(Constants.colors.warning)
                 .setTitle(locale.missingData.title)
@@ -87,7 +87,7 @@ export const execute: ClientModule['execute'] = async ({
         ) {
             const user = await client.users.fetch(userAPIData.discordID);
             const undefinedData = new BetterEmbed({
-                name: locale.receivedData.footer,
+                text: locale.receivedData.footer,
             })
                 .setColor(Constants.colors.on)
                 .setTitle(locale.receivedData.title)

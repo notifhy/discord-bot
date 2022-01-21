@@ -312,6 +312,7 @@ export interface Defender {
     version: Field,
     embed: {
         title: string,
+        footer: string,
     },
     missingPermissions: Field,
 }
