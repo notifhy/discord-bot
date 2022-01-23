@@ -289,7 +289,6 @@ export interface SystemMessages {
     embed: {
         footer: string,
     } & BaseEmbed,
-    failedDM: string,
 }
 
 export interface Errors {

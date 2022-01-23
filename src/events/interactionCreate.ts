@@ -10,8 +10,6 @@ import {
 import {
     Collection,
     CommandInteraction,
-    Constants as DiscordConstants,
-    DiscordAPIError,
 } from 'discord.js';
 import { Log } from '../util/Log';
 import { ownerID } from '../../config.json';
@@ -204,21 +202,22 @@ async function checkSystemMessages(
 
         systemMessages.fields.splice(25);
 
-        try { //Add a way to send a file instead if there are more than 25 fields/over 6k chars?
-            await interaction.user.send({ embeds: [systemMessages] });
-        } catch (error) {
-            if ((error as DiscordAPIError)?.code ===
-                DiscordConstants.APIErrors.CANNOT_MESSAGE_USER) {
-                systemMessages.description += text.failedDM;
+        const promises = await Promise.allSettled([
+            interaction.user.send({ embeds: [systemMessages] }),
+            interaction.followUp({
+                content: interaction.user.toString(),
+                embeds: [systemMessages],
+            }),
+        ]);
 
-                Log.command(interaction, 'Code 50007 while sending system message(s)');
-
-                await interaction.followUp({
-                    content: interaction.user.toString(),
-                    embeds: [systemMessages],
-                });
-            }
-        }
+        promises.filter(promise => promise.status === 'rejected')
+            .forEach(rejected => {
+                Log.command(
+                    interaction,
+                    'Error while sending system notifications',
+                    (rejected as PromiseRejectedResult)?.reason,
+                );
+            });
 
         await SQLite.updateUser<UserData>({
             discordID: interaction.user.id,
