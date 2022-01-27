@@ -22,7 +22,6 @@ export class RequestManager {
     abortThreshold: number;
     keyPercentage: number;
     maxAborts: number;
-    resumeAfter: number;
     uses: number;
 
     readonly baseURL: string;
@@ -38,7 +37,6 @@ export class RequestManager {
         this.abortThreshold = 2500;
         this.keyPercentage = 0.6;
         this.maxAborts = 1;
-        this.resumeAfter = 0;
         this.uses = 0;
 
         this.baseURL = `${Constants.urls.hypixel}%{type}%?uuid=%{uuid}%`;

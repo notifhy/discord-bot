@@ -1,8 +1,5 @@
 import type { ClientModule } from '../@types/modules';
-import type {
-    RewardsModule,
-    UserData,
-} from '../@types/database';
+import type { RewardsModule } from '../@types/database';
 import { BetterEmbed } from '../util/utility';
 import { RegionLocales } from '../../locales/RegionLocales';
 import { SQLite } from '../util/SQLite';
@@ -11,11 +8,13 @@ import ModuleError from '../errors/ModuleError';
 
 export const properties: ClientModule['properties'] = {
     name: 'rewards',
-    cleanName: 'Rewards',
+    cleanName: 'Rewards Module',
+    onlineStatusAPI: false,
 };
 
 export const execute: ClientModule['execute'] = async ({
     client,
+    baseLocale,
     differences: { primary },
     userAPIData,
 }): Promise<void> => {
@@ -34,15 +33,7 @@ export const execute: ClientModule['execute'] = async ({
                 ],
             });
 
-        const userData =
-            await SQLite.getUser<UserData>({
-                discordID: userAPIData.discordID,
-                table: Constants.tables.users,
-                allowUndefined: false,
-                columns: ['locale'],
-            });
-
-        const locale = RegionLocales.locale(userData.locale).modules.rewards;
+        const locale = baseLocale.rewards;
         const { replace } = RegionLocales;
 
         const date = Date.now();

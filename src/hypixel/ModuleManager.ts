@@ -4,15 +4,21 @@ import type {
     CleanHypixelStatus,
 } from '../@types/hypixel';
 import type {
+    Client,
+    Snowflake,
+} from 'discord.js';
+import type {
     History,
     UserAPIData,
+    UserData,
 } from '../@types/database';
-import { Client, Snowflake } from 'discord.js';
-import { compare } from '../util/utility';
+import {
+    BetterEmbed,
+    compare,
+} from '../util/utility';
+import { RegionLocales } from '../../locales/RegionLocales';
 import { SQLite } from '../util/SQLite';
 import Constants from '../util/Constants';
-import ModuleError from '../errors/ModuleError';
-import ModuleErrorHandler from '../errors/handlers/ModuleErrorHandler';
 
 export class ModuleManager {
     client: Client;
@@ -80,28 +86,83 @@ export class ModuleManager {
             userAPIData: UserAPIData,
         },
     ) {
-        try {
-            const promises: Promise<void>[] = [];
+        const apiEnabled =
+            userAPIData.lastLogin !== null &&
+            userAPIData.lastLogout !== null;
 
-            for (const module of userAPIData.modules) {
-                promises.push(
-                    this.client.modules
-                        .get(module)!
-                        .execute({
-                            client: this.client,
-                            differences: differences,
-                            userAPIData: userAPIData,
-                        }),
-                );
-            }
+        const userData = await SQLite.getUser<UserData>({
+            discordID: userAPIData.discordID,
+            table: Constants.tables.users,
+            allowUndefined: false,
+            columns: ['*'],
+        });
 
-            await Promise.all(promises);
-        } catch (error) {
-            await new ModuleErrorHandler(
-                error as ModuleError,
-                userAPIData.discordID,
+        const locale =
+            RegionLocales.locale(userData.locale).modules;
+
+        const modules = this.client.modules.filter(module => (
+            userAPIData.modules.includes(module.properties.name) &&
+            (
+                module.properties.onlineStatusAPI === true
+                ? module.properties.onlineStatusAPI && apiEnabled === true
+                : true
             )
-                .systemNotify();
+        ));
+
+        const promises: Promise<void>[] = [];
+
+        for (const module of modules.values()) {
+            promises.push(
+                module
+                    .execute({
+                        client: this.client,
+                        differences: differences,
+                        baseLocale: locale,
+                        userAPIData: userAPIData,
+                        userData: userData,
+                    }),
+            );
         }
+
+        await Promise.all(promises);
+
+        let embed;
+
+        if (ModuleManager.isMissingAPIData(differences)) {
+            embed = new BetterEmbed({
+                text: locale.statusAPIMissing.footer,
+            })
+                .setColor(Constants.colors.warning)
+                .setTitle(locale.statusAPIMissing.title)
+                .setDescription(locale.statusAPIMissing.description);
+        } else if (ModuleManager.isReceivedAPIData(differences)) {
+            embed = new BetterEmbed({
+                text: locale.statusAPIReceived.footer,
+            })
+                .setColor(Constants.colors.on)
+                .setTitle(locale.statusAPIReceived.title)
+                .setDescription(locale.statusAPIReceived.description);
+        }
+
+        if (embed) {
+            const user =
+                await this.client.users.fetch(userAPIData.discordID);
+
+            await user.send({ embeds: [embed] });
+        }
+    }
+
+    static isMissingAPIData(differences: Differences) {
+        return (differences.primary.lastLogin === null &&
+            differences.secondary.lastLogin !== null) ||
+        (differences.primary.lastLogout === null &&
+            differences.secondary.lastLogout !== null);
+    }
+
+    static isReceivedAPIData(differences: Differences) {
+        return (differences.primary.lastLogin !== null &&
+            differences.secondary.lastLogin === null) ||
+        (differences.primary.lastLogout !== null &&
+            differences.secondary.lastLogout === null);
     }
 }

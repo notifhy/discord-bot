@@ -715,24 +715,24 @@
         },
         "moduleErrors": {
             "10003": {
-                "name": "%{cleanModule}% Module Disabled",
-                "value": "The %{cleanModule}% module was disabled because the set channel was not fetchable. [Code 10003](https://discord.com/developers/docs/topics/opcodes-and-status-codes#json-json-error-codes \"Opcodes and Status codes\")"
+                "name": "%{cleanModule}% Disabled",
+                "value": "The set channel was not fetchable. [Code 10003](https://discord.com/developers/docs/topics/opcodes-and-status-codes#json-json-error-codes \"Opcodes and Status codes\")"
             },
             "10013": {
-                "name": "%{cleanModule}% Module Disabled",
-                "value": "The %{cleanModule}% module was disabled because your account was not fetchable. [Code 10013](https://discord.com/developers/docs/topics/opcodes-and-status-codes#json-json-error-codes \"Opcodes and Status codes\")"
+                "name": "%{cleanModule}% Disabled",
+                "value": "Your account was not fetchable. [Code 10013](https://discord.com/developers/docs/topics/opcodes-and-status-codes#json-json-error-codes \"Opcodes and Status codes\")"
             },
             "50001": {
-                "name": "%{cleanModule}% Module Disabled",
-                "value": "The %{cleanModule}% module was disabled because the set channel, server, or user was not reachable. Please check to see if this bot can access the set channel. [Code 50001](https://discord.com/developers/docs/topics/opcodes-and-status-codes#json-json-error-codes \"Opcodes and Status codes\")"
+                "name": "%{cleanModule}% Disabled",
+                "value": "The set channel, server, or user was not reachable. Please check to see if this bot can access the set channel. [Code 50001](https://discord.com/developers/docs/topics/opcodes-and-status-codes#json-json-error-codes \"Opcodes and Status codes\")"
             },
             "50007": {
-                "name": "%{cleanModule}% Module Disabled",
-                "value": "The %{cleanModule}% module was disabled because the bot was unable to DM you. Please check your privacy settings and enable direct messages. Then, reenable this module with /modules. [Code 50007](https://discord.com/developers/docs/topics/opcodes-and-status-codes#json-json-error-codes \"Opcodes and Status codes\")"
+                "name": "%{cleanModule}% Disabled",
+                "value": "This bot was unable to DM you. Please check your privacy settings and enable direct messages. Then, reenable this module with /modules. [Code 50007](https://discord.com/developers/docs/topics/opcodes-and-status-codes#json-json-error-codes \"Opcodes and Status codes\")"
             },
             "50013": {
-                "name": "%{cleanModule}% Module Disabled",
-                "value": "The %{cleanModule}% module was disabled because the bot lacked permission(s) to perform an action. Discord does not specify the missing permission(s), so this is all we know. [Code 50013](https://discord.com/developers/docs/topics/opcodes-and-status-codes#json-json-error-codes \"Opcodes and Status codes\")"
+                "name": "%{cleanModule}% Disabled",
+                "value": "This bot lacked permission(s) to perform an action. Discord does not specify the missing permission(s), so this is all we know. [Code 50013](https://discord.com/developers/docs/topics/opcodes-and-status-codes#json-json-error-codes \"Opcodes and Status codes\")"
             }
         },
         "systemMessages": {
@@ -744,6 +744,16 @@
         }
     },
     "modules": {
+        "statusAPIMissing": {
+            "title": "Missing Data",
+            "description": "Your status data was not found. This may be a result of disabling the Online Status API option on Hypixel or setting your social status to offline. Some modules will not work while this data is missing. Once the bot receives your status data, affected modules will automatically resume operation and you will receive another DM.",
+            "footer": "Issue"
+        },
+        "statusAPIReceived": {
+            "title": "Received Data",
+            "description": "Your status data was received. Affected modules will now resume operation.",
+            "footer": "Notification"
+        },
         "defender": {
             "gameType": {
                 "name": "Blacklisted Game Change Detected",
@@ -776,16 +786,6 @@
             }
         },
         "friends": {
-            "missingData": {
-                "title": "Missing Data",
-                "description": "Your last login and/or last logout data returned undefined for the Friend module. Login and logout notifications are now disabled. This may be a result of disabling the `Online` API option on Hypixel or setting your social status to offline. Notifications will resume and you will receive another DM once this data is no longer missing.",
-                "footer": "Issue"
-            },
-            "receivedData": {
-                "title": "Received Data",
-                "description": "Your last login and/or last logout data is no longer undefined for the Friend module. Login and logout notifications will now resume.",
-                "footer": "Notification"
-            },
             "missingPermissions": {
                 "name": "Friend Module Disabled",
                 "value": "The Friends module was disabled because this bot is missing the following permission(s) in the channel %{channel}%: %{missingPermissions}%."

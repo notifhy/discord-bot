@@ -1,17 +1,22 @@
-import BaseErrorHandler from './BaseErrorHandler';
-import { sendWebHook } from '../../util/utility';
 import {
     fatalWebhook,
     ownerID,
 } from '../../../config.json';
+import { sendWebHook } from '../../util/utility';
+import BaseErrorHandler from './BaseErrorHandler';
 
-export default class ErrorHandler extends BaseErrorHandler {
+export default class ErrorHandler<E> extends BaseErrorHandler<E> {
     data: string[];
 
-    constructor(error: unknown, ...data: string[]) {
+    constructor(error: E, ...data: string[]) {
         super(error);
         this.data = data;
-        this.errorLog();
+    }
+
+    static async init<T>(error: T, ...data: string[]) {
+        const handler = new ErrorHandler(error, ...data);
+        handler.errorLog();
+        await handler.systemNotify();
     }
 
     private errorLog() {
@@ -25,9 +30,8 @@ export default class ErrorHandler extends BaseErrorHandler {
     async systemNotify() {
         await sendWebHook({
             content: `<@${ownerID.join('><@')}>`,
-            embeds: [
-                this.errorStackEmbed(this.error),
-            ],
+            embeds: [this.errorEmbed()],
+            files: [this.stackAttachment],
             webhook: fatalWebhook,
             suppressError: true,
         });

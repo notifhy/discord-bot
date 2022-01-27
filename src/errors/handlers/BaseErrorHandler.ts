@@ -1,68 +1,45 @@
-import { Log } from '../../util/Log';
-import { SnowflakeUtil } from 'discord.js';
-import Constants from '../../util/Constants';
 import { BetterEmbed } from '../../util/utility';
+import { FileOptions, SnowflakeUtil } from 'discord.js';
+import { Log } from '../../util/Log';
+import Constants from '../../util/Constants';
 
-export default class BaseErrorHandler {
-    readonly error: unknown;
+export default class BaseErrorHandler<E> {
+    readonly error: E;
     readonly incidentID: string;
+    readonly stackAttachment: FileOptions;
 
-    constructor(error: unknown) {
+    constructor(error: E) {
         this.error = error;
         this.incidentID = SnowflakeUtil.generate();
+        this.stackAttachment = {
+            attachment: Buffer.from(
+                error instanceof Error &&
+                error.stack
+                    ? error.stack
+                    : JSON.stringify(
+                        error,
+                        Object.getOwnPropertyNames(error),
+                        2,
+                    ),
+            ),
+            name: error instanceof Error
+                ? `${error.name}.txt`
+                : 'error.txt',
+        };
     }
 
-    errorEmbed() {
+    baseErrorEmbed() {
         return new BetterEmbed({ text: this.incidentID })
             .setColor(Constants.colors.error);
     }
 
-    errorStackEmbed(error?: unknown) {
-        const embed = this.errorEmbed();
-
-        if (
-            error instanceof Error &&
-            error.stack
-        ) {
-            const nonStackLenth = `${error.name}: ${error.message}`.length;
-            const stack = error.stack.slice(
-                nonStackLenth,
-                Constants.limits.embedField + nonStackLenth,
+    errorEmbed() {
+        return this.baseErrorEmbed()
+            .setTitle(
+                this.error instanceof Error
+                    ? this.error.name
+                    : 'Error',
             );
-
-            embed
-                .addField(
-                    error.name,
-                    error.message.slice(0, Constants.limits.embedField),
-                )
-                .addField('Trace', stack);
-
-            if (nonStackLenth >= Constants.limits.embedDescription) {
-                embed.addField(
-                    'Over Max Length',
-                    'The stack is over 4096 characters long and was cut short',
-                );
-            }
-        } else {
-            const data = JSON.stringify(
-                 error,
-                Object.getOwnPropertyNames(error),
-                2,
-            );
-
-            embed.setDescription(
-                data.slice(0, Constants.limits.embedDescription),
-            );
-
-            if (data.length >= Constants.limits.embedDescription) {
-                embed.addField(
-                    'Over Max Length',
-                    'The stack is over 4096 characters long and was cut short',
-                );
-            }
-        }
-
-        return embed;
     }
 
     log(...text: unknown[]) {

@@ -35,11 +35,8 @@ export class HypixelRequest {
             })
         );
 
-        const JSON = (
-            await Request.tryParse<
-                HypixelAPIOk | HypixelAPIError
-            >(response)
-        );
+        const JSON =
+            await Request.tryParse<HypixelAPIOk | HypixelAPIError>(response);
 
         if (HypixelRequest.isHypixelAPIError(JSON, response)) {
             const baseErrorData = {

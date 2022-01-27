@@ -11,24 +11,26 @@ import {
 } from 'discord.js';
 import {
     arrayRemove,
-    BetterEmbed,
     timestamp,
 } from '../util/utility';
+import { Log } from '../util/Log';
 import { RegionLocales } from '../../locales/RegionLocales';
 import { SQLite } from '../util/SQLite';
 import Constants from '../util/Constants';
 import ModuleError from '../errors/ModuleError';
-import { Log } from '../util/Log';
 
 export const properties: ClientModule['properties'] = {
     name: 'friends',
-    cleanName: 'Friends',
+    cleanName: 'Friends Module',
+    onlineStatusAPI: true,
 };
 
 export const execute: ClientModule['execute'] = async ({
     client,
-    differences: { primary, secondary },
+    baseLocale,
+    differences: { primary },
     userAPIData,
+    userData,
 }): Promise<void> => {
     try {
         if (
@@ -46,59 +48,8 @@ export const execute: ClientModule['execute'] = async ({
                 columns: ['channel'],
             });
 
-        const userData =
-            await SQLite.getUser<UserData>({
-                discordID: userAPIData.discordID,
-                table: Constants.tables.users,
-                allowUndefined: false,
-                columns: [
-                    'locale',
-                    'systemMessages',
-                ],
-            });
-
-        const locale = RegionLocales.locale(userData.locale).modules.friends;
+        const locale = baseLocale.friends;
         const { replace } = RegionLocales;
-
-        if (
-            primary.lastLogin === null ||
-            primary.lastLogout === null
-        ) {
-            const user = await client.users.fetch(userAPIData.discordID);
-            const undefinedData = new BetterEmbed({
-                text: locale.missingData.footer,
-            })
-                .setColor(Constants.colors.warning)
-                .setTitle(locale.missingData.title)
-                .setDescription(locale.missingData.description);
-
-            await user.send({
-                embeds: [undefinedData],
-            });
-
-            return;
-        }
-
-        if (
-            (primary.lastLogin &&
-                secondary.lastLogin === null) ||
-            (primary.lastLogout &&
-                secondary.lastLogout === null)
-        ) {
-            const user = await client.users.fetch(userAPIData.discordID);
-            const undefinedData = new BetterEmbed({
-                text: locale.receivedData.footer,
-            })
-                .setColor(Constants.colors.on)
-                .setTitle(locale.receivedData.title)
-                .setDescription(locale.receivedData.description);
-
-            await user.send({
-                embeds: [undefinedData],
-            });
-
-            return;
-        }
 
         const channel = (
             await client.channels.fetch(

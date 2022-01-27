@@ -369,11 +369,7 @@ export const execute: ClientCommand['execute'] = async (
                     components: [buttons],
                 });
             } catch (error) {
-                const handler =
-                    new CommandErrorHandler(error, interaction, locale);
-
-                await handler.systemNotify();
-                await handler.userNotify();
+                await CommandErrorHandler.init(error, interaction, locale);
             }
         });
 
@@ -387,11 +383,7 @@ export const execute: ClientCommand['execute'] = async (
                     components: disabledRows,
                 });
             } catch (error) {
-                const handler =
-                    new CommandErrorHandler(error, interaction, locale);
-
-                await handler.systemNotify();
-                await handler.userNotify();
+                await CommandErrorHandler.init(error, interaction, locale);
             }
         });
     }

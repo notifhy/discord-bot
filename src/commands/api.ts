@@ -193,9 +193,9 @@ export const execute: ClientCommand['execute'] = async (
 };
 
 async function stats(interaction: CommandInteraction) {
-    const { abort, rateLimit, error } =
+    const { abort, rateLimit, resumeAfter, error } =
         interaction.client.hypixel.errors;
-    const { uses, resumeAfter, keyPercentage } =
+    const { uses, keyPercentage } =
         interaction.client.hypixel.request;
 
     const statsEmbed = new BetterEmbed(interaction)

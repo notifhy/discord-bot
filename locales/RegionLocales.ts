@@ -13,8 +13,8 @@ export const locales: Locales = {
 
 export class RegionLocales {
     static locale(locale?: string | null): Locale {
-        let locale2 = locale;
-        if (!Object.keys(locales).includes(locale ?? 'en-US')) {
+        let locale2 = locale ?? 'en-US';
+        if (!Object.keys(locales).includes(locale2)) {
             locale2 = 'en-US';
         }
 
