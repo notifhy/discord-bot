@@ -1,9 +1,9 @@
 import BaseErrorHandler from './BaseErrorHandler';
-import { sendWebHook } from '../../utility';
+import { sendWebHook } from '../../util/utility';
 import {
     fatalWebhook,
     ownerID,
-} from '../../../../config.json';
+} from '../../../config.json';
 
 export default class ErrorHandler extends BaseErrorHandler {
     data: string[];

@@ -1,7 +1,7 @@
-import { Log } from '../../Log';
+import { Log } from '../../util/Log';
 import { SnowflakeUtil } from 'discord.js';
-import Constants from '../../Constants';
-import { BetterEmbed } from '../../utility';
+import Constants from '../../util/Constants';
+import { BetterEmbed } from '../../util/utility';
 
 export default class BaseErrorHandler {
     readonly error: unknown;

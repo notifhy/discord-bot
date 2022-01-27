@@ -17,7 +17,7 @@ import {
 import { RegionLocales } from '../../locales/RegionLocales';
 import { SQLite } from '../util/SQLite';
 import Constants from '../util/Constants';
-import ModuleError from '../util/errors/ModuleError';
+import ModuleError from '../errors/ModuleError';
 import { Log } from '../util/Log';
 
 export const properties: ClientModule['properties'] = {

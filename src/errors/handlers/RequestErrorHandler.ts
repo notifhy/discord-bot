@@ -2,19 +2,19 @@ import {
     cleanLength,
     cleanRound,
     sendWebHook,
-} from '../../utility';
+} from '../../util/utility';
 import {
     fatalWebhook,
     hypixelAPIWebhook,
     keyLimit,
     ownerID,
-} from '../../../../config.json';
+} from '../../../config.json';
 import { FetchError } from 'node-fetch';
 import AbortError from '../AbortError';
 import BaseErrorHandler from './BaseErrorHandler';
 import HTTPError from '../HTTPError';
 import RateLimitError from '../RateLimitError';
-import { HypixelManager } from '../../../hypixel/HypixelManager';
+import { HypixelManager } from '../../hypixel/HypixelManager';
 
 export default class RequestErrorHandler extends BaseErrorHandler {
     readonly hypixelManager: HypixelManager;

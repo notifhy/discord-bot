@@ -6,7 +6,7 @@ import { Log } from '../util/Log';
 import { RegionLocales } from '../../locales/RegionLocales';
 import { SQLite } from '../util/SQLite';
 import Constants from '../util/Constants';
-import ModuleError from '../util/errors/ModuleError';
+import ModuleError from '../errors/ModuleError';
 
 export const properties: ClientModule['properties'] = {
     name: 'defender',

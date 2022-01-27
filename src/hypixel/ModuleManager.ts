@@ -11,8 +11,8 @@ import { Client, Snowflake } from 'discord.js';
 import { compare } from '../util/utility';
 import { SQLite } from '../util/SQLite';
 import Constants from '../util/Constants';
-import ModuleError from '../util/errors/ModuleError';
-import ModuleErrorHandler from '../util/errors/handlers/ModuleErrorHandler';
+import ModuleError from '../errors/ModuleError';
+import ModuleErrorHandler from '../errors/handlers/ModuleErrorHandler';
 
 export class ModuleManager {
     client: Client;

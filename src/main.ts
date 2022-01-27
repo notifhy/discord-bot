@@ -15,7 +15,7 @@ import { HypixelManager } from './hypixel/HypixelManager';
 import { discordAPIkey } from '../config.json';
 import { Log } from './util/Log';
 import { SQLite } from './util/SQLite';
-import ErrorHandler from './util/errors/handlers/ErrorHandler';
+import ErrorHandler from './errors/handlers/ErrorHandler';
 import fs from 'node:fs/promises';
 import process from 'node:process';
 

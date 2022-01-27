@@ -15,9 +15,9 @@ import { Log } from '../util/Log';
 import { ownerID } from '../../config.json';
 import { locales, RegionLocales } from '../../locales/RegionLocales';
 import { SQLite } from '../util/SQLite';
-import CommandErrorHandler from '../util/errors/handlers/CommandErrorHandler';
+import CommandErrorHandler from '../errors/handlers/CommandErrorHandler';
 import Constants from '../util/Constants';
-import ConstraintError from '../util/errors/ConstraintError';
+import ConstraintError from '../errors/ConstraintError';
 
 export const properties: ClientEvent['properties'] = {
     name: 'interactionCreate',

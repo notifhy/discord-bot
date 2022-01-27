@@ -23,8 +23,8 @@ import { Log } from '../util/Log';
 import { RegionLocales } from '../../locales/RegionLocales';
 import { Request } from '../util/Request';
 import Constants from '../util/Constants';
-import HTTPError from '../util/errors/HTTPError';
-import CommandErrorHandler from '../util/errors/handlers/CommandErrorHandler';
+import HTTPError from '../errors/HTTPError';
+import CommandErrorHandler from '../errors/handlers/CommandErrorHandler';
 
 export const properties: ClientCommand['properties'] = {
     name: 'player',

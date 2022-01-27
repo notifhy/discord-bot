@@ -1,8 +1,8 @@
-import type { Field } from '../../../@types/locales';
+import type { Field } from '../../@types/locales';
 import type {
     UserAPIData,
     UserData,
-} from '../../../@types/database';
+} from '../../@types/database';
 import {
     Constants as DiscordConstants,
     DiscordAPIError,
@@ -11,12 +11,12 @@ import {
 import {
     fatalWebhook,
     ownerID,
-} from '../../../../config.json';
-import { RegionLocales } from '../../../../locales/RegionLocales';
-import { arrayRemove, sendWebHook, timestamp } from '../../utility';
-import { SQLite } from '../../SQLite';
+} from '../../../config.json';
+import { RegionLocales } from '../../../locales/RegionLocales';
+import { arrayRemove, sendWebHook, timestamp } from '../../util/utility';
+import { SQLite } from '../../util/SQLite';
 import BaseErrorHandler from './BaseErrorHandler';
-import Constants from '../../Constants';
+import Constants from '../../util/Constants';
 import ModuleError from '../ModuleError';
 
 export default class ModuleErrorHandler extends BaseErrorHandler {

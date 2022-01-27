@@ -9,8 +9,8 @@ import {
 import { setTimeout } from 'node:timers/promises';
 import { SQLite } from '../util/SQLite';
 import Constants from '../util/Constants';
-import ErrorHandler from '../util/errors/handlers/ErrorHandler';
-import RequestErrorHandler from '../util/errors/handlers/RequestErrorHandler';
+import ErrorHandler from '../errors/handlers/ErrorHandler';
+import RequestErrorHandler from '../errors/handlers/RequestErrorHandler';
 import { HypixelErrors } from './HypixelErrors';
 
 /* eslint-disable no-await-in-loop */

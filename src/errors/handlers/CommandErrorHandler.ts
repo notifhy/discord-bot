@@ -3,7 +3,7 @@ import {
     cleanRound,
     sendWebHook,
     slashCommandResolver,
-} from '../../utility';
+} from '../../util/utility';
 import {
     ColorResolvable,
     CommandInteraction,
@@ -15,15 +15,15 @@ import {
     fatalWebhook,
     nonFatalWebhook,
     ownerID,
-} from '../../../../config.json';
+} from '../../../config.json';
 import BaseErrorHandler from './BaseErrorHandler';
 import ConstraintError from '../ConstraintError';
-import Constants from '../../Constants';
-import { RegionLocales } from '../../../../locales/RegionLocales';
+import Constants from '../../util/Constants';
+import { RegionLocales } from '../../../locales/RegionLocales';
 import {
     BaseEmbed,
     Locale,
-} from '../../../@types/locales';
+} from '../../@types/locales';
 import { setTimeout } from 'node:timers/promises';
 
 export default class CommandErrorHandler extends BaseErrorHandler {

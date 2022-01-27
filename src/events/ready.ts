@@ -3,7 +3,7 @@ import type { ClientEvent } from '../@types/client';
 import { Log } from '../util/Log';
 import { SQLite } from '../util/SQLite';
 import Constants from '../util/Constants';
-import ErrorHandler from '../util/errors/handlers/ErrorHandler';
+import ErrorHandler from '../errors/handlers/ErrorHandler';
 
 export const properties: ClientEvent['properties'] = {
     name: 'ready',
