@@ -27,13 +27,13 @@ import { Log } from '../util/Log';
 import { RegionLocales } from '../../locales/RegionLocales';
 import { SQLite } from '../util/SQLite';
 import { ToggleButtons } from '../util/ToggleButtons';
-import CommandErrorHandler from '../util/errors/handlers/CommandErrorHandler';
+import CommandErrorHandler from '../errors/handlers/CommandErrorHandler';
 import Constants from '../util/Constants';
 
 export const properties: ClientCommand['properties'] = {
     name: 'modules',
     description: 'Add or remove modules for your Minecraft account',
-    cooldown: 15_000,
+    cooldown: 5_000,
     ephemeral: true,
     noDM: false,
     ownerOnly: false,
@@ -197,10 +197,7 @@ export const execute: ClientCommand['execute'] = async (
                     await dataUpdate(i);
                 }
             } catch (error) {
-                const handler =
-                    new CommandErrorHandler(error, interaction, locale);
-                await handler.systemNotify();
-                await handler.userNotify();
+                new CommandErrorHandler(error, interaction, locale);
             }
         },
     );
@@ -214,9 +211,7 @@ export const execute: ClientCommand['execute'] = async (
                 components: disabledComponents,
             });
         } catch (error) {
-            const handler = new CommandErrorHandler(error, interaction, locale);
-            await handler.systemNotify();
-            await handler.userNotify();
+            await CommandErrorHandler.init(error, interaction, locale);
         }
     });
 

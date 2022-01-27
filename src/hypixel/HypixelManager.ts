@@ -1,5 +1,6 @@
 import type { UserAPIData } from '../@types/database';
-import { Client } from 'discord.js';
+import { Client, DiscordAPIError } from 'discord.js';
+import { HypixelErrors } from './HypixelErrors';
 import { keyLimit } from '../../config.json';
 import { ModuleManager } from './ModuleManager';
 import {
@@ -9,9 +10,11 @@ import {
 import { setTimeout } from 'node:timers/promises';
 import { SQLite } from '../util/SQLite';
 import Constants from '../util/Constants';
-import ErrorHandler from '../util/errors/handlers/ErrorHandler';
-import RequestErrorHandler from '../util/errors/handlers/RequestErrorHandler';
-import { HypixelErrors } from './HypixelErrors';
+import ErrorHandler from '../errors/handlers/ErrorHandler';
+import ModuleDiscordErrorHandler from '../errors/handlers/ModuleDiscordErrorHandler';
+import ModuleError from '../errors/ModuleError';
+import ModuleErrorHandler from '../errors/handlers/ModuleErrorHandler';
+import RequestErrorHandler from '../errors/handlers/RequestErrorHandler';
 
 /* eslint-disable no-await-in-loop */
 
@@ -30,18 +33,13 @@ export class HypixelManager {
 
     async ready() {
         while (true) {
-            try {
-                await this.refresh();
-            } catch (error) {
-                await new RequestErrorHandler(error, this)
-                    .systemNotify();
-            }
+            await this.refresh();
         }
     }
 
     private async refresh() {
-        if (this.request.resumeAfter > Date.now()) {
-            await setTimeout(this.request.resumeAfter - Date.now());
+        if (this.errors.isTimeout()) {
+            await setTimeout(this.errors.getTimeout());
         } else if (this.client.config.enabled === false) {
             await setTimeout(5_000); //Avoids blocking other processes
         }
@@ -61,7 +59,7 @@ export class HypixelManager {
 
         for (const user of users) {
             if (
-                this.request.resumeAfter > Date.now() ||
+                this.errors.isTimeout() ||
                 this.client.config.enabled === false
             ) {
                 return;
@@ -75,23 +73,52 @@ export class HypixelManager {
                 uses: this.request.uses,
             };
 
-            const data = await this.request.request(user, urls);
-            performance.fetch = Date.now();
+            let data, payload;
 
             try {
-                const payload =
-                    await ModuleManager.process(user.discordID, data);
-                performance.process = Date.now();
+                data = await this.request.request(user, urls);
+                performance.fetch = Date.now();
+            } catch (error) {
+                await RequestErrorHandler.init(error, this);
+                continue;
+            }
 
+            try {
+                payload = await ModuleManager.process(user.discordID, data);
+                performance.process = Date.now();
+            } catch (error) {
+                await ErrorHandler.init(error);
+                continue;
+            }
+
+            try {
                 await this.module.execute(payload);
                 performance.modules = Date.now();
-
-                this.updatePerformance(performance);
             } catch (error) {
-                this.errors.addError();
-                await new ErrorHandler(error, `ID: ${user.discordID}`)
-                    .systemNotify();
+                if (
+                    (
+                        error instanceof ModuleError &&
+                        error.raw instanceof DiscordAPIError
+                    ) ||
+                    (
+                        error instanceof DiscordAPIError
+                    )
+                ) {
+                    await ModuleDiscordErrorHandler.init(
+                        error as (
+                            DiscordAPIError |
+                            (Omit<ModuleError, 'raw'> & { raw: DiscordAPIError })
+                        ),
+                        user.discordID,
+                    );
+                } else {
+                    await ModuleErrorHandler.init(error, user.discordID, this);
+                }
+
+                continue;
             }
+
+            this.updatePerformance(performance);
 
             const timeout = this.getTimeout(urls, performance);
             await setTimeout(timeout);

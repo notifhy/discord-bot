@@ -2,6 +2,7 @@ import {
     clearTimeout,
     setTimeout,
 } from 'node:timers';
+import { RequestManager } from './RequestManager';
 import Constants from '../util/Constants';
 
 type ErrorType = {
@@ -13,10 +14,9 @@ type ErrorType = {
 }
 
 export class HypixelErrors {
-    config: {
-        resumeAfter: number,
-        keyPercentage: number,
-    };
+    request: RequestManager;
+
+    resumeAfter: number;
 
     readonly abort: ErrorType;
 
@@ -26,11 +26,10 @@ export class HypixelErrors {
 
     readonly error: ErrorType;
 
-    constructor(config: {
-        resumeAfter: number,
-        keyPercentage: number,
-    }) {
-        this.config = config;
+    constructor(request: RequestManager) {
+        this.request = request;
+
+        this.resumeAfter = 0;
 
         this.abort = {
             baseTimeout: 0, //The timeout each type starts out with
@@ -77,7 +76,7 @@ export class HypixelErrors {
         }
 
         this.rateLimit.isGlobal = rateLimitGlobal ?? this.rateLimit.isGlobal;
-        this.config.keyPercentage -= 0.05;
+        this.request.keyPercentage -= 0.05;
         this.base({
             type: 'rateLimit',
         });
@@ -89,9 +88,19 @@ export class HypixelErrors {
         });
     }
 
+    isTimeout() {
+        return this.resumeAfter > Date.now();
+    }
+
+    getTimeout() {
+        return this.isTimeout()
+            ? this.resumeAfter - Date.now()
+            : 0;
+    }
+
     private base({ type }: { type: 'abort' | 'rateLimit' | 'error' }) {
-        this.config.resumeAfter = Math.max(
-            this.config.resumeAfter,
+        this.resumeAfter = Math.max(
+            this.resumeAfter,
             Date.now() + this[type].timeout,
         ); //Sets the new delay by setting <Instance>.resumeAfter
 

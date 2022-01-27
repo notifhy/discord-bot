@@ -2,7 +2,10 @@ import type {
     ClientCommand,
     ClientEvent,
 } from '../@types/client';
-import type { UserAPIData, UserData } from '../@types/database';
+import type {
+    UserAPIData,
+    UserData,
+} from '../@types/database';
 import {
     BetterEmbed,
     slashCommandResolver,
@@ -11,13 +14,14 @@ import {
     Collection,
     CommandInteraction,
 } from 'discord.js';
+import { locales, RegionLocales } from '../../locales/RegionLocales';
 import { Log } from '../util/Log';
 import { ownerID } from '../../config.json';
-import { locales, RegionLocales } from '../../locales/RegionLocales';
 import { SQLite } from '../util/SQLite';
-import CommandErrorHandler from '../util/errors/handlers/CommandErrorHandler';
+import CommandErrorHandler from '../errors/handlers/CommandErrorHandler';
 import Constants from '../util/Constants';
-import ConstraintError from '../util/errors/ConstraintError';
+import CommandConstraintErrorHandler from '../errors/handlers/CommandConstraintErrorHandler';
+import ConstraintError from '../errors/ConstraintError';
 
 export const properties: ClientEvent['properties'] = {
     name: 'interactionCreate',
@@ -77,15 +81,21 @@ export const execute: ClientEvent['execute'] = async (
             );
         }
     } catch (error) {
-        const handler = new CommandErrorHandler(
-            error,
-            interaction,
-            userData?.locale ??
-            Constants.defaults.language,
-        );
-
-        await handler.systemNotify();
-        await handler.userNotify();
+        if (error instanceof ConstraintError) {
+            await CommandConstraintErrorHandler.init(
+                error,
+                interaction,
+                userData?.locale ??
+                Constants.defaults.language,
+            );
+        } else {
+            await CommandErrorHandler.init(
+                error,
+                interaction,
+                userData?.locale ??
+                Constants.defaults.language,
+            );
+        }
     }
 };
 

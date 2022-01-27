@@ -26,7 +26,7 @@ import {
 import { Log } from '../util/Log';
 import { RegionLocales } from '../../locales/RegionLocales';
 import { SQLite } from '../util/SQLite';
-import CommandErrorHandler from '../util/errors/handlers/CommandErrorHandler';
+import CommandErrorHandler from '../errors/handlers/CommandErrorHandler';
 import Constants from '../util/Constants';
 
 export const properties: ClientCommand['properties'] = {
@@ -385,10 +385,7 @@ export const execute: ClientCommand['execute'] = async (
                     components: [buttons],
                 });
             } catch (error) {
-                const handler =
-                    new CommandErrorHandler(error, interaction, locale);
-                await handler.systemNotify();
-                await handler.userNotify();
+                await CommandErrorHandler.init(error, interaction, locale);
             }
         });
 
@@ -402,10 +399,7 @@ export const execute: ClientCommand['execute'] = async (
                     components: disabledRows,
                 });
             } catch (error) {
-                const handler =
-                    new CommandErrorHandler(error, interaction, locale);
-                await handler.systemNotify();
-                await handler.userNotify();
+                await CommandErrorHandler.init(error, interaction, locale);
             }
         });
     }

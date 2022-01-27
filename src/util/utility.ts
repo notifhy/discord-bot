@@ -11,20 +11,16 @@ import {
     PermissionString,
     TextBasedChannel,
     WebhookClient,
+    WebhookMessageOptions,
 } from 'discord.js';
 import { Log } from './Log';
 import Constants from './Constants';
 
 export function arrayRemove<Type extends unknown[]>(
     array: Type,
-    item: unknown,
-) {
-    array.splice(
-        array.indexOf(item),
-        1,
-    );
-
-    return array;
+    ...items: unknown[]
+): Type {
+    return array.filter(item => !(items.includes(item))) as Type;
 }
 
 export async function awaitComponent(
@@ -323,22 +319,19 @@ export function nestedIterate(
     return modified;
 }
 
-export async function sendWebHook({
-    content,
-    embeds,
-    webhook,
-    suppressError = true,
-}: {
-    content?: string | null,
-    embeds: MessageEmbed[],
-    webhook: WebhookConfig,
-    suppressError?: boolean,
-}): Promise<void> {
+export async function sendWebHook(
+    {
+        webhook,
+        suppressError,
+        ...payload
+    }: {
+        webhook: WebhookConfig,
+        suppressError?: boolean,
+    } & WebhookMessageOptions,
+): Promise<void> {
     try {
-        await new WebhookClient({ id: webhook.id, token: webhook.token }).send({
-            content: content,
-            embeds: embeds,
-        });
+        await new WebhookClient({ id: webhook.id, token: webhook.token })
+            .send(payload);
     } catch (err) {
         Log.error(
             `An error has occurred while sending an WebHook |`,

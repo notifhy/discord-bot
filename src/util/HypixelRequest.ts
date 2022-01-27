@@ -7,8 +7,8 @@ import type {
 import type { Response } from 'node-fetch';
 import { hypixelAPIkey } from '../../config.json';
 import { Request } from './Request';
-import HTTPError from './errors/HTTPError';
-import RateLimitError from './errors/RateLimitError';
+import HTTPError from '../errors/HTTPError';
+import RateLimitError from '../errors/RateLimitError';
 
 export class HypixelRequest {
     readonly config: {
@@ -35,11 +35,8 @@ export class HypixelRequest {
             })
         );
 
-        const JSON = (
-            await Request.tryParse<
-                HypixelAPIOk | HypixelAPIError
-            >(response)
-        );
+        const JSON =
+            await Request.tryParse<HypixelAPIOk | HypixelAPIError>(response);
 
         if (HypixelRequest.isHypixelAPIError(JSON, response)) {
             const baseErrorData = {

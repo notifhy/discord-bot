@@ -6,17 +6,20 @@ import { Log } from '../util/Log';
 import { RegionLocales } from '../../locales/RegionLocales';
 import { SQLite } from '../util/SQLite';
 import Constants from '../util/Constants';
-import ModuleError from '../util/errors/ModuleError';
+import ModuleError from '../errors/ModuleError';
 
 export const properties: ClientModule['properties'] = {
     name: 'defender',
-    cleanName: 'Defender',
+    cleanName: 'Defender Module',
+    onlineStatusAPI: true,
 };
 
 export const execute: ClientModule['execute'] = async ({
     client,
+    baseLocale,
     differences: { primary, secondary },
     userAPIData,
+    userData,
 }): Promise<void> => {
     try {
         if (Object.keys(primary).length === 0) { //A bit more future proof
@@ -37,18 +40,7 @@ export const execute: ClientModule['execute'] = async ({
                 ],
             });
 
-        const userData =
-            await SQLite.getUser<UserData>({
-                discordID: userAPIData.discordID,
-                table: Constants.tables.users,
-                allowUndefined: false,
-                columns: [
-                    'locale',
-                    'systemMessages',
-                ],
-            });
-
-        const locale = RegionLocales.locale(userData.locale).modules.defender;
+        const locale = baseLocale.defender;
         const { replace } = RegionLocales;
 
         const fields: EmbedFieldData[] = [];

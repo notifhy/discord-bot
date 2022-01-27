@@ -2,25 +2,25 @@ import {
     cleanLength,
     cleanRound,
     sendWebHook,
-} from '../../utility';
+} from '../../util/utility';
 import {
     fatalWebhook,
     hypixelAPIWebhook,
     keyLimit,
     ownerID,
-} from '../../../../config.json';
+} from '../../../config.json';
 import { FetchError } from 'node-fetch';
+import { HypixelManager } from '../../hypixel/HypixelManager';
 import AbortError from '../AbortError';
 import BaseErrorHandler from './BaseErrorHandler';
 import HTTPError from '../HTTPError';
 import RateLimitError from '../RateLimitError';
-import { HypixelManager } from '../../../hypixel/HypixelManager';
 
-export default class RequestErrorHandler extends BaseErrorHandler {
+export default class RequestErrorHandler<E> extends BaseErrorHandler<E> {
     readonly hypixelManager: HypixelManager;
     readonly timeout: string | null;
 
-    constructor(error: unknown, hypixelManager: HypixelManager) {
+    constructor(error: E, hypixelManager: HypixelManager) {
         super(error);
         this.hypixelManager = hypixelManager;
 
@@ -37,11 +37,15 @@ export default class RequestErrorHandler extends BaseErrorHandler {
             errors.addError();
         }
 
-        this.errorLog();
-
-        const { resumeAfter } = this.hypixelManager.request;
+        const { resumeAfter } = this.hypixelManager.errors;
 
         this.timeout = cleanLength(resumeAfter - Date.now(), true);
+    }
+
+    static async init<T>(error: T, hypixelManager: HypixelManager) {
+        const handler = new RequestErrorHandler(error, hypixelManager);
+        handler.errorLog();
+        await handler.systemNotify();
     }
 
     private errorLog() {
@@ -65,7 +69,7 @@ export default class RequestErrorHandler extends BaseErrorHandler {
             },
         } = this.hypixelManager;
 
-        const embed = this.errorEmbed()
+        const embed = this.baseErrorEmbed()
             .setTitle('Degraded Performance')
             .addFields([
                 {
@@ -120,8 +124,7 @@ export default class RequestErrorHandler extends BaseErrorHandler {
         return embed;
     }
 
-    async systemNotify() {
-        const embeds = [];
+    private async systemNotify() {
         const embed = this.statusEmbed();
 
         if (this.error instanceof AbortError) {
@@ -129,8 +132,6 @@ export default class RequestErrorHandler extends BaseErrorHandler {
                 embed
                     .setDescription('A timeout has been applied.');
             }
-
-            embeds.push(embed);
         } else if (this.error instanceof RateLimitError) {
             const headers = this.error.response?.headers;
 
@@ -143,8 +144,6 @@ export default class RequestErrorHandler extends BaseErrorHandler {
                     `Remaining: ${headers?.get('ratelimit-remaining') ?? 'Unknown'}
                     Reset: ${headers?.get('ratelimit-reset') ?? 'Unknown'}`,
                 );
-
-            embeds.push(embed);
         } else if (this.error instanceof HTTPError) {
             embed
                 .setDescription('A timeout has been applied.')
@@ -152,19 +151,12 @@ export default class RequestErrorHandler extends BaseErrorHandler {
                     'Request',
                     `Status: ${this.error.status}`,
                 );
-
-            embeds.push(embed);
         } else if (this.error instanceof FetchError) {
             embed
                 .setDescription('A timeout has been applied.');
-
-            embeds.push(embed);
         } else {
             embed
                 .setTitle('Unexpected Error');
-
-            embeds.push(embed);
-            embeds.push(this.errorStackEmbed(this.error));
         }
 
         await sendWebHook({
@@ -173,7 +165,14 @@ export default class RequestErrorHandler extends BaseErrorHandler {
                 !(this.error instanceof AbortError)
                     ? `<@${ownerID.join('><@')}>`
                     : null,
-            embeds: embeds,
+            embeds: [embed],
+            files:
+                this.error instanceof AbortError ||
+                this.error instanceof RateLimitError ||
+                this.error instanceof HTTPError ||
+                this.error instanceof FetchError
+                    ? undefined
+                    : [this.stackAttachment],
             webhook:
                 this.error instanceof HTTPError ||
                 this.error instanceof FetchError

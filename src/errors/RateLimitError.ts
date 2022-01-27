@@ -1,4 +1,4 @@
-import { Hypixel429 } from '../../@types/hypixel';
+import { Hypixel429 } from '../@types/hypixel';
 import { Response } from 'node-fetch';
 import HTTPError from './HTTPError';
 

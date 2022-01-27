@@ -317,12 +317,6 @@ export interface Defender {
 }
 
 export interface Friends {
-    missingData: {
-        footer: string,
-    } & BaseEmbed,
-    receivedData: {
-        footer: string,
-    } & BaseEmbed,
     missingPermissions: Field,
     suppressNext: {
         footer: string,
@@ -350,6 +344,12 @@ export interface Rewards {
 }
 
 export interface Modules {
+    statusAPIMissing: {
+        footer: string,
+    } & BaseEmbed,
+    statusAPIReceived: {
+        footer: string,
+    } & BaseEmbed,
     defender: Defender,
     friends: Friends,
     rewards: Rewards,
