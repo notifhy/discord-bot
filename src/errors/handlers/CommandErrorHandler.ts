@@ -10,6 +10,7 @@ import { RegionLocales } from '../../../locales/RegionLocales';
 import { sendWebHook } from '../../util/utility';
 import BaseCommandErrorHandler from './BaseCommandErrorHandler';
 import Constants from '../../util/Constants';
+import ErrorHandler from './ErrorHandler';
 
 export default class CommandErrorHandler<E> extends BaseCommandErrorHandler<E> {
     readonly interaction: CommandInteraction;
@@ -31,9 +32,14 @@ export default class CommandErrorHandler<E> extends BaseCommandErrorHandler<E> {
         locale: string,
     ) {
         const handler = new CommandErrorHandler(error, interaction, locale);
-        handler.errorLog();
-        await handler.systemNotify();
-        await handler.userNotify();
+
+        try {
+            handler.errorLog();
+            await handler.systemNotify();
+            await handler.userNotify();
+        } catch (error2) {
+            await ErrorHandler.init(error2, handler.incidentID);
+        }
     }
 
     private errorLog() {

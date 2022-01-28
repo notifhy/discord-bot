@@ -17,6 +17,7 @@ import { setTimeout } from 'node:timers/promises';
 import BaseCommandErrorHandler from './BaseCommandErrorHandler';
 import Constants from '../../util/Constants';
 import ConstraintError from '../ConstraintError';
+import ErrorHandler from './ErrorHandler';
 
 export default class CommandConstraintErrorHandler
     extends BaseCommandErrorHandler<ConstraintError> {
@@ -41,9 +42,13 @@ export default class CommandConstraintErrorHandler
         const handler =
             new CommandConstraintErrorHandler(error, interaction, locale);
 
-        handler.errorLog();
-        await handler.systemNotify();
-        await handler.userNotify();
+        try {
+            handler.errorLog();
+            await handler.systemNotify();
+            await handler.userNotify();
+        } catch (error2) {
+            await ErrorHandler.init(error2, handler.incidentID);
+        }
     }
 
     private errorLog() {

@@ -6,6 +6,7 @@ import { HypixelManager } from '../../hypixel/HypixelManager';
 import { sendWebHook } from '../../util/utility';
 import { Snowflake } from 'discord.js';
 import BaseErrorHandler from './BaseErrorHandler';
+import ErrorHandler from './ErrorHandler';
 import ModuleError from '../ModuleError';
 
 export default class ModuleErrorHandler extends BaseErrorHandler<
@@ -44,10 +45,14 @@ export default class ModuleErrorHandler extends BaseErrorHandler<
     ) {
         const handler = new ModuleErrorHandler(error, discordID);
 
-        hypixelManager.errors.addError();
+        try {
+            hypixelManager.errors.addError();
 
-        handler.errorLog();
-        await handler.systemNotify();
+            handler.errorLog();
+            await handler.systemNotify();
+        } catch (error2) {
+            await ErrorHandler.init(error2, handler.incidentID);
+        }
     }
 
     private errorLog() {

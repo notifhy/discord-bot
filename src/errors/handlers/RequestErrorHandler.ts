@@ -13,6 +13,7 @@ import { FetchError } from 'node-fetch';
 import { HypixelManager } from '../../hypixel/HypixelManager';
 import AbortError from '../AbortError';
 import BaseErrorHandler from './BaseErrorHandler';
+import ErrorHandler from './ErrorHandler';
 import HTTPError from '../HTTPError';
 import RateLimitError from '../RateLimitError';
 
@@ -44,8 +45,13 @@ export default class RequestErrorHandler<E> extends BaseErrorHandler<E> {
 
     static async init<T>(error: T, hypixelManager: HypixelManager) {
         const handler = new RequestErrorHandler(error, hypixelManager);
-        handler.errorLog();
-        await handler.systemNotify();
+
+        try {
+            handler.errorLog();
+            await handler.systemNotify();
+        } catch (error2) {
+            await ErrorHandler.init(error2, handler.incidentID);
+        }
     }
 
     private errorLog() {
