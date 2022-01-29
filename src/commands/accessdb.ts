@@ -60,7 +60,7 @@ export const execute: ClientCommand['execute'] = async (
     const decrypted = new BetterEmbed(interaction)
         .setColor(Constants.colors.normal)
         .setTitle('Decrypted')
-        .setDescription(`Database decrypted, encrypting in ${timeout}`);
+        .setDescription(`Database decrypted, encrypting in ${timeout}.`);
 
     await interaction.editReply({ embeds: [decrypted] });
 
@@ -73,7 +73,7 @@ export const execute: ClientCommand['execute'] = async (
     const encrypted = new BetterEmbed(interaction)
         .setColor(Constants.colors.normal)
         .setTitle('Encrypted')
-        .setDescription('Database encrypted');
+        .setDescription('Database encrypted.');
 
     await interaction.followUp({
         embeds: [encrypted],
