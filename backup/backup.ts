@@ -8,7 +8,10 @@ import {
     parentFolder,
     scopes,
 } from './constants';
-import { google } from 'googleapis';
+import {
+    auth,
+    drive as googleDrive,
+} from '@googleapis/drive';
 import { googleApp } from '../config.json';
 import { Log } from '../src/util/Log';
 import { setTimeout } from 'node:timers/promises';
@@ -49,7 +52,7 @@ const {
     redirect_uris,
 } = googleApp.installed;
 
-const oauth2Client = new google.auth.OAuth2(
+const oauth2Client = new auth.OAuth2(
     client_id,
     client_secret,
     redirect_uris[0],
@@ -99,7 +102,7 @@ oauth2Client.on('tokens', async ({ expiry_date, refresh_token }) => {
         process.exit(0);
     }
 
-    const drive = google.drive({
+    const drive = googleDrive({
         version: 'v3',
         auth: oauth2Client,
     });
