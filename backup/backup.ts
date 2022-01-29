@@ -1,11 +1,11 @@
 import { code, refresh_token as refreshToken } from './token.json';
 import { google } from 'googleapis';
-import { googleApp } from '../../config.json';
-import { Log } from '../util/Log';
+import { googleApp } from '../config.json';
+import { Log } from '../src/util/Log';
 import { setTimeout } from 'node:timers/promises';
 import fsPromises from 'node:fs/promises';
 import fsSync from 'node:fs';
-import ErrorHandler from '../errors/handlers/ErrorHandler';
+import ErrorHandler from '../src/errors/handlers/ErrorHandler';
 import process from 'node:process';
 
 /* eslint-disable camelcase */
