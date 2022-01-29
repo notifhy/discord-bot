@@ -49,6 +49,7 @@ const oauth2Client = new google.auth.OAuth2(
 );
 
 oauth2Client.on('tokens', async ({ expiry_date, refresh_token }) => {
+    console.log('c');
     if (refresh_token) {
         const data = {
             code: '',
@@ -65,11 +66,12 @@ oauth2Client.on('tokens', async ({ expiry_date, refresh_token }) => {
 });
 
 (async () => {
+    //Only create a file if it doesn't exist
     await fsPromises.writeFile(
         `${__dirname}/token.json`,
         JSON.stringify(defaultToken),
-        { flag: 'wx' },
-    );
+        { flag: 'w' },
+    ).catch(() => null);
 
     if (code) {
         const { tokens } =

@@ -21,6 +21,7 @@ import process from 'node:process';
 
 process.on('exit', code => {
     Log.log(`Exiting with code ${code}`);
+    SQLite.close();
 });
 
 process.on('unhandledRejection', async error => {

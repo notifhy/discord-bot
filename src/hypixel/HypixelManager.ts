@@ -33,7 +33,12 @@ export class HypixelManager {
 
     async ready() {
         while (true) {
-            await this.refresh();
+            try {
+                await this.refresh();
+            } catch (error) {
+                await ErrorHandler.init(error);
+                continue;
+            }
         }
     }
 
@@ -42,6 +47,7 @@ export class HypixelManager {
             await setTimeout(this.errors.getTimeout());
         } else if (this.client.config.enabled === false) {
             await setTimeout(5_000); //Avoids blocking other processes
+            return;
         }
 
         const users = (

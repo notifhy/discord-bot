@@ -2,11 +2,17 @@ import {
     BaseUserData,
     Tables,
 } from '../@types/database';
-import Database from 'better-sqlite3';
+import { databaseKey } from '../../config.json';
+import Database from 'better-sqlite3-multiple-ciphers';
 import Constants from './Constants';
 
-// eslint-disable-next-line no-warning-comments
-//TODO: Fix "any" after the rest is done
+/* eslint-disable @typescript-eslint/no-unused-vars */
+/* eslint-disable consistent-return */
+/* eslint-disable no-unused-vars */
+
+let db = new Database(`${__dirname}/../../database.db`);
+
+db.pragma(`key='${databaseKey}'`);
 
 type JSONize<Type> = {
     [Property in keyof Type]:
@@ -46,22 +52,33 @@ type UpdateUserType<Type, B> = {
     data: Partial<Type>,
 }
 
-/* eslint-disable no-unused-vars */
-/* eslint-disable @typescript-eslint/no-unused-vars */
-/* eslint-disable consistent-return */
-
 export class SQLite {
+    static open() {
+        db = new Database(`${__dirname}/../../database.db`);
+    }
+
+    static close() {
+        db.close();
+    }
+
+    static encrypt() {
+        db.pragma(`rekey='${databaseKey}'`);
+    }
+
+    static fullDecrypt() {
+        db.pragma(`rekey=''`);
+    }
+
+    static decrypt() {
+        db.pragma(`key='${databaseKey}'`);
+    }
+
     static createTablesIfNotExists(): Promise<void> {
         return new Promise<void>(resolve => {
-            const db = new Database(`${__dirname}/../../database.db`);
-            const tables =
-                Object.values(Constants.tables.create)
-                .map(value => db.prepare(value));
-
             db.transaction(() => {
-                for (const table of tables) {
-                    table.run();
-                }
+                Object.values(Constants.tables.create)
+                    .map(value => db.prepare(value))
+                    .forEach(table => table.run());
 
                 const config = db
                     .prepare('SELECT * FROM config')
@@ -72,7 +89,6 @@ export class SQLite {
                 }
             });
 
-            db.close();
             resolve();
         });
     }
@@ -91,10 +107,8 @@ export class SQLite {
          */
 
         return new Promise(resolve => {
-            const db = new Database(`${__dirname}/../../database.db`);
             const rawData =
                 db.prepare(config.query).get() as Record<string, unknown>;
-            db.close();
 
             if (
                 (
@@ -121,10 +135,8 @@ export class SQLite {
          */
 
         return new Promise<Type[]>(resolve => {
-            const db = new Database(`${__dirname}/../../database.db`);
             const rawData =
                 db.prepare(query).all() as Record<string, unknown>[];
-            db.close();
 
             const data = rawData.map(rawData1 =>
                 this.JSONize(rawData1),
@@ -149,9 +161,7 @@ export class SQLite {
          */
 
         return new Promise<void>(resolve => {
-            const db = new Database(`${__dirname}/../../database.db`);
             db.prepare(query).run(data);
-            db.close();
 
             resolve();
         });
