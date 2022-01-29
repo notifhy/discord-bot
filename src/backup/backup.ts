@@ -27,6 +27,11 @@ process.on('uncaughtException', async error => {
     process.exit(1);
 });
 
+const defaultToken = {
+    code: '',
+    refresh_token: '',
+};
+
 const scopes = [
     'https://www.googleapis.com/auth/drive',
 ];
@@ -51,7 +56,8 @@ oauth2Client.on('tokens', async ({ expiry_date, refresh_token }) => {
         };
 
         await fsPromises.writeFile(
-            `${__dirname}/token.json`, JSON.stringify(data),
+            `${__dirname}/token.json`,
+            JSON.stringify(data),
         );
     }
 
@@ -59,6 +65,12 @@ oauth2Client.on('tokens', async ({ expiry_date, refresh_token }) => {
 });
 
 (async () => {
+    await fsPromises.writeFile(
+        `${__dirname}/token.json`,
+        JSON.stringify(defaultToken),
+        { flag: 'wx' },
+    );
+
     if (code) {
         const { tokens } =
             await oauth2Client.getToken(code);
