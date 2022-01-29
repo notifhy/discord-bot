@@ -1,4 +1,13 @@
-import { code, refresh_token as refreshToken } from './token.json';
+import {
+    code,
+    refresh_token as refreshToken,
+} from './token.json';
+import {
+    defaultToken,
+    interval,
+    parentFolder,
+    scopes,
+} from './constants';
 import { google } from 'googleapis';
 import { googleApp } from '../config.json';
 import { Log } from '../src/util/Log';
@@ -7,6 +16,7 @@ import fsPromises from 'node:fs/promises';
 import fsSync from 'node:fs';
 import ErrorHandler from '../src/errors/handlers/ErrorHandler';
 import process from 'node:process';
+import Timeout from './Timeout';
 
 /* eslint-disable camelcase */
 /* eslint-disable no-await-in-loop */
@@ -16,25 +26,22 @@ process.on('exit', exitCode => {
 });
 
 process.on('unhandledRejection', async error => {
-    Log.error('unhandledRejection', error);
+    Log.error('unhandledRejection');
     await ErrorHandler.init(error);
     process.exit(1);
 });
 
 process.on('uncaughtException', async error => {
-    Log.error('uncaughtException', error);
+    Log.error('uncaughtException');
     await ErrorHandler.init(error);
     process.exit(1);
 });
 
-const defaultToken = {
-    code: '',
-    refresh_token: '',
-};
-
-const scopes = [
-    'https://www.googleapis.com/auth/drive',
-];
+const {
+    filterError,
+    isTimeout,
+    pauseFor,
+} = new Timeout();
 
 const {
     client_id,
@@ -49,10 +56,9 @@ const oauth2Client = new google.auth.OAuth2(
 );
 
 oauth2Client.on('tokens', async ({ expiry_date, refresh_token }) => {
-    console.log('c');
     if (refresh_token) {
         const data = {
-            code: '',
+            ...defaultToken,
             refresh_token: refresh_token,
         };
 
@@ -60,9 +66,11 @@ oauth2Client.on('tokens', async ({ expiry_date, refresh_token }) => {
             `${__dirname}/token.json`,
             JSON.stringify(data),
         );
+
+        Log.log('Refresh token written');
     }
 
-    Log.log('New token, expires', expiry_date);
+    Log.log(`Access token expires ${expiry_date}`);
 });
 
 (async () => {
@@ -70,12 +78,11 @@ oauth2Client.on('tokens', async ({ expiry_date, refresh_token }) => {
     await fsPromises.writeFile(
         `${__dirname}/token.json`,
         JSON.stringify(defaultToken),
-        { flag: 'w' },
+        { flag: 'wx' },
     ).catch(() => null);
 
     if (code) {
-        const { tokens } =
-            await oauth2Client.getToken(code);
+        const { tokens } = await oauth2Client.getToken(code);
 
         oauth2Client.setCredentials(tokens);
     } else if (refreshToken) {
@@ -98,20 +105,25 @@ oauth2Client.on('tokens', async ({ expiry_date, refresh_token }) => {
     });
 
     while (true) {
-        const response = await drive.files.create({
-            requestBody: {
-                name: new Date().toLocaleString(),
-                parents: ['15KvOYG6r6To_fgXf5DOkIT6aEcUtT5rg'],
-            },
-            media: {
-                mimeType: 'application/octet-stream',
-                body: fsSync.createReadStream(`${__dirname}/../../database.db`),
-            },
-            fields: 'id',
-        });
+        try {
+            if (isTimeout()) {
+                setTimeout(pauseFor);
+            }
 
-        Log.log(response.status, response.statusText);
+            await drive.files.create({
+                requestBody: {
+                    name: new Date().toLocaleString(),
+                    parents: [parentFolder],
+                },
+                media: {
+                    mimeType: 'application/octet-stream',
+                    body: fsSync.createReadStream(`${__dirname}/../../database.db`),
+                },
+            });
 
-        await setTimeout(1000 * 60 * 30);
+            await setTimeout(interval);
+        } catch (error) {
+            await filterError(error);
+        }
     }
 })();

@@ -23,12 +23,6 @@ export const properties: ClientCommand['properties'] = {
                 description: 'Timeout in milliseconds',
                 required: true,
             },
-            {
-                name: 'force',
-                type: 5,
-                description: 'Ignore API check',
-                required: false,
-            },
         ],
     },
 };
@@ -36,23 +30,14 @@ export const properties: ClientCommand['properties'] = {
 export const execute: ClientCommand['execute'] = async (
     interaction: CommandInteraction,
 ): Promise<void> => {
-    const force = interaction.options.getBoolean('force') ?? false;
-
-    if (
-        interaction.client.config.enabled === true &&
-        force === false
-    ) {
-        const embed = new BetterEmbed(interaction)
-            .setColor(Constants.colors.warning)
-            .setTitle('API')
-            .setDescription('You must disabled the API first.');
-
-        await interaction.editReply({ embeds: [embed] });
-
-        return;
-    }
-
     const timeout = interaction.options.getInteger('timeout', true);
+
+    const currentAPI = interaction.client.config.enabled;
+    const curentDevMode = interaction.client.config.devMode;
+    interaction.client.config.enabled = false;
+    interaction.client.config.devMode = true;
+
+    await setTimeout(5000);
 
     SQLite.fullDecrypt();
     SQLite.close();
@@ -64,11 +49,13 @@ export const execute: ClientCommand['execute'] = async (
 
     await interaction.editReply({ embeds: [decrypted] });
 
-
     await setTimeout(timeout);
 
     SQLite.open();
     SQLite.encrypt();
+
+    interaction.client.config.enabled = currentAPI;
+    interaction.client.config.enabled = curentDevMode;
 
     const encrypted = new BetterEmbed(interaction)
         .setColor(Constants.colors.normal)
