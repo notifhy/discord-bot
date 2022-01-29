@@ -2,10 +2,12 @@ import type { ClientCommand } from '../@types/client';
 import { CommandInteraction } from 'discord.js';
 import { setTimeout } from 'node:timers/promises';
 import { SQLite } from '../util/SQLite';
+import { BetterEmbed } from '../util/utility';
+import Constants from '../util/Constants';
 
 export const properties: ClientCommand['properties'] = {
     name: 'accessdb',
-    description: 'Does stuff',
+    description: 'Access the database',
     cooldown: 0,
     ephemeral: true,
     noDM: false,
@@ -13,18 +15,18 @@ export const properties: ClientCommand['properties'] = {
     requireRegistration: false,
     structure: {
         name: 'accessdb',
-        description: 'access db',
+        description: 'Access the database',
         options: [
             {
                 name: 'timeout',
                 type: 4,
-                description: 'timeout in ms',
+                description: 'Timeout in milliseconds',
                 required: true,
             },
             {
                 name: 'force',
                 type: 5,
-                description: 'ignore warnings',
+                description: 'Ignore API check',
                 required: false,
             },
         ],
@@ -40,9 +42,12 @@ export const execute: ClientCommand['execute'] = async (
         interaction.client.config.enabled === true &&
         force === false
     ) {
-        await interaction.editReply({
-            content: 'You must disable the API first',
-        });
+        const embed = new BetterEmbed(interaction)
+            .setColor(Constants.colors.warning)
+            .setTitle('API')
+            .setDescription('You must disabled the API first.');
+
+        await interaction.editReply({ embeds: [embed] });
 
         return;
     }
@@ -52,16 +57,26 @@ export const execute: ClientCommand['execute'] = async (
     SQLite.fullDecrypt();
     SQLite.close();
 
-    await interaction.editReply({
-        content: `Database decrypted, encrypting in ${timeout}`,
-    });
+    const decrypted = new BetterEmbed(interaction)
+        .setColor(Constants.colors.normal)
+        .setTitle('Decrypted')
+        .setDescription(`Database decrypted, encrypting in ${timeout}`);
+
+    await interaction.editReply({ embeds: [decrypted] });
+
 
     await setTimeout(timeout);
 
     SQLite.open();
     SQLite.encrypt();
+
+    const encrypted = new BetterEmbed(interaction)
+        .setColor(Constants.colors.normal)
+        .setTitle('Encrypted')
+        .setDescription('Database encrypted');
+
     await interaction.followUp({
-        content: 'Database encrypted',
+        embeds: [encrypted],
         ephemeral: true,
     });
 };
