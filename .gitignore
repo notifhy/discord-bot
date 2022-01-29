@@ -7,6 +7,7 @@
 
 # ignore files with secrets
 config.json
+token.json
 
 # ignore compiled js
 **.js
