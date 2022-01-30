@@ -4,8 +4,8 @@ import {
     clientID,
     discordAPIkey as token,
 } from '../../config.json';
-import { CommandInteraction } from 'discord.js';
 import { Log } from '../util/Log';
+import { RegionLocales } from '../../locales/RegionLocales';
 import { REST } from '@discordjs/rest';
 import { Routes } from 'discord-api-types/v9';
 import fs from 'node:fs/promises';
@@ -74,8 +74,11 @@ export const properties: ClientCommand['properties'] = {
 };
 
 export const execute: ClientCommand['execute'] = async (
-    interaction: CommandInteraction,
+    interaction,
+    locale,
 ): Promise<void> => {
+    const text = RegionLocales.locale(locale).commands.deploy;
+
     const commandFiles = (await fs.readdir(__dirname)).filter(file =>
         file.endsWith('.ts'),
     );
@@ -122,12 +125,12 @@ export const execute: ClientCommand['execute'] = async (
 
     const successEmbed = new BetterEmbed(interaction)
         .setColor(Constants.colors.normal)
-        .setTitle('Success!')
+        .setTitle(text.title)
         .setDescription(
             JSON.stringify(commands, null, 2).slice(
                 0,
                 Constants.limits.embedDescription,
-            ) ?? 'None',
+            ) ?? text.none,
         );
 
     Log.command(interaction, `Scope: ${scope} | Type: ${type} | Guild ID: ${guildID}`);

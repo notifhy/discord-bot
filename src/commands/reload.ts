@@ -6,6 +6,7 @@ import type { ClientModule } from '../@types/modules';
 import { BetterEmbed } from '../util/utility';
 import { CommandInteraction } from 'discord.js';
 import { Log } from '../util/Log';
+import { RegionLocales } from '../../locales/RegionLocales';
 import Constants from '../util/Constants';
 
 export const properties: ClientCommand['properties'] = {
@@ -63,8 +64,12 @@ export const properties: ClientCommand['properties'] = {
 };
 
 export const execute: ClientCommand['execute'] = async (
-    interaction: CommandInteraction,
+    interaction,
+    locale,
 ): Promise<void> => {
+    const text = RegionLocales.locale(locale).commands.reload;
+    const { replace } = RegionLocales;
+
     switch (interaction.options.getSubcommand()) {
         case 'all': await reloadAll();
         break;
@@ -93,12 +98,11 @@ export const execute: ClientCommand['execute'] = async (
 
         const reloadedEmbed = new BetterEmbed(interaction)
             .setColor(Constants.colors.normal)
-            .setTitle(`Reloaded Everything`)
-            .setDescription(
-                `All imports have been reloaded! This action took ${
-                    Date.now() - now
-                } milliseconds.`,
-            );
+            .setTitle(text.all.title)
+            .setDescription(replace(text.all.description, {
+                imports: promises.length,
+                timeTaken: Date.now() - now,
+            }));
 
         Log.command(interaction, `All imports have been reloaded after ${
             Date.now() - now
@@ -109,7 +113,7 @@ export const execute: ClientCommand['execute'] = async (
 
     async function reloadSingle() {
         const now = Date.now();
-        const typeName = interaction.options.getString('type');
+        const typeName = interaction.options.getString('type', true);
         const type =
             interaction.client[
                 typeName as keyof Pick<
@@ -123,10 +127,11 @@ export const execute: ClientCommand['execute'] = async (
         if (selected === undefined) {
             const undefinedSelected = new BetterEmbed(interaction)
                 .setColor(Constants.colors.warning)
-                .setTitle('Unknown Item')
-                .setDescription(
-                    `There is no item with the structure ${typeName}.${item}!`,
-                );
+                .setTitle(text.single.unknown.title)
+                .setDescription(replace(text.single.unknown.description, {
+                    typeName: typeName,
+                    item: item,
+                }));
 
             await interaction.editReply({ embeds: [undefinedSelected] });
             return;
@@ -142,12 +147,12 @@ export const execute: ClientCommand['execute'] = async (
 
         const reloadedEmbed = new BetterEmbed(interaction)
             .setColor(Constants.colors.normal)
-            .setTitle(`Reloaded`)
-            .setDescription(
-                `${typeName}.${item} was successfully reloaded! This action took ${
-                    Date.now() - now
-                } milliseconds.`,
-            );
+            .setTitle(text.single.success.title)
+            .setDescription(replace(text.single.success.description, {
+                typeName: typeName,
+                item: item,
+                timeTaken: Date.now() - now,
+            }));
 
         Log.command(interaction, `${typeName}.${item} was successfully reloaded after ${
             Date.now() - now

@@ -4,11 +4,11 @@ import {
     cleanLength,
     cleanRound,
 } from '../util/utility';
-import { CommandInteraction } from 'discord.js';
 import { keyLimit } from '../../config.json';
-import { Log } from '../util/Log';
-import { RequestManager } from '../hypixel/RequestManager';
 import { HypixelErrors } from '../hypixel/HypixelErrors';
+import { Log } from '../util/Log';
+import { RegionLocales } from '../../locales/RegionLocales';
+import { RequestManager } from '../hypixel/RequestManager';
 import Constants from '../util/Constants';
 
 export const properties: ClientCommand['properties'] = {
@@ -160,164 +160,152 @@ export const properties: ClientCommand['properties'] = {
 type errorTypes = 'abort' | 'rateLimit' | 'error';
 
 export const execute: ClientCommand['execute'] = async (
-    interaction: CommandInteraction,
+    interaction,
+    locale,
 ): Promise<void> => {
+    const text = RegionLocales.locale(locale).commands.api;
+    const { replace } = RegionLocales;
+
     switch (interaction.options.getSubcommand()) {
-        case 'stats':
-            await stats(interaction);
+        case 'stats': await stats();
             break;
-        case 'instance':
-            await instance(
-                interaction,
-                interaction.options.getString('type', true),
-                interaction.options.getNumber('value', true),
-            );
+        case 'instance': await instance();
             break;
-        case 'set':
-            await set(
-                interaction,
-                interaction.options.getString('category') as errorTypes,
-                interaction.options.getString('type', true),
-                interaction.options.getNumber('value', true),
-            );
+        case 'set': await set();
             break;
-        case 'call':
-            await call(
-                interaction,
-                interaction.options.getString('method', true),
-                interaction.options.getBoolean('value'),
-            );
+        case 'call': await call();
             break;
         //no default
     }
-};
 
-async function stats(interaction: CommandInteraction) {
-    const { abort, rateLimit, resumeAfter, error } =
-        interaction.client.hypixel.errors;
-    const { uses, keyPercentage } =
-        interaction.client.hypixel.request;
+    async function stats() {
+        const { abort, rateLimit, resumeAfter, error } =
+            interaction.client.hypixel.errors;
+        const { uses, keyPercentage } =
+            interaction.client.hypixel.request;
 
-    const statsEmbed = new BetterEmbed(interaction)
-        .setColor(Constants.colors.normal)
-        .setDescription(
-            JSON.stringify(
-                interaction.client.hypixel.request.performance,
-            ).slice(0, Constants.limits.embedDescription),
-        )
-        .addField(
-            'Enabled',
-            interaction.client.config.enabled === true ? 'Yes' : 'No',
-        )
-        .addField(
-            'Resuming In',
-            cleanLength(resumeAfter - Date.now()) ?? 'Not applicable',
-        )
-        .addField(
-            'Global Rate Limit',
-            rateLimit.isGlobal === true ? 'Yes' : 'No',
-        )
-        .addField(
-            'Last Minute Statistics',
-            `Aborts: ${abort.lastMinute}
-            Rate Limit Hits: ${rateLimit.lastMinute}
-            Other Errors: ${error.lastMinute}`,
-        )
-        .addField(
-            'Next Timeout Lengths',
-            `May not be accurate
-            Abort Errors: ${cleanLength(abort.timeout)}
-            Rate Limit Errors: ${cleanLength(rateLimit.timeout)}
-            Other Errors: ${cleanLength(error.timeout)}`,
-        )
-        .addField(
-            'API Key',
-            `Dedicated Queries: ${cleanRound(
-                keyPercentage * keyLimit,
-                1,
-            )} or ${cleanRound(keyPercentage * 100, 1)}%
-            Instance Queries: ${uses}`,
-        );
+        const statsEmbed = new BetterEmbed(interaction)
+            .setColor(Constants.colors.normal)
+            .setDescription(
+                JSON.stringify(
+                    interaction.client.hypixel.request.performance,
+                ).slice(0, Constants.limits.embedDescription),
+            )
+            .addField(
+                'Enabled',
+                interaction.client.config.enabled === true ? 'Yes' : 'No',
+            )
+            .addField(
+                'Resuming In',
+                cleanLength(resumeAfter - Date.now()) ?? 'Not applicable',
+            )
+            .addField(
+                'Global Rate Limit',
+                rateLimit.isGlobal === true ? 'Yes' : 'No',
+            )
+            .addField(
+                'Last Minute Statistics',
+                `Aborts: ${abort.lastMinute}
+                Rate Limit Hits: ${rateLimit.lastMinute}
+                Other Errors: ${error.lastMinute}`,
+            )
+            .addField(
+                'Next Timeout Lengths',
+                `May not be accurate
+                Abort Errors: ${cleanLength(abort.timeout)}
+                Rate Limit Errors: ${cleanLength(rateLimit.timeout)}
+                Other Errors: ${cleanLength(error.timeout)}`,
+            )
+            .addField(
+                'API Key',
+                `Dedicated Queries: ${cleanRound(
+                    keyPercentage * keyLimit,
+                    1,
+                )} or ${cleanRound(keyPercentage * 100, 1)}%
+                Instance Queries: ${uses}`,
+            );
 
-    await interaction.editReply({
-        embeds: [statsEmbed],
-    });
-}
-
-async function instance(
-    interaction: CommandInteraction,
-    type: string,
-    value: number,
-) {
-    if (type === 'keyPercentage' && value > 1) {
-        throw new Error('Too high, must be below 1');
-    }
-
-    interaction.client.hypixel.request[
-        type as keyof Omit<RequestManager, 'baseURL' | 'getURLs' | 'hypixelRequest' | 'performance' | 'request'>
-    ] = value;
-
-    const setEmbed = new BetterEmbed(interaction)
-        .setColor(Constants.colors.normal)
-        .setTitle('Updated Value!')
-        .setDescription(
-            `<RequestManager>.instance.${type} is now ${value}.`,
-        );
-
-    Log.command(interaction, setEmbed.description);
-
-    await interaction.editReply({
-        embeds: [setEmbed],
-    });
-}
-
-async function set(
-    interaction: CommandInteraction,
-    category: errorTypes,
-    type: string,
-    value: number,
-) {
-    interaction.client.hypixel.errors[category][
-        type as keyof HypixelErrors[errorTypes]
-    ] = value;
-    const setEmbed = new BetterEmbed(interaction)
-        .setColor(Constants.colors.normal)
-        .setTitle('Updated Value!')
-        .setDescription(
-            `<HypixelErrors>.${category}.${type} is now ${value}.`,
-        );
-
-    Log.command(interaction, setEmbed.description);
-
-    await interaction.editReply({
-        embeds: [setEmbed],
-    });
-}
-
-async function call(
-    interaction: CommandInteraction,
-    type: string,
-    value: boolean | null,
-) {
-    const hypixelModuleErrors = interaction.client.hypixel.errors;
-    if (type === 'addAbort' || type === 'addError') {
-        hypixelModuleErrors[type]();
-    } else if (type === 'addRateLimit') {
-        hypixelModuleErrors[type]({
-            rateLimitGlobal: value ?? false,
-            ratelimitReset: null,
+        await interaction.editReply({
+            embeds: [statsEmbed],
         });
     }
-    const callEmbed = new BetterEmbed(interaction)
-        .setColor(Constants.colors.normal)
-        .setTitle('Executed!')
-        .setDescription(`Executed <HypixelErrors>.${type}`);
 
-    Log.command(interaction, callEmbed.description);
+    async function instance() {
+        const type = interaction.options.getString('type', true);
+        const value = interaction.options.getNumber('value', true);
 
-    await stats(interaction);
-    await interaction.followUp({
-        embeds: [callEmbed],
-        ephemeral: true,
-    });
-}
+        if (type === 'keyPercentage' && value > 1) {
+            throw new Error('Too high, must be below 1');
+        }
+
+        interaction.client.hypixel.request[
+            type as keyof Omit<RequestManager, 'baseURL' | 'getURLs' | 'hypixelRequest' | 'performance' | 'request'>
+        ] = value;
+
+        const setEmbed = new BetterEmbed(interaction)
+            .setColor(Constants.colors.normal)
+            .setTitle(text.instance.title)
+            .setDescription(replace(text.instance.description, {
+                type: type,
+                value: value,
+            }));
+
+        Log.command(interaction, setEmbed.description);
+
+        await interaction.editReply({
+            embeds: [setEmbed],
+        });
+    }
+
+    async function set() {
+        const category = interaction.options.getString('category', true) as errorTypes;
+        const type = interaction.options.getString('type', true);
+        const value = interaction.options.getNumber('value', true);
+
+        interaction.client.hypixel.errors[category][
+            type as keyof HypixelErrors[errorTypes]
+        ] = value;
+        const setEmbed = new BetterEmbed(interaction)
+            .setColor(Constants.colors.normal)
+            .setTitle(text.set.title)
+            .setDescription(replace(text.set.description, {
+                category: category,
+                value: value,
+            }));
+
+        Log.command(interaction, setEmbed.description);
+
+        await interaction.editReply({
+            embeds: [setEmbed],
+        });
+    }
+
+    async function call() {
+        const method = interaction.options.getString('method', true);
+        const value = interaction.options.getBoolean('value');
+
+        const hypixelModuleErrors = interaction.client.hypixel.errors;
+        if (method === 'addAbort' || method === 'addError') {
+            hypixelModuleErrors[method]();
+        } else if (method === 'addRateLimit') {
+            hypixelModuleErrors[method]({
+                rateLimitGlobal: value ?? false,
+                ratelimitReset: null,
+            });
+        }
+        const callEmbed = new BetterEmbed(interaction)
+            .setColor(Constants.colors.normal)
+            .setTitle(text.call.title)
+            .setDescription(replace(text.call.title, {
+                method: method,
+            }));
+
+        Log.command(interaction, callEmbed.description);
+
+        await stats();
+        await interaction.followUp({
+            embeds: [callEmbed],
+            ephemeral: true,
+        });
+    }
+};

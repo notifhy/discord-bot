@@ -1,5 +1,71 @@
 {
     "commands": {
+        "accessdb": {
+            "decrypted": {
+                "title": "Decrypted",
+                "description": "Database decrypted, encrypting in %{timeout}%."
+            },
+            "encrypted": {
+                "title": "Encrypted",
+                "description": "Database encrypted."
+            }
+        },
+        "api": {
+            "instance": {
+                "title": "Updated Value!",
+                "description": "<RequestManager>.instance.%{type}% is now %{value}%."
+            },
+            "set": {
+                "title": "Updated Value!",
+                "description": "<HypixelErrors>.%{category}%.%{type}% is now %{value}%."
+            },
+            "call": {
+                "title": "Executed!",
+                "description": "Executed <HypixelErrors>.%{method}%."
+            }
+        },
+        "botstatus": {
+            "set": {
+                "title": "Status Set",
+                "description": "The status is now set to %{status}%!"
+            },
+            "cleared": {
+                "title": "Status Cleared'",
+                "description": "The status is now automatic!"
+            }
+        },
+        "config": {
+            "on": "on",
+            "off": "off",
+            "api": {
+                "title": "API State Updated!",
+                "description": "API commands and functions are now %{state}%!"
+            },
+            "blockGuild": {
+                "add": {
+                    "title": "Guild Added",
+                    "description": "%{guildID}% was added to the blacklist!"
+                },
+                "remove": {
+                    "title": "Guild Removed",
+                    "description": "%{guildID}% was removed to the blacklist!"
+                }
+            },
+            "blockUser": {
+                "add": {
+                    "title": "User Added",
+                    "description": "%{userID}% was added to the blacklist!"
+                },
+                "remove": {
+                    "title": "User Removed",
+                    "description": "%{userID}% was removed to the blacklist!"
+                }
+            },
+            "devMode": {
+                "title": "Developer Mode Updated",
+                "description": "`Developer Mode is now %{state}%!"
+            }
+        },
         "data": {
             "delete": {
                 "confirm": {
@@ -40,10 +106,46 @@
                 }
             }
         },
+        "deploy": {
+            "title": "Success!",
+            "none": "None"
+        },
+        "eval": {
+            "maxLength": {
+                "name": "Over Max Length",
+                "value": "The error is over 1024 characters long"
+            },
+            "success": {
+                "title": "Executed Eval!",
+                "input": {
+                    "name": "Input",
+                    "value": "%{input}%"
+                },
+                "output": {
+                    "name": "Output",
+                    "value": "%{output}%"
+                },
+                "type": {
+                    "name": "Type",
+                    "value": "%{type}%"
+                },
+                "timeTaken": {
+                    "name": "Time Taken",
+                    "value": "%{ms}%"
+                }
+            },
+            "fail": {
+                "title": "Failed Eval",
+                "input": {
+                    "name": "Input",
+                    "value": "%{input}%"
+                }
+            }
+        },
         "help": {
             "information": {
                 "title": "Information",
-                "description": "placeholder"
+                "description": "This is a bot"
             },
             "all": {
                 "title": "Commands",
@@ -549,6 +651,13 @@
                 }
             }
         },
+        "performance": {
+            "title": "Performance",
+            "latest": {
+                "name": "Latest Performance",
+                "value": "Hypixel API Fetch: %{fetchPerformance}%ms\nProcess Data: %{processPerformance}ms\nModule Execution: ${modulePerformance}ms\nTotal: %{total}%ms"
+            }
+        },
         "ping": {
             "embed1": {
                 "title": "Pinging.."
@@ -640,6 +749,49 @@
                 "value": "/help • See information about any command or about this bot\n/language • Set a language for this bot"
             }
         },
+        "reload": {
+            "all": {
+                "title": "Reloaded Everything",
+                "description": "%{imports}% imports have been reloaded! This action took %{timeTaken}%ms"
+            },
+            "single": {
+                "unknown": {
+                    "title": "Unknown Item",
+                    "description": "There is no item with the structure %{typeName}%.%{item}%!"
+                },
+                "success": {
+                    "title": "Reloaded",
+                    "description": "%{typeName}%.%{item}% was successfully reloaded! This action took %{timeTaken}% milliseconds."
+                }
+            }
+        },
+        "snowflake": {
+            "title": "Snowflake",
+            "input": {
+                "name": "Input",
+                "value": "%{input}%"
+            },
+            "length": {
+                "name": "Length",
+                "value": "%{length}%"
+            },
+            "date": {
+                "name": "Date",
+                "value": "Date: %{date}%\nTime: %{time}%\nRelative: %{relative}%"
+            },
+            "worker": {
+                "name": "Worker ID",
+                "value": "%{worker}%"
+            },
+            "process": {
+                "name": "'Process ID",
+                "value": "%{process}%"
+            },
+            "increment": {
+                "name": "Increment",
+                "value": "%{increment}%"
+            }
+        },
         "system": {
             "embed": {
                 "title": "System",
@@ -667,6 +819,21 @@
                     "name": "Hypixel API",
                     "value": "Fetches: %{uses}%\nRefresh Interval: %{updateInterval}%"
                 }
+            }
+        },
+        "systemmessage": {
+            "notFound": {
+                "title": "User not found",
+                "description": "%{id}% was not found"
+            },
+            "preview": {
+                "buttonLabel": "Looks Good",
+                "title": "Preview",
+                "description": "Your preview is below. To abort, ignore this message."
+            },
+            "success": {
+                "title": "Success",
+                "description": "Your message was queued."
             }
         }
     },
@@ -786,16 +953,6 @@
             }
         },
         "friends": {
-            "missingData": {
-                "title": "Missing Data",
-                "description": "Your last login and/or last logout data returned undefined for the Friend module. Login and logout notifications are now disabled. This may be a result of disabling the `Online` API option on Hypixel or setting your social status to offline. Notifications will resume and you will receive another DM once this data is no longer missing.",
-                "footer": "Issue"
-            },
-            "receivedData": {
-                "title": "Received Data",
-                "description": "Your last login and/or last logout data is no longer undefined for the Friend module. Login and logout notifications will now resume.",
-                "footer": "Notification"
-            },
             "missingPermissions": {
                 "name": "Friend Module Disabled",
                 "value": "The Friends module was disabled because this bot is missing the following permission(s) in the channel %{channel}%: %{missingPermissions}%."

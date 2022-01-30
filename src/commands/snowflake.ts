@@ -1,6 +1,7 @@
 import type { ClientCommand } from '../@types/client';
 import { BetterEmbed, timestamp } from '../util/utility';
-import { CommandInteraction, SnowflakeUtil } from 'discord.js';
+import { RegionLocales } from '../../locales/RegionLocales';
+import { SnowflakeUtil } from 'discord.js';
 import Constants from '../util/Constants';
 
 export const properties: ClientCommand['properties'] = {
@@ -26,8 +27,12 @@ export const properties: ClientCommand['properties'] = {
 };
 
 export const execute: ClientCommand['execute'] = async (
-    interaction: CommandInteraction,
+    interaction,
+    locale,
 ): Promise<void> => {
+    const text = RegionLocales.locale(locale).commands.snowflake;
+    const { replace } = RegionLocales;
+
     const snowflake = interaction.options.getString('snowflake', true);
 
     const {
@@ -39,16 +44,27 @@ export const execute: ClientCommand['execute'] = async (
 
     const snowflakeEmbed = new BetterEmbed(interaction)
         .setColor(Constants.colors.normal)
-        .addField('Input', snowflake)
-        .addField('Length', String(snowflake.length))
-        .setTitle('Snowflake')
-        .addField('Date',
-        `Date: ${String(timestamp(time, 'D'))}
-        Time: ${String(timestamp(time, 'T'))}
-        Relative: ${String(timestamp(time, 'R'))}`)
-        .addField('Worker ID', String(workerId))
-        .addField('Process ID', String(processId))
-        .addField('Increment', String(increment));
+        .setTitle(text.title)
+        .addField(text.input.name, replace(text.input.value, {
+            snowflake: snowflake,
+        }))
+        .addField(text.length.name, replace(text.length.value, {
+            length: String(snowflake.length),
+        }))
+        .addField(text.date.name, replace(text.date.value, {
+            date: String(timestamp(time, 'D')),
+            time: String(timestamp(time, 'T')),
+            relative: String(timestamp(time, 'R')),
+        }))
+        .addField(text.worker.name, replace(text.worker.value, {
+            worker: String(workerId),
+        }))
+        .addField(text.process.name, replace(text.process.value, {
+            process: String(processId),
+        }))
+        .addField(text.increment.name, replace(text.increment.value, {
+            increment: String(increment),
+        }));
 
     await interaction.editReply({ embeds: [snowflakeEmbed] });
 };

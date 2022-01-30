@@ -1,7 +1,7 @@
 import type { ClientCommand } from '../@types/client';
 import { BetterEmbed } from '../util/utility';
-import { CommandInteraction } from 'discord.js';
 import { Log } from '../util/Log';
+import { RegionLocales } from '../../locales/RegionLocales';
 import Constants from '../util/Constants';
 
 export const properties: ClientCommand['properties'] = {
@@ -39,8 +39,12 @@ export const properties: ClientCommand['properties'] = {
 };
 
 export const execute: ClientCommand['execute'] = async (
-    interaction: CommandInteraction,
+    interaction,
+    locale,
 ): Promise<void> => {
+    const text = RegionLocales.locale(locale).commands.botstatus;
+    const { replace } = RegionLocales;
+
     const responseEmbed = new BetterEmbed(interaction)
         .setColor(Constants.colors.normal);
 
@@ -53,11 +57,16 @@ export const execute: ClientCommand['execute'] = async (
             name: status,
         });
 
-        responseEmbed.setTitle('Status Set');
-        responseEmbed.setDescription(`The status is now set to ${status}!`);
+        responseEmbed
+            .setTitle(text.set.title)
+            .setDescription(replace(text.set.description, {
+                status: status,
+            }));
     } else {
-        responseEmbed.setTitle('Status Cleared');
-        responseEmbed.setDescription('The status is now automatic!');
+        responseEmbed
+            .setTitle(text.cleared.title)
+            .setDescription(text.cleared.description);
+
         interaction.client.customStatus = null;
     }
 

@@ -1,6 +1,6 @@
 import type { ClientCommand } from '../@types/client';
 import { BetterEmbed } from '../util/utility';
-import { CommandInteraction } from 'discord.js';
+import { RegionLocales } from '../../locales/RegionLocales';
 import Constants from '../util/Constants';
 
 export const properties: ClientCommand['properties'] = {
@@ -18,8 +18,12 @@ export const properties: ClientCommand['properties'] = {
 };
 
 export const execute: ClientCommand['execute'] = async (
-    interaction: CommandInteraction,
+    interaction,
+    locale,
 ): Promise<void> => {
+    const text = RegionLocales.locale(locale).commands.performance;
+    const { replace } = RegionLocales;
+
     const {
         fetch: fetchPerformance,
         process: processPerformance,
@@ -29,21 +33,16 @@ export const execute: ClientCommand['execute'] = async (
 
     const responseEmbed = new BetterEmbed(interaction)
         .setColor(Constants.colors.normal)
-        .setTitle('Performance')
+        .setTitle(text.title)
         .addFields([
             {
-                name: 'Latest Performance',
-                value:
-                `Hypixel API Fetch: ${
-                    fetchPerformance
-                }ms
-                Process Data: ${
-                    processPerformance
-                }ms
-                Module Execution: ${
-                    modulePerformance
-                }ms
-                Total: ${total}ms`,
+                name: text.latest.name,
+                value: replace(text.latest.value, {
+                    fetchPerformance: fetchPerformance,
+                    processPerformance: processPerformance,
+                    modulePerformance: modulePerformance,
+                    total: total,
+                }),
             },
         ]);
 

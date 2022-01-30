@@ -7,7 +7,6 @@ import {
     timestamp,
 } from '../util/utility';
 import {
-    CommandInteraction,
     Constants as DiscordConstants,
     Message,
     MessageActionRow,
@@ -16,6 +15,7 @@ import {
     MessageEmbed,
 } from 'discord.js';
 import { Log } from '../util/Log';
+import { RegionLocales } from '../../locales/RegionLocales';
 import { SQLite } from '../util/SQLite';
 import Constants from '../util/Constants';
 
@@ -54,8 +54,12 @@ export const properties: ClientCommand['properties'] = {
 };
 
 export const execute: ClientCommand['execute'] = async (
-    interaction: CommandInteraction,
+    interaction,
+    locale,
 ): Promise<void> => {
+    const text = RegionLocales.locale(locale).commands.systemmessage;
+    const { replace } = RegionLocales;
+
     const id = interaction.options.getString('id', true);
 
     const userData =
@@ -69,8 +73,10 @@ export const execute: ClientCommand['execute'] = async (
     if (userData === undefined) {
         const notFoundEmbed = new BetterEmbed(interaction)
             .setColor(Constants.colors.normal)
-            .setTitle('User not found')
-            .setDescription(`${id} was not found`);
+            .setTitle(text.notFound.title)
+            .setDescription(replace(text.notFound.description, {
+                id: id,
+            }));
 
         await interaction.editReply({
             embeds: [notFoundEmbed],
@@ -88,14 +94,14 @@ export const execute: ClientCommand['execute'] = async (
         .setComponents(
             new MessageButton()
                 .setCustomId('true')
-                .setLabel('Looks Good')
+                .setLabel(text.preview.buttonLabel)
                 .setStyle(DiscordConstants.MessageButtonStyles.PRIMARY),
         );
 
     const validateEmbed = new BetterEmbed(interaction)
         .setColor(Constants.colors.normal)
-        .setTitle('Preview')
-        .setDescription('Your preview is below. To abort, ignore this message.')
+        .setTitle(text.preview.title)
+        .setDescription(text.preview.description)
         .addField('ID', id)
         .addField(name, value);
 
@@ -146,8 +152,8 @@ export const execute: ClientCommand['execute'] = async (
     });
 
     const successEmbed = new MessageEmbed(validateEmbed)
-        .setTitle('Success')
-        .setDescription('Your message was queued.');
+        .setTitle(text.success.title)
+        .setDescription(text.success.description);
 
     Log.command(interaction, name);
 

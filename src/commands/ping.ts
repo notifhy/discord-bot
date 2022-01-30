@@ -14,7 +14,7 @@ export const properties: ClientCommand['properties'] = {
     cooldown: 5_000,
     ephemeral: true,
     noDM: false,
-    ownerOnly: false,
+    ownerOnly: true,
     requireRegistration: false,
     structure: {
         name: 'ping',

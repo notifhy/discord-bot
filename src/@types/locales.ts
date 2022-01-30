@@ -62,6 +62,37 @@ export interface Field {
 /*
 Command Interface
 */
+export interface AccessDB {
+    decrypted: BaseEmbed,
+    encrypted: BaseEmbed,
+}
+
+export interface API {
+    instance: BaseEmbed,
+    set: BaseEmbed,
+    call: BaseEmbed,
+}
+
+export interface BotStatus {
+    set: BaseEmbed,
+    cleared: BaseEmbed,
+}
+
+export interface Config {
+    on: string,
+    off: string,
+    api: BaseEmbed,
+    blockGuild: {
+        add: BaseEmbed,
+        remove: BaseEmbed,
+    },
+    blockUser: {
+        add: BaseEmbed,
+        remove: BaseEmbed,
+    },
+    devMode: BaseEmbed,
+}
+
 export interface Data {
     delete: {
         confirm: BaseEmbed,
@@ -89,6 +120,26 @@ export interface Data {
             gameMap: string,
         },
     },
+}
+
+export interface Deploy {
+    title: string,
+    none: string,
+}
+
+export interface Eval {
+    maxLength: Field,
+    success: {
+        title: string,
+        input: Field,
+        output: Field,
+        type: Field,
+        timeTaken: Field,
+    },
+    fail: {
+        title: string,
+        input: Field,
+    }
 }
 
 export interface Help {
@@ -188,6 +239,11 @@ export interface ModulesCommand {
     },
 }
 
+export interface Performance {
+    title: string,
+    latest: Field,
+}
+
 export interface Ping {
     embed1: {
         title: string,
@@ -233,6 +289,24 @@ export interface Register {
     field: Field,
 }
 
+export interface Reload {
+    all: BaseEmbed,
+    single: {
+        unknown: BaseEmbed,
+        success: BaseEmbed,
+    }
+}
+
+export interface Snowflake {
+    title: string,
+    input: Field,
+    length: Field,
+    date: Field,
+    worker: Field,
+    process: Field,
+    increment: Field,
+}
+
 export interface System {
     embed: {
         title: string,
@@ -245,15 +319,33 @@ export interface System {
     }
 }
 
+export interface SystemMessage {
+    notFound: BaseEmbed,
+    preview: {
+        buttonLabel: string
+    } & BaseEmbed,
+    success: BaseEmbed,
+}
+
 export interface Commands {
+    accessdb: AccessDB,
+    api: API,
+    botstatus: BotStatus,
+    config: Config,
     data: Data,
+    deploy: Deploy,
+    eval: Eval,
     help: Help,
     language: Language,
     modules: ModulesCommand,
+    performance: Performance,
     ping: Ping,
     player: Player,
     register: Register,
+    reload: Reload,
+    snowflake: Snowflake,
     system: System,
+    systemmessage: SystemMessage,
 }
 
 /*

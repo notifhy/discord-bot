@@ -3,11 +3,9 @@ import type {
     Config,
 } from '../@types/client';
 import { BetterEmbed } from '../util/utility';
-import {
-    CommandInteraction,
-    WebhookEditMessageOptions,
-} from 'discord.js';
+import { WebhookEditMessageOptions } from 'discord.js';
 import { Log } from '../util/Log';
+import { RegionLocales } from '../../locales/RegionLocales';
 import { SQLite } from '../util/SQLite';
 import Constants from '../util/Constants';
 
@@ -64,8 +62,12 @@ export const properties: ClientCommand['properties'] = {
 };
 
 export const execute: ClientCommand['execute'] = async (
-    interaction: CommandInteraction,
+    interaction,
+    locale,
 ): Promise<void> => {
+    const text = RegionLocales.locale(locale).commands.config;
+    const replace = RegionLocales.replace;
+
     const config = await SQLite.queryGet<Config>({
         query: 'SELECT blockedGuilds, blockedUsers, devMode, enabled FROM config WHERE rowid = 1',
     });
@@ -91,12 +93,12 @@ export const execute: ClientCommand['execute'] = async (
 
         const apiEmbed = new BetterEmbed(interaction)
             .setColor(Constants.colors.normal)
-            .setTitle(`API State Updated!`)
-            .setDescription(
-                `API commands and functions are now ${
-                    config.enabled === true ? 'on' : 'off'
-                }!`,
-            );
+            .setTitle(text.api.title)
+            .setDescription(replace(text.api.description, {
+                state: config.enabled === true
+                    ? text.on
+                    : text.off,
+            }));
 
         payload.embeds = [apiEmbed];
 
@@ -117,8 +119,10 @@ export const execute: ClientCommand['execute'] = async (
             await guild.leave();
 
             guildEmbed
-                .setTitle(`Guild Added`)
-                .setDescription(`${guildID} was added to the blacklist!`);
+                .setTitle(text.blockGuild.add.title)
+                .setDescription(replace(text.blockGuild.add.description, {
+                    guildID: guildID,
+                }));
 
             payload.files = [
                 {
@@ -132,10 +136,10 @@ export const execute: ClientCommand['execute'] = async (
             config.blockedGuilds.splice(blockedGuildIndex, 1);
 
             guildEmbed
-                .setTitle(`Guild Removed`)
-                .setDescription(
-                    `${guildID} was removed from the blacklist!`,
-                );
+                .setTitle(text.blockGuild.remove.title)
+                .setDescription(replace(text.blockGuild.remove.description, {
+                    guildID: guildID,
+                }));
 
             payload.embeds = [guildEmbed];
         }
@@ -148,24 +152,28 @@ export const execute: ClientCommand['execute'] = async (
     }
 
     function blockUserCommand() {
-        const user = interaction.options.getString('user', true);
-        const blockedUserIndex = config.blockedUsers.indexOf(user);
+        const userID = interaction.options.getString('user', true);
+        const blockedUserIndex = config.blockedUsers.indexOf(userID);
 
         const userEmbed = new BetterEmbed(interaction)
                 .setColor(Constants.colors.normal);
 
         if (blockedUserIndex === -1) {
-            config.blockedUsers.push(user);
+            config.blockedUsers.push(userID);
 
             userEmbed
-                .setTitle(`User Added`)
-                .setDescription(`${user} was added to the blacklist!`);
+                .setTitle(text.blockUser.remove.title)
+                .setDescription(replace(text.blockUser.remove.description, {
+                    userID: userID,
+                }));
         } else {
             config.blockedUsers.splice(blockedUserIndex, 1);
 
             userEmbed
-                .setTitle(`User Removed`)
-                .setDescription(`${user} was removed from the blacklist!`);
+                .setTitle(text.blockUser.remove.title)
+                .setDescription(replace(text.blockUser.remove.description, {
+                    userID: userID,
+                }));
         }
 
         payload.embeds = [userEmbed];
@@ -181,12 +189,12 @@ export const execute: ClientCommand['execute'] = async (
 
         const devmodeEmbed = new BetterEmbed(interaction)
             .setColor(Constants.colors.normal)
-            .setTitle(`Developer Mode Updated`)
-            .setDescription(
-                `Developer Mode is now ${
-                    config.devMode ? 'on' : 'off'
-                }!`,
-            );
+            .setTitle(text.devMode.title)
+            .setDescription(replace(text.devMode.description, {
+                state: config.enabled === true
+                    ? text.on
+                    : text.off,
+            }));
 
         payload.embeds = [devmodeEmbed];
 

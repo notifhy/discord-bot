@@ -13,11 +13,11 @@ import process from 'node:process';
 
 export const properties: ClientCommand['properties'] = {
     name: 'system',
-    description: 'View system information, including how often your data will be refreshed',
+    description: 'View system information',
     cooldown: 10000,
     ephemeral: true,
     noDM: false,
-    ownerOnly: false,
+    ownerOnly: true,
     requireRegistration: false,
     structure: {
         name: 'system',

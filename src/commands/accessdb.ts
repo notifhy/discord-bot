@@ -1,8 +1,8 @@
 import type { ClientCommand } from '../@types/client';
-import { CommandInteraction } from 'discord.js';
+import { BetterEmbed } from '../util/utility';
 import { setTimeout } from 'node:timers/promises';
 import { SQLite } from '../util/SQLite';
-import { BetterEmbed } from '../util/utility';
+import { RegionLocales } from '../../locales/RegionLocales';
 import Constants from '../util/Constants';
 
 export const properties: ClientCommand['properties'] = {
@@ -28,8 +28,12 @@ export const properties: ClientCommand['properties'] = {
 };
 
 export const execute: ClientCommand['execute'] = async (
-    interaction: CommandInteraction,
+    interaction,
+    locale,
 ): Promise<void> => {
+    const text = RegionLocales.locale(locale).commands.accessdb;
+    const replace = RegionLocales.replace;
+
     const timeout = interaction.options.getInteger('timeout', true);
 
     const currentAPI = interaction.client.config.enabled;
@@ -44,8 +48,10 @@ export const execute: ClientCommand['execute'] = async (
 
     const decrypted = new BetterEmbed(interaction)
         .setColor(Constants.colors.normal)
-        .setTitle('Decrypted')
-        .setDescription(`Database decrypted, encrypting in ${timeout}.`);
+        .setTitle(text.decrypted.title)
+        .setDescription(replace(text.decrypted.description, {
+            timeout: timeout,
+        }));
 
     await interaction.editReply({ embeds: [decrypted] });
 
@@ -59,8 +65,8 @@ export const execute: ClientCommand['execute'] = async (
 
     const encrypted = new BetterEmbed(interaction)
         .setColor(Constants.colors.normal)
-        .setTitle('Encrypted')
-        .setDescription('Database encrypted.');
+        .setTitle(text.encrypted.title)
+        .setDescription(text.encrypted.description);
 
     await interaction.followUp({
         embeds: [encrypted],
