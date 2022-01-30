@@ -52,12 +52,10 @@ export const execute: ClientCommand['execute'] = async (
     const pingEmbed = new BetterEmbed(interaction)
         .setColor(embedColor)
         .setTitle(text.embed2.title)
-        .setDescription(
-            replace(text.embed2.description, {
-                wsPing: interaction.client.ws.ping,
-                rtPing: roundTripDelay,
-            }),
-        );
+        .setDescription(replace(text.embed2.description, {
+            wsPing: interaction.client.ws.ping,
+            rtPing: roundTripDelay,
+        }));
 
     Log.command(interaction, `WS: ${interaction.client.ws.ping}ms | RT: ${roundTripDelay}ms`);
 

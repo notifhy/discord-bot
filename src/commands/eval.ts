@@ -96,14 +96,12 @@ export const execute: ClientCommand['execute'] = async (
         const evalEmbed = new BetterEmbed(interaction)
             .setColor(Constants.colors.warning)
             .setTitle(text.fail.title)
-            .addFields([
-                {
-                    name: text.fail.input.name,
-                    value: replace(text.fail.input.value, {
-                        input: Formatters.codeBlock('javascript', input),
-                    }),
-                },
-            ]);
+            .addField(
+                text.fail.input.name,
+                replace(text.fail.input.value, {
+                    input: Formatters.codeBlock('javascript', input),
+                }),
+            );
 
         if (outputMaxLength === true) {
             evalEmbed.addField(

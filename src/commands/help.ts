@@ -74,11 +74,10 @@ export const execute: ClientCommand['execute'] = async (
             commandSearchEmbed
                 .setColor(Constants.colors.warning)
                 .setTitle(text.specific.invalid.title)
-                .setDescription(
-                    replace(text.specific.invalid.description, {
-                        command: commandArg,
-                    }),
-                );
+                .setDescription(replace(text.specific.invalid.description, {
+                    command: commandArg,
+                }));
+
             await interaction.editReply({ embeds: [commandSearchEmbed] });
             return;
         }

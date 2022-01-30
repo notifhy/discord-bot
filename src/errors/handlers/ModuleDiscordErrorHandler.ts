@@ -82,8 +82,16 @@ export default class ModuleDiscordErrorHandler extends BaseErrorHandler<
     private async systemNotify() {
         const identifier = this.baseErrorEmbed()
             .setTitle('Unexpected Error')
-            .addField('User', this.discordID)
-            .addField('Module', this.cleanModule);
+            .addFields([
+                {
+                    name: 'User',
+                    value: this.discordID,
+                },
+                {
+                    name: 'Module',
+                    value: this.cleanModule,
+                },
+            ]);
 
         await sendWebHook({
             content: `<@${ownerID.join('><@')}>`,

@@ -91,11 +91,9 @@ export const execute: ClientCommand['execute'] = async (
         const notFoundEmbed = new BetterEmbed(interaction)
             .setColor(Constants.colors.warning)
             .setTitle(text.notFound.title)
-            .setDescription(
-                replace(text.notFound.description, {
-                    inputType: inputType,
-                }),
-            );
+            .setDescription(replace(text.notFound.description, {
+                inputType: inputType,
+            }));
 
         Log.command(interaction, 404);
 

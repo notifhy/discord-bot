@@ -54,7 +54,9 @@ export const execute: ClientCommand['execute'] = async (
         });
 
     const newLocale = interaction.options.getString('language', true);
-    const rawNewLocale = newLocale === 'Auto' ? interaction.locale : newLocale;
+    const rawNewLocale = newLocale === 'Auto'
+        ? interaction.locale
+        : newLocale;
 
     const text = RegionLocales.locale(rawNewLocale).commands.language;
     const replace = RegionLocales.replace;
@@ -96,11 +98,9 @@ export const execute: ClientCommand['execute'] = async (
     } else {
         languageEmbed
             .setTitle(text.set.title)
-            .setDescription(
-                replace(text.set.description, {
-                    locale: newLocale,
-                }),
-            );
+            .setDescription(replace(text.set.description, {
+                locale: newLocale,
+            }));
 
         Log.command(interaction, `Locale set to ${newLocale}`);
     }

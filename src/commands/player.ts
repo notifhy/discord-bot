@@ -148,31 +148,34 @@ export const execute: ClientCommand['execute'] = async (
         const statusEmbed = new BetterEmbed(interaction)
             .setColor(Constants.colors.normal)
             .setTitle(text.status.embed.title)
-            .setDescription(
-                replace(text.status.embed.description, {
-                    username: username,
-                    status: online === true
-                        ? text.status.online
-                        : text.status.offline,
-                }))
-            .addField(
-                text.status.embed.field1.name,
-                replace(text.status.embed.field1.value, {
-                    uuid: uuid,
-                    TWITTER: TWITTER ?? unknown,
-                    INSTAGRAM: INSTAGRAM ?? unknown,
-                    TWITCH: TWITCH ?? unknown,
-                    DISCORD: DISCORD ?? unknown,
-                    HYPIXEL: HYPIXEL
-                        ? Formatters.hyperlink('link', HYPIXEL)
-                        : unknown,
-                }))
-            .addField(
-                text.status.embed.field2.name,
-                replace(text.status.embed.field2.value, {
-                    lastLogin: timestamp(last_login, 'F') ?? unknown,
-                    lastLogout: timestamp(last_logout, 'F') ?? unknown,
-                }));
+            .setDescription(replace(text.status.embed.description, {
+                username: username,
+                status: online === true
+                    ? text.status.online
+                    : text.status.offline,
+            }))
+            .addFields([
+                {
+                    name: text.status.embed.field1.name,
+                    value: replace(text.status.embed.field1.value, {
+                        uuid: uuid,
+                        TWITTER: TWITTER ?? unknown,
+                        INSTAGRAM: INSTAGRAM ?? unknown,
+                        TWITCH: TWITCH ?? unknown,
+                        DISCORD: DISCORD ?? unknown,
+                        HYPIXEL: HYPIXEL
+                            ? Formatters.hyperlink('link', HYPIXEL)
+                            : unknown,
+                    }),
+                },
+                {
+                    name: text.status.embed.field2.name,
+                    value: replace(text.status.embed.field2.value, {
+                        lastLogin: timestamp(last_login, 'F') ?? unknown,
+                        lastLogout: timestamp(last_logout, 'F') ?? unknown,
+                    }),
+                },
+            ]);
 
         if (online === true) {
             statusEmbed
@@ -411,11 +414,9 @@ export const execute: ClientCommand['execute'] = async (
         const notFoundEmbed = new BetterEmbed(interaction)
             .setColor(Constants.colors.warning)
             .setTitle(text.notFound.title)
-            .setDescription(
-                replace(text.notFound.description, {
-                    inputType: inputType,
-                }),
-            );
+            .setDescription(replace(text.notFound.description, {
+                inputType: inputType,
+            }));
 
         Log.command(interaction, 'User not found', input);
 

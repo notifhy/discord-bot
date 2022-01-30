@@ -191,39 +191,46 @@ export const execute: ClientCommand['execute'] = async (
                     interaction.client.hypixel.request.performance,
                 ).slice(0, Constants.limits.embedDescription),
             )
-            .addField(
-                'Enabled',
-                interaction.client.config.enabled === true ? 'Yes' : 'No',
-            )
-            .addField(
-                'Resuming In',
-                cleanLength(resumeAfter - Date.now()) ?? 'Not applicable',
-            )
-            .addField(
-                'Global Rate Limit',
-                rateLimit.isGlobal === true ? 'Yes' : 'No',
-            )
-            .addField(
-                'Last Minute Statistics',
-                `Aborts: ${abort.lastMinute}
-                Rate Limit Hits: ${rateLimit.lastMinute}
-                Other Errors: ${error.lastMinute}`,
-            )
-            .addField(
-                'Next Timeout Lengths',
-                `May not be accurate
-                Abort Errors: ${cleanLength(abort.timeout)}
-                Rate Limit Errors: ${cleanLength(rateLimit.timeout)}
-                Other Errors: ${cleanLength(error.timeout)}`,
-            )
-            .addField(
-                'API Key',
-                `Dedicated Queries: ${cleanRound(
-                    keyPercentage * keyLimit,
-                    1,
-                )} or ${cleanRound(keyPercentage * 100, 1)}%
-                Instance Queries: ${uses}`,
-            );
+            .addFields([
+                {
+                    name: 'Enabled',
+                    value: interaction.client.config.enabled === true
+                        ? 'Yes'
+                        : 'No',
+                },
+                {
+                    name: 'Resuming In',
+                    value: cleanLength(resumeAfter - Date.now()) ??
+                        'Not applicable',
+                },
+                {
+                    name: 'Global Rate Limit',
+                    value: rateLimit.isGlobal === true
+                        ? 'Yes'
+                        : 'No',
+                },
+                {
+                    name: 'Last Minute Statistics',
+                    value: `Aborts: ${abort.lastMinute}
+                    Rate Limit Hits: ${rateLimit.lastMinute}
+                    Other Errors: ${error.lastMinute}`,
+                },
+                {
+                    name: 'Next Timeout Lengths',
+                    value: `May not be accurate
+                    Abort Errors: ${cleanLength(abort.timeout)}
+                    Rate Limit Errors: ${cleanLength(rateLimit.timeout)}
+                    Other Errors: ${cleanLength(error.timeout)}`,
+                },
+                {
+                    name: 'API Key',
+                    value: `Dedicated Queries: ${cleanRound(
+                        keyPercentage * keyLimit,
+                        1,
+                    )} or ${cleanRound(keyPercentage * 100, 1)}%
+                    Instance Queries: ${uses}`,
+                },
+            ]);
 
         await interaction.editReply({
             embeds: [statsEmbed],

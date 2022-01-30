@@ -45,26 +45,46 @@ export const execute: ClientCommand['execute'] = async (
     const snowflakeEmbed = new BetterEmbed(interaction)
         .setColor(Constants.colors.normal)
         .setTitle(text.title)
-        .addField(text.input.name, replace(text.input.value, {
-            snowflake: snowflake,
-        }))
-        .addField(text.length.name, replace(text.length.value, {
-            length: String(snowflake.length),
-        }))
-        .addField(text.date.name, replace(text.date.value, {
-            date: String(timestamp(time, 'D')),
-            time: String(timestamp(time, 'T')),
-            relative: String(timestamp(time, 'R')),
-        }))
-        .addField(text.worker.name, replace(text.worker.value, {
-            worker: String(workerId),
-        }))
-        .addField(text.process.name, replace(text.process.value, {
-            process: String(processId),
-        }))
-        .addField(text.increment.name, replace(text.increment.value, {
-            increment: String(increment),
-        }));
+        .addFields([
+            {
+                name: text.input.name,
+                value: replace(text.input.value, {
+                    snowflake: snowflake,
+                }),
+            },
+            {
+                name: text.length.name,
+                value: replace(text.length.value, {
+                    length: String(snowflake.length),
+                }),
+            },
+            {
+                name: text.date.name,
+                value: replace(text.date.value, {
+                    date: String(timestamp(time, 'D')),
+                    time: String(timestamp(time, 'T')),
+                    relative: String(timestamp(time, 'R')),
+                }),
+            },
+            {
+                name: text.worker.name,
+                value: replace(text.worker.value, {
+                    worker: String(workerId),
+                }),
+            },
+            {
+                name: text.process.name,
+                value: replace(text.process.value, {
+                    process: String(processId),
+                }),
+            },
+            {
+                name: text.increment.name,
+                value: replace(text.increment.value, {
+                    increment: String(increment),
+                }),
+            },
+        ]);
 
     await interaction.editReply({ embeds: [snowflakeEmbed] });
 };

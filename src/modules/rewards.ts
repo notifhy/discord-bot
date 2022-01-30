@@ -132,13 +132,14 @@ export const execute: ClientModule['execute'] = async ({
                 })
                     .setColor(Constants.colors.normal)
                     .setTitle(locale.claimedNotification.title)
-                    .setDescription(
-                        replace(locale.claimedNotification.description, {
+                    .setDescription(replace(
+                        locale.claimedNotification.description,
+                        {
                             rewardScore: userAPIData.rewardScore ?? 0,
                             totalDailyRewards:
-                                userAPIData.totalDailyRewards ?? 0,
-                        }),
-                    );
+                            userAPIData.totalDailyRewards ?? 0,
+                        },
+                    ));
 
                 await user.send({
                     embeds: [claimedNotification],
