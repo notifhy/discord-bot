@@ -155,7 +155,9 @@ export interface Eval {
 }
 
 export interface Help {
-    information: BaseEmbed,
+    information: {
+        field: Field,
+    } & BaseEmbed,
     all: {
         title: string,
         field: Field,

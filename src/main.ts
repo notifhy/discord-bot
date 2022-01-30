@@ -60,7 +60,7 @@ const client = new Client({
         VoiceStateManager: 0,
     }),
     presence: {
-        status: 'dnd',
+        status: 'online',
     },
     sweepers: {
         guildMembers: {

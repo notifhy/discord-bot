@@ -72,7 +72,7 @@ oauth2Client.on('tokens', async ({ expiry_date, refresh_token }) => {
         Log.log('Refresh token written');
     }
 
-    Log.log(`Access token expires ${expiry_date}`);
+    Log.log(`New access token expires ${expiry_date}`);
 });
 
 (async () => {
@@ -115,6 +115,8 @@ oauth2Client.on('tokens', async ({ expiry_date, refresh_token }) => {
                     body: fsSync.createReadStream(`${__dirname}/../database.db`),
                 },
             });
+
+            Log.log('Uploaded backup');
 
             await setTimeout(interval);
         } catch (error) {
