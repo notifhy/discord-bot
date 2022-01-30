@@ -3,7 +3,6 @@ import {
     refresh_token as refreshToken,
 } from './token.json';
 import {
-    defaultToken,
     interval,
     parentFolder,
     scopes,
@@ -61,7 +60,7 @@ const oauth2Client = new auth.OAuth2(
 oauth2Client.on('tokens', async ({ expiry_date, refresh_token }) => {
     if (refresh_token) {
         const data = {
-            ...defaultToken,
+            code: '',
             refresh_token: refresh_token,
         };
 
@@ -77,13 +76,6 @@ oauth2Client.on('tokens', async ({ expiry_date, refresh_token }) => {
 });
 
 (async () => {
-    //Only create a file if it doesn't exist
-    await fsPromises.writeFile(
-        `${__dirname}/token.json`,
-        JSON.stringify(defaultToken),
-        { flag: 'wx' },
-    ).catch(() => null);
-
     if (code) {
         const { tokens } = await oauth2Client.getToken(code);
 
@@ -120,7 +112,7 @@ oauth2Client.on('tokens', async ({ expiry_date, refresh_token }) => {
                 },
                 media: {
                     mimeType: 'application/octet-stream',
-                    body: fsSync.createReadStream(`${__dirname}/../../database.db`),
+                    body: fsSync.createReadStream(`${__dirname}/../database.db`),
                 },
             });
 
