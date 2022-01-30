@@ -4,6 +4,7 @@ import { setTimeout } from 'node:timers/promises';
 import { SQLite } from '../util/SQLite';
 import { RegionLocales } from '../../locales/RegionLocales';
 import Constants from '../util/Constants';
+import { Log } from '../util/Log';
 
 export const properties: ClientCommand['properties'] = {
     name: 'accessdb',
@@ -41,6 +42,8 @@ export const execute: ClientCommand['execute'] = async (
     interaction.client.config.enabled = false;
     interaction.client.config.devMode = true;
 
+    Log.command(interaction, 'API disabled and Developer Mode enabled');
+
     await setTimeout(5000);
 
     SQLite.fullDecrypt();
@@ -61,7 +64,9 @@ export const execute: ClientCommand['execute'] = async (
     SQLite.encrypt();
 
     interaction.client.config.enabled = currentAPI;
-    interaction.client.config.enabled = curentDevMode;
+    interaction.client.config.devMode = curentDevMode;
+
+    Log.command(interaction, 'API and Developer Mode restored');
 
     const encrypted = new BetterEmbed(interaction)
         .setColor(Constants.colors.normal)

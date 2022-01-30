@@ -89,7 +89,7 @@ export const execute: ClientCommand['execute'] = async (
 
     function apiCommand() {
         config.enabled = !config.enabled;
-            interaction.client.config.enabled = Boolean(config.enabled);
+        interaction.client.config.enabled = config.enabled;
 
         const apiEmbed = new BetterEmbed(interaction)
             .setColor(Constants.colors.normal)
@@ -187,18 +187,18 @@ export const execute: ClientCommand['execute'] = async (
         config.devMode = !config.devMode;
         interaction.client.config.devMode = config.devMode;
 
-        const devmodeEmbed = new BetterEmbed(interaction)
+        const devModeEmbed = new BetterEmbed(interaction)
             .setColor(Constants.colors.normal)
             .setTitle(text.devMode.title)
             .setDescription(replace(text.devMode.description, {
-                state: config.enabled === true
+                state: config.devMode === true
                     ? text.on
                     : text.off,
             }));
 
-        payload.embeds = [devmodeEmbed];
+        payload.embeds = [devModeEmbed];
 
-        Log.command(interaction, devmodeEmbed.description);
+        Log.command(interaction, devModeEmbed.description);
     }
 
     const newRawConfig = SQLite.unJSONize({ ...config });

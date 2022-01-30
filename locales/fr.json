@@ -3,7 +3,7 @@
         "accessdb": {
             "decrypted": {
                 "title": "Decrypted",
-                "description": "Database decrypted, encrypting in %{timeout}%."
+                "description": "Database decrypted, encrypting in %{timeout}%ms."
             },
             "encrypted": {
                 "title": "Encrypted",
@@ -12,11 +12,11 @@
         },
         "api": {
             "instance": {
-                "title": "Updated Value!",
+                "title": "Updated Value",
                 "description": "<RequestManager>.instance.%{type}% is now %{value}%."
             },
             "set": {
-                "title": "Updated Value!",
+                "title": "Updated Value",
                 "description": "<HypixelErrors>.%{category}%.%{type}% is now %{value}%."
             },
             "call": {
@@ -38,7 +38,7 @@
             "on": "on",
             "off": "off",
             "api": {
-                "title": "API State Updated!",
+                "title": "API State Updated",
                 "description": "API commands and functions are now %{state}%!"
             },
             "blockGuild": {
@@ -63,7 +63,7 @@
             },
             "devMode": {
                 "title": "Developer Mode Updated",
-                "description": "`Developer Mode is now %{state}%!"
+                "description": "Developer Mode is now %{state}%!"
             }
         },
         "data": {
