@@ -68,7 +68,19 @@ export interface AccessDB {
 }
 
 export interface API {
-    instance: BaseEmbed,
+    api: {
+        yes: string,
+        no: string,
+        enabled: Field,
+        resume: Field,
+        rateLimit: Field,
+        lastMinute: Field,
+        nextTimeouts: Field,
+        apiKey: Field,
+    }
+    instance: {
+        tooHigh: string,
+    } & BaseEmbed,
     set: BaseEmbed,
     call: BaseEmbed,
 }

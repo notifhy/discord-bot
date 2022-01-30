@@ -193,42 +193,51 @@ export const execute: ClientCommand['execute'] = async (
             )
             .addFields([
                 {
-                    name: 'Enabled',
-                    value: interaction.client.config.enabled === true
-                        ? 'Yes'
-                        : 'No',
+                    name: text.api.enabled.name,
+                    value: replace(text.api.enabled.value, {
+                        state: interaction.client.config.enabled === true
+                            ? text.api.yes
+                            : text.api.no,
+                    }),
                 },
                 {
-                    name: 'Resuming In',
-                    value: cleanLength(resumeAfter - Date.now()) ??
+                    name: text.api.resume.name,
+                    value: replace(text.api.resume.value, {
+                        time: cleanLength(resumeAfter - Date.now()) ??
                         'Not applicable',
+                    }),
                 },
                 {
-                    name: 'Global Rate Limit',
-                    value: rateLimit.isGlobal === true
-                        ? 'Yes'
-                        : 'No',
+                    name: text.api.rateLimit.name,
+                    value: replace(text.api.rateLimit.value, {
+                        state: rateLimit.isGlobal === true
+                            ? text.api.yes
+                            : text.api.no,
+                    }),
                 },
                 {
-                    name: 'Last Minute Statistics',
-                    value: `Aborts: ${abort.lastMinute}
-                    Rate Limit Hits: ${rateLimit.lastMinute}
-                    Other Errors: ${error.lastMinute}`,
+                    name: text.api.lastMinute.name,
+                    value: replace(text.api.lastMinute.value, {
+                        abort: abort.lastMinute,
+                        rateLimit: rateLimit.lastMinute,
+                        error: error.lastMinute,
+                    }),
                 },
                 {
-                    name: 'Next Timeout Lengths',
-                    value: `May not be accurate
-                    Abort Errors: ${cleanLength(abort.timeout)}
-                    Rate Limit Errors: ${cleanLength(rateLimit.timeout)}
-                    Other Errors: ${cleanLength(error.timeout)}`,
+                    name: text.api.nextTimeouts.name,
+                    value: replace(text.api.nextTimeouts.value, {
+                        abort: abort.timeout,
+                        rateLimit: rateLimit.timeout,
+                        error: error.timeout,
+                    }),
                 },
                 {
-                    name: 'API Key',
-                    value: `Dedicated Queries: ${cleanRound(
-                        keyPercentage * keyLimit,
-                        1,
-                    )} or ${cleanRound(keyPercentage * 100, 1)}%
-                    Instance Queries: ${uses}`,
+                    name: text.api.apiKey.name,
+                    value: replace(text.api.apiKey.value, {
+                        queries: cleanRound(keyPercentage * keyLimit, 1),
+                        percentage: cleanRound(keyPercentage * 100, 1),
+                        uses: uses,
+                    }),
                 },
             ]);
 
@@ -242,7 +251,7 @@ export const execute: ClientCommand['execute'] = async (
         const value = interaction.options.getNumber('value', true);
 
         if (type === 'keyPercentage' && value > 1) {
-            throw new Error('Too high, must be below 1');
+            throw new Error(text.instance.tooHigh);
         }
 
         interaction.client.hypixel.request[

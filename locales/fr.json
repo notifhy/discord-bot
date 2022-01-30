@@ -11,7 +11,36 @@
             }
         },
         "api": {
+            "api": {
+                "yes": "Yes",
+                "no": "No",
+                "enabled": {
+                    "name": "Enabled",
+                    "value": "%{state}%"
+                },
+                "resume": {
+                    "name": "Resuming In",
+                    "value": "%{time}%"
+                },
+                "rateLimit": {
+                    "name": "Global Rate Limit",
+                    "value": "%{state}%"
+                },
+                "lastMinute": {
+                    "name": "Last Minute Statistic",
+                    "value": "Aborts: %{abort}%\nRate Limit Hits: %{rateLimit}%\nOther Errors: %{error}%"
+                },
+                "nextTimeouts": {
+                    "name": "Next Timeout Lengths",
+                    "value": "May not be accurate\nAbort Errors: %{abort}%\nRate Limit Errors: %{rateLimit}%\nOther Errors: %{error}%"
+                },
+                "apiKey": {
+                    "name": "API Key",
+                    "value": "Dedicated Queries: %{queries}% or %{percentage}\n%Instance Queries: ${uses}"
+                }
+            },
             "instance": {
+                "tooHigh": "Too high, must be below 1",
                 "title": "Updated Value",
                 "description": "<RequestManager>.instance.%{type}% is now %{value}%."
             },
