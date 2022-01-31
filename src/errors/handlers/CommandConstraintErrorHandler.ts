@@ -62,47 +62,53 @@ export default class CommandConstraintErrorHandler
             .locale(this.locale)
             .errors;
 
-        const constraint = text
-                .constraintErrors[this.error.message as keyof Locale['errors']['constraintErrors']];
+        const constraint =
+            text.constraintErrors[
+                this.error.message as keyof Locale['errors']['constraintErrors']
+            ];
 
-            if (this.error.message === 'cooldown') {
-                const embed1 = (constraint as Locale['errors']['constraintErrors']['cooldown']).embed1;
-                const embed2 = (constraint as Locale['errors']['constraintErrors']['cooldown']).embed2;
+        if (this.error.message === 'cooldown') {
+            const embed1 =
+                (constraint as
+                    Locale['errors']['constraintErrors']['cooldown']).embed1;
+            const embed2 =
+                (constraint as
+                    Locale['errors']['constraintErrors']['cooldown']).embed2;
 
-                const command =
-                    this.interaction.client.commands.get(commandName);
-
-                this.constraintResolver(
-                    embed1.title,
-                    RegionLocales.replace(embed1.description, {
-                        cooldown:
-                            (command?.properties.cooldown ?? 0) /
-                            Constants.ms.second,
-                        timeLeft:
-                            cleanRound(this.error.cooldown! /
-                            Constants.ms.second, 1),
-                    }),
-                );
-
-                await setTimeout(this.error.cooldown!);
-
-                this.constraintResolver(
-                    embed2.title,
-                    RegionLocales.replace(embed2.description, {
-                        commandName: commandName,
-                    }),
-                    Constants.colors.on,
-                );
-
-                return;
-            }
-
-            const embed = constraint as BaseEmbed;
+            const command =
+                this.interaction.client.commands.get(commandName);
 
             this.constraintResolver(
-                embed.title,
-                embed.description,
+                embed1.title,
+                RegionLocales.replace(embed1.description, {
+                    cooldown:
+                        (command?.properties.cooldown ?? 0) /
+                        Constants.ms.second,
+                    timeLeft:
+                        cleanRound(this.error.cooldown! /
+                        Constants.ms.second, 1),
+                }),
             );
+
+             await setTimeout(this.error.cooldown!);
+
+            this.constraintResolver(
+                embed2.title,
+                RegionLocales.replace(embed2.description, {
+                        commandName: commandName,
+                }),
+                Constants.colors.on,
+            );
+
+            return;
+        }
+
+        const embed = constraint as BaseEmbed;
+
+        this.constraintResolver(
+            embed.title,
+            embed.description,
+        );
     }
 
     private async constraintResolver(
