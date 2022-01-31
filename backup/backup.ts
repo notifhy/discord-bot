@@ -105,8 +105,10 @@ oauth2Client.on('tokens', async ({ expiry_date, refresh_token }) => {
                 setTimeout(pauseFor);
             }
 
-            const time =
-                new Date().toLocaleString(undefined, { hour12: false });
+            const time = new Date().toLocaleString(
+                undefined,
+                { hour12: false },
+            );
 
             await drive.files.create({
                 requestBody: {
