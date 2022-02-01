@@ -396,7 +396,6 @@ export interface ModuleErrors {
 }
 
 export interface SystemMessages {
-    alert: string,
     embed: {
         footer: string,
     } & BaseEmbed,
