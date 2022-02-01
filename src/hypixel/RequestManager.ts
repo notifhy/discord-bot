@@ -35,7 +35,7 @@ export class RequestManager {
 
     constructor() {
         this.abortThreshold = 2500;
-        this.keyPercentage = 0.6;
+        this.keyPercentage = 0.5;
         this.maxAborts = 1;
         this.uses = 0;
 

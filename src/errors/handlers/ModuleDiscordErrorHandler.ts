@@ -1,9 +1,11 @@
 import {
     arrayRemove,
+    BetterEmbed,
     sendWebHook,
     timestamp,
 } from '../../util/utility';
 import {
+    Client,
     Constants as DiscordConstants,
     DiscordAPIError,
     Snowflake,
@@ -24,19 +26,23 @@ export default class ModuleDiscordErrorHandler extends BaseErrorHandler<
     DiscordAPIError | (Omit<ModuleError, 'raw'> & { raw: DiscordAPIError })
 > {
     readonly cleanModule: string;
+    readonly client: Client;
     readonly discordID: string;
     readonly module: string | null;
     readonly raw: unknown | null;
 
     constructor(
-        error: DiscordAPIError | (Omit<ModuleError, 'raw'> & { raw: DiscordAPIError }),
+        client: Client,
         discordID: Snowflake,
+        error: DiscordAPIError | (Omit<ModuleError, 'raw'> & { raw: DiscordAPIError }),
     ) {
         super(error);
 
         this.cleanModule = error instanceof ModuleError
             ? error.cleanModule
             : 'None';
+
+        this.client = client;
 
         this.discordID = discordID;
 
@@ -50,10 +56,11 @@ export default class ModuleDiscordErrorHandler extends BaseErrorHandler<
     }
 
     static async init(
-        error: DiscordAPIError | (ModuleError & { raw: DiscordAPIError }),
+        client: Client,
         discordID: Snowflake,
+        error: DiscordAPIError | (ModuleError & { raw: DiscordAPIError }),
     ) {
-        const handler = new ModuleDiscordErrorHandler(error, discordID);
+        const handler = new ModuleDiscordErrorHandler(client, discordID, error);
 
         try {
             handler.errorLog();
@@ -121,25 +128,48 @@ export default class ModuleDiscordErrorHandler extends BaseErrorHandler<
         const { replace } = RegionLocales;
         const { APIErrors } = DiscordConstants;
 
+        const cleanModule = {
+            cleanModule: this.error instanceof ModuleError
+                ? this.cleanModule
+                : 'All Modules',
+        };
+
+        const message = {
+            name: replace(
+                locale[
+                    error.code as unknown as keyof Omit<typeof locale, 'alert'>
+                ].name,
+                cleanModule),
+            value: replace(
+                locale[
+                    error.code as unknown as keyof Omit<typeof locale, 'alert'>
+                ].value,
+                cleanModule,
+            ),
+        };
+
         switch (error.code) {
             case APIErrors.UNKNOWN_CHANNEL: //Unknown channel
-            case APIErrors.UNKNOWN_USER: //Unknown user
             case APIErrors.MISSING_ACCESS: //Unable to access channel, server, etc.
-            case APIErrors.CANNOT_MESSAGE_USER: //Cannot send messages to this user
             case APIErrors.MISSING_PERMISSIONS: { //Missing permission(s)
-                const cleanModule = {
-                    cleanModule: this.error instanceof ModuleError
-                        ? this.cleanModule
-                        : 'All Modules',
-                };
+                try {
+                    const user = await this.client.users.fetch(this.discordID);
 
-                const message = {
-                    name: replace(locale[error.code].name,
-                        cleanModule),
-                    value: replace(locale[error.code].value,
-                        cleanModule),
-                };
+                    const { footer, title } = locale.alert;
 
+                    const alertEmbed = new BetterEmbed({ text: footer })
+                        .setTitle(title)
+                        .addField(message.name, message.value);
+
+                    await user.send({ embeds: [alertEmbed] });
+                } catch (error3) {
+                    this.log('Failed to send DM alert');
+                    await ErrorHandler.init(error3, this.incidentID);
+                }
+                //falls through - eslint
+            }
+            case APIErrors.UNKNOWN_USER: //Unknown user
+            case APIErrors.CANNOT_MESSAGE_USER: { //Cannot send messages to this user
                 message.name = `${timestamp(Date.now(), 'D')} - ${message.name}`; //Update locale
 
                 this.log('Attempting to disable module(s)');

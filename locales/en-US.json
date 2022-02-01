@@ -914,6 +914,10 @@
             }
         },
         "moduleErrors": {
+            "alert": {
+                "title": "Module Alert",
+                "footer": "Alert"
+            },
             "10003": {
                 "name": "%{cleanModule}% Disabled",
                 "value": "The set channel was not fetchable. [Code 10003](https://discord.com/developers/docs/topics/opcodes-and-status-codes#json-json-error-codes \"Opcodes and Status codes\")"

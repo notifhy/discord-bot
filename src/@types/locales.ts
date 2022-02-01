@@ -384,14 +384,19 @@ export interface ConstraintErrors {
 }
 
 export interface ModuleErrors {
-    '10003': Field,
-    '10013': Field,
-    '50001': Field,
-    '50007': Field,
-    '50013': Field,
+    alert: {
+        title: string,
+        footer: string,
+    },
+    10003: Field,
+    10013: Field,
+    50001: Field,
+    50007: Field,
+    50013: Field,
 }
 
 export interface SystemMessages {
+    alert: string,
     embed: {
         footer: string,
     } & BaseEmbed,

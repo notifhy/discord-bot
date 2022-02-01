@@ -111,11 +111,12 @@ export class HypixelManager {
                     )
                 ) {
                     await ModuleDiscordErrorHandler.init(
+                        this.client,
+                        user.discordID,
                         error as (
                             DiscordAPIError |
                             (Omit<ModuleError, 'raw'> & { raw: DiscordAPIError })
                         ),
-                        user.discordID,
                     );
                 } else {
                     await ModuleErrorHandler.init(error, user.discordID, this);
