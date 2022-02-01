@@ -721,7 +721,7 @@
                         "value": "UUID: %{uuid}%\nTwitter: %{TWITTER}%\nInstagram: %{INSTAGRAM}%\nTwitch: %{TWITCH}%\nDiscord: %{DISCORD}%\nHypixel: %{HYPIXEL}%"
                     },
                     "field2": {
-                        "name": "Last Login &amp; Logout",
+                        "name": "Last Login and Logout",
                         "value": "Last Login: %{lastLogin}%\nLast Logout: %{lastLogout}%"
                     },
                     "field3": {
