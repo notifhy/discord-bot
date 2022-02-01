@@ -45,7 +45,7 @@ export default class Timeout {
     async filterError(error: unknown) {
         if (error instanceof GaxiosError) {
             const code = Number(error.code);
-            Log.log(`Ran into a ${code}`);
+            Log.error(`Ran into a ${code}`);
 
             if (
                 code >= 500 ||
@@ -53,12 +53,12 @@ export default class Timeout {
                 code === 408
             ) {
                 this.addError();
-                Log.log(`Added timeout, pausing for ${this.pauseFor}ms`);
+                Log.error(`Added timeout, pausing for ${this.pauseFor}ms`);
                 return;
             }
         }
 
-        Log.log('Unrecoverable error. Ending process.');
+        Log.error('Unrecoverable error. Ending process.');
 
         await ErrorHandler.init(error);
 
