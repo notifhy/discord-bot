@@ -16,7 +16,7 @@ import HTTPError from '../errors/HTTPError';
 
 export const properties: ClientCommand['properties'] = {
     name: 'register',
-    description: 'Register and setup your profile to begin using the modules that this bot offers',
+    description: 'Register and setup your profile to begin using the modules that this bot offers.',
     cooldown: 15_000,
     ephemeral: true,
     noDM: false,

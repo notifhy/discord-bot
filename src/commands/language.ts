@@ -8,7 +8,7 @@ import Constants from '../util/Constants';
 
 export const properties: ClientCommand['properties'] = {
     name: 'language',
-    description: 'Override the language for this bot. By default, the language used is automatic',
+    description: 'Override the language for this bot. By default, the language used is automatic.',
     cooldown: 10_000,
     ephemeral: true,
     noDM: false,

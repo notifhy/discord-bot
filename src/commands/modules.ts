@@ -32,7 +32,7 @@ import Constants from '../util/Constants';
 
 export const properties: ClientCommand['properties'] = {
     name: 'modules',
-    description: 'Add or remove modules for your Minecraft account',
+    description: 'Add or remove modules for your Minecraft account.',
     cooldown: 5_000,
     ephemeral: true,
     noDM: false,

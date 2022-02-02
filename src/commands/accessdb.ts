@@ -8,7 +8,7 @@ import { Log } from '../util/Log';
 
 export const properties: ClientCommand['properties'] = {
     name: 'accessdb',
-    description: 'Access the database',
+    description: 'Access the database.',
     cooldown: 0,
     ephemeral: true,
     noDM: false,
@@ -44,7 +44,7 @@ export const execute: ClientCommand['execute'] = async (
 
     Log.command(interaction, 'API disabled and Developer Mode enabled');
 
-    await setTimeout(5000);
+    await setTimeout(5_000);
 
     SQLite.fullDecrypt();
     SQLite.close();

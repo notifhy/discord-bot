@@ -3,7 +3,7 @@ import { CommandInteraction } from 'discord.js';
 
 export const properties: ClientCommand['properties'] = {
     name: 'test',
-    description: 'Does stuff',
+    description: 'Does stuff.',
     cooldown: 0,
     ephemeral: true,
     noDM: false,
@@ -11,7 +11,7 @@ export const properties: ClientCommand['properties'] = {
     requireRegistration: false,
     structure: {
         name: 'test',
-        description: 'does stuff',
+        description: 'Does stuff',
         options: [
             {
                 name: 'delete',

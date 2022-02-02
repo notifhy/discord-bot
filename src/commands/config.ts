@@ -11,7 +11,7 @@ import Constants from '../util/Constants';
 
 export const properties: ClientCommand['properties'] = {
     name: 'config',
-    description: 'Configure the bot',
+    description: 'Configure the bot.',
     cooldown: 0,
     ephemeral: true,
     noDM: false,

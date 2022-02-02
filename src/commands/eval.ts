@@ -7,7 +7,7 @@ import Constants from '../util/Constants';
 
 export const properties: ClientCommand['properties'] = {
     name: 'eval',
-    description: 'Evaluates a string',
+    description: 'Evaluates a string.',
     cooldown: 0,
     ephemeral: true,
     noDM: false,
@@ -15,7 +15,7 @@ export const properties: ClientCommand['properties'] = {
     requireRegistration: false,
     structure: {
         name: 'eval',
-        description: 'Eval',
+        description: 'Evaluates a string',
         options: [
             {
                 name: 'string',

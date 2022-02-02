@@ -6,7 +6,7 @@ import Constants from '../util/Constants';
 
 export const properties: ClientCommand['properties'] = {
     name: 'snowflake',
-    description: 'Deconstruct a snowflake',
+    description: 'Deconstruct a snowflake.',
     cooldown: 0,
     ephemeral: true,
     noDM: false,

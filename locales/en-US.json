@@ -63,6 +63,22 @@
                 "description": "The status is now automatic!"
             }
         },
+        "channel": {
+            "defender": {
+                "set": {
+                    "title": "Channel Set",
+                    "description": "Your channel for the Defender Module was changed to %{channel}%."
+                },
+                "remove": {
+                    "title": "Channel Removed",
+                    "description": "Your channel for the Defender Module was removed."
+                }
+            },
+            "friends": {
+                "title": "Channel Set",
+                "description": "Your channel for the Friends Module was changed to %{channel}%."
+            }
+        },
         "config": {
             "on": "on",
             "off": "off",

@@ -31,7 +31,7 @@ import Constants from '../util/Constants';
 
 export const properties: ClientCommand['properties'] = {
     name: 'data',
-    description: 'View or delete your data stored by this bot',
+    description: 'View or delete your data stored by this bot.',
     cooldown: 30_000,
     ephemeral: true,
     noDM: false,

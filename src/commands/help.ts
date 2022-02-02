@@ -5,7 +5,7 @@ import Constants from '../util/Constants';
 
 export const properties: ClientCommand['properties'] = {
     name: 'help',
-    description: 'Displays helpful information and available commands',
+    description: 'Displays helpful information and available commands.',
     cooldown: 5_000,
     ephemeral: true,
     noDM: false,

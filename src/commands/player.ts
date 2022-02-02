@@ -28,7 +28,7 @@ import CommandErrorHandler from '../errors/handlers/CommandErrorHandler';
 
 export const properties: ClientCommand['properties'] = {
     name: 'player',
-    description: 'View basic data on almost any Hypixel player',
+    description: 'View basic data on almost any Hypixel player.',
     cooldown: 10_000,
     ephemeral: true,
     noDM: false,

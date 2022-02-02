@@ -90,6 +90,14 @@ export interface BotStatus {
     cleared: BaseEmbed,
 }
 
+export interface Channel {
+    defender: {
+        set: BaseEmbed,
+        remove: BaseEmbed,
+    },
+    friends: BaseEmbed,
+}
+
 export interface Config {
     on: string,
     off: string,
@@ -345,6 +353,7 @@ export interface Commands {
     accessdb: AccessDB,
     api: API,
     botstatus: BotStatus,
+    channel: Channel,
     config: Config,
     data: Data,
     deploy: Deploy,
