@@ -36,7 +36,7 @@
                 },
                 "apiKey": {
                     "name": "API Key",
-                    "value": "Dedicated Queries: %{queries}% or %{percentage}\n%Instance Queries: ${uses}"
+                    "value": "Dedicated Queries: %{queries}% or %{percentage}%\n%Instance Queries: %{uses}%"
                 }
             },
             "instance": {
@@ -704,7 +704,7 @@
             "title": "Performance",
             "latest": {
                 "name": "Latest Performance",
-                "value": "Hypixel API Fetch: %{fetchPerformance}%ms\nProcess Data: %{processPerformance}ms\nModule Execution: ${modulePerformance}ms\nTotal: %{total}%ms"
+                "value": "Hypixel API Fetch: %{fetchPerformance}%ms\nProcess Data: %{processPerformance}%ms\nModule Execution: %{modulePerformance}%ms\nTotal: %{total}%ms"
             }
         },
         "ping": {
