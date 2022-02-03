@@ -27,7 +27,7 @@ import { Log } from '../../util/Log';
 import { RegionLocales } from '../../../locales/RegionLocales';
 import { SQLite } from '../../util/SQLite';
 import { ToggleButtons } from '../../util/ToggleButtons';
-import CommandErrorHandler from '../errors/handlers/CommandErrorHandler';
+import CommandErrorHandler from '../errors/CommandErrorHandler';
 import Constants from '../../util/Constants';
 
 export const properties: ClientCommand['properties'] = {

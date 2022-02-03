@@ -10,11 +10,11 @@ import {
 import { setTimeout } from 'node:timers/promises';
 import { SQLite } from '../../util/SQLite';
 import Constants from '../../util/Constants';
-import ErrorHandler from '../errors/handlers/ErrorHandler';
-import ModuleDiscordErrorHandler from '../errors/handlers/ModuleDiscordErrorHandler';
+import ErrorHandler from '../../util/errors/ErrorHandler';
+import ModuleDiscordErrorHandler from '../errors/ModuleDiscordErrorHandler';
 import ModuleError from '../errors/ModuleError';
-import ModuleErrorHandler from '../errors/handlers/ModuleErrorHandler';
-import RequestErrorHandler from '../errors/handlers/RequestErrorHandler';
+import ModuleErrorHandler from '../errors/ModuleErrorHandler';
+import RequestErrorHandler from '../errors/RequestErrorHandler';
 
 /* eslint-disable no-await-in-loop */
 

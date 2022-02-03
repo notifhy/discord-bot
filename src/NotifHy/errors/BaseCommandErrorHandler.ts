@@ -3,9 +3,9 @@ import {
     GuildChannel,
     TextChannel,
 } from 'discord.js';
-import { slashCommandResolver } from '../../../util/utility';
-import BaseErrorHandler from './BaseErrorHandler';
-import Constants from '../../../util/Constants';
+import { slashCommandResolver } from '../../util/utility';
+import BaseErrorHandler from '../../util/errors/BaseErrorHandler';
+import Constants from '../../util/Constants';
 
 export default class CommandErrorHandler<E> extends BaseErrorHandler<E> {
     readonly interaction: CommandInteraction;

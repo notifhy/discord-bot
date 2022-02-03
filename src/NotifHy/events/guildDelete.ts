@@ -3,7 +3,7 @@ import type { Guild } from 'discord.js';
 import { formattedUnix } from '../../util/utility';
 import { Log } from '../../util/Log';
 import { SQLite } from '../../util/SQLite';
-import ErrorHandler from '../errors/handlers/ErrorHandler';
+import ErrorHandler from '../../util/errors/ErrorHandler';
 
 export const properties: ClientEvent['properties'] = {
     name: 'guildDelete',

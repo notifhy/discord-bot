@@ -3,13 +3,14 @@ import {
     drive as googleDrive,
 } from '@googleapis/drive';
 import { backup as Constants } from '../util/Constants';
+import { GaxiosError } from 'gaxios';
 import { googleApp, refreshToken } from '../../config.json';
 import { Log } from '../util/Log';
 import { setTimeout } from 'node:timers/promises';
 import fsSync from 'node:fs';
-import ErrorHandler from '../NotifHy/errors/handlers/ErrorHandler';
+import ErrorHandler from '../util/errors/ErrorHandler';
 import process from 'node:process';
-import Timeout from './Timeout';
+import Timeout from '../util/Timeout';
 
 /* eslint-disable camelcase */
 /* eslint-disable no-await-in-loop */
@@ -31,10 +32,11 @@ process.on('uncaughtException', async error => {
 });
 
 const {
-    filterError,
+    addError,
     isTimeout,
-    pauseFor,
-} = new Timeout();
+    getPauseFor,
+    getTimeout,
+} = new Timeout('backup', { baseTimeout: 300_000 });
 
 const {
     client_id,
@@ -65,7 +67,8 @@ oauth2Client.on('tokens', ({ expiry_date }) => {
     while (true) {
         try {
             if (isTimeout()) {
-                setTimeout(pauseFor);
+                const timeout = getTimeout()!;
+                await setTimeout(timeout.pauseFor);
             }
 
             const time = new Date().toLocaleString(
@@ -86,9 +89,30 @@ oauth2Client.on('tokens', ({ expiry_date }) => {
 
             Log.log('Uploaded backup');
 
-            await setTimeout(Constants.interval);
+            await setTimeout(Constants.interval / 6);
         } catch (error) {
-            await filterError(error);
+            if (error instanceof GaxiosError) {
+                const code = Number(error.code);
+                Log.error(`Ran into a ${code}`);
+
+                if (
+                    code >= 500 ||
+                    code === 429 ||
+                    code === 408
+                ) {
+                    await ErrorHandler.init(error);
+                    addError();
+                    const pauseFor = getPauseFor();
+                    Log.error(`Added timeout, pausing for ${pauseFor}ms`);
+                    continue;
+                }
+            }
+
+            Log.error('Unrecoverable error. Ending process.');
+
+            await ErrorHandler.init(error);
+
+            process.exit(1);
         }
     }
 })();

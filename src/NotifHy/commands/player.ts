@@ -24,7 +24,7 @@ import { RegionLocales } from '../../../locales/RegionLocales';
 import { Request } from '../../util/Request';
 import Constants from '../../util/Constants';
 import HTTPError from '../errors/HTTPError';
-import CommandErrorHandler from '../errors/handlers/CommandErrorHandler';
+import CommandErrorHandler from '../errors/CommandErrorHandler';
 
 export const properties: ClientCommand['properties'] = {
     name: 'player',

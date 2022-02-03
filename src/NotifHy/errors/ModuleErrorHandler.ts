@@ -1,13 +1,13 @@
 import {
     fatalWebhook,
     ownerID,
-} from '../../../../config.json';
-import { HypixelManager } from '../../hypixel/HypixelManager';
-import { sendWebHook } from '../../../util/utility';
+} from '../../../config.json';
+import { HypixelManager } from '../hypixel/HypixelManager';
+import { sendWebHook } from '../../util/utility';
 import { Snowflake } from 'discord.js';
-import BaseErrorHandler from './BaseErrorHandler';
-import ErrorHandler from './ErrorHandler';
-import ModuleError from '../ModuleError';
+import BaseErrorHandler from '../../util/errors/BaseErrorHandler';
+import ErrorHandler from '../../util/errors/ErrorHandler';
+import ModuleError from './ModuleError';
 
 export default class ModuleErrorHandler extends BaseErrorHandler<
     unknown | (ModuleError & { raw: unknown })

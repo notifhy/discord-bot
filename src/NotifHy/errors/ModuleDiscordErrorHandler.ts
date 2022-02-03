@@ -3,7 +3,7 @@ import {
     BetterEmbed,
     sendWebHook,
     timestamp,
-} from '../../../util/utility';
+} from '../../util/utility';
 import {
     Client,
     Constants as DiscordConstants,
@@ -13,14 +13,14 @@ import {
 import {
     fatalWebhook,
     ownerID,
-} from '../../../../config.json';
-import { RegionLocales } from '../../../../locales/RegionLocales';
-import { SQLite } from '../../../util/SQLite';
-import { UserAPIData, UserData } from '../../../@types/database';
-import BaseErrorHandler from './BaseErrorHandler';
-import Constants from '../../../util/Constants';
-import ErrorHandler from './ErrorHandler';
-import ModuleError from '../ModuleError';
+} from '../../../config.json';
+import { RegionLocales } from '../../../locales/RegionLocales';
+import { SQLite } from '../../util/SQLite';
+import { UserAPIData, UserData } from '../../@types/database';
+import BaseErrorHandler from '../../util/errors/BaseErrorHandler';
+import Constants from '../../util/Constants';
+import ErrorHandler from '../../util/errors/ErrorHandler';
+import ModuleError from './ModuleError';
 
 export default class ModuleDiscordErrorHandler extends BaseErrorHandler<
     DiscordAPIError | (Omit<ModuleError, 'raw'> & { raw: DiscordAPIError })

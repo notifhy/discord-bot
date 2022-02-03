@@ -1,23 +1,23 @@
 import {
     BaseEmbed,
     Locale,
-} from '../../../@types/locales';
+} from '../../@types/locales';
 import {
     BetterEmbed,
     cleanRound,
     sendWebHook,
-} from '../../../util/utility';
+} from '../../util/utility';
 import {
     ColorResolvable,
     CommandInteraction,
 } from 'discord.js';
-import { nonFatalWebhook } from '../../../../config.json';
-import { RegionLocales } from '../../../../locales/RegionLocales';
+import { nonFatalWebhook } from '../../../config.json';
+import { RegionLocales } from '../../../locales/RegionLocales';
 import { setTimeout } from 'node:timers/promises';
 import BaseCommandErrorHandler from './BaseCommandErrorHandler';
-import Constants from '../../../util/Constants';
-import ConstraintError from '../ConstraintError';
-import ErrorHandler from './ErrorHandler';
+import Constants from '../../util/Constants';
+import ConstraintError from './ConstraintError';
+import ErrorHandler from '../../util/errors/ErrorHandler';
 
 export default class CommandConstraintErrorHandler
     extends BaseCommandErrorHandler<ConstraintError> {

@@ -5,12 +5,12 @@ import {
 import {
     fatalWebhook,
     ownerID,
-} from '../../../../config.json';
-import { RegionLocales } from '../../../../locales/RegionLocales';
-import { sendWebHook } from '../../../util/utility';
+} from '../../../config.json';
+import { RegionLocales } from '../../../locales/RegionLocales';
+import { sendWebHook } from '../../util/utility';
 import BaseCommandErrorHandler from './BaseCommandErrorHandler';
-import Constants from '../../../util/Constants';
-import ErrorHandler from './ErrorHandler';
+import Constants from '../../util/Constants';
+import ErrorHandler from '../../util/errors/ErrorHandler';
 
 export default class CommandErrorHandler<E> extends BaseCommandErrorHandler<E> {
     readonly interaction: CommandInteraction;
