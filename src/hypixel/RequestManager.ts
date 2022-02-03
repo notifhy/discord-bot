@@ -6,7 +6,7 @@ import type {
 } from '../@types/hypixel';
 import type { UserAPIData } from '../@types/database';
 import { HypixelRequest } from '../util/HypixelRequest';
-import { Log } from '../util/Log';
+//import { Log } from '../util/Log';
 import Constants from '../util/Constants';
 
 export type Performance = {
@@ -50,7 +50,7 @@ export class RequestManager {
     }
 
     async request(user: UserAPIData, urls: string[]) {
-        Log.log(user.uuid);
+        //Log.log(user.uuid);
 
         const [player, status] =
             await Promise.all(
