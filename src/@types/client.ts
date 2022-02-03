@@ -5,7 +5,7 @@ import type {
     Collection,
     CommandInteraction,
 } from 'discord.js';
-import type { HypixelManager } from '../hypixel/HypixelManager';
+import type { HypixelManager } from '../NotifHy/hypixel/HypixelManager';
 
 export interface WebhookConfig {
     id: string,

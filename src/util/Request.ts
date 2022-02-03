@@ -3,7 +3,7 @@ import fetch, {
     RequestInit,
     Response,
 } from 'node-fetch';
-import AbortError from '../errors/AbortError';
+import AbortError from '../NotifHy/errors/AbortError';
 
 export class Request {
     aborts: number;
