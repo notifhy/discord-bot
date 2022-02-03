@@ -58,10 +58,16 @@ export const execute: ClientCommand['execute'] = async (
             .setColor(Constants.colors.normal)
             .setTitle(text.information.title)
             .setDescription(text.information.description)
-            .addField(
-                text.information.field.name,
-                text.information.field.value,
-            );
+            .addFields([
+                {
+                    name: text.information.gitHub.name,
+                    value: text.information.gitHub.value,
+                },
+                {
+                    name: text.information.legal.name,
+                    value: text.information.legal.value,
+                },
+            ]);
 
         await interaction.editReply({ embeds: [informationEmbed] });
     }

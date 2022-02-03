@@ -164,7 +164,8 @@ export interface Eval {
 
 export interface Help {
     information: {
-        field: Field,
+        gitHub: Field,
+        legal: Field,
     } & BaseEmbed,
     all: {
         title: string,
