@@ -23,9 +23,10 @@
         "typescript": "^4.5.5"
     },
     "scripts": {
-        "dev": "npx ts-node src/main.ts",
-        "start": "node src/main.js",
-        "build": "tsc -p ."
+        "backup": "npx ts-node src/Backup/main.ts",
+        "dev": "npx ts-node src/NotifHy/main.ts",
+        "build": "tsc -p .",
+        "postbuild": "node src/NotifHy/main.js"
     },
     "engines": {
         "node": ">=17.3.0"
