@@ -36,7 +36,7 @@ const {
     isTimeout,
     getPauseFor,
     getTimeout,
-} = new Timeout('backup', { baseTimeout: 300_000 });
+} = new Timeout({ baseTimeout: 300_000 });
 
 const {
     client_id,
@@ -67,8 +67,7 @@ oauth2Client.on('tokens', ({ expiry_date }) => {
     while (true) {
         try {
             if (isTimeout()) {
-                const timeout = getTimeout()!;
-                await setTimeout(timeout.pauseFor);
+                await setTimeout(getTimeout().pauseFor);
             }
 
             const time = new Date().toLocaleString(
@@ -101,8 +100,7 @@ oauth2Client.on('tokens', ({ expiry_date }) => {
                     code === 408
                 ) {
                     addError();
-                    const pauseFor = getPauseFor();
-                    Log.error(`Added timeout, pausing for ${pauseFor}ms`);
+                    Log.error(`Added timeout, pausing for ${getPauseFor()}ms`);
                     continue;
                 }
             }

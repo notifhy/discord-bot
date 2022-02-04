@@ -1,49 +1,42 @@
-import { Collection } from 'discord.js';
 import {
     clearTimeout,
     setTimeout,
 } from 'node:timers';
-import { Log } from './Log';
 import Constants from './Constants';
 
 type TimeoutOptions = {
-    baseTimeout: number,
+    baseTimeout?: number,
+    increment?: (current: number) => number,
 }
-
-type TimeoutType = {
-    baseTimeout: number,
-    clearTimeout: number | undefined;
-    lastMinute: number,
-    pauseFor: number;
-    resumeAfter: number;
-    timeout: number;
-}
-
-const defaultTimeout = {
-    baseTimeout: Constants.ms.minute,
-    clearTimeout: undefined,
-    lastMinute: 0,
-    pauseFor: 0,
-    resumeAfter: 0,
-    timeout: Constants.ms.minute,
-};
-
-const timeouts = new Collection<string, TimeoutType>();
 
 export default class Timeout {
-    key: string;
+    private timeout: {
+        baseTimeout: number,
+        clearTimeout: number | undefined;
+        lastMinute: number,
+        pauseFor: number;
+        resumeAfter: number;
+        timeout: number;
+    };
 
-    constructor(key: string, options?: TimeoutOptions) {
-        this.key = key;
+    private increment: TimeoutOptions['increment'] | undefined;
 
-        const config = { ...defaultTimeout };
+    constructor(options?: TimeoutOptions) {
+        this.timeout = {
+            baseTimeout: Constants.ms.minute,
+            clearTimeout: undefined,
+            lastMinute: 0,
+            pauseFor: 0,
+            resumeAfter: 0,
+            timeout: Constants.ms.minute,
+        };
+
+        this.increment = options?.increment;
 
         if (options?.baseTimeout) {
-            config.baseTimeout = options.baseTimeout;
-            config.timeout = options.baseTimeout;
+            this.timeout.baseTimeout = options.baseTimeout;
+            this.timeout.timeout = options.baseTimeout;
         }
-
-        timeouts.set(key, config);
 
         this.addError = this.addError.bind(this);
         this.isTimeout = this.isTimeout.bind(this);
@@ -52,48 +45,36 @@ export default class Timeout {
     }
 
     addError() {
-        const timeout = this.getTimeout();
+        this.timeout.pauseFor = this.timeout.timeout;
+        this.timeout.resumeAfter = this.timeout.timeout + Date.now();
 
-        if (timeout === null) {
-            //Log and send webhook
-            Log.log('Timeout key invalid!', this.key);
-            return;
-        }
+        this.timeout.timeout = (
+            this.increment
+            ? this.increment(this.timeout.timeout)
+            : (this.timeout.timeout * 2)
+        ) || this.timeout.baseTimeout;
 
-        timeout.pauseFor = timeout.timeout;
-        timeout.resumeAfter = timeout.timeout + Date.now();
+        clearTimeout(this.timeout.clearTimeout);
 
-        timeout.timeout = (timeout.timeout * 2) || 30_000;
-
-        clearTimeout(timeout.clearTimeout);
-
-        timeouts.set(this.key, timeout);
-
-        timeout.clearTimeout = setTimeout(() => {
-            const timeoutNew = this.getTimeout();
-
-            if (timeoutNew) {
-                timeoutNew.timeout = 0;
-                timeouts.set(this.key, timeoutNew);
-            }
-        }, timeout.timeout + 30_000) as unknown as number;
-    }
-
-    isTimeout() {
-        const timeout = this.getTimeout();
-
-        if (timeout === null) {
-            return null;
-        }
-
-        return timeout.resumeAfter > Date.now();
+        this.timeout.clearTimeout = setTimeout(() => {
+            this.timeout.timeout = this.timeout.baseTimeout;
+        }, this.timeout.timeout + 30_000) as unknown as number;
     }
 
     getPauseFor() {
-        return timeouts.get(this.key)?.pauseFor ?? null;
+        return this.timeout.pauseFor;
     }
 
     getTimeout() {
-        return timeouts.get(this.key) ?? null;
+        return this.timeout;
+    }
+
+    isTimeout() {
+        return this.timeout.resumeAfter > Date.now();
+    }
+
+    resetTimeout() {
+        clearTimeout(this.timeout.clearTimeout);
+        this.timeout.timeout = this.timeout.baseTimeout;
     }
 }
