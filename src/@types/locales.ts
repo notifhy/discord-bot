@@ -91,11 +91,16 @@ export interface BotStatus {
 }
 
 export interface Channel {
+    dms: string
     defender: {
+        alreadySet: BaseEmbed,
         set: BaseEmbed,
         remove: BaseEmbed,
     },
-    friends: BaseEmbed,
+    friends: {
+        alreadySet: BaseEmbed,
+        set: BaseEmbed,
+    },
 }
 
 export interface Config {

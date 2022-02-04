@@ -64,19 +64,30 @@
             }
         },
         "channel": {
+            "dms": "your DMs",
             "defender": {
+                "alreadySet": {
+                    "title": "Already Set",
+                    "description": "Defender Module alerts are already being sent to %{channel}%!"
+                },
                 "set": {
                     "title": "Channel Set",
-                    "description": "Your channel for the Defender Module was changed to %{channel}%."
+                    "description": "Defender Module alerts will now be sent to %{channel}%!"
                 },
                 "remove": {
                     "title": "Channel Removed",
-                    "description": "Your channel for the Defender Module was removed."
+                    "description": "Defender Module alerts will now be sent via DMs!"
                 }
             },
             "friends": {
-                "title": "Channel Set",
-                "description": "Your channel for the Friends Module was changed to %{channel}%."
+                "alreadySet": {
+                    "title": "Already Set",
+                    "description": "Friends Module notifications are already being sent to %{channel}%!"
+                },
+                "set": {
+                    "title": "Channel Set",
+                    "description": "Friends Module notifications will now be sent to %{channel}%!"
+                }
             }
         },
         "config": {

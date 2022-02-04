@@ -138,8 +138,8 @@ export const execute: ClientCommand['execute'] = async (
         })
     );
 
-    const getFriendsData = async () => (
-        await SQLite.getUser<FriendsModule>({
+    const getFriendsData = () => (
+        SQLite.getUser<FriendsModule>({
             discordID: interaction.user.id,
             table: Constants.tables.friends,
             allowUndefined: false,
@@ -148,10 +148,10 @@ export const execute: ClientCommand['execute'] = async (
                 'channel',
             ],
         })
-    ) as FriendsModule;
+    );
 
-    const getRewardsData = async () => (
-        await SQLite.getUser<RewardsModule>({
+    const getRewardsData = () => (
+        SQLite.getUser<RewardsModule>({
             discordID: interaction.user.id,
             table: Constants.tables.rewards,
             allowUndefined: false,
@@ -162,7 +162,7 @@ export const execute: ClientCommand['execute'] = async (
                 'notificationInterval',
             ],
         })
-    ) as RewardsModule;
+    );
 
     const reply = await interaction.editReply({
         embeds: [mainEmbed],

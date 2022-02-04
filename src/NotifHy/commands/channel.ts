@@ -11,7 +11,7 @@ import Constants from '../../util/Constants';
 export const properties: ClientCommand['properties'] = {
     name: 'channel',
     description: 'Modify the channel for the Defender or Friends Module. You must use this in a server.',
-    cooldown: 10_000,
+    cooldown: 5_000,
     ephemeral: true,
     noDM: false,
     ownerOnly: false,
@@ -42,7 +42,7 @@ export const properties: ClientCommand['properties'] = {
                     {
                         name: 'remove',
                         type: 1,
-                        description: 'Remove the channel from the Defender Module',
+                        description: 'Remove the channel from the Defender Module and send alerts via DMs',
                     },
                 ],
             },
@@ -71,21 +71,53 @@ export const execute: ClientCommand['execute'] = async (
     const { replace } = RegionLocales;
 
     const channel = interaction.options.getChannel('channel');
-
     const type = interaction.options.getSubcommand() === 'friends'
         ? 'friends'
         : 'defender';
 
+    const baseLocale = RegionLocales.locale(locale).commands.channel;
+    const alreadySet = baseLocale[type].alreadySet;
+
     let table: Tables;
-    let text = RegionLocales.locale(locale).commands.channel[type];
+    let text: BaseEmbed;
+
 
     switch (type) {
         case 'defender':
-        table = Constants.tables.defender;
-        text = (text as Channel['defender'])[channel ? 'set' : 'remove'];
-        break;
-        case 'friends': table = Constants.tables.friends;
+            table = Constants.tables.defender;
+            text = (
+                baseLocale[type] as Channel['defender']
+            )[channel ? 'set' : 'remove'];
+            break;
+        case 'friends':
+            table = Constants.tables.friends;
+            text = baseLocale[type].set;
         //No default
+    }
+
+    const { channel: currentChannel } =
+        await SQLite.getUser<DefenderModule | FriendsModule>({
+            discordID: interaction.user.id,
+            table: table,
+            allowUndefined: false,
+            columns: [
+                'channel',
+            ],
+        });
+
+    if (currentChannel === (channel?.id ?? null)) {
+        const alreadySetEmbed = new BetterEmbed(interaction)
+            .setColor(Constants.colors.warning)
+            .setTitle(alreadySet.title)
+            .setDescription(replace(alreadySet.description, {
+                channel: channel
+                    ? Formatters.channelMention(channel.id)
+                    : `${baseLocale.dms}`,
+            }));
+
+        await interaction.editReply({ embeds: [alreadySetEmbed] });
+
+        return;
     }
 
     await SQLite.updateUser<DefenderModule | FriendsModule>({
@@ -97,8 +129,9 @@ export const execute: ClientCommand['execute'] = async (
     });
 
     const embed = new BetterEmbed(interaction)
-        .setTitle((text as BaseEmbed).title)
-        .setDescription(replace((text as BaseEmbed).description, {
+        .setColor(Constants.colors.normal)
+        .setTitle(text.title)
+        .setDescription(replace(text.description, {
             channel: channel
                 ? Formatters.channelMention(channel.id)
                 : 'not_a_value',
