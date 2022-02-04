@@ -15,7 +15,7 @@ export const properties: ClientModule['properties'] = {
 export const execute: ClientModule['execute'] = async ({
     client,
     baseLocale,
-    differences: { primary },
+    differences: { newData },
     userAPIData,
 }): Promise<void> => {
     try {
@@ -97,7 +97,7 @@ export const execute: ClientModule['execute'] = async ({
             });
         }
 
-        if (primary.rewardScore === undefined) {
+        if (newData.rewardScore === undefined) {
             return;
         }
 
@@ -105,7 +105,7 @@ export const execute: ClientModule['execute'] = async ({
             const user = await client.users.fetch(userAPIData.discordID);
             const milestones = Constants.modules.rewards.milestones;
             const milestone = milestones.find(
-                item => item === primary.rewardScore,
+                item => item === newData.rewardScore,
             );
 
             if (

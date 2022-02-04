@@ -5,9 +5,9 @@ import type { UserAPIData, UserData } from './database';
 
 export type ModuleNames = 'defender' | 'friend' | 'rewards';
 
-export type Differences = {
-    primary: Partial<CleanHypixelPlayer & CleanHypixelStatus>,
-    secondary: Partial<CleanHypixelPlayer & CleanHypixelStatus>,
+export type ModuleDifferences = {
+    newData: Partial<CleanHypixelPlayer & CleanHypixelStatus>,
+    oldData: Partial<CleanHypixelPlayer & CleanHypixelStatus>,
 };
 
 export interface ClientModule {
@@ -25,7 +25,7 @@ export interface ClientModule {
             userData,
         }: {
             client: Client,
-            differences: Differences,
+            differences: ModuleDifferences,
             baseLocale: Locale['modules'],
             userAPIData: UserAPIData,
             userData: UserData,

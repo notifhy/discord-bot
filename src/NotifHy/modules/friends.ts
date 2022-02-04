@@ -28,14 +28,14 @@ export const properties: ClientModule['properties'] = {
 export const execute: ClientModule['execute'] = async ({
     client,
     baseLocale,
-    differences: { primary },
+    differences: { newData },
     userAPIData,
     userData,
 }): Promise<void> => {
     try {
         if (
-            primary.lastLogin === undefined &&
-            primary.lastLogout === undefined
+            newData.lastLogin === undefined &&
+            newData.lastLogout === undefined
         ) {
             return; //If the login/logout aren't in differences
         }
@@ -101,9 +101,9 @@ export const execute: ClientModule['execute'] = async ({
 
         const notifications: MessageEmbed[] = [];
 
-        if (primary.lastLogin) {
-            const relative = timestamp(primary.lastLogin, 'R');
-            const time = timestamp(primary.lastLogin, 'T');
+        if (newData.lastLogin) {
+            const relative = timestamp(newData.lastLogin, 'R');
+            const time = timestamp(newData.lastLogin, 'T');
 
             const login = new MessageEmbed({
                 color: Constants.colors.on,
@@ -117,9 +117,9 @@ export const execute: ClientModule['execute'] = async ({
             notifications.push(login);
         }
 
-        if (primary.lastLogout) {
-            const relative = timestamp(primary.lastLogout, 'R');
-            const time = timestamp(primary.lastLogout, 'T');
+        if (newData.lastLogout) {
+            const relative = timestamp(newData.lastLogout, 'R');
+            const time = timestamp(newData.lastLogout, 'T');
 
             const logout = new MessageEmbed({
                 color: Constants.colors.off,
@@ -134,13 +134,13 @@ export const execute: ClientModule['execute'] = async ({
             const lastEvent = userAPIData.history[1]; //First item in array is this event, so it checks the second item
             //@ts-expect-error hasOwn typing not implemented yet - https://github.com/microsoft/TypeScript/issues/44253
             const duplicationCheck = Object.hasOwn(lastEvent, 'lastLogout') &&
-                primary.lastLogout - lastEvent.lastLogout! <
+                newData.lastLogout - lastEvent.lastLogout! <
                 Constants.ms.second * 2.5;
 
             if (duplicationCheck === false) {
                 if (
-                    primary.lastLogout >
-                    (primary.lastLogin ?? 0)
+                    newData.lastLogout >
+                    (newData.lastLogin ?? 0)
                 ) {
                     notifications.push(logout);
                 } else {

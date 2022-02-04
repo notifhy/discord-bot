@@ -1,4 +1,4 @@
-import type { Differences } from '../../@types/modules';
+import type { ModuleDifferences } from '../../@types/modules';
 import type {
     CleanHypixelPlayer,
     CleanHypixelStatus,
@@ -71,8 +71,11 @@ export class ModuleManager {
         });
 
         return {
-            differences,
-            userAPIData,
+            differences: {
+                newData: differences.primary,
+                oldData: differences.secondary,
+            },
+            userAPIData: userAPIData,
         };
     }
 
@@ -82,7 +85,7 @@ export class ModuleManager {
             userAPIData,
         }:
         {
-            differences: Differences,
+            differences: ModuleDifferences,
             userAPIData: UserAPIData,
         },
     ) {
@@ -104,8 +107,8 @@ export class ModuleManager {
             userAPIData.modules.includes(module.properties.name) &&
             (
                 module.properties.onlineStatusAPI === true
-                ? module.properties.onlineStatusAPI && apiEnabled === true
-                : true
+                    ? module.properties.onlineStatusAPI && apiEnabled === true
+                    : true
             )
         ));
 
@@ -152,17 +155,17 @@ export class ModuleManager {
         }
     }
 
-    static isMissingAPIData(differences: Differences) {
-        return (differences.primary.lastLogin === null &&
-            differences.secondary.lastLogin !== null) ||
-        (differences.primary.lastLogout === null &&
-            differences.secondary.lastLogout !== null);
+    static isMissingAPIData(differences: ModuleDifferences) {
+        return (differences.oldData.lastLogin === null &&
+            differences.oldData.lastLogin !== null) ||
+        (differences.oldData.lastLogout === null &&
+            differences.oldData.lastLogout !== null);
     }
 
-    static isReceivedAPIData(differences: Differences) {
-        return (differences.primary.lastLogin !== null &&
-            differences.secondary.lastLogin === null) ||
-        (differences.primary.lastLogout !== null &&
-            differences.secondary.lastLogout === null);
+    static isReceivedAPIData(differences: ModuleDifferences) {
+        return (differences.oldData.lastLogin !== null &&
+            differences.oldData.lastLogin === null) ||
+        (differences.oldData.lastLogout !== null &&
+            differences.oldData.lastLogout === null);
     }
 }
