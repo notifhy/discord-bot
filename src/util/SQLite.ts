@@ -57,6 +57,7 @@ export class SQLite {
         db = new Database(`${__dirname}/../../database.db`);
     }
 
+    //Calling this even after the database is closed doesn't break anything
     static close() {
         db.close();
     }

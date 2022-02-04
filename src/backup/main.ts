@@ -89,7 +89,7 @@ oauth2Client.on('tokens', ({ expiry_date }) => {
 
             Log.log('Uploaded backup');
 
-            await setTimeout(Constants.interval / 6);
+            await setTimeout(Constants.interval);
         } catch (error) {
             if (error instanceof GaxiosError) {
                 const code = Number(error.code);
@@ -100,7 +100,6 @@ oauth2Client.on('tokens', ({ expiry_date }) => {
                     code === 429 ||
                     code === 408
                 ) {
-                    await ErrorHandler.init(error);
                     addError();
                     const pauseFor = getPauseFor();
                     Log.error(`Added timeout, pausing for ${pauseFor}ms`);
