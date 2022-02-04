@@ -10,7 +10,7 @@ import type {
     ModulesCommand,
 } from '../../@types/locales';
 import baseStructures,
-{ combiner } from '../../util/Structures';
+{ combiner } from '../util/Structures';
 import {
     BetterEmbed,
     disableComponents,
@@ -26,9 +26,9 @@ import {
 import { Log } from '../../util/Log';
 import { RegionLocales } from '../../../locales/RegionLocales';
 import { SQLite } from '../../util/SQLite';
-import { ToggleButtons } from '../../util/ToggleButtons';
+import { ToggleButtons } from '../util/ToggleButtons';
 import CommandErrorHandler from '../errors/CommandErrorHandler';
-import Constants from '../../util/Constants';
+import Constants from '../util/Constants';
 
 export const properties: ClientCommand['properties'] = {
     name: 'modules',

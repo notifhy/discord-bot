@@ -6,7 +6,7 @@ import { ChannelTypes } from 'discord.js/typings/enums';
 import { Formatters } from 'discord.js';
 import { RegionLocales } from '../../../locales/RegionLocales';
 import { SQLite } from '../../util/SQLite';
-import Constants from '../../util/Constants';
+import Constants from '../util/Constants';
 
 export const properties: ClientCommand['properties'] = {
     name: 'channel',

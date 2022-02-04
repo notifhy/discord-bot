@@ -4,7 +4,7 @@ import type {
     SelectMenuStructure,
     SelectMenuTopLocale,
     SelectMenuTopStructure,
-} from '../@types/locales';
+} from '../../@types/locales';
 import Constants from './Constants';
 
 export function combiner(

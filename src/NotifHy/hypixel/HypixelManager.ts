@@ -9,7 +9,7 @@ import {
 } from './RequestManager';
 import { setTimeout } from 'node:timers/promises';
 import { SQLite } from '../../util/SQLite';
-import Constants from '../../util/Constants';
+import Constants from '../util/Constants';
 import ErrorHandler from '../../util/errors/ErrorHandler';
 import ModuleDiscordErrorHandler from '../errors/ModuleDiscordErrorHandler';
 import ModuleError from '../errors/ModuleError';

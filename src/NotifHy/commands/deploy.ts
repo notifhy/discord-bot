@@ -9,7 +9,7 @@ import { RegionLocales } from '../../../locales/RegionLocales';
 import { REST } from '@discordjs/rest';
 import { Routes } from 'discord-api-types/v9';
 import fs from 'node:fs/promises';
-import Constants from '../../util/Constants';
+import Constants from '../util/Constants';
 
 export const properties: ClientCommand['properties'] = {
     name: 'deploy',

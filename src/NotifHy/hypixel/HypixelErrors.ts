@@ -3,7 +3,7 @@ import {
     setTimeout,
 } from 'node:timers';
 import { RequestManager } from './RequestManager';
-import Constants from '../../util/Constants';
+import Constants from '../util/Constants';
 
 type ErrorType = {
     baseTimeout: number;

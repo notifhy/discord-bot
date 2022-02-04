@@ -2,7 +2,7 @@ import {
     clearTimeout,
     setTimeout,
 } from 'node:timers';
-import Constants from './Constants';
+import Constants from '../NotifHy/util/Constants';
 
 type TimeoutOptions = {
     baseTimeout?: number,

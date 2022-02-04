@@ -17,7 +17,7 @@ import {
 import { Log } from '../../util/Log';
 import { RegionLocales } from '../../../locales/RegionLocales';
 import { SQLite } from '../../util/SQLite';
-import Constants from '../../util/Constants';
+import Constants from '../util/Constants';
 
 export const properties: ClientCommand['properties'] = {
     name: 'systemmessage',

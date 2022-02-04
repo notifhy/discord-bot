@@ -22,7 +22,7 @@ import {
 import { Log } from '../../util/Log';
 import { RegionLocales } from '../../../locales/RegionLocales';
 import { Request } from '../../util/Request';
-import Constants from '../../util/Constants';
+import Constants from '../util/Constants';
 import HTTPError from '../errors/HTTPError';
 import CommandErrorHandler from '../errors/CommandErrorHandler';
 

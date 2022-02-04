@@ -15,7 +15,7 @@ import { nonFatalWebhook } from '../../../config.json';
 import { RegionLocales } from '../../../locales/RegionLocales';
 import { setTimeout } from 'node:timers/promises';
 import BaseCommandErrorHandler from './BaseCommandErrorHandler';
-import Constants from '../../util/Constants';
+import Constants from '../util/Constants';
 import ConstraintError from './ConstraintError';
 import ErrorHandler from '../../util/errors/ErrorHandler';
 

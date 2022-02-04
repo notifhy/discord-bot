@@ -11,7 +11,7 @@ import { Log } from '../../util/Log';
 import { RegionLocales } from '../../../locales/RegionLocales';
 import { Request } from '../../util/Request';
 import { SQLite } from '../../util/SQLite';
-import Constants from '../../util/Constants';
+import Constants from '../util/Constants';
 import HTTPError from '../errors/HTTPError';
 
 export const properties: ClientCommand['properties'] = {

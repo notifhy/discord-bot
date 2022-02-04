@@ -7,7 +7,7 @@ import type {
 import type { UserAPIData } from '../../@types/database';
 import { HypixelRequest } from '../../util/HypixelRequest';
 //import { Log } from '../util/Log';
-import Constants from '../../util/Constants';
+import Constants from '../util/Constants';
 
 export type Performance = {
     start: number;

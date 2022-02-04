@@ -4,7 +4,7 @@ import {
 } from '../@types/database';
 import { databaseKey } from '../../config.json';
 import Database from 'better-sqlite3-multiple-ciphers';
-import Constants from './Constants';
+import Constants from '../NotifHy/util/Constants';
 
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable consistent-return */

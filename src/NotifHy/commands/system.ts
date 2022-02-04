@@ -8,7 +8,7 @@ import {
 import { keyLimit } from '../../../config.json';
 import { RegionLocales } from '../../../locales/RegionLocales';
 import { SQLite } from '../../util/SQLite';
-import Constants from '../../util/Constants';
+import Constants from '../util/Constants';
 import process from 'node:process';
 
 export const properties: ClientCommand['properties'] = {

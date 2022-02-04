@@ -3,7 +3,7 @@ import { BetterEmbed } from '../../util/utility';
 import { Formatters } from 'discord.js';
 import { Log } from '../../util/Log';
 import { RegionLocales } from '../../../locales/RegionLocales';
-import Constants from '../../util/Constants';
+import Constants from '../util/Constants';
 
 export const properties: ClientCommand['properties'] = {
     name: 'eval',

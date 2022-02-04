@@ -2,13 +2,13 @@ import {
     auth,
     drive as googleDrive,
 } from '@googleapis/drive';
-import { backup as Constants } from '../util/Constants';
 import { GaxiosError } from 'gaxios';
 import { googleApp, refreshToken } from '../../config.json';
 import { Log } from '../util/Log';
 import { setTimeout } from 'node:timers/promises';
-import fsSync from 'node:fs';
+import Constants from './util/Constants';
 import ErrorHandler from '../util/errors/ErrorHandler';
+import fsSync from 'node:fs';
 import process from 'node:process';
 import Timeout from '../util/Timeout';
 

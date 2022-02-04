@@ -19,7 +19,7 @@ import { Log } from '../../util/Log';
 import { ownerID } from '../../../config.json';
 import { SQLite } from '../../util/SQLite';
 import CommandErrorHandler from '../errors/CommandErrorHandler';
-import Constants from '../../util/Constants';
+import Constants from '../util/Constants';
 import CommandConstraintErrorHandler from '../errors/CommandConstraintErrorHandler';
 import ConstraintError from '../errors/ConstraintError';
 
