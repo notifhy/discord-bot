@@ -1,11 +1,11 @@
-import type { ClientCommand } from '../../@types/client';
+import type { ClientCommand } from '../@types/client';
 import type {
     DefenderModule,
     FriendsModule,
     RewardsModule,
     UserAPIData,
     UserData,
-} from '../../@types/database';
+} from '../@types/database';
 import {
     awaitComponent,
     BetterEmbed,

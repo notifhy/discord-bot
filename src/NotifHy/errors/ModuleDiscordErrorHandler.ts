@@ -16,7 +16,7 @@ import {
 } from '../../../config.json';
 import { RegionLocales } from '../../../locales/RegionLocales';
 import { SQLite } from '../../util/SQLite';
-import { UserAPIData, UserData } from '../../@types/database';
+import { UserAPIData, UserData } from '../@types/database';
 import BaseErrorHandler from '../../util/errors/BaseErrorHandler';
 import Constants from '../util/Constants';
 import ErrorHandler from '../../util/errors/ErrorHandler';

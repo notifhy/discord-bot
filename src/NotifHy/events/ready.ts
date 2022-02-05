@@ -1,5 +1,5 @@
 import type { Client } from 'discord.js';
-import type { ClientEvent } from '../../@types/client';
+import type { ClientEvent } from '../@types/client';
 import { Log } from '../../util/Log';
 import { SQLite } from '../../util/SQLite';
 import Constants from '../util/Constants';

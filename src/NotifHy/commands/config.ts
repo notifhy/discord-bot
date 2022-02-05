@@ -1,7 +1,7 @@
 import type {
     ClientCommand,
     Config,
-} from '../../@types/client';
+} from '../@types/client';
 import { BetterEmbed } from '../../util/utility';
 import { WebhookEditMessageOptions } from 'discord.js';
 import { Log } from '../../util/Log';

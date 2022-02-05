@@ -1,8 +1,8 @@
 import type {
     ClientEvent,
     ClientCommand,
-} from '../../@types/client';
-import type { ClientModule } from '../../@types/modules';
+} from '../@types/client';
+import type { ClientModule } from '../@types/modules';
 import { BetterEmbed } from '../../util/utility';
 import { CommandInteraction } from 'discord.js';
 import { Log } from '../../util/Log';

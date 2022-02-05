@@ -1,4 +1,4 @@
-import type { UserAPIData } from '../../@types/database';
+import type { UserAPIData } from '../@types/database';
 import { Client, DiscordAPIError } from 'discord.js';
 import { HypixelErrors } from './HypixelErrors';
 import { keyLimit } from '../../../config.json';

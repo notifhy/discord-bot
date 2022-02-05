@@ -1,5 +1,5 @@
-import type { ClientCommand } from '../../@types/client';
-import type { UserData } from '../../@types/database';
+import type { ClientCommand } from '../@types/client';
+import type { UserData } from '../@types/database';
 import { BetterEmbed } from '../../util/utility';
 import { Log } from '../../util/Log';
 import { RegionLocales } from '../../../locales/RegionLocales';

@@ -1,4 +1,4 @@
-import type { WebhookConfig } from '../@types/client';
+import type { WebhookConfig } from '../NotifHy/@types/client';
 import {
     AwaitMessageCollectorOptionsParams,
     CommandInteraction,

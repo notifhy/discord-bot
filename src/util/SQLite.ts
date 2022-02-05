@@ -1,7 +1,7 @@
 import {
     BaseUserData,
     Tables,
-} from '../@types/database';
+} from '../NotifHy/@types/database';
 import { databaseKey } from '../../config.json';
 import Database from 'better-sqlite3-multiple-ciphers';
 import Constants from '../NotifHy/util/Constants';

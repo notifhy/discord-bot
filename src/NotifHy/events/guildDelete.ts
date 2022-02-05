@@ -1,4 +1,4 @@
-import type { ClientEvent } from '../../@types/client';
+import type { ClientEvent } from '../@types/client';
 import type { Guild } from 'discord.js';
 import { formattedUnix } from '../../util/utility';
 import { Log } from '../../util/Log';

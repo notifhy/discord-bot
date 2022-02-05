@@ -1,8 +1,8 @@
-import type { ModuleDifferences } from '../../@types/modules';
+import type { ModuleDifferences } from '../@types/modules';
 import type {
     CleanHypixelPlayer,
     CleanHypixelStatus,
-} from '../../@types/hypixel';
+} from '../@types/hypixel';
 import type {
     Client,
     Snowflake,
@@ -11,7 +11,7 @@ import type {
     History,
     UserAPIData,
     UserData,
-} from '../../@types/database';
+} from '../@types/database';
 import {
     BetterEmbed,
     compare,

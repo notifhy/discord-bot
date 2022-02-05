@@ -6,7 +6,7 @@ import {
 import type {
     ButtonData,
     LocaleButton,
-} from '../../@types/locales';
+} from '../@types/locales';
 
 export class ToggleButtons extends MessageActionRow {
     constructor({

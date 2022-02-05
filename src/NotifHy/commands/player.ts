@@ -1,10 +1,10 @@
-import type { ClientCommand } from '../../@types/client';
+import type { ClientCommand } from '../@types/client';
 import type {
     PlayerDB,
     SlothpixelPlayer,
     SlothpixelRecentGames,
     SlothpixelStatus,
-} from '../../@types/hypixel';
+} from '../@types/hypixel';
 import {
     BetterEmbed,
     cleanLength,

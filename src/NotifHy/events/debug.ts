@@ -1,4 +1,4 @@
-import type { ClientEvent } from '../../@types/client';
+import type { ClientEvent } from '../@types/client';
 import { formattedUnix } from '../../util/utility';
 
 export const properties: ClientEvent['properties'] = {

@@ -3,8 +3,8 @@ import type {
     CleanHypixelStatus,
     RawHypixelPlayer,
     RawHypixelStatus,
-} from '../../@types/hypixel';
-import type { UserAPIData } from '../../@types/database';
+} from '../@types/hypixel';
+import type { UserAPIData } from '../@types/database';
 import { HypixelRequest } from '../../util/HypixelRequest';
 //import { Log } from '../util/Log';
 import Constants from '../util/Constants';

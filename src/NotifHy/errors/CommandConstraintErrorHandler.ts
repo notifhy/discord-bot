@@ -1,7 +1,7 @@
 import {
     BaseEmbed,
     Locale,
-} from '../../@types/locales';
+} from '../@types/locales';
 import {
     BetterEmbed,
     cleanRound,

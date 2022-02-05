@@ -1,4 +1,4 @@
-import type { ClientCommand } from '../../@types/client';
+import type { ClientCommand } from '../@types/client';
 import { BetterEmbed } from '../../util/utility';
 import { Formatters } from 'discord.js';
 import { Log } from '../../util/Log';

@@ -1,5 +1,5 @@
-import type { ClientModule } from '../../@types/modules';
-import type { DefenderModule, UserAPIData, UserData } from '../../@types/database';
+import type { ClientModule } from '../@types/modules';
+import type { DefenderModule, UserAPIData, UserData } from '../@types/database';
 import { arrayRemove, BetterEmbed, cleanGameType, timestamp } from '../../util/utility';
 import { ColorResolvable, EmbedFieldData, Formatters, TextChannel } from 'discord.js';
 import { Log } from '../../util/Log';

@@ -1,11 +1,11 @@
 import type {
     ClientCommand,
     ClientEvent,
-} from '../../@types/client';
+} from '../@types/client';
 import type {
     UserAPIData,
     UserData,
-} from '../../@types/database';
+} from '../@types/database';
 import {
     BetterEmbed,
     slashCommandResolver,

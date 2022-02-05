@@ -1,5 +1,5 @@
-import type { ClientCommand } from '../../@types/client';
-import type { UserAPIData } from '../../@types/database';
+import type { ClientCommand } from '../@types/client';
+import type { UserAPIData } from '../@types/database';
 import {
     BetterEmbed,
     cleanLength,

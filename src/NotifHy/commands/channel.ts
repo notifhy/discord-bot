@@ -1,6 +1,6 @@
-import type { BaseEmbed, Channel } from '../../@types/locales';
-import type { ClientCommand } from '../../@types/client';
-import type { DefenderModule, FriendsModule, Tables } from '../../@types/database';
+import type { BaseEmbed, Channel } from '../@types/locales';
+import type { ClientCommand } from '../@types/client';
+import type { DefenderModule, FriendsModule, Tables } from '../@types/database';
 import { BetterEmbed } from '../../util/utility';
 import { ChannelTypes } from 'discord.js/typings/enums';
 import { Formatters } from 'discord.js';

@@ -2,7 +2,7 @@ import type {
     Locale,
     Locales,
     Parameters,
-} from '../src/@types/locales';
+} from '../src/NotifHy/@types/locales';
 import en from './en-US.json';
 import fr from './fr.json';
 

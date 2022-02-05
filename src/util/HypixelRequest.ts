@@ -3,7 +3,7 @@ import type {
     Hypixel429,
     HypixelAPIError,
     HypixelAPIOk,
-} from '../@types/hypixel';
+} from '../NotifHy/@types/hypixel';
 import type { Response } from 'node-fetch';
 import { hypixelAPIkey } from '../../config.json';
 import { Request } from './Request';

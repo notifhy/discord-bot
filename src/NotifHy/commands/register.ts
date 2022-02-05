@@ -1,11 +1,11 @@
-import type { ClientCommand } from '../../@types/client';
-import type { SlothpixelPlayer } from '../../@types/hypixel';
+import type { ClientCommand } from '../@types/client';
+import type { SlothpixelPlayer } from '../@types/hypixel';
 import type {
     DefenderModule,
     FriendsModule,
     RewardsModule,
     UserAPIData,
-} from '../../@types/database';
+} from '../@types/database';
 import { BetterEmbed } from '../../util/utility';
 import { Log } from '../../util/Log';
 import { RegionLocales } from '../../../locales/RegionLocales';

@@ -1,14 +1,14 @@
-import type { ClientCommand } from '../../@types/client';
+import type { ClientCommand } from '../@types/client';
 import type {
     DefenderModule,
     FriendsModule,
     RewardsModule,
     UserAPIData,
-} from '../../@types/database';
+} from '../@types/database';
 import type {
     Locale,
     ModulesCommand,
-} from '../../@types/locales';
+} from '../@types/locales';
 import baseStructures,
 { combiner } from '../util/Structures';
 import {

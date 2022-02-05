@@ -1,9 +1,9 @@
-import type { ClientModule } from '../../@types/modules';
+import type { ClientModule } from '../@types/modules';
 import type {
     FriendsModule,
     UserAPIData,
     UserData,
-} from '../../@types/database';
+} from '../@types/database';
 import {
     Formatters,
     MessageEmbed,

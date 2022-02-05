@@ -2,8 +2,8 @@ import type {
     ClientCommand,
     ClientEvent,
     Config,
-} from '../@types/client';
-import type { ClientModule } from '../@types/modules';
+} from './@types/client';
+import type { ClientModule } from './@types/modules';
 import {
     Client,
     Collection,

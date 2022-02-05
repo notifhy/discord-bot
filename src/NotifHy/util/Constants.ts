@@ -1,4 +1,4 @@
-import { Tables } from '../../@types/database';
+import { Tables } from '../@types/database';
 import {
     ColorResolvable,
     Permissions,

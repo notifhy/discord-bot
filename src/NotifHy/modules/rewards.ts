@@ -1,5 +1,5 @@
-import type { ClientModule } from '../../@types/modules';
-import type { RewardsModule } from '../../@types/database';
+import type { ClientModule } from '../@types/modules';
+import type { RewardsModule } from '../@types/database';
 import { BetterEmbed } from '../../util/utility';
 import { RegionLocales } from '../../../locales/RegionLocales';
 import { SQLite } from '../../util/SQLite';
