@@ -11,40 +11,42 @@ type TimeoutOptions = {
 }
 
 export default class Timeout {
-    private timeout: {
-        baseTimeout: number,
-        clearTimeout: number | undefined;
-        lastMinute: number,
-        maxTimeout: number,
-        pauseFor: number;
-        resumeAfter: number;
-        timeout: number;
-    };
+    private baseTimeout: number;
+    private clearTimeout: number | undefined;
+    lastMinute: number;
+    private maxTimeout: number;
+    pauseFor: number;
+    resumeAfter: number;
+    timeout: number;
 
     private increment: TimeoutOptions['increment'] | undefined;
 
     constructor(options?: TimeoutOptions) {
-        this.timeout = {
-            baseTimeout: GlobalConstants.ms.minute,
-            clearTimeout: undefined,
-            lastMinute: 0,
-            maxTimeout: GlobalConstants.ms.day / 2,
-            pauseFor: 0,
-            resumeAfter: 0,
-            timeout: GlobalConstants.ms.minute,
-        };
+        //Timeout set when the timeout is cleared
+        this.baseTimeout = options?.baseTimeout ?? GlobalConstants.ms.minute;
 
+        //Holds a setTimeout Id for clearing
+        this.clearTimeout = undefined;
+
+        //Number of addError calls int he last minute
+        this.lastMinute = 0;
+
+        //Upper limit to this.timeout
+        this.maxTimeout = options?.maxTimeout ?? GlobalConstants.ms.day / 2;
+
+        //The value that would be used for a setTimeout
+        this.pauseFor = 0;
+
+        //Unix time for when a timeout should end
+        this.resumeAfter = 0;
+
+        //Holds the next timeout length
+        this.timeout = options?.baseTimeout ?? GlobalConstants.ms.minute;
+
+        //Optional value to manipulate the increase in timeout
         this.increment = options?.increment;
 
-        if (options?.maxTimeout) {
-            this.timeout.maxTimeout = options.maxTimeout;
-        }
-
-        if (options?.baseTimeout) {
-            this.timeout.baseTimeout = options.baseTimeout;
-            this.timeout.timeout = options.baseTimeout;
-        }
-
+        //Bindings
         this.addError = this.addError.bind(this);
         this.isTimeout = this.isTimeout.bind(this);
         this.getPauseFor = this.getPauseFor.bind(this);
@@ -52,42 +54,48 @@ export default class Timeout {
     }
 
     addError() {
-        this.timeout.pauseFor = this.timeout.timeout;
-        this.timeout.resumeAfter = this.timeout.timeout + Date.now();
+        this.pauseFor = this.timeout;
+        this.resumeAfter = this.timeout + Date.now();
 
         const baseTimeout = Math.max(
             this.increment
-                ? this.increment(this.timeout.timeout)
-                : (this.timeout.timeout * 2),
-            this.timeout.baseTimeout,
+                ? this.increment(this.timeout)
+                : (this.timeout * 2),
+            this.baseTimeout,
         );
 
-        this.timeout.timeout = Math.min(
+        this.timeout = Math.min(
             baseTimeout,
-            this.timeout.maxTimeout,
+            this.maxTimeout,
         );
 
-        clearTimeout(this.timeout.clearTimeout);
+        clearTimeout(this.clearTimeout);
 
-        this.timeout.clearTimeout = setTimeout(() => {
-            this.timeout.timeout = this.timeout.baseTimeout;
-        }, this.timeout.timeout + 30_000) as unknown as number;
+        this.clearTimeout = setTimeout(() => {
+            this.timeout = this.baseTimeout;
+        }, this.timeout + 30_000) as unknown as number;
+
+        this.lastMinute += 1;
+
+        setTimeout(() => {
+            this.lastMinute -= 1;
+        }, GlobalConstants.ms.minute);
     }
 
     getPauseFor() {
-        return this.timeout.pauseFor;
+        return this.pauseFor;
     }
 
     getTimeout() {
-        return this.timeout;
+        return this;
     }
 
     isTimeout() {
-        return this.timeout.resumeAfter > Date.now();
+        return this.resumeAfter > Date.now();
     }
 
     resetTimeout() {
-        clearTimeout(this.timeout.clearTimeout);
-        this.timeout.timeout = this.timeout.baseTimeout;
+        clearTimeout(this.clearTimeout);
+        this.timeout = this.baseTimeout;
     }
 }
