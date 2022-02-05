@@ -6,6 +6,7 @@ import { Log } from '../../util/Log';
 import { RegionLocales } from '../../../locales/RegionLocales';
 import { SQLite } from '../../util/SQLite';
 import Constants from '../util/Constants';
+import GlobalConstants from '../../util/Constants';
 import ModuleError from '../errors/ModuleError';
 
 export const properties: ClientModule['properties'] = {
@@ -77,7 +78,7 @@ export const execute: ClientModule['execute'] = async ({
             //@ts-expect-error hasOwn typing not implemented yet - https://github.com/microsoft/TypeScript/issues/44253
             const duplicationCheck = Object.hasOwn(lastEvent, 'lastLogout') &&
                 newData.lastLogout - lastEvent.lastLogout! <
-                Constants.ms.second * 2.5;
+                GlobalConstants.ms.second * 2.5;
 
             if (duplicationCheck === false) {
                 const relative = timestamp(newData.lastLogout, 'R');

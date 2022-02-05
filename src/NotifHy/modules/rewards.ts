@@ -4,6 +4,7 @@ import { BetterEmbed } from '../../util/utility';
 import { RegionLocales } from '../../../locales/RegionLocales';
 import { SQLite } from '../../util/SQLite';
 import Constants from '../util/Constants';
+import GlobalConstants from '../../util/Constants';
 import ModuleError from '../errors/ModuleError';
 
 export const properties: ClientModule['properties'] = {
@@ -56,10 +57,11 @@ export const execute: ClientModule['execute'] = async ({
         const notificationInterval = rewardsModule.notificationInterval!;
 
         //Is the user's last claimed reward between the last midnight and the coming midnight
-        const hasClaimed = nextResetTime - Constants.ms.day < lastClaimedReward;
+        const hasClaimed =
+            nextResetTime - GlobalConstants.ms.day < lastClaimedReward;
 
         const surpassedInterval =
-            rewardsModule.lastNotified < nextResetTime - Constants.ms.day
+            rewardsModule.lastNotified < nextResetTime - GlobalConstants.ms.day
                 ? true //Bypass for alerts from the previous daily reward
                 : rewardsModule.lastNotified + notificationInterval <
                   Date.now();

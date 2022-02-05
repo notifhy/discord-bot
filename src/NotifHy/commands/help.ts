@@ -2,6 +2,7 @@ import type { ClientCommand } from '../../@types/client';
 import { BetterEmbed } from '../../util/utility';
 import { RegionLocales } from '../../../locales/RegionLocales';
 import Constants from '../util/Constants';
+import GlobalConstants from '../../util/Constants';
 
 export const properties: ClientCommand['properties'] = {
     name: 'help',
@@ -111,7 +112,7 @@ export const execute: ClientCommand['execute'] = async (
             replace(text.specific.cooldown.value, {
                 commandCooldown:
                     command.properties.cooldown /
-                    Constants.ms.second,
+                    GlobalConstants.ms.second,
             }),
         );
 

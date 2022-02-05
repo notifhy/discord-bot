@@ -15,6 +15,7 @@ import {
 } from 'discord.js';
 import { Log } from './Log';
 import Constants from '../NotifHy/util/Constants';
+import GlobalConstants from '../util/Constants';
 
 export function arrayRemove<Type extends unknown[]>(
     array: Type,
@@ -171,19 +172,20 @@ export function cleanLength(
         return null;
     }
 
-    let newMS = Math.floor(ms / Constants.ms.second) * Constants.ms.second;
+    let newMS = Math.floor(ms / GlobalConstants.ms.second) *
+        GlobalConstants.ms.second;
 
     if (rejectZero ? newMS <= 0 : newMS < 0) {
         return null;
     }
 
-    const days = Math.floor(newMS / Constants.ms.day);
-    newMS -= days * Constants.ms.day;
-    const hours = Math.floor(newMS / Constants.ms.hour);
-    newMS -= hours * Constants.ms.hour;
-    const minutes = Math.floor(newMS / Constants.ms.minute);
-    newMS -= minutes * Constants.ms.minute;
-    const seconds = Math.floor(newMS / Constants.ms.second);
+    const days = Math.floor(newMS / GlobalConstants.ms.day);
+    newMS -= days * GlobalConstants.ms.day;
+    const hours = Math.floor(newMS / GlobalConstants.ms.hour);
+    newMS -= hours * GlobalConstants.ms.hour;
+    const minutes = Math.floor(newMS / GlobalConstants.ms.minute);
+    newMS -= minutes * GlobalConstants.ms.minute;
+    const seconds = Math.floor(newMS / GlobalConstants.ms.second);
     return days > 0
         ? `${days}d ${hours}h ${minutes}m ${seconds}s`
         : hours > 0

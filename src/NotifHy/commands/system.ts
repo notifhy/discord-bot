@@ -9,6 +9,7 @@ import { keyLimit } from '../../../config.json';
 import { RegionLocales } from '../../../locales/RegionLocales';
 import { SQLite } from '../../util/SQLite';
 import Constants from '../util/Constants';
+import GlobalConstants from '../../util/Constants';
 import process from 'node:process';
 
 export const properties: ClientCommand['properties'] = {
@@ -41,7 +42,7 @@ export const execute: ClientCommand['execute'] = async (
         keyLimit * request.keyPercentage;
 
     const intervalBetweenRequests =
-        (60 / keyQueryLimit) * Constants.ms.second;
+        (60 / keyQueryLimit) * GlobalConstants.ms.second;
 
     const registeredUsers = (
         await SQLite.getAllUsers<UserAPIData>({

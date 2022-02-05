@@ -11,6 +11,7 @@ import { setTimeout } from 'node:timers/promises';
 import { SQLite } from '../../util/SQLite';
 import Constants from '../util/Constants';
 import ErrorHandler from '../../util/errors/ErrorHandler';
+import GlobalConstants from '../../util/Constants';
 import ModuleDiscordErrorHandler from '../errors/ModuleDiscordErrorHandler';
 import ModuleError from '../errors/ModuleError';
 import ModuleErrorHandler from '../errors/ModuleErrorHandler';
@@ -149,7 +150,7 @@ export class HypixelManager {
 
         const { history } = this.request.performance;
 
-        if (history[0]?.start + Constants.ms.hour > Date.now()) return;
+        if (history[0]?.start + GlobalConstants.ms.hour > Date.now()) return;
 
         history.unshift(performance);
 

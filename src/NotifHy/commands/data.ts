@@ -28,6 +28,7 @@ import { RegionLocales } from '../../../locales/RegionLocales';
 import { SQLite } from '../../util/SQLite';
 import CommandErrorHandler from '../errors/CommandErrorHandler';
 import Constants from '../util/Constants';
+import GlobalConstants from '../../util/Constants';
 
 export const properties: ClientCommand['properties'] = {
     name: 'data',
@@ -126,7 +127,7 @@ export const execute: ClientCommand['execute'] = async (
             'BUTTON',
             {
                 filter: componentFilter,
-                idle: Constants.ms.second * 30,
+                idle: GlobalConstants.ms.second * 30,
             },
         );
 
@@ -336,8 +337,8 @@ export const execute: ClientCommand['execute'] = async (
 
         const collector = interaction.channel!.createMessageComponentCollector({
             filter: filter,
-            idle: Constants.ms.minute * 5,
-            time: Constants.ms.minute * 30,
+            idle: GlobalConstants.ms.minute * 5,
+            time: GlobalConstants.ms.minute * 30,
         });
 
         let currentIndex = 0;

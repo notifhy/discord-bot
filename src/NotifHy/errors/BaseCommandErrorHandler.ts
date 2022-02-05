@@ -5,7 +5,7 @@ import {
 } from 'discord.js';
 import { slashCommandResolver } from '../../util/utility';
 import BaseErrorHandler from '../../util/errors/BaseErrorHandler';
-import Constants from '../util/Constants';
+import GlobalConstants from '../../util/Constants';
 
 export default class CommandErrorHandler<E> extends BaseErrorHandler<E> {
     readonly interaction: CommandInteraction;
@@ -44,7 +44,7 @@ export default class CommandErrorHandler<E> extends BaseErrorHandler<E> {
                     value: `ID: ${id}
                     Command: ${command}
                     Created At: <t:${Math.round(
-                        createdTimestamp / Constants.ms.second,
+                        createdTimestamp / GlobalConstants.ms.second,
                     )}:T>`,
                 },
                 {

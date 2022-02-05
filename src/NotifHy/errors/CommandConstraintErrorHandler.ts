@@ -18,6 +18,7 @@ import BaseCommandErrorHandler from './BaseCommandErrorHandler';
 import Constants from '../util/Constants';
 import ConstraintError from './ConstraintError';
 import ErrorHandler from '../../util/errors/ErrorHandler';
+import GlobalConstants from '../../util/Constants';
 
 export default class CommandConstraintErrorHandler
     extends BaseCommandErrorHandler<ConstraintError> {
@@ -83,10 +84,10 @@ export default class CommandConstraintErrorHandler
                 RegionLocales.replace(embed1.description, {
                     cooldown:
                         (command?.properties.cooldown ?? 0) /
-                        Constants.ms.second,
+                        GlobalConstants.ms.second,
                     timeLeft:
                         cleanRound(this.error.cooldown! /
-                        Constants.ms.second, 1),
+                        GlobalConstants.ms.second, 1),
                 }),
             );
 

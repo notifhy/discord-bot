@@ -22,6 +22,7 @@ import CommandErrorHandler from '../errors/CommandErrorHandler';
 import Constants from '../util/Constants';
 import CommandConstraintErrorHandler from '../errors/CommandConstraintErrorHandler';
 import ConstraintError from '../errors/ConstraintError';
+import GlobalConstants from '../../util/Constants';
 
 export const properties: ClientEvent['properties'] = {
     name: 'interactionCreate',
@@ -183,7 +184,8 @@ function cooldownConstraint(
     }
 
     const expireTime = Number(timestamps.get(user.id)) + cooldown;
-    const isCooldown = expireTime > (Constants.ms.second * 2.5) + Date.now();
+    const isCooldown = expireTime >
+        (GlobalConstants.ms.second * 2.5) + Date.now();
     const timeLeft = expireTime - Date.now();
 
     if (isCooldown) {

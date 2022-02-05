@@ -18,6 +18,7 @@ import { Log } from '../../util/Log';
 import { RegionLocales } from '../../../locales/RegionLocales';
 import { SQLite } from '../../util/SQLite';
 import Constants from '../util/Constants';
+import GlobalConstants from '../../util/Constants';
 
 export const properties: ClientCommand['properties'] = {
     name: 'systemmessage',
@@ -123,7 +124,7 @@ export const execute: ClientCommand['execute'] = async (
         'BUTTON',
         {
             filter: componentFilter,
-            idle: Constants.ms.second * 30,
+            idle: GlobalConstants.ms.second * 30,
         },
     );
 

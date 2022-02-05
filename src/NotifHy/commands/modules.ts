@@ -29,6 +29,7 @@ import { SQLite } from '../../util/SQLite';
 import { ToggleButtons } from '../util/ToggleButtons';
 import CommandErrorHandler from '../errors/CommandErrorHandler';
 import Constants from '../util/Constants';
+import GlobalConstants from '../../util/Constants';
 
 export const properties: ClientCommand['properties'] = {
     name: 'modules',
@@ -176,8 +177,8 @@ export const execute: ClientCommand['execute'] = async (
 
     const collector = interaction.channel!.createMessageComponentCollector({
         filter: filter,
-        idle: Constants.ms.minute * 5,
-        time: Constants.ms.minute * 30,
+        idle: GlobalConstants.ms.minute * 5,
+        time: GlobalConstants.ms.minute * 30,
     });
 
     let selected: string;

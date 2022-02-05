@@ -1,6 +1,6 @@
 import { auth } from '@googleapis/drive';
-import { backup as Constants } from '../NotifHy/util/Constants';
 import { googleApp } from '../../config.json';
+import Constants from './util/Constants';
 
 /* eslint-disable camelcase */
 

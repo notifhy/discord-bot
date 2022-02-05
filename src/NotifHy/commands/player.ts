@@ -25,6 +25,7 @@ import { Request } from '../../util/Request';
 import Constants from '../util/Constants';
 import HTTPError from '../errors/HTTPError';
 import CommandErrorHandler from '../errors/CommandErrorHandler';
+import GlobalConstants from '../../util/Constants';
 
 export const properties: ClientCommand['properties'] = {
     name: 'player',
@@ -323,8 +324,8 @@ export const execute: ClientCommand['execute'] = async (
 
         const collector = interaction.channel!.createMessageComponentCollector({
             filter: filter,
-            idle: Constants.ms.minute * 5,
-            time: Constants.ms.minute * 30,
+            idle: GlobalConstants.ms.minute * 5,
+            time: GlobalConstants.ms.minute * 30,
         });
 
         let currentIndex = 0;

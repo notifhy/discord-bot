@@ -3,7 +3,7 @@ import {
     setTimeout,
 } from 'node:timers';
 import { RequestManager } from './RequestManager';
-import Constants from '../util/Constants';
+import GlobalConstants from '../../util/Constants';
 
 type ErrorType = {
     baseTimeout: number;
@@ -40,18 +40,18 @@ export class HypixelErrors {
         };
 
         this.rateLimit = {
-            baseTimeout: Constants.ms.minute,
+            baseTimeout: GlobalConstants.ms.minute,
             lastMinute: 0,
-            timeout: Constants.ms.minute,
+            timeout: GlobalConstants.ms.minute,
             resetTimeout: undefined,
             total: 0,
             isGlobal: false,
         };
 
         this.error = {
-            baseTimeout: Constants.ms.minute / 2,
+            baseTimeout: GlobalConstants.ms.minute / 2,
             lastMinute: 0,
-            timeout: Constants.ms.minute / 2,
+            timeout: GlobalConstants.ms.minute / 2,
             resetTimeout: undefined,
             total: 0,
         };
@@ -72,7 +72,7 @@ export class HypixelErrors {
     }) {
         if (ratelimitReset) {
             this.rateLimit.timeout =
-                (Number(ratelimitReset) + 1) * Constants.ms.second;
+                (Number(ratelimitReset) + 1) * GlobalConstants.ms.second;
         }
 
         this.rateLimit.isGlobal = rateLimitGlobal ?? this.rateLimit.isGlobal;
@@ -104,7 +104,8 @@ export class HypixelErrors {
             Date.now() + this[type].timeout,
         ); //Sets the new delay by setting <Instance>.resumeAfter
 
-        const newTimeout = this[type].timeout * 2 || Constants.ms.minute / 2;
+        const newTimeout = this[type].timeout * 2 ||
+            GlobalConstants.ms.minute / 2;
 
         this[type].timeout = newTimeout; //Setting new timeout
 
@@ -114,7 +115,7 @@ export class HypixelErrors {
 
         setTimeout(() => {
             this[type].lastMinute -= 1; //Removing a type from the count
-        }, Constants.ms.minute);
+        }, GlobalConstants.ms.minute);
 
         if (this[type].resetTimeout !== undefined) {
             //Clears the type's existing timeout, if any
@@ -124,6 +125,6 @@ export class HypixelErrors {
         this[type].resetTimeout = setTimeout(() => {
             //Returns type number rather than NodeJS.timeout
             this[type].timeout = this[type].baseTimeout; //Sets a timeout to set the timeout back to "0"
-        }, newTimeout + Constants.ms.minute) as unknown as number;
+        }, newTimeout + GlobalConstants.ms.minute) as unknown as number;
     }
 }

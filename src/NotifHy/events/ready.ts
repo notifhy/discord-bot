@@ -4,6 +4,7 @@ import { Log } from '../../util/Log';
 import { SQLite } from '../../util/SQLite';
 import Constants from '../util/Constants';
 import ErrorHandler from '../../util/errors/ErrorHandler';
+import GlobalConstants from '../../util/Constants';
 
 export const properties: ClientEvent['properties'] = {
     name: 'ready',
@@ -17,7 +18,7 @@ export const execute: ClientEvent['execute'] = async (client: Client) => {
 
     setActivity();
 
-    setInterval(setActivity, Constants.ms.hour);
+    setInterval(setActivity, GlobalConstants.ms.hour);
 
     async function setActivity() {
         try {

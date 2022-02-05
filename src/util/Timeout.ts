@@ -2,7 +2,7 @@ import {
     clearTimeout,
     setTimeout,
 } from 'node:timers';
-import Constants from '../NotifHy/util/Constants';
+import GlobalConstants from '../util/Constants';
 
 type TimeoutOptions = {
     baseTimeout?: number,
@@ -23,12 +23,12 @@ export default class Timeout {
 
     constructor(options?: TimeoutOptions) {
         this.timeout = {
-            baseTimeout: Constants.ms.minute,
+            baseTimeout: GlobalConstants.ms.minute,
             clearTimeout: undefined,
             lastMinute: 0,
             pauseFor: 0,
             resumeAfter: 0,
-            timeout: Constants.ms.minute,
+            timeout: GlobalConstants.ms.minute,
         };
 
         this.increment = options?.increment;
