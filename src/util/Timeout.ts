@@ -7,6 +7,7 @@ import GlobalConstants from '../util/Constants';
 type TimeoutOptions = {
     baseTimeout?: number,
     increment?: (current: number) => number,
+    maxTimeout?: number,
 }
 
 export default class Timeout {
@@ -14,6 +15,7 @@ export default class Timeout {
         baseTimeout: number,
         clearTimeout: number | undefined;
         lastMinute: number,
+        maxTimeout: number,
         pauseFor: number;
         resumeAfter: number;
         timeout: number;
@@ -26,12 +28,17 @@ export default class Timeout {
             baseTimeout: GlobalConstants.ms.minute,
             clearTimeout: undefined,
             lastMinute: 0,
+            maxTimeout: GlobalConstants.ms.day / 2,
             pauseFor: 0,
             resumeAfter: 0,
             timeout: GlobalConstants.ms.minute,
         };
 
         this.increment = options?.increment;
+
+        if (options?.maxTimeout) {
+            this.timeout.maxTimeout = options.maxTimeout;
+        }
 
         if (options?.baseTimeout) {
             this.timeout.baseTimeout = options.baseTimeout;
@@ -48,11 +55,17 @@ export default class Timeout {
         this.timeout.pauseFor = this.timeout.timeout;
         this.timeout.resumeAfter = this.timeout.timeout + Date.now();
 
-        this.timeout.timeout = (
+        const baseTimeout = Math.max(
             this.increment
-            ? this.increment(this.timeout.timeout)
-            : (this.timeout.timeout * 2)
-        ) || this.timeout.baseTimeout;
+                ? this.increment(this.timeout.timeout)
+                : (this.timeout.timeout * 2),
+            this.timeout.baseTimeout,
+        );
+
+        this.timeout.timeout = Math.min(
+            baseTimeout,
+            this.timeout.maxTimeout,
+        );
 
         clearTimeout(this.timeout.clearTimeout);
 
