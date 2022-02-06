@@ -172,6 +172,8 @@ export const execute: ClientCommand['execute'] = async (
             table: Constants.tables.defender,
             data: {
                 discordID: interaction.user.id,
+                languages: language ? [language] : [],
+                versions: mc_version ? [mc_version] : [],
             },
         }),
         SQLite.newUser<FriendsModule>({
