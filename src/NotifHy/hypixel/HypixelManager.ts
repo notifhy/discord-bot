@@ -64,6 +64,11 @@ export class HypixelManager {
             })
         ).filter(user => user.modules.length > 0);
 
+        if (users.length === 0) {
+            await setTimeout(5_000); //Avoids blocking other processes
+            return;
+        }
+
         for (const user of users) {
             if (
                 this.errors.isTimeout() ||

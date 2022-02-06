@@ -76,21 +76,19 @@ export class SQLite {
 
     static createTablesIfNotExists(): Promise<void> {
         return new Promise<void>(resolve => {
-            db.transaction(() => {
-                Object.values(Constants.tables.create)
-                    .map(value => db.prepare(value))
-                    .forEach(table => table.run());
+            Object.values(Constants.tables.create)
+                .map(value => db.prepare(value))
+                .forEach(table => table.run());
 
-                const config = db
-                    .prepare('SELECT * FROM config')
-                    .get();
+            const config = db
+                .prepare('SELECT * FROM config')
+                .get();
 
-                if (config === undefined) {
-                    db.prepare('INSERT INTO config DEFAULT VALUES').run();
-                }
+            if (config === undefined) {
+                db.prepare('INSERT INTO config DEFAULT VALUES').run();
+            }
 
-                resolve();
-            });
+            resolve();
         });
     }
 
