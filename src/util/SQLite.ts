@@ -88,9 +88,9 @@ export class SQLite {
                 if (config === undefined) {
                     db.prepare('INSERT INTO config DEFAULT VALUES').run();
                 }
-            });
 
-            resolve();
+                resolve();
+            });
         });
     }
 
