@@ -1,5 +1,6 @@
 import type { ClientEvent } from '../@types/client';
 import { formattedUnix } from '../../util/utility';
+import { Log } from '../../util/Log';
 
 export const properties: ClientEvent['properties'] = {
     name: 'debug',
@@ -8,5 +9,5 @@ export const properties: ClientEvent['properties'] = {
 
 export const execute: ClientEvent['execute'] = (info: string): void => {
     return;
-    console.log(`${formattedUnix({ date: true, utc: true })} |`, info);
+    Log.log(`${formattedUnix({ date: true, utc: true })} |`, info);
 };

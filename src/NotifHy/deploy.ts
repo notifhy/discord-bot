@@ -3,12 +3,13 @@ import {
     clientID,
     discordAPIkey,
 } from '../../config.json';
+import { Log } from '../util/Log';
 import { REST } from '@discordjs/rest';
 import { Routes } from 'discord-api-types/v9';
 
 (async () => {
     try {
-        console.log('Starting deployment of the deploy command.');
+        Log.log('Starting deployment of the deploy command.');
 
         const deployCommand = (
             (await import(`${__dirname}/commands/deploy.ts`)) as ClientCommand
@@ -20,8 +21,8 @@ import { Routes } from 'discord-api-types/v9';
                 body: [deployCommand],
             });
 
-        console.log('Successfully deployed the deploy command.');
+        Log.log('Successfully deployed the deploy command.');
     } catch (error) {
-        console.error(error);
+        Log.error(error);
     }
 })();

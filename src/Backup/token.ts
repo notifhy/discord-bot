@@ -1,5 +1,6 @@
 import { auth } from '@googleapis/drive';
 import { googleApp } from '../../config.json';
+import { Log } from '../util/Log';
 import Constants from './util/Constants';
 
 /* eslint-disable camelcase */
@@ -22,13 +23,13 @@ const oauth2Client = new auth.OAuth2(
     if (code) {
         const { tokens } = await oauth2Client.getToken(code);
 
-        console.log(tokens.refresh_token);
+        Log.log(tokens.refresh_token);
     } else {
         const url = oauth2Client.generateAuthUrl({
             access_type: 'offline',
             scope: Constants.scopes,
         });
 
-        console.log(url);
+        Log.log(url);
     }
 })();

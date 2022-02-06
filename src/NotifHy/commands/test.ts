@@ -1,5 +1,6 @@
 import type { ClientCommand } from '../@types/client';
 import { CommandInteraction } from 'discord.js';
+import { Log } from '../../util/Log';
 
 export const properties: ClientCommand['properties'] = {
     name: 'test',
@@ -45,6 +46,6 @@ export const execute: ClientCommand['execute'] = async (
     try {
         await interaction.reply({ content: 'Pong!' });
     } catch (err) {
-        console.log(err);
+        Log.error(err);
     }
 };
