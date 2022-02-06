@@ -34,15 +34,15 @@ export const execute: ClientCommand['execute'] = async (
     const responseEmbed = new BetterEmbed(interaction)
         .setColor(Constants.colors.normal)
         .setTitle(text.title)
-        .addField(
-            text.latest.name,
-            replace(text.latest.value, {
+        .addFields({
+            name: text.latest.name,
+            value: replace(text.latest.value, {
                 fetchPerformance: fetchPerformance,
                 processPerformance: processPerformance,
                 modulePerformance: modulePerformance,
                 total: total,
             }),
-        );
+        });
 
     await interaction.editReply({
         embeds: [responseEmbed],

@@ -77,7 +77,7 @@ export default class RequestErrorHandler<E> extends BaseErrorHandler<E> {
 
         const embed = this.baseErrorEmbed()
             .setTitle('Degraded Performance')
-            .addFields([
+            .addFields(
                 {
                     name: 'Type',
                     value:
@@ -125,7 +125,7 @@ export default class RequestErrorHandler<E> extends BaseErrorHandler<E> {
                     )} or ${cleanRound(keyPercentage * 100)}%
                     Instance Queries: ${uses}`,
                 },
-            ]);
+            );
 
         return embed;
     }
@@ -145,18 +145,18 @@ export default class RequestErrorHandler<E> extends BaseErrorHandler<E> {
                 .setDescription(
                     'A timeout has been applied. Dedicated queries have been lowered by 5%.',
                 )
-                .addField(
-                    'Header Data',
-                    `Remaining: ${headers?.get('ratelimit-remaining') ?? 'Unknown'}
+                .addFields({
+                    name: 'Header Data',
+                    value: `Remaining: ${headers?.get('ratelimit-remaining') ?? 'Unknown'}
                     Reset: ${headers?.get('ratelimit-reset') ?? 'Unknown'}`,
-                );
+                });
         } else if (this.error instanceof HTTPError) {
             embed
                 .setDescription('A timeout has been applied.')
-                .addField(
-                    'Request',
-                    `Status: ${this.error.status}`,
-                );
+                .addFields({
+                    name: 'Request',
+                    value: `Status: ${this.error.status}`,
+                });
         } else if (this.error instanceof FetchError) {
             embed
                 .setDescription('A timeout has been applied.');

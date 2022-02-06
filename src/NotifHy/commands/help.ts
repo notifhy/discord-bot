@@ -59,7 +59,7 @@ export const execute: ClientCommand['execute'] = async (
             .setColor(Constants.colors.normal)
             .setTitle(text.information.title)
             .setDescription(text.information.description)
-            .addFields([
+            .addFields(
                 {
                     name: text.information.gitHub.name,
                     value: text.information.gitHub.value,
@@ -68,7 +68,7 @@ export const execute: ClientCommand['execute'] = async (
                     name: text.information.legal.name,
                     value: text.information.legal.value,
                 },
-            ]);
+            );
 
         await interaction.editReply({ embeds: [informationEmbed] });
     }
@@ -107,27 +107,27 @@ export const execute: ClientCommand['execute'] = async (
             );
         }
 
-        commandSearchEmbed.addField(
-            text.specific.cooldown.name,
-            replace(text.specific.cooldown.value, {
+        commandSearchEmbed.addFields({
+            name: text.specific.cooldown.name,
+            value: replace(text.specific.cooldown.value, {
                 commandCooldown:
                     command.properties.cooldown /
                     GlobalConstants.ms.second,
             }),
-        );
+        });
 
         if (command.properties.noDM === true) {
-            commandSearchEmbed.addField(
-                text.specific.dm.name,
-                replace(text.specific.dm.value),
-            );
+            commandSearchEmbed.addFields({
+                name: text.specific.dm.name,
+                value: replace(text.specific.dm.value),
+            });
         }
 
         if (command.properties.ownerOnly === true) {
-            commandSearchEmbed.addField(
-                text.specific.owner.name,
-                replace(text.specific.owner.value),
-            );
+            commandSearchEmbed.addFields({
+                name: text.specific.owner.name,
+                value: replace(text.specific.owner.value),
+            });
         }
 
         await interaction.editReply({ embeds: [commandSearchEmbed] });
@@ -142,14 +142,14 @@ export const execute: ClientCommand['execute'] = async (
             .setTitle(text.all.title);
 
         for (const command of commandsCollection.values()) {
-            allCommandsEmbed.addField(
-                replace(text.all.field.name, {
+            allCommandsEmbed.addFields({
+                name: replace(text.all.field.name, {
                     commandName: command.properties.name,
                 }),
-                replace(text.all.field.value, {
+                value: replace(text.all.field.value, {
                     commandDescription: command.properties.description,
                 }),
-            );
+            });
         }
 
         await interaction.editReply({ embeds: [allCommandsEmbed] });

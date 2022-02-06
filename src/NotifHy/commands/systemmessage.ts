@@ -103,8 +103,16 @@ export const execute: ClientCommand['execute'] = async (
         .setColor(Constants.colors.normal)
         .setTitle(text.preview.title)
         .setDescription(text.preview.description)
-        .addField('ID', id)
-        .addField(name, value);
+        .addFields(
+            {
+                name: 'ID',
+                value: id,
+            },
+            {
+                name: name,
+                value: value,
+            },
+        );
 
     const message = await interaction.editReply({
         embeds: [validateEmbed],

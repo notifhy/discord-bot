@@ -89,7 +89,7 @@ export default class ModuleDiscordErrorHandler extends BaseErrorHandler<
     private async systemNotify() {
         const identifier = this.baseErrorEmbed()
             .setTitle('Unexpected Error')
-            .addFields([
+            .addFields(
                 {
                     name: 'User',
                     value: this.discordID,
@@ -98,7 +98,7 @@ export default class ModuleDiscordErrorHandler extends BaseErrorHandler<
                     name: 'Module',
                     value: this.cleanModule,
                 },
-            ]);
+            );
 
         await sendWebHook({
             content: `<@${ownerID.join('><@')}>`,
@@ -159,7 +159,10 @@ export default class ModuleDiscordErrorHandler extends BaseErrorHandler<
 
                     const alertEmbed = new BetterEmbed({ text: footer })
                         .setTitle(title)
-                        .addField(message.name, message.value);
+                        .addFields({
+                            name: message.name,
+                            value: message.value,
+                        });
 
                     await user.send({ embeds: [alertEmbed] });
                 } catch (error3) {

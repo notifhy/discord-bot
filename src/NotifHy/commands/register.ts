@@ -192,7 +192,10 @@ export const execute: ClientCommand['execute'] = async (
         .setColor(Constants.colors.normal)
         .setTitle(text.title)
         .setDescription(text.description)
-        .addField(text.field.name, text.field.value);
+        .addFields({
+            name: text.field.name,
+            value: text.field.value,
+        });
 
     Log.command(interaction, 'Success');
 

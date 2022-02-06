@@ -261,12 +261,12 @@ export const execute: ClientCommand['execute'] = async (
                     );
 
                 if (missingRequirements.length > 0) {
-                    mainEmbed.addField(
-                        text.missingConfigField.name,
-                        replace(text.missingConfigField.value, {
+                    mainEmbed.addFields({
+                        name: text.missingConfigField.name,
+                        value: replace(text.missingConfigField.value, {
                             missingRequirements: missingRequirements.join(', '),
                         }),
-                    );
+                    });
                 }
 
                 const component = new ToggleButtons({

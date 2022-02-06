@@ -45,7 +45,7 @@ export const execute: ClientCommand['execute'] = async (
     const snowflakeEmbed = new BetterEmbed(interaction)
         .setColor(Constants.colors.normal)
         .setTitle(text.title)
-        .addFields([
+        .addFields(
             {
                 name: text.input.name,
                 value: replace(text.input.value, {
@@ -84,7 +84,7 @@ export const execute: ClientCommand['execute'] = async (
                     increment: String(increment),
                 }),
             },
-        ]);
+        );
 
     await interaction.editReply({ embeds: [snowflakeEmbed] });
 };

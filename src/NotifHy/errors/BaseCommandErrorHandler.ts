@@ -33,7 +33,7 @@ export default class CommandErrorHandler<E> extends BaseErrorHandler<E> {
         );
 
         return this.baseErrorEmbed()
-            .addFields([
+            .addFields(
                 {
                     name: 'User',
                     value: `Tag: ${user.tag}
@@ -72,6 +72,6 @@ export default class CommandErrorHandler<E> extends BaseErrorHandler<E> {
                     name: 'Other',
                     value: `Websocket Ping: ${client.ws.ping}`,
                 },
-            ]);
+            );
     }
 }

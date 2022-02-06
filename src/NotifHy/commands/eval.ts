@@ -47,7 +47,7 @@ export const execute: ClientCommand['execute'] = async (
         const evalEmbed = new BetterEmbed(interaction)
             .setColor(Constants.colors.normal)
             .setTitle(text.success.title)
-            .addFields([
+            .addFields(
                 {
                     name: text.success.input.name,
                     value: replace(text.success.input.value, {
@@ -76,13 +76,13 @@ export const execute: ClientCommand['execute'] = async (
                         ms: Formatters.codeBlock(`${timeTaken}ms`),
                     }),
                 },
-            ]);
+            );
 
         if (outputMaxLength === true) {
-            evalEmbed.addField(
-                text.maxLength.name,
-                text.maxLength.value,
-            );
+            evalEmbed.addFields({
+                name: text.maxLength.name,
+                value: text.maxLength.value,
+            });
         }
 
         Log.command(interaction, 'Output: ', output);
@@ -96,18 +96,18 @@ export const execute: ClientCommand['execute'] = async (
         const evalEmbed = new BetterEmbed(interaction)
             .setColor(Constants.colors.warning)
             .setTitle(text.fail.title)
-            .addField(
-                text.fail.input.name,
-                replace(text.fail.input.value, {
+            .addFields({
+                name: text.fail.input.name,
+                value: replace(text.fail.input.value, {
                     input: Formatters.codeBlock('javascript', input),
                 }),
-            );
+            });
 
         if (outputMaxLength === true) {
-            evalEmbed.addField(
-                text.maxLength.name,
-                text.maxLength.value,
-            );
+            evalEmbed.addFields({
+                name: text.maxLength.name,
+                value: text.maxLength.value,
+            });
         }
 
         const errorStackAttachment = {

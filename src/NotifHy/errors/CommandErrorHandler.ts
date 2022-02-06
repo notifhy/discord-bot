@@ -61,12 +61,12 @@ export default class CommandErrorHandler<E> extends BaseCommandErrorHandler<E> {
             .setDescription(replace(text.commandErrors.embed.description, {
                 commandName: commandName,
             }))
-            .addField(
-                text.commandErrors.embed.field.name,
-                replace(text.commandErrors.embed.field.value, {
+            .addFields({
+                name: text.commandErrors.embed.field.name,
+                value: replace(text.commandErrors.embed.field.value, {
                     id: this.incidentID,
                 }),
-            );
+            });
 
         const payLoad = { embeds: [embed], ephemeral: true };
 

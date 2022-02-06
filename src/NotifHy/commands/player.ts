@@ -155,7 +155,7 @@ export const execute: ClientCommand['execute'] = async (
                     ? text.status.online
                     : text.status.offline,
             }))
-            .addFields([
+            .addFields(
                 {
                     name: text.status.embed.field1.name,
                     value: replace(text.status.embed.field1.value, {
@@ -176,39 +176,42 @@ export const execute: ClientCommand['execute'] = async (
                         lastLogout: timestamp(last_logout, 'F') ?? unknown,
                     }),
                 },
-            ]);
+            );
 
         if (online === true) {
             statusEmbed
-                .addField(
-                    text.status.embed.onlineField.name,
-                    replace(text.status.embed.onlineField.value, {
+                .addFields({
+                    name: text.status.embed.onlineField.name,
+                    value: replace(text.status.embed.onlineField.value, {
                         playTime: cleanLength(
                             Date.now() - Number(last_login),
                         ) ?? unknown,
                         gameType: type ?? unknown,
                         gameMode: mode ?? unknown,
                         gameMap: map ?? unknown,
-                    }));
+                    }),
+                });
         } else {
             statusEmbed
-                .addField(
-                    text.status.embed.offlineField.name,
-                    replace(text.status.embed.offlineField.value, {
+                .addFields({
+                    name: text.status.embed.offlineField.name,
+                    value: replace(text.status.embed.offlineField.value, {
                         playTime: cleanLength(
                             Number(last_logout) - Number(last_login),
                         ) ?? unknown,
                         gameType: last_game ?? unknown,
-                    }));
+                    }),
+                });
         }
 
         statusEmbed
-            .addField(
-                text.status.embed.field3.name,
-                replace(text.status.embed.field3.value, {
+            .addFields({
+                name: text.status.embed.field3.name,
+                value: replace(text.status.embed.field3.value, {
                     language: language ?? 'ENGLISH',
                     version: mc_version ?? unknown,
-                }));
+                }),
+            });
 
         await interaction.editReply({ embeds: [statusEmbed] });
     }

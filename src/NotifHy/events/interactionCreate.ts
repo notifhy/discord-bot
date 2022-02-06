@@ -209,7 +209,10 @@ async function checkSystemMessages(
             .setDescription(text.embed.description);
 
         for (const message of userData.systemMessages) {
-            systemMessages.addField(message.name, message.value);
+            systemMessages.addFields({
+                name: message.name,
+                value: message.value,
+            });
         }
 
         systemMessages.fields.splice(25);

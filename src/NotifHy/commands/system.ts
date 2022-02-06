@@ -59,7 +59,7 @@ export const execute: ClientCommand['execute'] = async (
     const responseEmbed = new BetterEmbed(interaction)
         .setColor(Constants.colors.normal)
         .setTitle(text.embed.title)
-        .addFields([
+        .addFields(
             {
                 name: text.embed.field1.name,
                 value: replace(text.embed.field1.value, {
@@ -100,7 +100,7 @@ export const execute: ClientCommand['execute'] = async (
                     updateInterval: cleanLength(updateInterval)!,
                 }),
             },
-        ]);
+        );
 
     await interaction.editReply({
         embeds: [responseEmbed],

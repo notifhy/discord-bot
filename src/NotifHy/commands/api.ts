@@ -191,7 +191,7 @@ export const execute: ClientCommand['execute'] = async (
                     interaction.client.hypixel.request.performance,
                 ).slice(0, Constants.limits.embedDescription),
             )
-            .addFields([
+            .addFields(
                 {
                     name: text.api.enabled.name,
                     value: replace(text.api.enabled.value, {
@@ -239,7 +239,7 @@ export const execute: ClientCommand['execute'] = async (
                         uses: uses,
                     }),
                 },
-            ]);
+            );
 
         await interaction.editReply({
             embeds: [statsEmbed],
