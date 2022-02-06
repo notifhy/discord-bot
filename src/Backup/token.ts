@@ -4,7 +4,7 @@ import Constants from './util/Constants';
 
 /* eslint-disable camelcase */
 
-const code = '4/1AX4XfWj8zMbPnp2ArLcshT6lFZPio1cRXdzNGRG-MMxlDb4mw4RIA7BSQqg';
+const code = '';
 
 const {
     client_id,
