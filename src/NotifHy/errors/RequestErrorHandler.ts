@@ -65,6 +65,7 @@ export default class RequestErrorHandler<E> extends BaseErrorHandler<E> {
     private statusEmbed() {
         const {
             errors: {
+                isGlobal,
                 abort,
                 rateLimit,
                 error,
@@ -95,7 +96,7 @@ export default class RequestErrorHandler<E> extends BaseErrorHandler<E> {
                     name: 'Global Rate Limit',
                     value:
                         this.error instanceof RateLimitError &&
-                        rateLimit.isGlobal === true
+                        isGlobal === true
                                 ? 'Yes'
                                 : 'No',
                 },

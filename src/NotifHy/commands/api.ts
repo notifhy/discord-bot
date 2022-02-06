@@ -5,7 +5,6 @@ import {
     cleanRound,
 } from '../../util/utility';
 import { keyLimit } from '../../../config.json';
-import { HypixelErrors } from '../hypixel/HypixelErrors';
 import { Log } from '../../util/Log';
 import { RegionLocales } from '../../../locales/RegionLocales';
 import { RequestManager } from '../hypixel/RequestManager';
@@ -97,16 +96,8 @@ export const properties: ClientCommand['properties'] = {
                         required: true,
                         choices: [
                             {
-                                name: 'baseTimeout',
-                                value: 'baseTimeout',
-                            },
-                            {
                                 name: 'timeout',
                                 value: 'timeout',
-                            },
-                            {
-                                name: 'lastMinute',
-                                value: 'lastMinute',
                             },
                         ],
                     },
@@ -159,6 +150,8 @@ export const properties: ClientCommand['properties'] = {
 
 type errorTypes = 'abort' | 'rateLimit' | 'error';
 
+type TimeoutSettables = 'timeout';
+
 export const execute: ClientCommand['execute'] = async (
     interaction,
     locale,
@@ -179,7 +172,7 @@ export const execute: ClientCommand['execute'] = async (
     }
 
     async function stats() {
-        const { abort, rateLimit, resumeAfter, error } =
+        const { abort, isGlobal, rateLimit, resumeAfter, error } =
             interaction.client.hypixel.errors;
         const { uses, keyPercentage } =
             interaction.client.hypixel.request;
@@ -210,7 +203,7 @@ export const execute: ClientCommand['execute'] = async (
                 {
                     name: text.api.rateLimit.name,
                     value: replace(text.api.rateLimit.value, {
-                        state: rateLimit.isGlobal === true
+                        state: isGlobal === true
                             ? text.api.yes
                             : text.api.no,
                     }),
@@ -279,7 +272,7 @@ export const execute: ClientCommand['execute'] = async (
         const value = interaction.options.getNumber('value', true);
 
         interaction.client.hypixel.errors[category][
-            type as keyof HypixelErrors[errorTypes]
+            type as TimeoutSettables
         ] = value;
         const setEmbed = new BetterEmbed(interaction)
             .setColor(Constants.colors.normal)
@@ -301,6 +294,7 @@ export const execute: ClientCommand['execute'] = async (
         const value = interaction.options.getBoolean('value');
 
         const hypixelModuleErrors = interaction.client.hypixel.errors;
+
         if (method === 'addAbort' || method === 'addError') {
             hypixelModuleErrors[method]();
         } else if (method === 'addRateLimit') {
@@ -309,6 +303,7 @@ export const execute: ClientCommand['execute'] = async (
                 ratelimitReset: null,
             });
         }
+
         const callEmbed = new BetterEmbed(interaction)
             .setColor(Constants.colors.normal)
             .setTitle(text.call.title)

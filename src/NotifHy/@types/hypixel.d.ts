@@ -5,11 +5,11 @@ export interface BaseHypixelAPI {
     success: boolean,
 }
 
-export interface Hypixel400_403_422 extends BaseHypixelAPI {
+export interface HypixelAPIError extends BaseHypixelAPI {
     cause: string,
 }
 
-export interface Hypixel429 extends BaseHypixelAPI {
+export interface HypixelAPI429 extends BaseHypixelAPI {
     cause: string,
     throttle: boolean,
     global: boolean,
@@ -38,9 +38,9 @@ export interface RawHypixelStatus extends BaseHypixelAPI {
     },
 }
 
-export type HypixelAPIError =
-    | Hypixel400_403_422
-    | Hypixel429;
+export type HypixelAPINotOK =
+    | HypixelAPIError
+    | HypixelAPI429;
 
 export type HypixelAPIOk =
     | RawHypixelPlayer

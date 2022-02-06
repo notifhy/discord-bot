@@ -1,10 +1,9 @@
 import type {
-    Hypixel400_403_422,
-    Hypixel429,
+    HypixelAPINotOK,
+    HypixelAPI429,
     HypixelAPIError,
     HypixelAPIOk,
 } from '../NotifHy/@types/hypixel';
-import type { Response } from 'node-fetch';
 import { hypixelAPIkey } from '../../config.json';
 import { Request } from './Request';
 import HTTPError from '../NotifHy/errors/HTTPError';
@@ -38,37 +37,32 @@ export class HypixelRequest {
         const JSON =
             await Request.tryParse<HypixelAPIOk | HypixelAPIError>(response);
 
-        if (HypixelRequest.isHypixelAPIError(JSON, response)) {
-            const baseErrorData = {
-                message: JSON?.cause,
-                response: response,
-                url: url,
-            };
+        const status = response.status;
 
-            if (HypixelRequest.isRateLimit(JSON, response)) {
-                throw new RateLimitError(
-                    Object.assign(baseErrorData, { json: JSON }),
-                );
-            } else {
-                throw new HTTPError<Hypixel400_403_422>(
-                    Object.assign(baseErrorData, { json: JSON }),
-                );
-            }
+        if (response.ok) {
+            return JSON as HypixelAPIOk;
         }
 
-        //Data is all good!
-        return JSON as HypixelAPIOk;
+        const baseErrorData = {
+            message: (JSON as HypixelAPINotOK)?.cause,
+            response: response,
+            url: url,
+        };
+
+        if (status === 429) {
+            throw new RateLimitError(
+                Object.assign(
+                    baseErrorData,
+                    { json: JSON as HypixelAPI429 },
+                ),
+            );
+        } else {
+            throw new HTTPError<HypixelAPIError>(
+                Object.assign(
+                    baseErrorData,
+                    { json: JSON as HypixelAPIError },
+                ),
+            );
+        }
     }
-
-    private static isHypixelAPIError = (
-        json: HypixelAPIOk | HypixelAPIError | null,
-        response: Response,
-    ): json is HypixelAPIError | null =>
-        response.ok === false || JSON === null;
-
-    private static isRateLimit = (
-        json: HypixelAPIError | null,
-        response: Response,
-    ): json is Hypixel429 | null =>
-        response.status === 429;
 }
