@@ -21,7 +21,7 @@ export type Performance = {
 export class RequestManager {
     abortThreshold: number;
     keyPercentage: number;
-    maxAborts: number;
+    maxRetries: number;
     uses: number;
 
     readonly baseURL: string;
@@ -34,9 +34,9 @@ export class RequestManager {
     hypixelRequest: HypixelRequest;
 
     constructor() {
-        this.abortThreshold = 2500;
+        this.abortThreshold = 5000;
         this.keyPercentage = 0.5;
-        this.maxAborts = 1;
+        this.maxRetries = 2;
         this.uses = 0;
 
         this.baseURL = `${Constants.urls.hypixel}%{type}%?uuid=%{uuid}%`;

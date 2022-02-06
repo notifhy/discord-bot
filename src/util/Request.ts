@@ -4,19 +4,20 @@ import fetch, {
     Response,
 } from 'node-fetch';
 import AbortError from '../NotifHy/errors/AbortError';
+import { Log } from './Log';
 
 export class Request {
-    aborts: number;
+    retries: number;
     readonly abortThreshold: number;
-    readonly maxAborts: number;
+    readonly maxRetries: number;
 
     constructor(config?: {
-        maxAborts?: number,
+        maxRetries?: number,
         abortThreshold?: number,
     }) {
-        this.aborts = 0;
+        this.retries = 0;
         this.abortThreshold = config?.abortThreshold ?? 2500;
-        this.maxAborts = config?.maxAborts ?? 1;
+        this.maxRetries = config?.maxRetries ?? 2;
     }
 
     async request(url: string, fetchOptions?: RequestInit): Promise<Response> {
@@ -27,13 +28,27 @@ export class Request {
         ).unref();
 
         try {
-            return await fetch(url, {
+            const response = await fetch(url, {
                 signal: controller.signal,
                 ...fetchOptions,
             });
+
+            if (response.ok) {
+                return response;
+            } else if (
+                this.retries < this.maxRetries &&
+                response.status >= 500 && response.status < 600
+            ) {
+                Log.debug('[REQUEST] Retrying a response between 500 and 600');
+                this.retries += 1;
+                return this.request(url, fetchOptions);
+            }
+
+            return response;
         } catch (error) {
-            if (this.aborts < this.maxAborts) {
-                this.aborts += 1;
+            if (this.retries < this.maxRetries) {
+                Log.debug('[REQUEST] Retrying an AbortError');
+                this.retries += 1;
                 return this.request(url, fetchOptions);
             }
 

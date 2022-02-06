@@ -11,13 +11,13 @@ import RateLimitError from '../NotifHy/errors/RateLimitError';
 
 export class HypixelRequest {
     readonly config: {
-        maxAborts?: number,
+        maxRetries?: number,
         abortThreshold?: number,
     } | undefined;
 
     constructor(
         config?: {
-            maxAborts?: number,
+            maxRetries?: number,
             abortThreshold?: number,
         },
     ) {
@@ -27,7 +27,7 @@ export class HypixelRequest {
     async call(url: string): Promise<HypixelAPIOk> {
         const response = (
             await new Request({
-                maxAborts: this.config?.maxAborts,
+                maxRetries: this.config?.maxRetries,
                 abortThreshold: this.config?.abortThreshold,
             }).request(url, {
                 headers: { 'API-Key': hypixelAPIkey },
