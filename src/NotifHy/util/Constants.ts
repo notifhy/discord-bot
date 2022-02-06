@@ -96,7 +96,7 @@ export default {
         friends: 'friends' as Tables,
         rewards: 'rewards' as Tables,
         create: {
-            api: `CREATE TABLE IF NOT EXISTS "api" (
+            api: `CREATE TABLE "api" (
                 "discordID" TEXT NOT NULL UNIQUE,
                 "uuid" TEXT NOT NULL UNIQUE,
                 "modules" TEXT NOT NULL DEFAULT '[]',
@@ -116,13 +116,13 @@ export default {
                 "totalRewards" INTEGER,
                 "history" TEXT NOT NULL DEFAULT '[]'
             )`,
-            config: `CREATE TABLE IF NOT EXISTS "config" (
+            config: `CREATE TABLE "config" (
                 "blockedGuilds" TEXT NOT NULL DEFAULT '[]',
                 "blockedUsers" TEXT NOT NULL DEFAULT '[]',
                 "devMode" TEXT NOT NULL DEFAULT 'false',
                 "enabled" TEXT NOT NULL DEFAULT 'true'
             )`,
-            defender: `CREATE TABLE IF NOT EXISTS "defender" (
+            defender: `CREATE TABLE "defender" (
                 "discordID" TEXT NOT NULL UNIQUE,
                 "alerts" TEXT NOT NULL DEFAULT '{"login": true,"logout":true,"version":true,"gameTypes":true,"language":true}',
                 "gameTypes" TEXT NOT NULL DEFAULT '[]',
@@ -130,11 +130,11 @@ export default {
                 "languages" TEXT NOT NULL DEFAULT '[]',
                 "versions" TEXT NOT NULL DEFAULT '[]'
             )`,
-            friends: `CREATE TABLE IF NOT EXISTS "friends" (
+            friends: `CREATE TABLE "friends" (
                 "discordID" TEXT NOT NULL UNIQUE,
                 "channel" TEXT DEFAULT null
             )`,
-            rewards: `CREATE TABLE IF NOT EXISTS "rewards" (
+            rewards: `CREATE TABLE "rewards" (
                 "discordID" TEXT NOT NULL UNIQUE,
                 "alertTime" INTEGER DEFAULT null,
                 "claimNotification" INTEGER NOT NULL DEFAULT 'true',
@@ -142,9 +142,10 @@ export default {
                 "milestones" TEXT NOT NULL DEFAULT 'true',
                 "notificationInterval" INTEGER NOT NULL DEFAULT 1800000
             )`,
-            users: `CREATE TABLE IF NOT EXISTS "users" (
+            users: `CREATE TABLE "users" (
                 "discordID" TEXT NOT NULL UNIQUE,
-                "language" TEXT NOT NULL DEFAULT 'en-us',
+                "locale" TEXT NOT NULL DEFAULT 'en-US',
+                "localeOverride" TEXT NOT NULL DEFAULT 'false',
                 "systemMessages" TEXT NOT NULL DEFAULT '[]'
             )`,
         },
