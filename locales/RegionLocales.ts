@@ -27,7 +27,7 @@ export class RegionLocales {
         for (const parameter in parameters) {
             //@ts-expect-error hasOwn not implemented in typings.
             if (Object.hasOwn(parameters, parameter)) {
-                const regex = new RegExp(`%{${parameter}}%`, 'g');
+                const regex = new RegExp(`{{ ${parameter} }}`, 'g');
                 replaced = replaced.replaceAll(
                     regex,
                     String(parameters[parameter]),

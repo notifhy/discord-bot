@@ -3,7 +3,7 @@
         "accessdb": {
             "decrypted": {
                 "title": "Decrypted",
-                "description": "Database decrypted, encrypting in %{timeout}%ms."
+                "description": "Database decrypted, encrypting in {{ timeout }}ms."
             },
             "encrypted": {
                 "title": "Encrypted",
@@ -16,47 +16,47 @@
                 "no": "No",
                 "enabled": {
                     "name": "Enabled",
-                    "value": "%{state}%"
+                    "value": "{{ state }}"
                 },
                 "resume": {
                     "name": "Resuming In",
-                    "value": "%{time}%"
+                    "value": "{{ time }}"
                 },
                 "rateLimit": {
                     "name": "Global Rate Limit",
-                    "value": "%{state}%"
+                    "value": "{{ state }}"
                 },
                 "lastMinute": {
                     "name": "Last Minute Statistic",
-                    "value": "Aborts: %{abort}%\nRate Limit Hits: %{rateLimit}%\nOther Errors: %{error}%"
+                    "value": "Aborts: {{ abort }}\nRate Limit Hits: {{ rateLimit }}\nOther Errors: {{ error }}"
                 },
                 "nextTimeouts": {
                     "name": "Next Timeout Lengths",
-                    "value": "May not be accurate\nAbort Errors: %{abort}%\nRate Limit Errors: %{rateLimit}%\nOther Errors: %{error}%"
+                    "value": "May not be accurate\nAbort Errors: {{ abort }}\nRate Limit Errors: {{ rateLimit }}\nOther Errors: {{ error }}"
                 },
                 "apiKey": {
                     "name": "API Key",
-                    "value": "Dedicated Queries: %{queries}% or %{percentage}%\n%Instance Queries: %{uses}%"
+                    "value": "Dedicated Queries: {{ queries }} or {{ percentage }}\n%Instance Queries: {{ uses }}"
                 }
             },
             "instance": {
                 "tooHigh": "Too high, must be below 1",
                 "title": "Updated Value",
-                "description": "<RequestManager>.instance.%{type}% is now %{value}%."
+                "description": "<RequestManager>.instance.{{ type }} is now {{ value }}."
             },
             "set": {
                 "title": "Updated Value",
-                "description": "<HypixelErrors>.%{category}%.%{type}% is now %{value}%."
+                "description": "<HypixelErrors>.{{ category }}.{{ type }} is now {{ value }}."
             },
             "call": {
                 "title": "Executed!",
-                "description": "Executed <HypixelErrors>.%{method}%."
+                "description": "Executed <HypixelErrors>.{{ method }}."
             }
         },
         "botstatus": {
             "set": {
                 "title": "Status Set",
-                "description": "The status is now set to %{status}%!"
+                "description": "The status is now set to {{ status }}!"
             },
             "cleared": {
                 "title": "Status Cleared'",
@@ -68,11 +68,11 @@
             "defender": {
                 "alreadySet": {
                     "title": "Already Set",
-                    "description": "Defender Module alerts are already being sent to %{channel}%!"
+                    "description": "Defender Module alerts are already being sent to {{ channel }}!"
                 },
                 "set": {
                     "title": "Channel Set",
-                    "description": "Defender Module alerts will now be sent to %{channel}%!"
+                    "description": "Defender Module alerts will now be sent to {{ channel }}!"
                 },
                 "remove": {
                     "title": "Channel Removed",
@@ -82,11 +82,11 @@
             "friends": {
                 "alreadySet": {
                     "title": "Already Set",
-                    "description": "Friends Module notifications are already being sent to %{channel}%!"
+                    "description": "Friends Module notifications are already being sent to {{ channel }}!"
                 },
                 "set": {
                     "title": "Channel Set",
-                    "description": "Friends Module notifications will now be sent to %{channel}%!"
+                    "description": "Friends Module notifications will now be sent to {{ channel }}!"
                 }
             }
         },
@@ -95,31 +95,31 @@
             "off": "off",
             "api": {
                 "title": "API State Updated",
-                "description": "API commands and functions are now %{state}%!"
+                "description": "API commands and functions are now {{ state }}!"
             },
             "blockGuild": {
                 "add": {
                     "title": "Guild Added",
-                    "description": "%{guildID}% was added to the blacklist!"
+                    "description": "{{ guildID }} was added to the blacklist!"
                 },
                 "remove": {
                     "title": "Guild Removed",
-                    "description": "%{guildID}% was removed to the blacklist!"
+                    "description": "{{ guildID }} was removed to the blacklist!"
                 }
             },
             "blockUser": {
                 "add": {
                     "title": "User Added",
-                    "description": "%{userID}% was added to the blacklist!"
+                    "description": "{{ userID }} was added to the blacklist!"
                 },
                 "remove": {
                     "title": "User Removed",
-                    "description": "%{userID}% was removed to the blacklist!"
+                    "description": "{{ userID }} was removed to the blacklist!"
                 }
             },
             "devMode": {
                 "title": "Developer Mode Updated",
-                "description": "Developer Mode is now %{state}%!"
+                "description": "Developer Mode is now {{ state }}!"
             }
         },
         "data": {
@@ -142,7 +142,7 @@
             "history": {
                 "embed": {
                     "title": "History",
-                    "description": "• Showing %{start}% to %{end}% out of %{total}%\n• Saves up to %{max}% events"
+                    "description": "• Showing {{ start }} to {{ end }} out of {{ total }}\n• Saves up to {{ max }} events"
                 },
                 "null": "None",
                 "keys": {
@@ -175,26 +175,26 @@
                 "title": "Executed Eval!",
                 "input": {
                     "name": "Input",
-                    "value": "%{input}%"
+                    "value": "{{ input }}"
                 },
                 "output": {
                     "name": "Output",
-                    "value": "%{output}%"
+                    "value": "{{ output }}"
                 },
                 "type": {
                     "name": "Type",
-                    "value": "%{type}%"
+                    "value": "{{ type }}"
                 },
                 "timeTaken": {
                     "name": "Time Taken",
-                    "value": "%{ms}%"
+                    "value": "{{ ms }}"
                 }
             },
             "fail": {
                 "title": "Failed Eval",
                 "input": {
                     "name": "Input",
-                    "value": "%{input}%"
+                    "value": "{{ input }}"
                 }
             }
         },
@@ -214,20 +214,20 @@
             "all": {
                 "title": "Commands",
                 "field": {
-                    "name": "**/%{commandName}%**",
-                    "value": "%{commandDescription}%"
+                    "name": "**/{{ commandName }}**",
+                    "value": "{{ commandDescription }}"
                 }
             },
             "specific": {
                 "invalid": {
                     "title": "Invalid Command!",
-                    "description": "/%{command}% isn't a valid command!"
+                    "description": "/{{ command }} isn't a valid command!"
                 },
-                "title": "/%{command}%",
-                "description": "%{commandDescription}%",
+                "title": "/{{ command }}",
+                "description": "{{ commandDescription }}",
                 "cooldown": {
                     "name": "Command Cooldown",
-                    "value": "%{commandCooldown}% second(s)"
+                    "value": "{{ commandCooldown }} second(s)"
                 },
                 "dm": {
                     "name": "Direct Messages",
@@ -250,7 +250,7 @@
             },
             "set": {
                 "title": "Override Set",
-                "description": "Your language override has been changed to `%{locale}%`!"
+                "description": "Your language override has been changed to `{{ locale }}`!"
             }
         },
         "modules": {
@@ -260,7 +260,7 @@
                 "menuPlaceholder": "Defender Module Settings",
                 "missingConfigField": {
                     "name": "Missing Configuration",
-                    "value": "You need to configure the following settings before enabling the Defender module: %{missingRequirements}%. Click on the menu below, select the option(s), and configure it."
+                    "value": "You need to configure the following settings before enabling the Defender module: {{ missingRequirements }}. Click on the menu below, select the option(s), and configure it."
                 },
                 "menu": {
                     "toggle": {
@@ -510,7 +510,7 @@
                 "menuPlaceholder": "Friend Module Settings",
                 "missingConfigField": {
                     "name": "Missing Configuration",
-                    "value": "You need to configure the following settings before enabling the Friend module: %{missingRequirements}%. Click on the menu below, select the option(s), and configure it."
+                    "value": "You need to configure the following settings before enabling the Friend module: {{ missingRequirements }}. Click on the menu below, select the option(s), and configure it."
                 },
                 "menu": {
                     "toggle": {
@@ -544,7 +544,7 @@
                 "menuPlaceholder": "Reward Module Settings",
                 "missingConfigField": {
                     "name": "Missing Configuration",
-                    "value": "You need to configure the following settings before enabling the Rewards module: %{missingRequirements}%. Click on the menu below, select the option(s), and configure it."
+                    "value": "You need to configure the following settings before enabling the Rewards module: {{ missingRequirements }}. Click on the menu below, select the option(s), and configure it."
                 },
                 "menu": {
                     "toggle": {
@@ -719,7 +719,7 @@
             "title": "Performance",
             "latest": {
                 "name": "Latest Performance",
-                "value": "Hypixel API Fetch: %{fetchPerformance}%ms\nProcess Data: %{processPerformance}%ms\nModule Execution: %{modulePerformance}%ms\nTotal: %{total}%ms"
+                "value": "Hypixel API Fetch: {{ fetchPerformance }}ms\nProcess Data: {{ processPerformance }}ms\nModule Execution: {{ modulePerformance }}ms\nTotal: {{ total }}ms"
             }
         },
         "ping": {
@@ -728,7 +728,7 @@
             },
             "embed2": {
                 "title": "🏓 Ping!",
-                "description": "Websocket heartbeat is %{wsPing}%ms. Roundtrip latency is %{rtPing}%ms."
+                "description": "Websocket heartbeat is {{ wsPing }}ms. Roundtrip latency is {{ rtPing }}ms."
             }
         },
         "player": {
@@ -738,7 +738,7 @@
             },
             "notFound": {
                 "title": "Not Found",
-                "description": "That %{inputType}% doesn't seem to be valid. Check to see if you spelt it wrong."
+                "description": "That {{ inputType }} doesn't seem to be valid. Check to see if you spelt it wrong."
             },
             "unknown": "Unknown",
             "status": {
@@ -746,26 +746,26 @@
                 "offline": "offline",
                 "embed": {
                     "title": "Status",
-                    "description": "%{username}% is %{status}%",
+                    "description": "{{ username }} is {{ status }}",
                     "field1": {
                         "name": "Identity",
-                        "value": "UUID: %{uuid}%\nTwitter: %{TWITTER}%\nInstagram: %{INSTAGRAM}%\nTwitch: %{TWITCH}%\nDiscord: %{DISCORD}%\nHypixel: %{HYPIXEL}%"
+                        "value": "UUID: {{ uuid }}\nTwitter: {{ TWITTER }}\nInstagram: {{ INSTAGRAM }}\nTwitch: {{ TWITCH }}\nDiscord: {{ DISCORD }}\nHypixel: {{ HYPIXEL }}"
                     },
                     "field2": {
                         "name": "Last Login and Logout",
-                        "value": "Last Login: %{lastLogin}%\nLast Logout: %{lastLogout}%"
+                        "value": "Last Login: {{ lastLogin }}\nLast Logout: {{ lastLogout }}"
                     },
                     "field3": {
                         "name": "Settings",
-                        "value": "Language: %{language}%\nVersion: %{version}%"
+                        "value": "Language: {{ language }}\nVersion: {{ version }}"
                     },
                     "onlineField": {
                         "name": "Session",
-                        "value": "Playtime: %{playTime}%\nGame Type: %{gameType}%\nGame Mode: %{gameMode}%\nGame Map: %{gameMap}%"
+                        "value": "Playtime: {{ playTime }}\nGame Type: {{ gameType }}\nGame Mode: {{ gameMode }}\nGame Map: {{ gameMap }}"
                     },
                     "offlineField": {
                         "name": "Last Session",
-                        "value": "Last Playtime: %{playTime}%\nLast Game Type: %{gameType}%"
+                        "value": "Last Playtime: {{ playTime }}\nLast Game Type: {{ gameType }}"
                     }
                 }
             },
@@ -776,11 +776,11 @@
                 "gameMap": "Map: ",
                 "inProgress": "In Progress",
                 "embed": {
-                    "title": "Recent Games - %{username}%",
-                    "description": "• Showing %{start}% to %{end}% out of %{total}%\n• Saves up to 100 events\n• Saves events for up to 3 days\n• Games may not show up for some players",
+                    "title": "Recent Games - {{ username }}",
+                    "description": "• Showing {{ start }} to {{ end }} out of {{ total }}\n• Saves up to 100 events\n• Saves events for up to 3 days\n• Games may not show up for some players",
                     "field": {
-                        "name": "%{gameType}% | %{date}%",
-                        "value": "Game Start: %{start}%\nGame End: %{end}%\n%{playTime}%%{mode}%%{map}%"
+                        "name": "{{ gameType }} | {{ date }}",
+                        "value": "Game Start: {{ start }}\nGame End: {{ end }}\n{{ playTime }}{{ mode }}{{ map }}"
                     }
                 }
             }
@@ -796,7 +796,7 @@
             },
             "notFound": {
                 "title": "Not Found",
-                "description": "That %{inputType}% doesn't seem to be valid. Check to see if you spelt it wrong."
+                "description": "That {{ inputType }} doesn't seem to be valid. Check to see if you spelt it wrong."
             },
             "unlinked": {
                 "title": "Unlinked Account",
@@ -816,16 +816,16 @@
         "reload": {
             "all": {
                 "title": "Reloaded Everything",
-                "description": "%{imports}% imports have been reloaded! This action took %{timeTaken}%ms"
+                "description": "{{ imports }} imports have been reloaded! This action took {{ timeTaken }}ms"
             },
             "single": {
                 "unknown": {
                     "title": "Unknown Item",
-                    "description": "There is no item with the structure %{typeName}%.%{item}%!"
+                    "description": "There is no item with the structure {{ typeName }}.{{ item }}!"
                 },
                 "success": {
                     "title": "Reloaded",
-                    "description": "%{typeName}%.%{item}% was successfully reloaded! This action took %{timeTaken}% milliseconds."
+                    "description": "{{ typeName }}.{{ item }} was successfully reloaded! This action took {{ timeTaken }} milliseconds."
                 }
             }
         },
@@ -833,27 +833,27 @@
             "title": "Snowflake",
             "input": {
                 "name": "Input",
-                "value": "%{input}%"
+                "value": "{{ input }}"
             },
             "length": {
                 "name": "Length",
-                "value": "%{length}%"
+                "value": "{{ length }}"
             },
             "date": {
                 "name": "Date",
-                "value": "Date: %{date}%\nTime: %{time}%\nRelative: %{relative}%"
+                "value": "Date: {{ date }}\nTime: {{ time }}\nRelative: {{ relative }}"
             },
             "worker": {
                 "name": "Worker ID",
-                "value": "%{worker}%"
+                "value": "{{ worker }}"
             },
             "process": {
                 "name": "'Process ID",
-                "value": "%{process}%"
+                "value": "{{ process }}"
             },
             "increment": {
                 "name": "Increment",
-                "value": "%{increment}%"
+                "value": "{{ increment }}"
             }
         },
         "system": {
@@ -861,34 +861,34 @@
                 "title": "System",
                 "field1": {
                     "name": "Uptime",
-                    "value": "%{uptime}%"
+                    "value": "{{ uptime }}"
                 },
                 "field2": {
                     "name": "Memory Usage",
-                    "value": "%{memoryMegaBytes}%MB"
+                    "value": "{{ memoryMegaBytes }}MB"
                 },
                 "field3": {
                     "name": "Servers",
-                    "value": "%{servers}%"
+                    "value": "{{ servers }}"
                 },
                 "field4": {
                     "name": "Users",
-                    "value": "%{users}%"
+                    "value": "{{ users }}"
                 },
                 "field5": {
                     "name": "Registered Users",
-                    "value": "%{registeredUsers}%"
+                    "value": "{{ registeredUsers }}"
                 },
                 "field6": {
                     "name": "Hypixel API",
-                    "value": "Fetches: %{uses}%\nRefresh Interval: %{updateInterval}%"
+                    "value": "Fetches: {{ uses }}\nRefresh Interval: {{ updateInterval }}"
                 }
             }
         },
         "systemmessage": {
             "notFound": {
                 "title": "User not found",
-                "description": "%{id}% was not found"
+                "description": "{{ id }} was not found"
             },
             "preview": {
                 "buttonLabel": "Looks Good",
@@ -905,10 +905,10 @@
         "commandErrors": {
             "embed": {
                 "title": "Oops",
-                "description": "An error occurred while executing the command /%{commandName}%! This error has been automatically forwarded for review. It should be resolved soon. Sorry.",
+                "description": "An error occurred while executing the command /{{ commandName }}! This error has been automatically forwarded for review. It should be resolved soon. Sorry.",
                 "field": {
                     "name": "Incident ID",
-                    "value": "%{id}%"
+                    "value": "{{ id }}"
                 }
             }
         },
@@ -936,11 +936,11 @@
             "cooldown": {
                 "embed1": {
                     "title": "Cooldown",
-                    "description": "You are executing commands too quickly! The cooldown of this command is %{cooldown}% seconds. This message will turn green in %{timeLeft}% seconds once the cooldown expires."
+                    "description": "You are executing commands too quickly! The cooldown of this command is {{ cooldown }} seconds. This message will turn green in {{ timeLeft }} seconds once the cooldown expires."
                 },
                 "embed2": {
                     "title": "Cooldown Over",
-                    "description": "The cooldown has expired! You can now execute the command /%{commandName}%!"
+                    "description": "The cooldown has expired! You can now execute the command /{{ commandName }}!"
                 }
             }
         },
@@ -950,23 +950,23 @@
                 "footer": "Alert"
             },
             "10003": {
-                "name": "%{cleanModule}% Disabled",
+                "name": "{{ cleanModule }} Disabled",
                 "value": "The set channel was not fetchable. [Code 10003](https://discord.com/developers/docs/topics/opcodes-and-status-codes#json-json-error-codes \"Opcodes and Status codes\")"
             },
             "10013": {
-                "name": "%{cleanModule}% Disabled",
+                "name": "{{ cleanModule }} Disabled",
                 "value": "Your account was not fetchable. [Code 10013](https://discord.com/developers/docs/topics/opcodes-and-status-codes#json-json-error-codes \"Opcodes and Status codes\")"
             },
             "50001": {
-                "name": "%{cleanModule}% Disabled",
+                "name": "{{ cleanModule }} Disabled",
                 "value": "The set channel, server, or user was not reachable. Please check to see if this bot can access the set channel. [Code 50001](https://discord.com/developers/docs/topics/opcodes-and-status-codes#json-json-error-codes \"Opcodes and Status codes\")"
             },
             "50007": {
-                "name": "%{cleanModule}% Disabled",
+                "name": "{{ cleanModule }} Disabled",
                 "value": "This bot was unable to DM you. Please check your privacy settings and enable direct messages. Then, reenable this module with /modules. [Code 50007](https://discord.com/developers/docs/topics/opcodes-and-status-codes#json-json-error-codes \"Opcodes and Status codes\")"
             },
             "50013": {
-                "name": "%{cleanModule}% Disabled",
+                "name": "{{ cleanModule }} Disabled",
                 "value": "This bot lacked permission(s) to perform an action. Discord does not specify the missing permission(s), so this is all we know. [Code 50013](https://discord.com/developers/docs/topics/opcodes-and-status-codes#json-json-error-codes \"Opcodes and Status codes\")"
             }
         },
@@ -992,24 +992,24 @@
         "defender": {
             "gameType": {
                 "name": "Blacklisted Game Change Detected",
-                "value": "Your account changed games from %{sGameType}% to %{pGameType}%",
+                "value": "Your account changed games from {{ sGameType }} to {{ pGameType }}",
                 "null": "None"
             },
             "login": {
                 "name": "Login Detected",
-                "value": "Your account logged in %{relative}% at %{time}%"
+                "value": "Your account logged in {{ relative }} at {{ time }}"
             },
             "logout": {
                 "name": "Logout Detected",
-                "value": "Your account logged out %{relative}% at %{time}%"
+                "value": "Your account logged out {{ relative }} at {{ time }}"
             },
             "language": {
                 "name": "Language Change Detected",
-                "value": "Your language changed from %{sLanguage}% to %{pLanguage}%"
+                "value": "Your language changed from {{ sLanguage }} to {{ pLanguage }}"
             },
             "version": {
                 "name": "Version Change Detected",
-                "value": "Your version changed from %{sVersion}% to %{pVersion}%"
+                "value": "Your version changed from {{ sVersion }} to {{ pVersion }}"
             },
             "embed": {
                 "title": "Alert",
@@ -1017,13 +1017,13 @@
             },
             "missingPermissions": {
                 "name": "Defender Module Disabled",
-                "value": "The Defender module was disabled because this bot is missing the following permission(s) in the channel %{channel}%: %{missingPermissions}%."
+                "value": "The Defender module was disabled because this bot is missing the following permission(s) in the channel {{ channel }}: {{ missingPermissions }}."
             }
         },
         "friends": {
             "missingPermissions": {
                 "name": "Friend Module Disabled",
-                "value": "The Friends module was disabled because this bot is missing the following permission(s) in the channel %{channel}%: %{missingPermissions}%."
+                "value": "The Friends module was disabled because this bot is missing the following permission(s) in the channel {{ channel }}: {{ missingPermissions }}."
             },
             "suppressNext": {
                 "title": "Alert Suppressed",
@@ -1031,21 +1031,21 @@
                 "footer": "Notification"
             },
             "login": {
-                "description": "%{mention}% logged in %{relative}% at %{time}%"
+                "description": "{{ mention }} logged in {{ relative }} at {{ time }}"
             },
             "logout": {
-                "description": "%{mention}% logged out %{relative}% at %{time}%"
+                "description": "{{ mention }} logged out {{ relative }} at {{ time }}"
             }
         },
         "rewards": {
             "claimedNotification": {
                 "title": "Daily Reward Claimed",
-                "description": "You now have a daily streak of %{rewardScore}% with %{totalDailyRewards}% total daily rewards!",
+                "description": "You now have a daily streak of {{ rewardScore }} with {{ totalDailyRewards }} total daily rewards!",
                 "footer": "Notification"
             },
             "milestone": {
                 "title": "Congratulations",
-                "description": "🎉 You have reached a daily streak of %{milestone}%!",
+                "description": "🎉 You have reached a daily streak of {{ milestone }}!",
                 "footer": "Notification"
             },
             "rewardReminder": {
