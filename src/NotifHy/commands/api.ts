@@ -47,12 +47,8 @@ export const properties: ClientCommand['properties'] = {
                                 value: 'keyPercentage',
                             },
                             {
-                                name: 'maxAborts',
-                                value: 'maxAborts',
-                            },
-                            {
-                                name: 'resumeAfter',
-                                value: 'resumeAfter',
+                                name: 'maxRetries',
+                                value: 'maxRetries',
                             },
                         ],
                     },
@@ -96,6 +92,14 @@ export const properties: ClientCommand['properties'] = {
                         required: true,
                         choices: [
                             {
+                                name: 'pauseFor',
+                                value: 'pauseFor',
+                            },
+                            {
+                                name: 'resumeAfter',
+                                value: 'resumeAfter',
+                            },
+                            {
                                 name: 'timeout',
                                 value: 'timeout',
                             },
@@ -105,7 +109,7 @@ export const properties: ClientCommand['properties'] = {
                         name: 'value',
                         type: 10,
                         description: 'An integer as an input',
-                        required: false,
+                        required: true,
                         min_value: 0,
                     },
                 ],
@@ -150,7 +154,7 @@ export const properties: ClientCommand['properties'] = {
 
 type errorTypes = 'abort' | 'rateLimit' | 'error';
 
-type TimeoutSettables = 'timeout';
+type TimeoutSettables = 'timeout' | 'resumeAfter';
 
 export const execute: ClientCommand['execute'] = async (
     interaction,
@@ -172,7 +176,7 @@ export const execute: ClientCommand['execute'] = async (
     }
 
     async function stats() {
-        const { abort, isGlobal, rateLimit, resumeAfter, error } =
+        const { abort, isGlobal, rateLimit, error, getTimeout } =
             interaction.client.hypixel.errors;
         const { uses, keyPercentage } =
             interaction.client.hypixel.request;
@@ -196,7 +200,7 @@ export const execute: ClientCommand['execute'] = async (
                 {
                     name: text.api.resume.name,
                     value: replace(text.api.resume.value, {
-                        time: cleanLength(resumeAfter - Date.now()) ??
+                        time: cleanLength(getTimeout() - Date.now()) ??
                         'Not applicable',
                     }),
                 },
@@ -279,6 +283,7 @@ export const execute: ClientCommand['execute'] = async (
             .setTitle(text.set.title)
             .setDescription(replace(text.set.description, {
                 category: category,
+                type: type,
                 value: value,
             }));
 

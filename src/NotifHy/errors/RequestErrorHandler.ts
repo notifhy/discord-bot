@@ -38,9 +38,9 @@ export default class RequestErrorHandler<E> extends BaseErrorHandler<E> {
             errors.addError();
         }
 
-        const { resumeAfter } = this.hypixelManager.errors;
+        const resumeAfter = this.hypixelManager.errors.getTimeout();
 
-        this.timeout = cleanLength(resumeAfter - Date.now(), true);
+        this.timeout = cleanLength(resumeAfter, true);
     }
 
     static async init<T>(error: T, hypixelManager: HypixelManager) {

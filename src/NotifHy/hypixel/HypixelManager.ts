@@ -92,6 +92,7 @@ export class HypixelManager {
                 performance.fetch = Date.now();
             } catch (error) {
                 await RequestErrorHandler.init(error, this);
+                await setTimeout(this.getTimeout(urls));
                 continue;
             }
 
@@ -100,6 +101,7 @@ export class HypixelManager {
                 performance.process = Date.now();
             } catch (error) {
                 await ErrorHandler.init(error);
+                await setTimeout(this.getTimeout(urls));
                 continue;
             }
 
@@ -128,6 +130,7 @@ export class HypixelManager {
                     await ModuleErrorHandler.init(error, user.discordID, this);
                 }
 
+                await setTimeout(this.getTimeout(urls));
                 continue;
             }
 
@@ -138,11 +141,11 @@ export class HypixelManager {
         }
     }
 
-    private getTimeout(urls: string[], performance: Performance) {
+    private getTimeout(urls: string[], performance?: Performance) {
         const keyQueryLimit = keyLimit * this.request.keyPercentage;
         const intervalBetweenRequests = (60 / keyQueryLimit) * 1000;
         const total = intervalBetweenRequests * urls.length;
-        return Math.max(total - performance.total, 0);
+        return Math.max(total - (performance?.total ?? 0), 0);
     }
 
     private updatePerformance(performance: Performance) {

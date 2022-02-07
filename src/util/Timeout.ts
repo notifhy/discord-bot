@@ -65,13 +65,16 @@ export default class Timeout {
         );
 
         this.timeout = Math.min(
-            baseTimeout,
+            baseTimeout === 0
+                ? 30_000
+                : baseTimeout,
             this.maxTimeout,
         );
 
         clearTimeout(this.clearTimeout);
 
         this.clearTimeout = setTimeout(() => {
+            this.pauseFor = 0;
             this.timeout = this.baseTimeout;
         }, this.timeout + 30_000) as unknown as number;
 

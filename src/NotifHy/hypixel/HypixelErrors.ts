@@ -5,8 +5,6 @@ import Timeout from '../../util/Timeout';
 export class HypixelErrors {
     request: RequestManager;
 
-    resumeAfter: number;
-
     readonly abort: Timeout;
 
     readonly rateLimit: Timeout;
@@ -18,8 +16,6 @@ export class HypixelErrors {
     constructor(request: RequestManager) {
         this.request = request;
 
-        this.resumeAfter = 0;
-
         this.isGlobal = false;
 
         this.abort = new Timeout({ baseTimeout: 0 });
@@ -27,6 +23,12 @@ export class HypixelErrors {
         this.rateLimit = new Timeout({ baseTimeout: 30_000 });
 
         this.error = new Timeout({ baseTimeout: 30_000 });
+
+        this.addAbort = this.addAbort.bind(this);
+        this.addRateLimit = this.addRateLimit.bind(this);
+        this.addError = this.addError.bind(this);
+        this.isTimeout = this.isTimeout.bind(this);
+        this.getTimeout = this.getTimeout.bind(this);
     }
 
     addAbort() {
@@ -55,12 +57,18 @@ export class HypixelErrors {
     }
 
     isTimeout() {
-        return this.resumeAfter > Date.now();
+        return this.abort.resumeAfter > Date.now() ||
+            this.rateLimit.resumeAfter > Date.now() ||
+            this.error.resumeAfter > Date.now();
     }
 
     getTimeout() {
         return this.isTimeout()
-            ? this.resumeAfter - Date.now()
+            ? Math.max(
+                this.abort.pauseFor,
+                this.rateLimit.pauseFor,
+                this.error.pauseFor,
+            )
             : 0;
     }
 }
