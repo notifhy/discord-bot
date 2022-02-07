@@ -335,10 +335,7 @@ export async function sendWebHook(
         await new WebhookClient({ id: webhook.id, token: webhook.token })
             .send(payload);
     } catch (err) {
-        Log.error(
-            `An error has occurred while sending an WebHook |`,
-            (err as Error)?.stack ?? (err as Error)?.message,
-        );
+        Log.error(`An error has occurred while sending an WebHook`, err);
 
         if (suppressError === true) {
             return;

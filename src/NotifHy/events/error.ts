@@ -7,5 +7,5 @@ export const properties: ClientEvent['properties'] = {
 };
 
 export const execute: ClientEvent['execute'] = (error: Error): void => {
-    Log.error(`discord.js Error:`, error);
+    Log.error(`discord.js Error`, error);
 };

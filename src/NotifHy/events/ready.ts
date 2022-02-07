@@ -12,9 +12,7 @@ export const properties: ClientEvent['properties'] = {
 };
 
 export const execute: ClientEvent['execute'] = async (client: Client) => {
-    Log.log(
-        `Logged in as ${client?.user?.tag}!`,
-    );
+    Log.log(`Logged in as ${client?.user?.tag}!`);
 
     setActivity();
 

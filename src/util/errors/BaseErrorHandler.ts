@@ -43,9 +43,7 @@ export default class BaseErrorHandler<E> {
     }
 
     log(...text: unknown[]) {
-        const id = `Incident ${
-            this.incidentID
-        } |`;
+        const id = `Incident ${this.incidentID} |`;
 
         Log.error(id, ...text);
     }

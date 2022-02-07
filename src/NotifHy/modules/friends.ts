@@ -65,7 +65,7 @@ export const execute: ClientModule['execute'] = async ({
             .missing(Constants.modules.friends.permissions);
 
         if (missingPermissions.length !== 0) {
-            Log.error(userAPIData.discordID, `Friend Module: Missing ${missingPermissions.join(', ')}`);
+            Log.warn('[FRIENDS]', userAPIData.discordID, `Missing ${missingPermissions.join(', ')}`);
 
             const newModules =
                 arrayRemove(userAPIData.modules, 'friends') as string[];
@@ -157,6 +157,8 @@ export const execute: ClientModule['execute'] = async ({
                     parse: [],
                 },
             });
+
+            Log.debug('[FRIENDS]', userAPIData.discordID, 'Delivered Notifications');
         }
     } catch (error) {
         throw new ModuleError({

@@ -6,6 +6,7 @@ import { SQLite } from '../../util/SQLite';
 import Constants from '../util/Constants';
 import GlobalConstants from '../../util/Constants';
 import ModuleError from '../errors/ModuleError';
+import { Log } from '../../util/Log';
 
 export const properties: ClientModule['properties'] = {
     name: 'rewards',
@@ -97,6 +98,8 @@ export const execute: ClientModule['execute'] = async ({
                     lastNotified: Date.now(),
                 },
             });
+
+            Log.debug('[REWARDS]', userAPIData.discordID, 'Delivered Reminder');
         }
 
         if (newData.rewardScore === undefined) {
@@ -128,6 +131,8 @@ export const execute: ClientModule['execute'] = async ({
                 await user.send({
                     embeds: [milestoneNotification],
                 });
+
+                Log.debug('[REWARDS]', userAPIData.discordID, 'Delivered Milestone');
             } else if (rewardsModule.claimNotification === true) {
                 const claimedNotification = new BetterEmbed({
                     text: locale.claimedNotification.footer,
@@ -146,6 +151,8 @@ export const execute: ClientModule['execute'] = async ({
                 await user.send({
                     embeds: [claimedNotification],
                 });
+
+                Log.debug('[REWARDS]', userAPIData.discordID, 'Delivered Claimed Notification');
             }
         }
     } catch (error) {
