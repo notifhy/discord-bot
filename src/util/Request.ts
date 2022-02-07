@@ -34,12 +34,16 @@ export class Request {
             });
 
             if (response.ok) {
+                if (this.retries > 0) {
+                    Log.debug('[REQUEST] Successfully fetched after a retry');
+                }
+
                 return response;
             } else if (
                 this.retries < this.maxRetries &&
                 response.status >= 500 && response.status < 600
             ) {
-                Log.debug('[REQUEST] Retrying a response between 500 and 600');
+                Log.debug('[REQUEST] Retrying due to a response between 500 and 600');
                 this.retries += 1;
                 return this.request(url, fetchOptions);
             }
@@ -47,7 +51,7 @@ export class Request {
             return response;
         } catch (error) {
             if (this.retries < this.maxRetries) {
-                Log.debug('[REQUEST] Retrying an AbortError');
+                Log.debug('[REQUEST] Retrying due to an AbortError');
                 this.retries += 1;
                 return this.request(url, fetchOptions);
             }

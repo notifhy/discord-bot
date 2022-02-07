@@ -51,7 +51,7 @@ const oauth2Client = new auth.OAuth2(
 );
 
 oauth2Client.on('tokens', ({ expiry_date }) => {
-    Log.log(`New access token expires ${expiry_date}`);
+    Log.debug(`New access token expires ${expiry_date}`);
 });
 
 (async () => {
@@ -86,7 +86,7 @@ oauth2Client.on('tokens', ({ expiry_date }) => {
                 },
             });
 
-            Log.log('Uploaded backup');
+            Log.debug('Uploaded backup');
 
             await setTimeout(Constants.interval);
         } catch (error) {
@@ -100,7 +100,7 @@ oauth2Client.on('tokens', ({ expiry_date }) => {
                     code === 408
                 ) {
                     addError();
-                    Log.error(`Added timeout, pausing for ${getPauseFor()}ms`);
+                    Log.warn(`Added timeout, pausing for ${getPauseFor()}ms`);
                     continue;
                 }
             }
