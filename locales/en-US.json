@@ -202,7 +202,7 @@
             "information": {
                 "introduction": {
                     "name": "Introduction",
-                    "value": "NotifHy is a bot focused on alerts and notifications for the Hypixel server. Share logins with friends, get reminders when you are about to lose your daily reward streak, and get alerts on suspicious activity. This bot is the successor to HyGuard, which you can read about [here](https://hypixel.net/threads/discord-bot-hyguard-a-bot-that-monitors-your-account-24-7.4368395/ \"Hypixel Forums\")"
+                    "value": "NotifHy is a bot focused on alerts and notifications for the Hypixel server. Share logins with friends, get reminders when you are about to lose your daily reward streak, and get alerts on suspicious activity. This bot is the successor to HyGuard, which you can read about [here](https://hypixel.net/threads/discord-bot-hyguard-a-bot-that-monitors-your-account-24-7.4368395/ \"Hypixel Forums\")."
                 },
                 "modules": {
                     "name": "Modules",
@@ -214,7 +214,7 @@
                 },
                 "other": {
                     "name": "Other Information",
-                    "value": "Learn more at https://attituding.github.io/NotifHy/ or the GitHub page below"
+                    "value": "Learn more at https://attituding.github.io/NotifHy/ or the GitHub page below."
                 },
                 "gitHub": {
                     "name": "GitHub",
@@ -222,11 +222,11 @@
                 },
                 "legal": {
                     "name": "Legal Stuff",
-                    "value": "By using this service, you agree to our [Privacy Policy](https://attituding.github.io/NotifHy/privacy/ \"Privacy Policy\") and our [Terms of Service](https://attituding.github.io/NotifHy/tos/ \"Terms of Service\")"
+                    "value": "By using this service, you agree to our [Privacy Policy](https://attituding.github.io/NotifHy/privacy/ \"Privacy Policy\") and our [Terms of Service](https://attituding.github.io/NotifHy/tos/ \"Terms of Service\")."
                 },
                 "contact": {
                     "name": "Contact",
-                    "value": "Contact Attituding at [attituding@outlook.com](mailto:attituding@outlook.com \"attituding@outlook.com\") or Attituding#6517 on Discord for assistance, bug reports, or suggestions"
+                    "value": "Contact Attituding at [attituding@outlook.com](mailto:attituding@outlook.com \"attituding@outlook.com\") or Attituding#6517 on Discord for assistance, bug reports, or suggestions."
                 }
             },
             "all": {
