@@ -169,9 +169,14 @@ export interface Eval {
 
 export interface Help {
     information: {
+        introduction: Field,
+        modules: Field,
+        setup: Field,
+        other: Field,
         gitHub: Field,
         legal: Field,
-    } & BaseEmbed,
+        contact: Field,
+    },
     all: {
         title: string,
         field: Field,

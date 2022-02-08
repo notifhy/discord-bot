@@ -57,9 +57,23 @@ export const execute: ClientCommand['execute'] = async (
     async function information() {
         const informationEmbed = new BetterEmbed(interaction)
             .setColor(Constants.colors.normal)
-            .setTitle(text.information.title)
-            .setDescription(text.information.description)
             .addFields(
+                {
+                    name: text.information.introduction.name,
+                    value: text.information.introduction.value,
+                },
+                {
+                    name: text.information.modules.name,
+                    value: text.information.modules.value,
+                },
+                {
+                    name: text.information.setup.name,
+                    value: text.information.setup.value,
+                },
+                {
+                    name: text.information.other.name,
+                    value: text.information.other.value,
+                },
                 {
                     name: text.information.gitHub.name,
                     value: text.information.gitHub.value,
@@ -67,6 +81,10 @@ export const execute: ClientCommand['execute'] = async (
                 {
                     name: text.information.legal.name,
                     value: text.information.legal.value,
+                },
+                {
+                    name: text.information.contact.name,
+                    value: text.information.contact.value,
                 },
             );
 

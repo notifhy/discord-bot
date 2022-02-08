@@ -200,15 +200,33 @@
         },
         "help": {
             "information": {
-                "title": "Information",
-                "description": "NotifHy is a bot focused on alerts and notifications for the Hypixel server. This bot is the replacement for HyGuard, which you can read about [here](https://hypixel.net/threads/discord-bot-hyguard-a-bot-that-monitors-your-account-24-7.4368395/ \"Hypixel Forums\").\n\nModules are the types of notifications you can set up and use. This bot currently offers three modules.\n\nModules:\n• The Defender Module is an implementation of HyGuard\n• The Friends Module sends your login and logouts to a channel to share\n• The Rewards Module sends you a DM reminding you to claim your daily reward\n\nSetup:\n• Run `/register` to link your Minecraft account\n• Run `/modules` and pick one to read about, configure, or use\n• Run `/channel` to set a channel for relevant modules",
+                "introduction": {
+                    "name": "Introduction",
+                    "value": "NotifHy is a bot focused on alerts and notifications for the Hypixel server. Share logins with friends, get reminders when you are about to lose your daily reward streak, and get alerts on suspicious activity. This bot is the successor to HyGuard, which you can read about [here](https://hypixel.net/threads/discord-bot-hyguard-a-bot-that-monitors-your-account-24-7.4368395/ \"Hypixel Forums\")."
+                },
+                "modules": {
+                    "name": "Modules",
+                    "value": "Modules are how different types of notifications are separated. Once you register, simply select and configure the modules you want to use.\n\n• The Defender Module is an implementation of [HyGuard](https://hypixel.net/threads/discord-bot-hyguard-a-bot-that-monitors-your-account-24-7.4368395/ \"Hypixel Forums\")\n• The Friends Module sends your login and logouts to a channel to share\n• The Rewards Module sends you a DM reminding you to claim your daily reward"
+                },
+                "setup": {
+                    "name": "Setup",
+                    "value": "• Invite the bot by clicking https://attituding.github.io/NotifHy/invite/ and granting the OAuth2 scopes\n• Use /register followed by your username or UUID\n    • Using /discord on Hypixel may be required to link or relink your Discord account to your Minecraft account\nUse /modules followed by the module you are interested in\n    • Configure the module by clicking on the select menus. The Toggle setting will tell you what settings need to be configured before you can enable the module\n    • /channel may be requires for some modules to tell the bot where you want alerts/notifications to go"
+                },
+                "other": {
+                    "name": "Other Information",
+                    "value": "• View most of the data stored by the bot with **/data**\n• If you want to delete your data, use **/data delete**\n• To completely delete all of your data including logs files and similar, contact Attituding\n• Use **/player** to look up a player's status or recent games\n• Use **/language** to set a language override (languages are determined automatically by default)\n• Use **/help** to get basic information or information about the available commands"
+                },
                 "gitHub": {
                     "name": "GitHub",
-                    "value": "This application is available under the MIT license. See the [GitHub](https://github.com/Attituding/NotifHy \"https://github.com/Attituding/NotifHy\") page and the license for more details."
+                    "value": "This application's source code is available at this [GitHub](https://github.com/Attituding/NotifHy \"https://github.com/Attituding/NotifHy\") page under the MIT license. See the license for more details."
                 },
                 "legal": {
                     "name": "Legal Stuff",
-                    "value": "By using this bot, you agree to the [Privacy Policy](https://attituding.github.io/NotifHy/privacy/ \"Privacy Policy\") and [Terms of Service](https://attituding.github.io/NotifHy/tos/ \"Terms of Service\") for this application."
+                    "value": "By using this service, you agree to our [Privacy Policy](https://attituding.github.io/NotifHy/privacy/ \"Privacy Policy\") and our [Terms of Service](https://attituding.github.io/NotifHy/tos/ \"Terms of Service\")."
+                },
+                "contact": {
+                    "name": "Contact",
+                    "value": "Contact Attituding at attituding@outlook.com or Attituding#6517 on Discord for assistance, bug reports, or suggestions."
                 }
             },
             "all": {
