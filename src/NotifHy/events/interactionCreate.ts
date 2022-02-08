@@ -46,7 +46,8 @@ export const execute: ClientEvent['execute'] = async (
             Log.command(interaction, slashCommandResolver(interaction));
 
             await interaction.deferReply({
-                ephemeral: command.properties.ephemeral,
+                ephemeral: command.properties.ephemeral &&
+                    interaction.inGuild(),
             });
 
             userData =
