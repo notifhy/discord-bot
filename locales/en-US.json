@@ -226,7 +226,7 @@
                 },
                 "contact": {
                     "name": "Contact",
-                    "value": "Contact Attituding at attituding@outlook.com or Attituding#6517 on Discord for assistance, bug reports, or suggestions"
+                    "value": "Contact Attituding at [attituding@outlook.com](mailto:attituding@outlook.com \"attituding@outlook.com\") or Attituding#6517 on Discord for assistance, bug reports, or suggestions"
                 }
             },
             "all": {
@@ -238,7 +238,7 @@
             },
             "specific": {
                 "invalid": {
-                    "title": "Invalid Command!",
+                    "title": "Invalid Command",
                     "description": "/{{ command }} isn't a valid command!"
                 },
                 "title": "/{{ command }}",

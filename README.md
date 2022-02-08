@@ -29,4 +29,4 @@ Modules are how different types of notifications are separated. Once you registe
 By using this service, you agree to our [Privacy Policy](https://attituding.github.io/NotifHy/privacy/ "Privacy Policy") and our [Terms of Service](https://attituding.github.io/NotifHy/tos/ "Terms of Service").
 
 ## Contact
-Contact Attituding at attituding@outlook.com or Attituding#6517 on Discord for assistance, bug reports, or suggestions.
+Contact Attituding at [attituding@outlook.com](mailto:attituding@outlook.com "attituding@outlook.com") or Attituding#6517 on Discord for assistance, bug reports, or suggestions.
