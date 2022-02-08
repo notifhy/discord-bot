@@ -24,9 +24,38 @@ export const properties: ClientCommand['properties'] = {
                     {
                         name: 'command',
                         type: 3,
-                        description:
-                            'A command to get info about. This parameter is completely optional',
+                        description: 'A command to get info about. This parameter is completely optional',
                         required: false,
+                        choices: [
+                            {
+                                name: '/channel',
+                                value: 'channel',
+                            },
+                            {
+                                name: '/data',
+                                value: 'data',
+                            },
+                            {
+                                name: '/help',
+                                value: 'help',
+                            },
+                            {
+                                name: '/language',
+                                value: 'language',
+                            },
+                            {
+                                name: '/modules',
+                                value: 'modules',
+                            },
+                            {
+                                name: '/player',
+                                value: 'player',
+                            },
+                            {
+                                name: '/register',
+                                value: 'register',
+                            },
+                        ],
                     },
                 ],
             },
