@@ -49,7 +49,7 @@ export const execute: ClientCommand['execute'] = async (
             {
                 name: text.input.name,
                 value: replace(text.input.value, {
-                    snowflake: snowflake,
+                    input: snowflake,
                 }),
             },
             {
