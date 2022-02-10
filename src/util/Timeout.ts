@@ -2,7 +2,9 @@ import {
     clearTimeout,
     setTimeout,
 } from 'node:timers';
-import GlobalConstants from '../util/Constants';
+import { GlobalConstants } from '../util/Constants';
+
+/* eslint-disable no-unused-vars */
 
 type TimeoutOptions = {
     baseTimeout?: number,
@@ -10,7 +12,7 @@ type TimeoutOptions = {
     maxTimeout?: number,
 }
 
-export default class Timeout {
+export class Timeout {
     private baseTimeout: number;
     private clearTimeout: number | undefined;
     lastMinute: number;

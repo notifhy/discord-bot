@@ -11,6 +11,8 @@ import {
     disableComponents,
     timestamp,
 } from '../../util/utility';
+import { Constants } from '../util/Constants';
+import { CommandErrorHandler } from '../errors/CommandErrorHandler';
 import {
     Constants as DiscordConstants,
     Formatters,
@@ -19,13 +21,11 @@ import {
     MessageButton,
     MessageComponentInteraction,
 } from 'discord.js';
+import { GlobalConstants } from '../../util/Constants';
+import { HTTPError } from '../errors/HTTPError';
 import { Log } from '../../util/Log';
 import { RegionLocales } from '../../../locales/RegionLocales';
 import { Request } from '../../util/Request';
-import Constants from '../util/Constants';
-import HTTPError from '../errors/HTTPError';
-import CommandErrorHandler from '../errors/CommandErrorHandler';
-import GlobalConstants from '../../util/Constants';
 
 export const properties: ClientCommand['properties'] = {
     name: 'player',

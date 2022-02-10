@@ -1,21 +1,24 @@
 import type { UserAPIData } from '../@types/database';
-import { Client, DiscordAPIError } from 'discord.js';
+import {
+    Client,
+    DiscordAPIError,
+} from 'discord.js';
+import { Constants } from '../util/Constants';
+import { ErrorHandler } from '../../util/errors/ErrorHandler';
+import { GlobalConstants } from '../../util/Constants';
 import { HypixelErrors } from './HypixelErrors';
 import { keyLimit } from '../../../config.json';
+import { ModuleDiscordErrorHandler } from '../errors/ModuleDiscordErrorHandler';
+import { ModuleError } from '../errors/ModuleError';
+import { ModuleErrorHandler } from '../errors/ModuleErrorHandler';
 import { ModuleManager } from './ModuleManager';
 import {
     Performance,
     RequestManager,
 } from './RequestManager';
+import { RequestErrorHandler } from '../errors/RequestErrorHandler';
 import { setTimeout } from 'node:timers/promises';
 import { SQLite } from '../../util/SQLite';
-import Constants from '../util/Constants';
-import ErrorHandler from '../../util/errors/ErrorHandler';
-import GlobalConstants from '../../util/Constants';
-import ModuleDiscordErrorHandler from '../errors/ModuleDiscordErrorHandler';
-import ModuleError from '../errors/ModuleError';
-import ModuleErrorHandler from '../errors/ModuleErrorHandler';
-import RequestErrorHandler from '../errors/RequestErrorHandler';
 
 /* eslint-disable no-await-in-loop */
 

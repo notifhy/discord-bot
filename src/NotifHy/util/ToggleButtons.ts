@@ -1,12 +1,12 @@
+import type {
+    ButtonData,
+    LocaleButton,
+} from '../@types/locales';
 import {
     Constants,
     MessageActionRow,
     MessageButton,
 } from 'discord.js';
-import type {
-    ButtonData,
-    LocaleButton,
-} from '../@types/locales';
 
 export class ToggleButtons extends MessageActionRow {
     constructor({

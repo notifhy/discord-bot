@@ -1,4 +1,7 @@
-import type { MessageSelectMenuOptions, MessageSelectOptionData } from 'discord.js';
+import type {
+    MessageSelectMenuOptions,
+    MessageSelectOptionData,
+} from 'discord.js';
 
 /*
 Universal Module Data Separation Stuff

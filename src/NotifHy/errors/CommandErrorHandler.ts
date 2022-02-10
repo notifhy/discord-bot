@@ -1,18 +1,18 @@
+import { BaseCommandErrorHandler } from './BaseCommandErrorHandler';
 import {
     CommandInteraction,
     MessageEmbed,
 } from 'discord.js';
+import { Constants } from '../util/Constants';
+import { ErrorHandler } from '../../util/errors/ErrorHandler';
 import {
     fatalWebhook,
     ownerID,
 } from '../../../config.json';
 import { RegionLocales } from '../../../locales/RegionLocales';
 import { sendWebHook } from '../../util/utility';
-import BaseCommandErrorHandler from './BaseCommandErrorHandler';
-import Constants from '../util/Constants';
-import ErrorHandler from '../../util/errors/ErrorHandler';
 
-export default class CommandErrorHandler<E> extends BaseCommandErrorHandler<E> {
+export class CommandErrorHandler<E> extends BaseCommandErrorHandler<E> {
     readonly interaction: CommandInteraction;
     readonly locale: string;
 

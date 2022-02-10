@@ -5,20 +5,20 @@ import type {
     UserData,
 } from '../@types/database';
 import {
+    arrayRemove,
+    timestamp,
+} from '../../util/utility';
+import {
     Formatters,
     MessageEmbed,
     TextChannel,
 } from 'discord.js';
-import {
-    arrayRemove,
-    timestamp,
-} from '../../util/utility';
+import { Constants } from '../util/Constants';
+import { GlobalConstants } from '../../util/Constants';
 import { Log } from '../../util/Log';
+import { ModuleError } from '../errors/ModuleError';
 import { RegionLocales } from '../../../locales/RegionLocales';
 import { SQLite } from '../../util/SQLite';
-import Constants from '../util/Constants';
-import GlobalConstants from '../../util/Constants';
-import ModuleError from '../errors/ModuleError';
 
 export const properties: ClientModule['properties'] = {
     name: 'friends',

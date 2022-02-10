@@ -1,9 +1,9 @@
 import type { ClientCommand } from '../@types/client';
 import { BetterEmbed } from '../../util/utility';
+import { Constants } from '../util/Constants';
 import { Formatters } from 'discord.js';
 import { Log } from '../../util/Log';
 import { RegionLocales } from '../../../locales/RegionLocales';
-import Constants from '../util/Constants';
 
 export const properties: ClientCommand['properties'] = {
     name: 'eval',

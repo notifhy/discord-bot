@@ -1,6 +1,6 @@
 import type { Locale } from '../@types/locales';
 
-export default class ConstraintError extends Error {
+export class ConstraintError extends Error {
     readonly cooldown?: number;
 
     constructor(message: keyof Locale['errors']['constraintErrors'], cooldown?: number) {

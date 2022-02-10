@@ -1,11 +1,11 @@
+import { BaseErrorHandler } from './BaseErrorHandler';
 import {
     fatalWebhook,
     ownerID,
 } from '../../../config.json';
 import { sendWebHook } from '../utility';
-import BaseErrorHandler from './BaseErrorHandler';
 
-export default class ErrorHandler<E> extends BaseErrorHandler<E> {
+export class ErrorHandler<E> extends BaseErrorHandler<E> {
     data: string[];
 
     constructor(error: E, ...data: string[]) {

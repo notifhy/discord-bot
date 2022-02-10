@@ -1,11 +1,11 @@
-import { MessageSelectMenuOptions } from 'discord.js';
+import type { MessageSelectMenuOptions } from 'discord.js';
 import type {
     SelectMenuLocale,
     SelectMenuStructure,
     SelectMenuTopLocale,
     SelectMenuTopStructure,
 } from '../@types/locales';
-import Constants from './Constants';
+import { Constants } from './Constants';
 
 export function combiner(
     locale: { select: SelectMenuLocale } & SelectMenuTopLocale,
@@ -34,7 +34,7 @@ export function combiner(
     } & SelectMenuLocale & SelectMenuStructure;
 }
 
-export default {
+export const Structures = {
     defender: {
         toggle: {
             value: 'toggle',

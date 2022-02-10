@@ -1,9 +1,12 @@
 import { BetterEmbed } from '../utility';
-import { FileOptions, SnowflakeUtil } from 'discord.js';
+import { Constants } from '../../NotifHy/util/Constants';
+import {
+    FileOptions,
+    SnowflakeUtil,
+} from 'discord.js';
 import { Log } from '../Log';
-import Constants from '../../NotifHy/util/Constants';
 
-export default class BaseErrorHandler<E> {
+export class BaseErrorHandler<E> {
     readonly error: E;
     readonly incidentID: string;
     readonly stackAttachment: FileOptions;

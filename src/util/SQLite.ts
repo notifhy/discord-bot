@@ -2,9 +2,9 @@ import {
     BaseUserData,
     Tables,
 } from '../NotifHy/@types/database';
+import { Constants } from '../NotifHy/util/Constants';
 import { databaseKey } from '../../config.json';
 import Database from 'better-sqlite3-multiple-ciphers';
-import Constants from '../NotifHy/util/Constants';
 
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable consistent-return */
@@ -364,7 +364,7 @@ export class SQLite {
                 | Record<string, unknown>
                 | string
                 | undefined>,
-        ): JSONize<typeof input> {
+    ): JSONize<typeof input> {
         for (const key in input) {
             //@ts-expect-error Types not added yet
             if (Object.hasOwn(input, key)) {

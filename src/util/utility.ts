@@ -13,9 +13,9 @@ import {
     WebhookClient,
     WebhookMessageOptions,
 } from 'discord.js';
+import { Constants } from '../NotifHy/util/Constants';
+import { GlobalConstants } from '../util/Constants';
 import { Log } from './Log';
-import Constants from '../NotifHy/util/Constants';
-import GlobalConstants from '../util/Constants';
 
 export function arrayRemove<Type extends unknown[]>(
     array: Type,

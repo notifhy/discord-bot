@@ -11,11 +11,11 @@ import {
     Options,
     Sweepers,
 } from 'discord.js';
-import { HypixelManager } from './hypixel/HypixelManager';
 import { discordAPIkey } from '../../config.json';
+import { ErrorHandler } from '../util/errors/ErrorHandler';
+import { HypixelManager } from './hypixel/HypixelManager';
 import { Log } from '../util/Log';
 import { SQLite } from '../util/SQLite';
-import ErrorHandler from '../util/errors/ErrorHandler';
 import fs from 'node:fs/promises';
 import process from 'node:process';
 

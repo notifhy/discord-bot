@@ -4,11 +4,11 @@ import {
     cleanLength,
     cleanRound,
 } from '../../util/utility';
+import { Constants } from '../util/Constants';
 import { keyLimit } from '../../../config.json';
 import { Log } from '../../util/Log';
 import { RegionLocales } from '../../../locales/RegionLocales';
 import { RequestManager } from '../hypixel/RequestManager';
-import Constants from '../util/Constants';
 
 export const properties: ClientCommand['properties'] = {
     name: 'api',

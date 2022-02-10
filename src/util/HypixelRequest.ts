@@ -1,13 +1,13 @@
 import type {
-    HypixelAPINotOK,
     HypixelAPI429,
     HypixelAPIError,
+    HypixelAPINotOK,
     HypixelAPIOk,
 } from '../NotifHy/@types/hypixel';
+import { HTTPError } from '../NotifHy/errors/HTTPError';
 import { hypixelAPIkey } from '../../config.json';
+import { RateLimitError } from '../NotifHy/errors/RateLimitError';
 import { Request } from './Request';
-import HTTPError from '../NotifHy/errors/HTTPError';
-import RateLimitError from '../NotifHy/errors/RateLimitError';
 
 export class HypixelRequest {
     readonly config: {

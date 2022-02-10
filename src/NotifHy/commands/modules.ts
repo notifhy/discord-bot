@@ -9,8 +9,11 @@ import type {
     Locale,
     ModulesCommand,
 } from '../@types/locales';
-import baseStructures,
-{ combiner } from '../util/Structures';
+import {
+    combiner,
+    Structures as baseStructures,
+} from '../util/Structures';
+import { CommandErrorHandler } from '../errors/CommandErrorHandler';
 import {
     BetterEmbed,
     disableComponents,
@@ -23,13 +26,12 @@ import {
     MessageSelectMenu,
     SelectMenuInteraction,
 } from 'discord.js';
+import { Constants } from '../util/Constants';
+import { GlobalConstants } from '../../util/Constants';
 import { Log } from '../../util/Log';
 import { RegionLocales } from '../../../locales/RegionLocales';
 import { SQLite } from '../../util/SQLite';
 import { ToggleButtons } from '../util/ToggleButtons';
-import CommandErrorHandler from '../errors/CommandErrorHandler';
-import Constants from '../util/Constants';
-import GlobalConstants from '../../util/Constants';
 
 export const properties: ClientCommand['properties'] = {
     name: 'modules',

@@ -1,4 +1,3 @@
-import type { ModuleDifferences } from '../@types/modules';
 import type {
     CleanHypixelPlayer,
     CleanHypixelStatus,
@@ -12,13 +11,14 @@ import type {
     UserAPIData,
     UserData,
 } from '../@types/database';
+import type { ModuleDifferences } from '../@types/modules';
 import {
     BetterEmbed,
     compare,
 } from '../../util/utility';
+import { Constants } from '../util/Constants';
 import { RegionLocales } from '../../../locales/RegionLocales';
 import { SQLite } from '../../util/SQLite';
-import Constants from '../util/Constants';
 
 export class ModuleManager {
     client: Client;

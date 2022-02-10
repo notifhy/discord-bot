@@ -1,6 +1,6 @@
+import { GlobalConstants } from '../../util/Constants';
 import { RequestManager } from './RequestManager';
-import GlobalConstants from '../../util/Constants';
-import Timeout from '../../util/Timeout';
+import { Timeout } from '../../util/Timeout';
 
 export class HypixelErrors {
     request: RequestManager;

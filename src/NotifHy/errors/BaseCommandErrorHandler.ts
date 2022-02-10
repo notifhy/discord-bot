@@ -3,11 +3,11 @@ import {
     GuildChannel,
     TextChannel,
 } from 'discord.js';
+import { BaseErrorHandler } from '../../util/errors/BaseErrorHandler';
+import { GlobalConstants } from '../../util/Constants';
 import { slashCommandResolver } from '../../util/utility';
-import BaseErrorHandler from '../../util/errors/BaseErrorHandler';
-import GlobalConstants from '../../util/Constants';
 
-export default class CommandErrorHandler<E> extends BaseErrorHandler<E> {
+export class BaseCommandErrorHandler<E> extends BaseErrorHandler<E> {
     readonly interaction: CommandInteraction;
 
     constructor(

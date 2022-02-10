@@ -1,7 +1,7 @@
 import { auth } from '@googleapis/drive';
+import { Constants } from './util/Constants';
 import { googleApp } from '../../config.json';
 import { Log } from '../util/Log';
-import Constants from './util/Constants';
 
 /* eslint-disable camelcase */
 

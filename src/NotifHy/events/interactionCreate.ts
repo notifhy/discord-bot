@@ -14,15 +14,18 @@ import {
     Collection,
     CommandInteraction,
 } from 'discord.js';
-import { locales, RegionLocales } from '../../../locales/RegionLocales';
+import { CommandConstraintErrorHandler } from '../errors/CommandConstraintErrorHandler';
+import { CommandErrorHandler } from '../errors/CommandErrorHandler';
+import { Constants } from '../util/Constants';
+import { ConstraintError } from '../errors/ConstraintError';
+import { GlobalConstants } from '../../util/Constants';
+import {
+    locales,
+    RegionLocales,
+ } from '../../../locales/RegionLocales';
 import { Log } from '../../util/Log';
 import { ownerID } from '../../../config.json';
 import { SQLite } from '../../util/SQLite';
-import CommandErrorHandler from '../errors/CommandErrorHandler';
-import Constants from '../util/Constants';
-import CommandConstraintErrorHandler from '../errors/CommandConstraintErrorHandler';
-import ConstraintError from '../errors/ConstraintError';
-import GlobalConstants from '../../util/Constants';
 
 export const properties: ClientEvent['properties'] = {
     name: 'interactionCreate',

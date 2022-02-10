@@ -1,8 +1,11 @@
 import type { ClientCommand } from '../@types/client';
-import { BetterEmbed, timestamp } from '../../util/utility';
+import {
+    BetterEmbed,
+    timestamp,
+} from '../../util/utility';
+import { Constants } from '../util/Constants';
 import { RegionLocales } from '../../../locales/RegionLocales';
 import { SnowflakeUtil } from 'discord.js';
-import Constants from '../util/Constants';
 
 export const properties: ClientCommand['properties'] = {
     name: 'snowflake',

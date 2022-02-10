@@ -1,12 +1,12 @@
 import type { ClientModule } from '../@types/modules';
 import type { RewardsModule } from '../@types/database';
 import { BetterEmbed } from '../../util/utility';
+import { Constants } from '../util/Constants';
+import { GlobalConstants } from '../../util/Constants';
+import { Log } from '../../util/Log';
+import { ModuleError } from '../errors/ModuleError';
 import { RegionLocales } from '../../../locales/RegionLocales';
 import { SQLite } from '../../util/SQLite';
-import Constants from '../util/Constants';
-import GlobalConstants from '../../util/Constants';
-import ModuleError from '../errors/ModuleError';
-import { Log } from '../../util/Log';
 
 export const properties: ClientModule['properties'] = {
     name: 'rewards',

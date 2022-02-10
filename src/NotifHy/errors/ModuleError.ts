@@ -1,4 +1,4 @@
-export default class ModuleError extends Error {
+export class ModuleError extends Error {
     readonly cleanModule: string;
     readonly module: string;
     readonly raw: unknown;

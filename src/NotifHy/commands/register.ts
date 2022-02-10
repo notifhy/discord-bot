@@ -7,12 +7,12 @@ import type {
     UserAPIData,
 } from '../@types/database';
 import { BetterEmbed } from '../../util/utility';
+import { Constants } from '../util/Constants';
+import { HTTPError } from '../errors/HTTPError';
 import { Log } from '../../util/Log';
 import { RegionLocales } from '../../../locales/RegionLocales';
 import { Request } from '../../util/Request';
 import { SQLite } from '../../util/SQLite';
-import Constants from '../util/Constants';
-import HTTPError from '../errors/HTTPError';
 
 export const properties: ClientCommand['properties'] = {
     name: 'register',

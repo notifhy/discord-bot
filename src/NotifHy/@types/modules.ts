@@ -1,7 +1,12 @@
 import type { CleanHypixelPlayer, CleanHypixelStatus } from './hypixel';
 import type { Client } from 'discord.js';
 import type { Locale } from './locales';
-import type { UserAPIData, UserData } from './database';
+import type {
+    UserAPIData,
+    UserData,
+} from './database';
+
+/* eslint-disable no-unused-vars */
 
 export type ModuleNames = 'defender' | 'friend' | 'rewards';
 

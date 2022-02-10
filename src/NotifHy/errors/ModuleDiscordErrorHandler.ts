@@ -1,28 +1,31 @@
+import type {
+    UserAPIData,
+    UserData,
+} from '../@types/database';
 import {
     arrayRemove,
     BetterEmbed,
     sendWebHook,
     timestamp,
 } from '../../util/utility';
+import { BaseErrorHandler } from '../../util/errors/BaseErrorHandler';
 import {
     Client,
-    Constants as DiscordConstants,
     DiscordAPIError,
+    Constants as DiscordConstants,
     Snowflake,
 } from 'discord.js';
+import { Constants } from '../util/Constants';
+import { ErrorHandler } from '../../util/errors/ErrorHandler';
 import {
     fatalWebhook,
     ownerID,
 } from '../../../config.json';
+import { ModuleError } from './ModuleError';
 import { RegionLocales } from '../../../locales/RegionLocales';
 import { SQLite } from '../../util/SQLite';
-import { UserAPIData, UserData } from '../@types/database';
-import BaseErrorHandler from '../../util/errors/BaseErrorHandler';
-import Constants from '../util/Constants';
-import ErrorHandler from '../../util/errors/ErrorHandler';
-import ModuleError from './ModuleError';
 
-export default class ModuleDiscordErrorHandler extends BaseErrorHandler<
+export class ModuleDiscordErrorHandler extends BaseErrorHandler<
     DiscordAPIError | (Omit<ModuleError, 'raw'> & { raw: DiscordAPIError })
 > {
     readonly cleanModule: string;

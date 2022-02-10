@@ -1,10 +1,10 @@
 import type { Client } from 'discord.js';
 import type { ClientEvent } from '../@types/client';
+import { Constants } from '../util/Constants';
+import { ErrorHandler } from '../../util/errors/ErrorHandler';
+import { GlobalConstants } from '../../util/Constants';
 import { Log } from '../../util/Log';
 import { SQLite } from '../../util/SQLite';
-import Constants from '../util/Constants';
-import ErrorHandler from '../../util/errors/ErrorHandler';
-import GlobalConstants from '../../util/Constants';
 
 export const properties: ClientEvent['properties'] = {
     name: 'ready',

@@ -1,10 +1,10 @@
-import { setTimeout } from 'node:timers';
+import { AbortError } from '../NotifHy/errors/AbortError';
 import fetch, {
     RequestInit,
     Response,
 } from 'node-fetch';
-import AbortError from '../NotifHy/errors/AbortError';
 import { Log } from './Log';
+import { setTimeout } from 'node:timers';
 
 export class Request {
     readonly abortThreshold: number;

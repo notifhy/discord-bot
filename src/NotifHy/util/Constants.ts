@@ -6,7 +6,7 @@ import {
 import gameTypes from '../../../assets/gameTypes.json';
 import modes from '../../../assets/modes.json';
 
-export default {
+export const Constants = {
     clean: {
         gameTypes: gameTypes,
         modes: modes,

@@ -1,4 +1,4 @@
-export default {
+export const GlobalConstants = {
     ms: {
         day: 86_400_000,
         hour: 3_600_000,

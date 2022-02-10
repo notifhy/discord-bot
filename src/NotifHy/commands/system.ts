@@ -5,11 +5,11 @@ import {
     cleanLength,
     cleanRound,
 } from '../../util/utility';
+import { Constants } from '../util/Constants';
+import { GlobalConstants } from '../../util/Constants';
 import { keyLimit } from '../../../config.json';
 import { RegionLocales } from '../../../locales/RegionLocales';
 import { SQLite } from '../../util/SQLite';
-import Constants from '../util/Constants';
-import GlobalConstants from '../../util/Constants';
 import process from 'node:process';
 
 export const properties: ClientCommand['properties'] = {

@@ -1,3 +1,4 @@
+import { BaseCommandErrorHandler } from './BaseCommandErrorHandler';
 import {
     BaseEmbed,
     Locale,
@@ -11,16 +12,15 @@ import {
     ColorResolvable,
     CommandInteraction,
 } from 'discord.js';
+import { Constants } from '../util/Constants';
+import { ConstraintError } from './ConstraintError';
+import { ErrorHandler } from '../../util/errors/ErrorHandler';
+import { GlobalConstants } from '../../util/Constants';
 import { nonFatalWebhook } from '../../../config.json';
 import { RegionLocales } from '../../../locales/RegionLocales';
 import { setTimeout } from 'node:timers/promises';
-import BaseCommandErrorHandler from './BaseCommandErrorHandler';
-import Constants from '../util/Constants';
-import ConstraintError from './ConstraintError';
-import ErrorHandler from '../../util/errors/ErrorHandler';
-import GlobalConstants from '../../util/Constants';
 
-export default class CommandConstraintErrorHandler
+export class CommandConstraintErrorHandler
     extends BaseCommandErrorHandler<ConstraintError> {
     readonly interaction: CommandInteraction;
     readonly locale: string;

@@ -1,5 +1,6 @@
 {
     "cSpell.words": [
+        "accessdb",
         "autoleave",
         "bitfield",
         "blockguild",
@@ -13,6 +14,7 @@
         "discordjs",
         "displayname",
         "fetchable",
+        "Gaxios",
         "hypixel",
         "interactable",
         "jsonized",

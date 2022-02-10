@@ -1,10 +1,10 @@
 /* eslint-disable no-unused-vars */
-import type { ClientModule } from './modules';
 import type {
     ChatInputApplicationCommandData,
     Collection,
     CommandInteraction,
 } from 'discord.js';
+import type { ClientModule } from './modules';
 import type { HypixelManager } from '../hypixel/HypixelManager';
 
 export interface WebhookConfig {

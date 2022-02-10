@@ -5,9 +5,9 @@ import type {
     RawHypixelStatus,
 } from '../@types/hypixel';
 import type { UserAPIData } from '../@types/database';
+import { Constants } from '../util/Constants';
 import { HypixelRequest } from '../../util/HypixelRequest';
 //import { Log } from '../../util/Log';
-import Constants from '../util/Constants';
 
 export type Performance = {
     start: number;

@@ -1,8 +1,11 @@
+import { AbortError } from './AbortError';
+import { BaseErrorHandler } from '../../util/errors/BaseErrorHandler';
 import {
     cleanLength,
     cleanRound,
     sendWebHook,
 } from '../../util/utility';
+import { ErrorHandler } from '../../util/errors/ErrorHandler';
 import {
     fatalWebhook,
     hypixelAPIWebhook,
@@ -10,14 +13,11 @@ import {
     ownerID,
 } from '../../../config.json';
 import { FetchError } from 'node-fetch';
+import { HTTPError } from './HTTPError';
 import { HypixelManager } from '../hypixel/HypixelManager';
-import AbortError from './AbortError';
-import BaseErrorHandler from '../../util/errors/BaseErrorHandler';
-import ErrorHandler from '../../util/errors/ErrorHandler';
-import HTTPError from './HTTPError';
-import RateLimitError from './RateLimitError';
+import { RateLimitError } from './RateLimitError';
 
-export default class RequestErrorHandler<E> extends BaseErrorHandler<E> {
+export class RequestErrorHandler<E> extends BaseErrorHandler<E> {
     readonly hypixelManager: HypixelManager;
     readonly timeout: string | null;
 

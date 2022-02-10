@@ -2,15 +2,18 @@ import {
     auth,
     drive as googleDrive,
 } from '@googleapis/drive';
+import { Constants } from './util/Constants';
+import { ErrorHandler } from '../util/errors/ErrorHandler';
 import { GaxiosError } from 'gaxios';
-import { googleApp, refreshToken } from '../../config.json';
+import {
+    googleApp,
+    refreshToken,
+} from '../../config.json';
 import { Log } from '../util/Log';
 import { setTimeout } from 'node:timers/promises';
-import Constants from './util/Constants';
-import ErrorHandler from '../util/errors/ErrorHandler';
+import { Timeout } from '../util/Timeout';
 import fsSync from 'node:fs';
 import process from 'node:process';
-import Timeout from '../util/Timeout';
 
 /* eslint-disable camelcase */
 /* eslint-disable no-await-in-loop */

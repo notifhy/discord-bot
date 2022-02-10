@@ -1,6 +1,6 @@
 import type { Response } from 'node-fetch';
 
-export default class HTTPError<JSON> extends Error {
+export class HTTPError<JSON> extends Error {
     readonly json: JSON | null;
     readonly response: Response | null;
     readonly status: number;

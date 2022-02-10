@@ -1,6 +1,6 @@
-import HTTPError from './HTTPError';
+import { HTTPError } from './HTTPError';
 
-export default class AbortError extends HTTPError<never> {
+export class AbortError extends HTTPError<never> {
     constructor({
         message,
         url,

@@ -1,12 +1,19 @@
-import type { BaseEmbed, Channel } from '../@types/locales';
+import type {
+    BaseEmbed,
+    Channel,
+} from '../@types/locales';
 import type { ClientCommand } from '../@types/client';
-import type { DefenderModule, FriendsModule, Tables } from '../@types/database';
+import type {
+    DefenderModule,
+    FriendsModule,
+    Tables,
+} from '../@types/database';
 import { BetterEmbed } from '../../util/utility';
 import { ChannelTypes } from 'discord.js/typings/enums';
+import { Constants } from '../util/Constants';
 import { Formatters } from 'discord.js';
 import { RegionLocales } from '../../../locales/RegionLocales';
 import { SQLite } from '../../util/SQLite';
-import Constants from '../util/Constants';
 
 export const properties: ClientCommand['properties'] = {
     name: 'channel',
