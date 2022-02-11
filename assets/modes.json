@@ -801,5 +801,9 @@
     {
         "key": "dungeon_hub",
         "name": "Dungeon Hub"
+    },
+    {
+        "key": "winter",
+        "name": "Winter Island"
     }
 ]
