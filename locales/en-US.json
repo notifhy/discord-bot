@@ -866,7 +866,7 @@
                 "value": "{{ worker }}"
             },
             "process": {
-                "name": "'Process ID",
+                "name": "Process ID",
                 "value": "{{ process }}"
             },
             "increment": {
