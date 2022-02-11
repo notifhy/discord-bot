@@ -5,10 +5,7 @@ import {
 import { Constants } from './util/Constants';
 import { ErrorHandler } from '../util/errors/ErrorHandler';
 import { GaxiosError } from 'gaxios';
-import {
-    googleApp,
-    refreshToken,
-} from '../../config.json';
+import { googleKey } from '../../config.json';
 import { Log } from '../util/Log';
 import { setTimeout } from 'node:timers/promises';
 import { Timeout } from '../util/Timeout';
@@ -41,30 +38,15 @@ const {
     getTimeout,
 } = new Timeout({ baseTimeout: 300_000 });
 
-const {
-    client_id,
-    client_secret,
-    redirect_uris,
-} = googleApp.installed;
-
-const oauth2Client = new auth.OAuth2(
-    client_id,
-    client_secret,
-    redirect_uris[0],
-);
-
-oauth2Client.on('tokens', ({ expiry_date }) => {
-    Log.debug(`New access token expires ${expiry_date}`);
-});
-
 (async () => {
-    oauth2Client.setCredentials({
-        refresh_token: refreshToken,
+    const authorization = await auth.getClient({
+        scopes: Constants.scopes,
+        credentials: googleKey,
     });
 
     const drive = googleDrive({
         version: 'v3',
-        auth: oauth2Client,
+        auth: authorization,
     });
 
     while (true) {
