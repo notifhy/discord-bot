@@ -32,10 +32,6 @@ export const properties: ClientCommand['properties'] = {
                         name: 'English (English)',
                         value: 'en-US',
                     },
-                    {
-                        name: 'Français (French)',
-                        value: 'fr',
-                    },
                 ],
             },
         ],
