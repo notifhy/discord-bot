@@ -5,7 +5,7 @@ import {
 import { Constants } from './util/Constants';
 import { ErrorHandler } from '../util/errors/ErrorHandler';
 import { GaxiosError } from 'gaxios';
-import { googleKey } from '../../config.json';
+import { googleCredentials } from '../../config.json';
 import { Log } from '../util/Log';
 import { setTimeout } from 'node:timers/promises';
 import { Timeout } from '../util/Timeout';
@@ -41,7 +41,7 @@ const {
 (async () => {
     const authorization = await auth.getClient({
         scopes: Constants.scopes,
-        credentials: googleKey,
+        credentials: googleCredentials,
     });
 
     const drive = googleDrive({
