@@ -2,20 +2,20 @@ import type {
     Locale,
     Locales,
     Parameters,
-} from '../src/NotifHy/@types/locales';
+} from '../@types/locales';
+import { Constants } from '../util/Constants';
 import en from './en-US.json';
-import fr from './fr.json';
 
 export const locales: Locales = {
     'en-US': en,
-    fr: fr,
 };
 
 export class RegionLocales {
     static locale(locale?: string | null): Locale {
-        let locale2 = locale ?? 'en-US';
+        let locale2 = locale ?? Constants.defaults.language;
+
         if (!Object.keys(locales).includes(locale2)) {
-            locale2 = 'en-US';
+            locale2 = Constants.defaults.language;
         }
 
         return locales[locale2 as keyof Locales];

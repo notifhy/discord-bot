@@ -22,7 +22,7 @@ import {
     ownerID,
 } from '../../../config.json';
 import { ModuleError } from './ModuleError';
-import { RegionLocales } from '../../../locales/RegionLocales';
+import { RegionLocales } from '../locales/RegionLocales';
 import { SQLite } from '../../util/SQLite';
 
 export class ModuleDiscordErrorHandler extends BaseErrorHandler<

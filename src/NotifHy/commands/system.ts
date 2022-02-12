@@ -8,7 +8,7 @@ import {
 import { Constants } from '../util/Constants';
 import { GlobalConstants } from '../../util/Constants';
 import { keyLimit } from '../../../config.json';
-import { RegionLocales } from '../../../locales/RegionLocales';
+import { RegionLocales } from '../locales/RegionLocales';
 import { SQLite } from '../../util/SQLite';
 import process from 'node:process';
 

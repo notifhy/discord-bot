@@ -17,7 +17,7 @@ import { ConstraintError } from './ConstraintError';
 import { ErrorHandler } from '../../util/errors/ErrorHandler';
 import { GlobalConstants } from '../../util/Constants';
 import { nonFatalWebhook } from '../../../config.json';
-import { RegionLocales } from '../../../locales/RegionLocales';
+import { RegionLocales } from '../locales/RegionLocales';
 import { setTimeout } from 'node:timers/promises';
 
 export class CommandConstraintErrorHandler

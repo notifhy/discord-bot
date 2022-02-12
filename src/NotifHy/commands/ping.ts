@@ -6,7 +6,7 @@ import {
 import { BetterEmbed } from '../../util/utility';
 import { Constants } from '../util/Constants';
 import { Log } from '../../util/Log';
-import { RegionLocales } from '../../../locales/RegionLocales';
+import { RegionLocales } from '../locales/RegionLocales';
 
 export const properties: ClientCommand['properties'] = {
     name: 'ping',

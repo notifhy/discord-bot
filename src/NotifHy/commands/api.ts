@@ -7,7 +7,7 @@ import {
 import { Constants } from '../util/Constants';
 import { keyLimit } from '../../../config.json';
 import { Log } from '../../util/Log';
-import { RegionLocales } from '../../../locales/RegionLocales';
+import { RegionLocales } from '../locales/RegionLocales';
 import { RequestManager } from '../hypixel/RequestManager';
 
 export const properties: ClientCommand['properties'] = {

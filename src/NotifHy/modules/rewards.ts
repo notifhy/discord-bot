@@ -5,7 +5,7 @@ import { Constants } from '../util/Constants';
 import { GlobalConstants } from '../../util/Constants';
 import { Log } from '../../util/Log';
 import { ModuleError } from '../errors/ModuleError';
-import { RegionLocales } from '../../../locales/RegionLocales';
+import { RegionLocales } from '../locales/RegionLocales';
 import { SQLite } from '../../util/SQLite';
 
 export const properties: ClientModule['properties'] = {

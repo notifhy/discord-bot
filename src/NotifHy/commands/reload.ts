@@ -7,7 +7,7 @@ import { BetterEmbed } from '../../util/utility';
 import { CommandInteraction } from 'discord.js';
 import { Constants } from '../util/Constants';
 import { Log } from '../../util/Log';
-import { RegionLocales } from '../../../locales/RegionLocales';
+import { RegionLocales } from '../locales/RegionLocales';
 
 export const properties: ClientCommand['properties'] = {
     name: 'reload',

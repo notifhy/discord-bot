@@ -22,7 +22,7 @@ import { GlobalConstants } from '../../util/Constants';
 import {
     locales,
     RegionLocales,
- } from '../../../locales/RegionLocales';
+ } from '../locales/RegionLocales';
 import { Log } from '../../util/Log';
 import { ownerID } from '../../../config.json';
 import { SQLite } from '../../util/SQLite';
@@ -166,7 +166,7 @@ async function generalConstraints(
 
     if (
         noDM === true &&
-        !interaction.inGuild()
+        !interaction.inCachedGuild()
     ) {
         throw new ConstraintError('dm');
     }

@@ -64,11 +64,19 @@
             }
         },
         "channel": {
-            "dms": "your DMs",
+            "dms": "DMs",
+            "botMissingPermission": {
+                "title": "Missing Permission",
+                "description": "This bot is unable to access the channel you selected. You can either grant the bot elevated server permissions or select a channel the bot can access."
+            },
+            "userMissingPermission": {
+                "title": "Missing Permission",
+                "description": "As a temporary workaround, you must have the Manage Channels permission to use this command. You are advised to use this bot in a server that you own or share with close friends.\n\nShould you decided to move to a different server, all your settings will remain the same.\n\nFor community owners, an option to whitelist or create channels will be added soon™."
+            },
             "defender": {
                 "alreadySet": {
                     "title": "Already Set",
-                    "description": "Defender Module alerts are already being sent to {{ channel }}!"
+                    "description": "Defender Module alerts are already set to {{ channel }}!"
                 },
                 "set": {
                     "title": "Channel Set",
@@ -82,7 +90,7 @@
             "friends": {
                 "alreadySet": {
                     "title": "Already Set",
-                    "description": "Friends Module notifications are already being sent to {{ channel }}!"
+                    "description": "Friends Module notifications are already set to {{ channel }}!"
                 },
                 "set": {
                     "title": "Channel Set",
@@ -210,7 +218,7 @@
                 },
                 "setup": {
                     "name": "Setup",
-                    "value": "• Invite the bot by clicking [here](https://attituding.github.io/NotifHy/invite/ \"Invite\") and granting the OAuth2 scopes\n• Use `/register` followed by your username or UUID\n• Using `/discord` on Hypixel may be required to link or relink your Discord account to your Minecraft account\n• Use `/modules` followed by the module you are interested in\n• Configure the module by clicking on the select menus and buttons. The `Toggle` setting will tell you what settings need to be configured before you can enable the module\n• `/channel` may be required for some modules in order to tell the bot where you want alerts/notifications to go"
+                    "value": "• Find or create a server that you own or is owned by your friends\n• Invite the bot by clicking [here](https://attituding.github.io/NotifHy/invite/ \"Invite\") and granting the OAuth2 scopes\n• Use `/register` followed by your username or UUID\n• Using `/discord` on Hypixel may be required to link or relink your Discord account to your Minecraft account\n• Use `/modules` followed by the module you are interested in\n• Configure the module by clicking on the select menus and buttons. The `Toggle` setting will tell you what settings need to be configured before you can enable the module\n• `/channel` may be required for some modules in order to tell the bot where you want alerts/notifications to go"
                 },
                 "other": {
                     "name": "Other Information",

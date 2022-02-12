@@ -9,7 +9,7 @@ import {
     fatalWebhook,
     ownerID,
 } from '../../../config.json';
-import { RegionLocales } from '../../../locales/RegionLocales';
+import { RegionLocales } from '../locales/RegionLocales';
 import { sendWebHook } from '../../util/utility';
 
 export class CommandErrorHandler<E> extends BaseCommandErrorHandler<E> {

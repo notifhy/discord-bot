@@ -24,7 +24,7 @@ import {
 import { GlobalConstants } from '../../util/Constants';
 import { HTTPError } from '../errors/HTTPError';
 import { Log } from '../../util/Log';
-import { RegionLocales } from '../../../locales/RegionLocales';
+import { RegionLocales } from '../locales/RegionLocales';
 import { Request } from '../../util/Request';
 
 export const properties: ClientCommand['properties'] = {

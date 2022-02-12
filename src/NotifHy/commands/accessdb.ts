@@ -2,7 +2,7 @@ import type { ClientCommand } from '../@types/client';
 import { Constants } from '../util/Constants';
 import { BetterEmbed } from '../../util/utility';
 import { Log } from '../../util/Log';
-import { RegionLocales } from '../../../locales/RegionLocales';
+import { RegionLocales } from '../locales/RegionLocales';
 import { setTimeout } from 'node:timers/promises';
 import { SQLite } from '../../util/SQLite';
 

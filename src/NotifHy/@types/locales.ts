@@ -94,7 +94,9 @@ export interface BotStatus {
 }
 
 export interface Channel {
-    dms: string
+    dms: string,
+    botMissingPermission: BaseEmbed,
+    userMissingPermission: BaseEmbed,
     defender: {
         alreadySet: BaseEmbed,
         set: BaseEmbed,
@@ -499,7 +501,6 @@ export interface Locale {
 
 export interface Locales {
     'en-US': Locale,
-    'fr': Locale,
 }
 
 export interface Parameters {

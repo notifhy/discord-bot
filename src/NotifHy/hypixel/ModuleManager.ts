@@ -17,7 +17,7 @@ import {
     compare,
 } from '../../util/utility';
 import { Constants } from '../util/Constants';
-import { RegionLocales } from '../../../locales/RegionLocales';
+import { RegionLocales } from '../locales/RegionLocales';
 import { SQLite } from '../../util/SQLite';
 
 export class ModuleManager {

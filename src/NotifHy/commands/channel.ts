@@ -11,8 +11,11 @@ import type {
 import { BetterEmbed } from '../../util/utility';
 import { ChannelTypes } from 'discord.js/typings/enums';
 import { Constants } from '../util/Constants';
-import { Formatters } from 'discord.js';
-import { RegionLocales } from '../../../locales/RegionLocales';
+import {
+    Formatters,
+    Permissions,
+} from 'discord.js';
+import { RegionLocales } from '../locales/RegionLocales';
 import { SQLite } from '../../util/SQLite';
 
 export const properties: ClientCommand['properties'] = {
@@ -20,7 +23,7 @@ export const properties: ClientCommand['properties'] = {
     description: 'Modify the channel for the Defender or Friends Module. You must use this in a server.',
     cooldown: 5_000,
     ephemeral: true,
-    noDM: false,
+    noDM: true,
     ownerOnly: false,
     requireRegistration: true,
     structure: {
@@ -77,6 +80,10 @@ export const execute: ClientCommand['execute'] = async (
 ): Promise<void> => {
     const { replace } = RegionLocales;
 
+    if (!interaction.inCachedGuild()) {
+        return;
+    }
+
     const channel = interaction.options.getChannel('channel');
     const type = interaction.options.getSubcommand() === 'friends'
         ? 'friends'
@@ -85,9 +92,33 @@ export const execute: ClientCommand['execute'] = async (
     const baseLocale = RegionLocales.locale(locale).commands.channel;
     const alreadySet = baseLocale[type].alreadySet;
 
+    if (channel?.viewable === false) {
+        const missingPermission = new BetterEmbed(interaction)
+            .setColor(Constants.colors.warning)
+            .setTitle(baseLocale.botMissingPermission.title)
+            .setDescription(baseLocale.botMissingPermission.description);
+
+        await interaction.editReply({ embeds: [missingPermission] });
+
+        return;
+    }
+
+    const userHasPermission =
+        interaction.member!.permissions.has(Permissions.FLAGS.MANAGE_CHANNELS);
+
+    if (userHasPermission === false) {
+        const missingPermission = new BetterEmbed(interaction)
+            .setColor(Constants.colors.warning)
+            .setTitle(baseLocale.userMissingPermission.title)
+            .setDescription(baseLocale.userMissingPermission.description);
+
+        await interaction.editReply({ embeds: [missingPermission] });
+
+        return;
+    }
+
     let table: Tables;
     let text: BaseEmbed;
-
 
     switch (type) {
         case 'defender':

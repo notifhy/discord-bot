@@ -4,7 +4,7 @@ import {
     timestamp,
 } from '../../util/utility';
 import { Constants } from '../util/Constants';
-import { RegionLocales } from '../../../locales/RegionLocales';
+import { RegionLocales } from '../locales/RegionLocales';
 import { SnowflakeUtil } from 'discord.js';
 
 export const properties: ClientCommand['properties'] = {

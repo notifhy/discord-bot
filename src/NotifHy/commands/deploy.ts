@@ -6,7 +6,7 @@ import {
 } from '../../../config.json';
 import { Constants } from '../util/Constants';
 import { Log } from '../../util/Log';
-import { RegionLocales } from '../../../locales/RegionLocales';
+import { RegionLocales } from '../locales/RegionLocales';
 import { REST } from '@discordjs/rest';
 import { Routes } from 'discord-api-types/v9';
 import fs from 'node:fs/promises';
