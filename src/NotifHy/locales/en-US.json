@@ -218,7 +218,7 @@
                 },
                 "setup": {
                     "name": "Setup",
-                    "value": "• Find or create a server that you own or is owned by your friends\n• Invite the bot by clicking [here](https://attituding.github.io/NotifHy/invite/ \"Invite\") and granting the OAuth2 scopes\n• Use `/register` followed by your username or UUID\n• Using `/discord` on Hypixel may be required to link or relink your Discord account to your Minecraft account\n• Use `/modules` followed by the module you are interested in\n• Configure the module by clicking on the select menus and buttons. The `Toggle` setting will tell you what settings need to be configured before you can enable the module\n• `/channel` may be required for some modules in order to tell the bot where you want alerts/notifications to go"
+                    "value": "• You should use a server that you own or is owned by your friends\n• Invite the bot by clicking [here](https://attituding.github.io/NotifHy/invite/ \"Invite\") and granting the OAuth2 scopes\n• Use `/register` followed by your username or UUID\n• Using `/discord` on Hypixel may be required to link or relink your Discord account to your Minecraft account\n• Use `/modules` followed by the module you are interested in\n• Configure the module by clicking on the select menus and buttons. The `Toggle` setting will tell you what settings need to be configured before you can enable the module\n• `/channel` may be required for some modules in order to tell the bot where you want alerts/notifications to go"
                 },
                 "other": {
                     "name": "Other Information",

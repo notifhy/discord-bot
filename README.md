@@ -11,6 +11,7 @@ Modules are how different types of notifications are separated. Once you registe
 
 ## Setup
  - Invite the bot by clicking [here](https://attituding.github.io/NotifHy/invite/ "Invite") and granting the OAuth2 scopes
+   - You should use a server that you own or is owned by your friends
  - Use **/register** followed by your username or UUID
    - Using **/discord** on Hypixel may be required to link or relink your Discord account to your Minecraft account
  - Use **/modules** followed by the module you are interested in
