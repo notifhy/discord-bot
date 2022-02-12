@@ -84,7 +84,7 @@ export class SQLite {
                 .prepare('SELECT * FROM config')
                 .get();
 
-            if (config === undefined) {
+            if (typeof config === 'undefined') {
                 db.prepare('INSERT INTO config DEFAULT VALUES').run();
             }
 
@@ -112,9 +112,9 @@ export class SQLite {
             if (
                 (
                     config.allowUndefined === false ||
-                    config.allowUndefined === undefined
+                    typeof config.allowUndefined === 'undefined'
                 ) &&
-                rawData === undefined
+                typeof rawData === 'undefined'
             ) {
                 throw new RangeError(
                     `The query ${config.query} returned an undefined value`,
@@ -235,7 +235,7 @@ export class SQLite {
 
         if (
             config.returnNew === false ||
-            config.returnNew === undefined
+            typeof config.returnNew === 'undefined'
         ) {
             return;
         }
@@ -287,7 +287,7 @@ export class SQLite {
 
         if (
             config.returnNew === false ||
-            config.returnNew === undefined
+            typeof config.returnNew === 'undefined'
         ) {
             return;
         }

@@ -36,7 +36,7 @@ export class Request {
             });
 
 
-            if (response.ok) {
+            if (response.ok === true) {
                 if (this.try > 1) {
                     Log.debug('[REQUEST] Successfully fetched after a retry');
                 }

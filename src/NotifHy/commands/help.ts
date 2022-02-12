@@ -128,7 +128,7 @@ export const execute: ClientCommand['execute'] = async (
         const commandSearchEmbed = new BetterEmbed(interaction)
             .setColor(Constants.colors.normal);
 
-        if (command === undefined) {
+        if (typeof command === 'undefined') {
             commandSearchEmbed
                 .setColor(Constants.colors.warning)
                 .setTitle(text.specific.invalid.title)
@@ -146,13 +146,11 @@ export const execute: ClientCommand['execute'] = async (
             }),
         );
 
-        if (command.properties.description) {
-            commandSearchEmbed.setDescription(
-                replace(text.specific.description, {
-                    commandDescription: command.properties.description,
-                }),
-            );
-        }
+        commandSearchEmbed.setDescription(
+            replace(text.specific.description, {
+                commandDescription: command.properties.description,
+            }),
+        );
 
         commandSearchEmbed.addFields({
             name: text.specific.cooldown.name,

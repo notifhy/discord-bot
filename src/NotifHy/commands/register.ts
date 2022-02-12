@@ -51,7 +51,7 @@ export const execute: ClientCommand['execute'] = async (
             columns: ['discordID'],
         });
 
-    if (userAPIData) {
+    if (userAPIData !== undefined) {
         const alreadyRegisteredEmbed = new BetterEmbed(interaction)
             .setColor(Constants.colors.warning)
             .setTitle(text.alreadyRegistered.title)

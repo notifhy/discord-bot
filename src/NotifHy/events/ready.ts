@@ -21,9 +21,7 @@ export const execute: ClientEvent['execute'] = async (client: Client) => {
     async function setActivity() {
         try {
             let label: string;
-            if (client.customStatus) {
-                label = client.customStatus;
-            } else {
+            if (client.customStatus === null) {
                 const users = (
                     await SQLite.getAllUsers({
                         table: Constants.tables.api,
@@ -32,6 +30,8 @@ export const execute: ClientEvent['execute'] = async (client: Client) => {
                 ).length;
 
                 label = `${users} accounts | /register /help | ${client.guilds.cache.size} servers`;
+            } else {
+                label = client.customStatus;
             }
 
             client.user?.setActivity({

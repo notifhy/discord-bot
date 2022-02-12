@@ -71,7 +71,7 @@ export const execute: ClientCommand['execute'] = async (
             allowUndefined: true,
         });
 
-    if (userData === undefined) {
+    if (typeof userData === 'undefined') {
         const notFoundEmbed = new BetterEmbed(interaction)
             .setColor(Constants.colors.normal)
             .setTitle(text.notFound.title)

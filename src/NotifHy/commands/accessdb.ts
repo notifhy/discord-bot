@@ -39,6 +39,7 @@ export const execute: ClientCommand['execute'] = async (
 
     const currentAPI = interaction.client.config.enabled;
     const curentDevMode = interaction.client.config.devMode;
+
     interaction.client.config.enabled = false;
     interaction.client.config.devMode = true;
 

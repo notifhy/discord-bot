@@ -42,7 +42,7 @@ export class HypixelErrors {
         rateLimitGlobal: boolean | null,
         ratelimitReset: string | null;
     }) {
-        if (ratelimitReset) {
+        if (ratelimitReset !== null) {
             this.rateLimit.timeout =
                 (Number(ratelimitReset) + 1) * GlobalConstants.ms.second;
         }

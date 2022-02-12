@@ -62,8 +62,8 @@ export const execute: ClientModule['execute'] = async ({
         let color: ColorResolvable = Constants.colors.normal;
 
         if (
-            newData.lastLogin &&
-            oldData.lastLogin &&
+            newData.lastLogin != null && //eslint-disable-line eqeqeq
+            oldData.lastLogin != null && //eslint-disable-line eqeqeq
             defenderModule.alerts.login === true
         ) {
             const relative = timestamp(newData.lastLogin, 'R');
@@ -83,8 +83,8 @@ export const execute: ClientModule['execute'] = async ({
         }
 
         if (
-            newData.lastLogout &&
-            oldData.lastLogout &&
+            newData.lastLogout != null && //eslint-disable-line eqeqeq
+            oldData.lastLogout != null && //eslint-disable-line eqeqeq
             defenderModule.alerts.logout === true
         ) {
             //lastLogout seems to change twice sometimes on a single logout, this is a fix for that
@@ -122,8 +122,8 @@ export const execute: ClientModule['execute'] = async ({
         const cleanVersion = newData.version?.match(/^1.\d+/m)?.[0];
 
         if (
-            newData.version &&
-            oldData.version &&
+            newData.version != null && //eslint-disable-line eqeqeq
+            oldData.version != null && //eslint-disable-line eqeqeq
             defenderModule.alerts.version === true &&
             cleanVersion &&
             defenderModule.versions.includes(cleanVersion) === false
@@ -173,8 +173,8 @@ export const execute: ClientModule['execute'] = async ({
         }
 
         if (
-            newData.language &&
-            oldData.language &&
+            newData.language != null && //eslint-disable-line eqeqeq
+            oldData.language != null && //eslint-disable-line eqeqeq
             defenderModule.alerts.language === true &&
             defenderModule.languages
                 .includes(newData.language) === false

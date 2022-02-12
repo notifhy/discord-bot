@@ -165,13 +165,13 @@ export const execute: ClientCommand['execute'] = async (
 
     switch (interaction.options.getSubcommand()) {
         case 'stats': await stats();
-            break;
+        break;
         case 'instance': await instance();
-            break;
+        break;
         case 'set': await set();
-            break;
+        break;
         case 'call': await call();
-            break;
+        break;
         //no default
     }
 

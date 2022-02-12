@@ -35,8 +35,8 @@ export const execute: ClientModule['execute'] = async ({
 }): Promise<void> => {
     try {
         if (
-            newData.lastLogin === undefined &&
-            newData.lastLogout === undefined
+            typeof newData.lastLogin === 'undefined' &&
+            typeof newData.lastLogout === 'undefined'
         ) {
             return; //If the login/logout aren't in differences
         }
@@ -102,7 +102,8 @@ export const execute: ClientModule['execute'] = async ({
 
         const notifications: MessageEmbed[] = [];
 
-        if (newData.lastLogin) {
+        //eslint-disable-next-line eqeqeq
+        if (newData.lastLogin != null) {
             const relative = timestamp(newData.lastLogin, 'R');
             const time = timestamp(newData.lastLogin, 'T');
 
@@ -118,7 +119,8 @@ export const execute: ClientModule['execute'] = async ({
             notifications.push(login);
         }
 
-        if (newData.lastLogout) {
+        //eslint-disable-next-line eqeqeq
+        if (newData.lastLogout != null) {
             const relative = timestamp(newData.lastLogout, 'R');
             const time = timestamp(newData.lastLogout, 'T');
 

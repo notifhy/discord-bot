@@ -117,7 +117,7 @@ export class RequestManager {
     }
 
     private static cleanStatusData(rawHypixelStatus?: RawHypixelStatus) {
-        if (rawHypixelStatus === undefined) {
+        if (typeof rawHypixelStatus === 'undefined') {
             return undefined;
         }
 

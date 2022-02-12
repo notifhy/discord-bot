@@ -102,7 +102,7 @@ export const execute: ClientModule['execute'] = async ({
             Log.debug('[REWARDS]', userAPIData.discordID, 'Delivered Reminder');
         }
 
-        if (newData.rewardScore === undefined) {
+        if (typeof newData.rewardScore === 'undefined') {
             return;
         }
 

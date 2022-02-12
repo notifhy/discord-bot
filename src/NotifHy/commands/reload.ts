@@ -124,7 +124,7 @@ export const execute: ClientCommand['execute'] = async (
         const item = interaction.options.getString('item')!;
         const selected = type.get(item);
 
-        if (selected === undefined) {
+        if (typeof selected === 'undefined') {
             const undefinedSelected = new BetterEmbed(interaction)
                 .setColor(Constants.colors.warning)
                 .setTitle(text.single.unknown.title)

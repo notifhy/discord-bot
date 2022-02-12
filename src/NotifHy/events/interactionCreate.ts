@@ -42,7 +42,7 @@ export const execute: ClientEvent['execute'] = async (
             const command: ClientCommand | undefined =
                 interaction.client.commands.get(interaction.commandName);
 
-            if (command === undefined) {
+            if (typeof command === 'undefined') {
                 return;
             }
 
@@ -159,7 +159,7 @@ async function generalConstraints(
                 columns: ['discordID'],
             });
 
-        if (data === undefined) {
+        if (typeof data === 'undefined') {
             throw new ConstraintError('register');
         }
     }
@@ -181,7 +181,7 @@ function cooldownConstraint(
 
     const timestamps = cooldowns.get(name);
 
-    if (!timestamps) {
+    if (typeof timestamps === 'undefined') {
         cooldowns.set(name, new Collection());
         cooldowns.get(name)!.set(user.id, Date.now());
         return;
@@ -192,7 +192,7 @@ function cooldownConstraint(
         (GlobalConstants.ms.second * 2.5) + Date.now();
     const timeLeft = expireTime - Date.now();
 
-    if (isCooldown) {
+    if (isCooldown === true) {
         throw new ConstraintError('cooldown', timeLeft);
     }
 
