@@ -320,6 +320,7 @@ export interface Register {
     alreadyRegistered: BaseEmbed;
     invalid: BaseEmbed,
     notFound: BaseEmbed,
+    alreadyUsed: BaseEmbed,
     unlinked: BaseEmbed,
     mismatched: BaseEmbed,
     title: string,

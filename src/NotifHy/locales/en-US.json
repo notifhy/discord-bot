@@ -824,6 +824,10 @@
                 "title": "Not Found",
                 "description": "That {{ inputType }} doesn't seem to be valid. Check to see if you spelt it wrong."
             },
+            "alreadyUsed": {
+                "title": "UUID Already Used",
+                "description": "Your UUID is already in the database. You might have another Discord account account that is already registered. Contact Attituding for cases where you lost access to your old account."
+            },
             "unlinked": {
                 "title": "Unlinked Account",
                 "description": "You have not linked your Discord account to your Minecraft account on Hypixel! Follow the guide below. If you just linked it, please wait a few minutes and try again."

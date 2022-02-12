@@ -120,6 +120,25 @@ export const execute: ClientCommand['execute'] = async (
         links: { DISCORD },
     } = (await response.json()) as SlothpixelPlayer;
 
+    const uuids = (
+        await SQLite.getAllUsers<UserAPIData>({
+            table: Constants.tables.api,
+            columns: ['uuid'],
+        })
+    ).map(user => user.uuid);
+
+    if (uuids.includes(uuid)) {
+        const alreadyUsedEmbed = new BetterEmbed(interaction)
+            .setColor(Constants.colors.warning)
+            .setTitle(text.alreadyUsed.title)
+            .setDescription(text.alreadyUsed.description);
+
+        Log.command(interaction, 'UUID already used');
+
+        await interaction.editReply({ embeds: [alreadyUsedEmbed] });
+        return;
+    }
+
     if (DISCORD === null) {
         const unlinkedEmbed = new BetterEmbed(interaction)
             .setColor(Constants.colors.warning)
