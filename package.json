@@ -24,7 +24,7 @@
     },
     "scripts": {
         "backup": "npx ts-node src/Backup/main.ts",
-        "dev": "npx ts-node src/NotifHy/main.ts",
+        "notifhy": "npx ts-node src/NotifHy/main.ts",
         "build": "tsc -p .",
         "postbuild": "node src/NotifHy/main.js"
     },

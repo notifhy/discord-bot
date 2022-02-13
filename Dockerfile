@@ -8,4 +8,4 @@ RUN npm install
 
 ADD . /usr/src/app
 
-CMD ["npm","run","dev"]
+CMD ["npm","run","notifhy"]
