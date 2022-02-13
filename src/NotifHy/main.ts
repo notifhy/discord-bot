@@ -155,6 +155,8 @@ client.modules = new Collection();
         }
     }
 
+    SQLite.key();
+
     await SQLite.createTablesIfNotExists();
 
     const config = await SQLite.queryGet<Config>({

@@ -47,7 +47,7 @@ export const execute: ClientCommand['execute'] = async (
 
     await setTimeout(5_000);
 
-    SQLite.fullDecrypt();
+    SQLite.removeKey();
     SQLite.close();
 
     const decrypted = new BetterEmbed(interaction)
@@ -62,7 +62,7 @@ export const execute: ClientCommand['execute'] = async (
     await setTimeout(timeout);
 
     SQLite.open();
-    SQLite.encrypt();
+    SQLite.rekey();
 
     interaction.client.config.enabled = currentAPI;
     interaction.client.config.devMode = curentDevMode;

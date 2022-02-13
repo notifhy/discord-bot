@@ -1,6 +1,14 @@
 import type { ClientCommand } from '../@types/client';
-import { CommandInteraction } from 'discord.js';
+import type { DefenderModule } from '../@types/database';
+import {
+    CommandInteraction,
+    MessageEmbed,
+    TextChannel,
+} from 'discord.js';
+import { Constants } from '../util/Constants';
 import { Log } from '../../util/Log';
+import { setTimeout } from 'timers/promises';
+import { SQLite } from '../../util/SQLite';
 
 export const properties: ClientCommand['properties'] = {
     name: 'test',
@@ -39,13 +47,40 @@ export const properties: ClientCommand['properties'] = {
     },
 };
 
+/* eslint-disable no-await-in-loop */
+
 export const execute: ClientCommand['execute'] = async (
     interaction: CommandInteraction,
 ): Promise<void> => {
-    throw new SyntaxError('hello hello hello hello');
-    try {
-        await interaction.reply({ content: 'Pong!' });
-    } catch (err) {
-        Log.error(err);
+    const channelIDs = (
+        (
+            await SQLite.getAllUsers<DefenderModule>({
+                table: Constants.tables.defender,
+                columns: ['channel'],
+            })
+        )
+        .map(user => user.channel)
+        .filter(channel => typeof channel === 'string')
+    ) as string[];
+
+    const embed = new MessageEmbed()
+        .setTitle('Bot Updated 🎉')
+        .setDescription('Apologies for the unexpected notification!\n\nTL;DR: Used to be HyGuard, more features, and a Privacy Policy + ToS')
+        .addField('New Bot!', 'HyGuard has a new coat of paint, a much needed upgrade, and renamed to NotifHy. You have been automatically migrated to this new system.\n\nAsides from account protection, you can also get alerts for friends logging on and reminders for daily rewards. Data is now actually tracked, so you can view your history with **/data**. Configuring what kind of notifications you get have gone from 6+ different commands to one; **/modules**.\n\nSee https://attituding.github.io/NotifHy/ for more information about the new bot.')
+        .addField('Legal Stuff', 'By using this service, you agree to our [Privacy Policy](https://attituding.github.io/NotifHy/privacy/ "Privacy Policy") and our [Terms of Service](https://attituding.github.io/NotifHy/tos/ "Terms of Service"). To discontinue use of this application, look into **/data delete** and/or contact Attituding. This addition was in part added to comply with Discord\'s verification requirements.')
+        .addField('A Note', 'Just about a year ago, I had no idea how to code. I decided to play around the the Hypixel API, made a prototype or two, and deployed the first version of HyGuard. With the positivity that the project received, I continued work on the concept until where we are now, with a side project here and there. Thank you all for the wonderful feedback and support.\n\n- Attituding');
+
+    for (const channel of channelIDs) {
+        try {
+            const fetched = await interaction.client.channels.fetch(channel);
+            await (fetched as TextChannel).send({ embeds: [embed] });
+        } catch (error) {
+            Log.error(error instanceof Error ? error.message : error, channel);
+            await interaction.followUp({ content: `Failed to send for ${channel}` });
+        }
+
+        await setTimeout(15_000);
     }
+
+    await interaction.followUp({ content: 'Done!' });
 };

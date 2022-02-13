@@ -12,8 +12,6 @@ import Database from 'better-sqlite3-multiple-ciphers';
 
 let db = new Database(`${__dirname}/../../database.db`);
 
-db.pragma(`key='${databaseKey}'`);
-
 type JSONize<Type> = {
     [Property in keyof Type]:
         Type[Property] extends Record<string, unknown>
@@ -62,17 +60,18 @@ export class SQLite {
         db.close();
     }
 
-    static encrypt() {
+    static rekey() {
         db.pragma(`rekey='${databaseKey}'`);
     }
 
-    static fullDecrypt() {
+    static key() {
+        db.pragma(`key='${databaseKey}'`);
+    }
+
+    static removeKey() {
         db.pragma(`rekey=''`);
     }
 
-    static decrypt() {
-        db.pragma(`key='${databaseKey}'`);
-    }
 
     static createTablesIfNotExists(): Promise<void> {
         return new Promise<void>(resolve => {
@@ -179,7 +178,7 @@ export class SQLite {
         columns: (keyof Type | '*')[];
     }): Promise<Type | undefined> {
         const query = `SELECT ${
-            config.columns?.join(', ') ?? '*'
+            config.columns.join(', ')
         } FROM ${config.table} WHERE discordID = '${config.discordID}'`;
 
         const data = await this.queryGet<Type>({
@@ -197,7 +196,7 @@ export class SQLite {
         table: Tables,
         columns: (keyof Type | '*')[],
     }): Promise<Type[]> {
-        const query = `SELECT ${columns?.join(', ') ?? '*'} FROM ${table}`;
+        const query = `SELECT ${columns.join(', ')} FROM ${table}`;
         const userData = await this.queryGetAll<Type>(query);
 
         return userData as Type[];
