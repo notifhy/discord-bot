@@ -23,9 +23,9 @@ export function combiner(
 
     const options = clonedLocale.select.options.map(
         (option: Record<string, unknown>, index: number) => ({
-        ...option,
-        ...structure.select.options[index]!,
-    }));
+            ...option,
+            ...structure.select.options[index]!,
+        }));
 
     combined.select.options = options;
 
@@ -320,73 +320,73 @@ export const Structures = {
                         value: '86400000',
                     },
                     {
-                        value: '3600000',
-                    },
-                    {
-                        value: '7200000',
-                    },
-                    {
-                        value: '10800000',
-                    },
-                    {
-                        value: '14400000',
-                    },
-                    {
-                        value: '18000000',
-                    },
-                    {
-                        value: '21600000',
-                    },
-                    {
-                        value: '25200000',
-                    },
-                    {
-                        value: '28800000',
-                    },
-                    {
-                        value: '32400000',
-                    },
-                    {
-                        value: '36000000',
-                    },
-                    {
-                        value: '39600000',
-                    },
-                    {
-                        value: '43200000',
-                    },
-                    {
-                        value: '46800000',
-                    },
-                    {
-                        value: '50400000',
-                    },
-                    {
-                        value: '54000000',
-                    },
-                    {
-                        value: '57600000',
-                    },
-                    {
-                        value: '61200000',
-                    },
-                    {
-                        value: '64800000',
-                    },
-                    {
-                        value: '68400000',
-                    },
-                    {
-                        value: '72000000',
-                    },
-                    {
-                        value: '75600000',
+                        value: '82800000',
                     },
                     {
                         value: '79200000',
                     },
                     {
-                        value: '82800000',
+                        value: '75600000',
+                    },
+                    {
+                        value: '72000000',
+                    },
+                    {
+                        value: '68400000',
+                    },
+                    {
+                        value: '64800000',
+                    },
+                    {
+                        value: '61200000',
+                    },
+                    {
+                        value: '57600000',
+                    },
+                    {
+                        value: '54000000',
+                    },
+                    {
+                        value: '50400000',
+                    },
+                    {
+                        value: '46800000',
+                    },
+                    {
+                        value: '43200000',
+                    },
+                    {
+                        value: '39600000',
+                    },
+                    {
+                        value: '36000000',
+                    },
+                    {
+                        value: '32400000',
+                    },
+                    {
+                        value: '28800000',
+                    },
+                    {
+                        value: '25200000',
+                    },
+                    {
+                        value: '21600000',
+                    },
+                    {
+                        value: '18000000',
+                    },
+                    {
+                        value: '14400000',
+                    },
+                    {
+                        value: '10800000',
+                    },
+                    {
+                        value: '7200000',
+                    },
+                    {
+                        value: '3600000',
                     },
                 ],
             },

@@ -67,7 +67,7 @@
             "dms": "DMs",
             "botMissingPermission": {
                 "title": "Missing Permission",
-                "description": "This bot is unable to access the channel you selected. You can either grant the bot elevated server permissions or select a channel the bot can access."
+                "description": "This bot is unable to access the channel you selected. You can either grant the bot elevated server permissions or select a different channel the bot can access."
             },
             "userMissingPermission": {
                 "title": "Missing Permission",
@@ -76,25 +76,25 @@
             "defender": {
                 "alreadySet": {
                     "title": "Already Set",
-                    "description": "Defender Module alerts are already set to {{ channel }}!"
+                    "description": "Defender module alerts are already set to {{ channel }}!"
                 },
                 "set": {
                     "title": "Channel Set",
-                    "description": "Defender Module alerts will now be sent to {{ channel }}!"
+                    "description": "Defender module alerts will now be sent to {{ channel }}!"
                 },
                 "remove": {
                     "title": "Channel Removed",
-                    "description": "Defender Module alerts will now be sent via DMs!"
+                    "description": "Defender module alerts will now be sent via DMs!"
                 }
             },
             "friends": {
                 "alreadySet": {
                     "title": "Already Set",
-                    "description": "Friends Module notifications are already set to {{ channel }}!"
+                    "description": "Friends module notifications are already set to {{ channel }}!"
                 },
                 "set": {
                     "title": "Channel Set",
-                    "description": "Friends Module notifications will now be sent to {{ channel }}!"
+                    "description": "Friends module notifications will now be sent to {{ channel }}!"
                 }
             }
         },
@@ -134,7 +134,7 @@
             "delete": {
                 "confirm": {
                     "title": "Confirmation",
-                    "description": "Are you absolutely sure that you want to delete your data? This is irreversible. Please confirm with the buttons below.\n\nThis deletion will delete everything shown in /data view all. Historic or relevant data like guild IDs, user IDs, usernames, errors, and similar may remain in logs, blacklists, or similar."
+                    "description": "Are you absolutely sure that you want to delete your data? This is irreversible. Please confirm with the buttons below.\n\nThis deletion will delete everything shown in **/data view all**. Historic or relevant data like guild IDs, user IDs, usernames, errors, and similar may remain in logs, blacklists, or similar. Contact Attituding for a proper data wipe or more information."
                 },
                 "deleted": {
                     "title": "Deleted",
@@ -214,11 +214,11 @@
                 },
                 "modules": {
                     "name": "Modules",
-                    "value": "Modules are how different types of notifications are separated. Once you register, simply select and configure the modules you want to use.\n\n• The Defender Module is an implementation of [HyGuard](https://hypixel.net/threads/discord-bot-hyguard-a-bot-that-monitors-your-account-24-7.4368395/ \"Hypixel Forums\")\n• The Friends Module sends your login and logouts to a channel to share\n• The Rewards Module sends you a DM reminding you to claim your daily reward"
+                    "value": "Modules are how different types of notifications are separated. Once you register, simply select and configure the modules you want to use.\n\n• The Defender module is an implementation of [HyGuard](https://hypixel.net/threads/discord-bot-hyguard-a-bot-that-monitors-your-account-24-7.4368395/ \"Hypixel Forums\")\n• The Friends module sends your login and logouts to a channel to share\n• The Rewards module sends you a DM reminding you to claim your daily reward"
                 },
                 "setup": {
                     "name": "Setup",
-                    "value": "• You should use a server that you own or is owned by your friends\n• Invite the bot by clicking [here](https://attituding.github.io/NotifHy/invite/ \"Invite\") and granting the OAuth2 scopes\n• Use `/register` followed by your username or UUID\n• Using `/discord` on Hypixel may be required to link or relink your Discord account to your Minecraft account\n• Use `/modules` followed by the module you are interested in\n• Configure the module by clicking on the select menus and buttons. The `Toggle` setting will tell you what settings need to be configured before you can enable the module\n• `/channel` may be required for some modules in order to tell the bot where you want alerts/notifications to go"
+                    "value": "• You should use a server that you own or is owned by your friends\n• Invite the bot by clicking [here](https://attituding.github.io/NotifHy/invite/ \"Invite\") and granting the OAuth2 scopes\n• Use **/register** followed by your username or UUID\n• Using **/discord** on Hypixel may be required to link or relink your Discord account to your Minecraft account\n• Use **/modules** followed by the module you are interested in\n• Configure the module by clicking on the select menus and buttons. The **Toggle** setting will tell you what settings need to be configured before you can enable the module\n• **/channel** may be required for some modules in order to tell the bot where you want alerts/notifications to go"
                 },
                 "other": {
                     "name": "Other Information",
@@ -240,14 +240,14 @@
             "all": {
                 "title": "Commands",
                 "field": {
-                    "name": "`/{{ commandName }}`",
+                    "name": "/{{ commandName }}",
                     "value": "{{ commandDescription }}"
                 }
             },
             "specific": {
                 "invalid": {
                     "title": "Invalid Command",
-                    "description": "/{{ command }} isn't a valid command!"
+                    "description": "**/{{ command }}** isn't a valid command!"
                 },
                 "title": "/{{ command }}",
                 "description": "{{ commandDescription }}",
@@ -276,7 +276,7 @@
             },
             "set": {
                 "title": "Override Set",
-                "description": "Your language override has been changed to `{{ locale }}`!"
+                "description": "Your language override has been changed to **{{ locale }}**!"
             }
         },
         "modules": {
@@ -292,7 +292,7 @@
                     "toggle": {
                         "label": "Toggle",
                         "description": "Toggle whether this module is active",
-                        "longDescription": "Enable or disable this module. However, this module will not be activated if you have not configured it.",
+                        "longDescription": "Enable or disable this module.",
                         "button": {
                             "enable": "Enable",
                             "disable": "Disable"
@@ -331,7 +331,7 @@
                     "channel": {
                         "label": "Channel",
                         "description": "Set a channel to send alerts to",
-                        "longDescription": "Set a channel to send alerts to. Due to limitations, you need to set a channel with /channel. You can also choose to leave this field empty; alerts will be sent via Direct Messages instead.",
+                        "longDescription": "Set a channel to send alerts to. Due to limitations, you need to set a channel with **/channel**. You can also choose to ignore this setting; alerts will be sent via Direct Messages instead.",
                         "select": {
                             "placeholder": "Select a channel",
                             "options": [
@@ -551,7 +551,7 @@
                     "channel": {
                         "label": "Channel",
                         "description": "Set a channel to send logins and logouts to",
-                        "longDescription": "Set a channel to send logins and logouts to. Due to limitations, you need to set a channel with /channel.",
+                        "longDescription": "Set a channel to send logins and logouts to. Due to limitations, you need to set a channel with **/channel**.",
                         "select": {
                             "placeholder": "Select a channel",
                             "options": [
@@ -575,7 +575,7 @@
                 "menu": {
                     "toggle": {
                         "label": "Toggle",
-                        "description": "Toggle whether this module is active",
+                        "description": "Toggle whether this module is enabled",
                         "longDescription": "Enable or disable this module.",
                         "button": {
                             "enable": "Enable",
@@ -585,7 +585,7 @@
                     "alertTime": {
                         "label": "Grace Period",
                         "description": "Set when the bot should start alerting you",
-                        "longDescription": "Set the amount of hours ahead of the daily reward reset for when the bot should start pinging you.",
+                        "longDescription": "Set how long the bot should wait **after** the daily reset to start pinging you.",
                         "select": {
                             "placeholder": "Select a time",
                             "options": [
@@ -595,96 +595,95 @@
                                 },
                                 {
                                     "label": "1 hour",
-                                    "description": "1 hour before the next daily reset (11 PM EST)"
+                                    "description": "1 hour after the daily reset (1 AM EST)"
                                 },
                                 {
                                     "label": "2 hours",
-                                    "description": "2 hours before the next daily reset (10 PM EST)"
+                                    "description": "2 hours after the daily reset (2 AM EST)"
                                 },
                                 {
                                     "label": "3 hours",
-                                    "description": "3 hours before the next daily reset (9 PM EST)"
+                                    "description": "3 hours after the daily reset (3 AM EST)"
                                 },
                                 {
                                     "label": "4 hours",
-                                    "description": "4 hours before the next daily reset (8 PM EST)"
+                                    "description": "4 hours after the daily reset (4 AM EST)"
                                 },
                                 {
                                     "label": "5 hours",
-                                    "description": "5 hours before the next daily reset (7 PM EST)"
+                                    "description": "5 hours after the daily reset (5 AM EST)"
                                 },
                                 {
                                     "label": "6 hours",
-                                    "description": "6 hours before the next daily reset (6 PM EST)"
+                                    "description": "6 hours after the daily reset (6 AM EST)"
                                 },
                                 {
                                     "label": "7 hours",
-                                    "value": "25200000",
-                                    "description": "7 hours before the next daily reset (5 PM EST)"
+                                    "description": "7 hours after the daily reset (7 AM EST)"
                                 },
                                 {
                                     "label": "8 hours",
-                                    "description": "8 hours before the next daily reset (4 PM EST)"
+                                    "description": "8 hours after the daily reset (8 AM EST)"
                                 },
                                 {
                                     "label": "9 hours",
-                                    "description": "9 hours before the next daily reset (3 PM EST)"
+                                    "description": "9 hours after the daily reset (9 AM EST)"
                                 },
                                 {
                                     "label": "10 hours",
-                                    "description": "10 hours before the next daily reset (2 PM EST)"
+                                    "description": "10 hours after the daily reset (10 AM EST)"
                                 },
                                 {
                                     "label": "11 hours",
-                                    "description": "11 hours before the next daily reset (1 PM EST)"
+                                    "description": "11 hours after the daily reset (11 AM EST)"
                                 },
                                 {
                                     "label": "12 hours",
-                                    "description": "12 hours before the next daily reset (12 PM EST)"
+                                    "description": "12 hours after the daily reset (12 PM EST)"
                                 },
                                 {
                                     "label": "13 hours",
-                                    "description": "13 hours before the next daily reset (11 AM EST)"
+                                    "description": "13 hours after the daily reset (1 PM EST)"
                                 },
                                 {
                                     "label": "14 hours",
-                                    "description": "14 hours before the next daily reset (10 AM EST)"
+                                    "description": "14 hours after the daily reset (2 PM EST)"
                                 },
                                 {
                                     "label": "15 hours",
-                                    "description": "15 hours before the next daily reset (9 AM EST)"
+                                    "description": "15 hours after the daily reset (3 PM EST)"
                                 },
                                 {
                                     "label": "16 hours",
-                                    "description": "16 hours before the next daily reset (8 AM EST)"
+                                    "description": "16 hours after the daily reset (4 PM EST)"
                                 },
                                 {
                                     "label": "17 hours",
-                                    "description": "17 hours before the next daily reset (7 AM EST)"
+                                    "description": "17 hours after the daily reset (5 PM EST)"
                                 },
                                 {
                                     "label": "18 hours",
-                                    "description": "18 hours before the next daily reset (6 AM EST)"
+                                    "description": "18 hours after the daily reset (6 PM EST)"
                                 },
                                 {
                                     "label": "19 hours",
-                                    "description": "19 hours before the next daily reset (5 AM EST)"
+                                    "description": "19 hours after the daily reset (7 PM EST)"
                                 },
                                 {
                                     "label": "20 hours",
-                                    "description": "20 hours before the next daily reset (4 AM EST)"
+                                    "description": "20 hours after the daily reset (8 PM EST)"
                                 },
                                 {
                                     "label": "21 hours",
-                                    "description": "21 hours before the next daily reset (3 AM EST)"
+                                    "description": "21 hours after the daily reset (9 PM EST)"
                                 },
                                 {
                                     "label": "22 hours",
-                                    "description": "22 hours before the next daily reset (2 AM EST)"
+                                    "description": "22 hours after the daily reset (10 PM EST)"
                                 },
                                 {
                                     "label": "23 hours",
-                                    "description": "23 hours before the next daily reset (1 AM EST)"
+                                    "description": "23 hours after the daily reset (11 PM EST)"
                                 }
                             ]
                         }
@@ -814,7 +813,7 @@
         "register": {
             "alreadyRegistered": {
                 "title": "Already Registered",
-                "description": "You have already registered! If you want to unregister, use /data."
+                "description": "You have already registered! If you want to unregister, use **/data delete** or contact Attituding."
             },
             "invalid": {
                 "title": "Invalid Input",
@@ -834,13 +833,13 @@
             },
             "mismatched": {
                 "title": "Mismatched Tag",
-                "description": "That Minecraft account currently has a different Discord account linked! If that is your account, follow the guide below to relink it. If you just relinked linked it, please wait a few minutes and try again."
+                "description": "That Minecraft account currently has a different Discord account linked! If that is your account, follow the guide below to relink it. If you just relinked it, please wait a few minutes and try again."
             },
             "title": "Registered",
-            "description": "Registered successfully! You can now add modules with /modules.",
+            "description": "Registered successfully!",
             "field": {
                 "name": "Next Steps",
-                "value": "/help • See information about any command or about this bot\n/language • Set a language for this bot"
+                "value": "**/modules** • Configure modules and set up notifications\n**/help** • See information about any command or about this bot"
             }
         },
         "reload": {
@@ -935,7 +934,7 @@
         "commandErrors": {
             "embed": {
                 "title": "Oops",
-                "description": "An error occurred while executing the command /{{ commandName }}! This error has been automatically forwarded for review. It should be resolved soon. Sorry.",
+                "description": "An error occurred while executing the command **/{{ commandName }}**! This error has been automatically forwarded for review. It should be resolved soon. Sorry.",
                 "field": {
                     "name": "Incident ID",
                     "value": "{{ id }}"
@@ -957,7 +956,7 @@
             },
             "register": {
                 "title": "Missing Registration",
-                "description": "You must register with /register before using this command!"
+                "description": "You must register with **/register** before using this command!"
             },
             "dm": {
                 "title": "DM Channel",
@@ -970,7 +969,7 @@
                 },
                 "embed2": {
                     "title": "Cooldown Over",
-                    "description": "The cooldown has expired! You can now execute the command /{{ commandName }}!"
+                    "description": "The cooldown has expired! You can now execute the command **/{{ commandName }}**!"
                 }
             }
         },
@@ -993,7 +992,7 @@
             },
             "50007": {
                 "name": "{{ cleanModule }} Disabled",
-                "value": "This bot was unable to DM you. Please check your privacy settings and enable direct messages. Then, reenable this module with /modules. [Code 50007](https://discord.com/developers/docs/topics/opcodes-and-status-codes#json-json-error-codes \"Opcodes and Status codes\")"
+                "value": "This bot was unable to DM you. Please check your privacy settings and enable direct messages. Then, reenable this/these modules with **/modules**. [Code 50007](https://discord.com/developers/docs/topics/opcodes-and-status-codes#json-json-error-codes \"Opcodes and Status codes\")"
             },
             "50013": {
                 "name": "{{ cleanModule }} Disabled",
@@ -1057,7 +1056,7 @@
             },
             "suppressNext": {
                 "title": "Alert Suppressed",
-                "description": "Your latest alert for the Friend Module has been suppressed, and login/logout notifications will now resume.",
+                "description": "Your latest alert for the Friend module has been suppressed, and login/logout notifications will now resume.",
                 "footer": "Notification"
             },
             "login": {

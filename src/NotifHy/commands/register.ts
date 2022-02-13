@@ -222,15 +222,13 @@ export const execute: ClientCommand['execute'] = async (
 
     await interaction.editReply({ embeds: [registeredEmbed] });
 
-    const users = (
-        await SQLite.getAllUsers<UserAPIData>({
-            table: Constants.tables.api,
-            columns: ['discordID'],
-        })
-    ).length;
-
     interaction.client.user!.setActivity({
         type: 'WATCHING',
-        name: `${users} accounts | /register /help | ${interaction.client.guilds.cache.size} servers`,
+        name: interaction.client.customStatus ?? `${(
+            await SQLite.getAllUsers<UserAPIData>({
+                table: Constants.tables.api,
+                columns: ['discordID'],
+            })
+        ).length} accounts | /register /help | ${interaction.client.guilds.cache.size} servers`,
     });
 };

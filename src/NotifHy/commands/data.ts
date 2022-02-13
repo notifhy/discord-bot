@@ -149,6 +149,10 @@ export const execute: ClientCommand['execute'] = async (
                 }),
                 SQLite.deleteUser({
                     discordID: interaction.user.id,
+                    table: Constants.tables.defender,
+                }),
+                SQLite.deleteUser({
+                    discordID: interaction.user.id,
                     table: Constants.tables.friends,
                 }),
                 SQLite.deleteUser({
@@ -167,6 +171,16 @@ export const execute: ClientCommand['execute'] = async (
             await button.update({
                 embeds: [deleted],
                 components: disabledRows,
+            });
+
+            interaction.client.user!.setActivity({
+                type: 'WATCHING',
+                name: interaction.client.customStatus ?? `${(
+                    await SQLite.getAllUsers<UserAPIData>({
+                        table: Constants.tables.api,
+                        columns: ['discordID'],
+                    })
+                ).length} accounts | /register /help | ${interaction.client.guilds.cache.size} servers`,
             });
         } else {
             const aborted = new BetterEmbed(interaction)

@@ -1,5 +1,7 @@
 import type { ClientEvent } from '../@types/client';
 import type { Guild } from 'discord.js';
+import type { UserAPIData } from '../@types/database';
+import { Constants } from '../util/Constants';
 import { ErrorHandler } from '../../util/errors/ErrorHandler';
 import { formattedUnix } from '../../util/utility';
 import { Log } from '../../util/Log';
@@ -33,16 +35,14 @@ export const execute: ClientEvent['execute'] = async (guild: Guild): Promise<voi
     );
 
     try {
-        const users = (
-            await SQLite.getAllUsers({
-                table: 'api',
-                columns: ['discordID'],
-            })
-        ).length;
-
         guild.client.user!.setActivity({
             type: 'WATCHING',
-            name: `${users} accounts | /register /help | ${guild.client.guilds.cache.size} servers`,
+            name: guild.client.customStatus ?? `${(
+                await SQLite.getAllUsers<UserAPIData>({
+                    table: Constants.tables.api,
+                    columns: ['discordID'],
+                })
+            ).length} accounts | /register /help | ${guild.client.guilds.cache.size} servers`,
         });
     } catch (error) {
         await new ErrorHandler(error).systemNotify();
