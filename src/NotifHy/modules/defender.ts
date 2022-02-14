@@ -88,7 +88,7 @@ export const execute: ClientModule['execute'] = async ({
             defenderModule.alerts.logout === true
         ) {
             //lastLogout seems to change twice sometimes on a single logout, this is a fix for that
-            const lastEvent = userAPIData.history[1]; //First item in array is this event, so it checks the second item
+            const lastEvent = userAPIData.history[1] ?? {}; //First item in array is this event, so it checks the second item
             //@ts-expect-error hasOwn typing not implemented yet - https://github.com/microsoft/TypeScript/issues/44253
             const duplicationCheck = Object.hasOwn(lastEvent, 'lastLogout') &&
                 newData.lastLogout - lastEvent.lastLogout! <
