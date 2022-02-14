@@ -8,8 +8,7 @@ export class Log {
     }
 
     static command(interaction: CommandInteraction, ...text: unknown[]) {
-        const base = `${interaction.user.tag} (${interaction.user.id})`;
-        console.log(this.base('INTERACTION'), base, ...text);
+        console.log(this.base('INTERACTION'), interaction.user.id, ...text);
     }
 
     static debug(...text: unknown[]) {
