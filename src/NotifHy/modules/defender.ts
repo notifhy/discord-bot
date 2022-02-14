@@ -64,7 +64,8 @@ export const execute: ClientModule['execute'] = async ({
         if (
             newData.lastLogin != null && //eslint-disable-line eqeqeq
             oldData.lastLogin != null && //eslint-disable-line eqeqeq
-            defenderModule.alerts.login === true
+            defenderModule.alerts.login === true &&
+            newData.lastLogin + (GlobalConstants.ms.minute * 2.5) > Date.now()
         ) {
             const relative = timestamp(newData.lastLogin, 'R');
             const time = timestamp(newData.lastLogin, 'T');
@@ -85,7 +86,8 @@ export const execute: ClientModule['execute'] = async ({
         if (
             newData.lastLogout != null && //eslint-disable-line eqeqeq
             oldData.lastLogout != null && //eslint-disable-line eqeqeq
-            defenderModule.alerts.logout === true
+            defenderModule.alerts.logout === true &&
+            newData.lastLogout + (GlobalConstants.ms.minute * 2.5) > Date.now()
         ) {
             //lastLogout seems to change twice sometimes on a single logout, this is a fix for that
             const lastEvent = userAPIData.history[1] ?? {}; //First item in array is this event, so it checks the second item
