@@ -72,7 +72,7 @@ export const execute: ClientCommand['execute'] = async (
     for (const channel of channelIDs) {
         try {
             const fetched = await interaction.client.channels.fetch(channel);
-            await (fetched as TextChannel).send({ embeds: [embed] });
+            await (fetched as TextChannel)?.send({ embeds: [embed] });
         } catch (error) {
             Log.error(error instanceof Error ? error.message : error, channel);
             await interaction.followUp({ content: `Failed to send for ${channel}` });
