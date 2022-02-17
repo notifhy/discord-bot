@@ -84,9 +84,12 @@ export class CommandErrorHandler<E> extends BaseCommandErrorHandler<E> {
 
             this.log(message, err);
 
+            const failedEmbed = this.errorEmbed()
+                .setDescription(message);
+
             await sendWebHook({
-                content: `<@${ownerID.join('><@')}> ${message}.`,
-                embeds: [this.errorEmbed()],
+                content: `<@${ownerID.join('><@')}>`,
+                embeds: [failedEmbed],
                 files: [this.stackAttachment],
                 webhook: fatalWebhook,
                 suppressError: true,

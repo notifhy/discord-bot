@@ -53,7 +53,7 @@ export class CommandConstraintErrorHandler
     }
 
     private errorLog() {
-        this.log(`${this.interaction.user.tag} failed the constraint ${this.error.message}`);
+        this.log(`${this.interaction.user.id} failed the constraint ${this.error.message}`);
     }
 
     private async userNotify() {

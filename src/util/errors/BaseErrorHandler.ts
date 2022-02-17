@@ -16,14 +16,11 @@ export class BaseErrorHandler<E> {
         this.incidentID = SnowflakeUtil.generate();
         this.stackAttachment = {
             attachment: Buffer.from(
-                error instanceof Error &&
-                error.stack
-                    ? error.stack
-                    : JSON.stringify(
-                        error,
-                        Object.getOwnPropertyNames(error),
-                        2,
-                    ),
+                JSON.stringify(
+                    error,
+                    Object.getOwnPropertyNames(error),
+                    4,
+                ),
             ),
             name: error instanceof Error
                 ? `${error.name}.txt`

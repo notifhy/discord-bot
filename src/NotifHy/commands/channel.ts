@@ -17,6 +17,7 @@ import {
 } from 'discord.js';
 import { RegionLocales } from '../locales/RegionLocales';
 import { SQLite } from '../../util/SQLite';
+import { Log } from '../../util/Log';
 
 export const properties: ClientCommand['properties'] = {
     name: 'channel',
@@ -98,6 +99,8 @@ export const execute: ClientCommand['execute'] = async (
             .setTitle(baseLocale.botMissingPermission.title)
             .setDescription(baseLocale.botMissingPermission.description);
 
+        Log.command(interaction, 'Channel not viewable');
+
         await interaction.editReply({ embeds: [missingPermission] });
 
         return;
@@ -111,6 +114,8 @@ export const execute: ClientCommand['execute'] = async (
             .setColor(Constants.colors.warning)
             .setTitle(baseLocale.userMissingPermission.title)
             .setDescription(baseLocale.userMissingPermission.description);
+
+        Log.command(interaction, 'User missing permission');
 
         await interaction.editReply({ embeds: [missingPermission] });
 
@@ -153,6 +158,8 @@ export const execute: ClientCommand['execute'] = async (
                     : `${baseLocale.dms}`,
             }));
 
+        Log.command(interaction, 'Channel already set');
+
         await interaction.editReply({ embeds: [alreadySetEmbed] });
 
         return;
@@ -174,6 +181,8 @@ export const execute: ClientCommand['execute'] = async (
                 ? Formatters.channelMention(channel.id)
                 : 'not_a_value',
         }));
+
+    Log.command(interaction, 'Channel updated');
 
     await interaction.editReply({ embeds: [embed] });
 };
