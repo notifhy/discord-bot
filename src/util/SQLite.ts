@@ -1,6 +1,6 @@
 import {
     BaseUserData,
-    Tables,
+    Table,
 } from '../NotifHy/@types/database';
 import { Constants } from '../NotifHy/util/Constants';
 import { databaseKey } from '../../config.json';
@@ -32,20 +32,20 @@ type GetType<B> = {
 
 type GetUserType<T, B> = {
     discordID: string,
-    table: Tables,
+    table: Table,
     allowUndefined?: B,
     columns: (keyof T | '*')[],
 }
 
 type NewUserType<Type, B> = {
-    table: Tables,
+    table: Table,
     returnNew?: B,
     data: Partial<Type>,
 }
 
 type UpdateUserType<Type, B> = {
     discordID: string,
-    table: Tables,
+    table: Table,
     returnNew?: B,
     data: Partial<Type>,
 }
@@ -73,7 +73,7 @@ export class SQLite {
     }
 
 
-    static createTablesIfNotExists(): Promise<void> {
+    static createTableIfNotExists(): Promise<void> {
         return new Promise<void>(resolve => {
             Object.values(Constants.tables.create)
                 .map(value => db.prepare(value))
@@ -173,7 +173,7 @@ export class SQLite {
         config: GetUserType<Type, boolean>): Promise<Type | undefined>
     static async getUser<Type>(config: {
         discordID: string,
-        table: Tables,
+        table: Table,
         allowUndefined?: boolean,
         columns: (keyof Type | '*')[];
     }): Promise<Type | undefined> {
@@ -193,7 +193,7 @@ export class SQLite {
         table,
         columns,
     }: {
-        table: Tables,
+        table: Table,
         columns: (keyof Type | '*')[],
     }): Promise<Type[]> {
         const query = `SELECT ${columns.join(', ')} FROM ${table}`;
@@ -209,7 +209,7 @@ export class SQLite {
     static async newUser<Type extends Omit<BaseUserData, never>>(
         config: NewUserType<Type, boolean>): Promise<Type | undefined>;
     static async newUser<Type extends Omit<BaseUserData, never>>(config: {
-        table: Tables,
+        table: Table,
         returnNew?: boolean,
         data: Partial<Type>,
     }): Promise<Type | undefined> {
@@ -257,7 +257,7 @@ export class SQLite {
         config: UpdateUserType<Type, boolean>): Promise<Type | undefined>
     static async updateUser<Type extends Omit<BaseUserData, never>>(config: {
         discordID: string,
-        table: Tables,
+        table: Table,
         returnNew?: boolean,
         data: Partial<Type>,
     }): Promise<Type | undefined> {
@@ -306,7 +306,7 @@ export class SQLite {
         table,
     }: {
         discordID: string,
-        table: Tables,
+        table: Table,
     }): Promise<void> {
         const query = `DELETE FROM ${table} WHERE discordID = ?`;
         await this.queryRun({
