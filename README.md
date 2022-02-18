@@ -6,6 +6,7 @@ NotifHy is a bot focused on alerts and notifications for the Hypixel server. Sha
 ## Differences from HyGuard
 This bot is the successor to HyGuard, which you can read about [here](https://hypixel.net/threads/discord-bot-hyguard-a-bot-that-monitors-your-account-24-7.4368395/ "Hypixel Forums").
 - NotifHy now offers different types of notification as explained below
+  - Some functions or commands were removed because they were hacky, such as any function or command utilizing to a user's timezone
 - Data is now tracked, so you can view your history with **/data**
 - Configuring what kind of notifications you get have gone from 6+ different commands to **/modules**
 
