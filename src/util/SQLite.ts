@@ -73,7 +73,7 @@ export class SQLite {
     }
 
 
-    static createTableIfNotExists(): Promise<void> {
+    static createTablesIfNotExists(): Promise<void> {
         return new Promise<void>(resolve => {
             Object.values(Constants.tables.create)
                 .map(value => db.prepare(value))
