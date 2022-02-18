@@ -1,4 +1,4 @@
-import { Tables } from '../@types/database';
+import { Table } from '../@types/database';
 import {
     ColorResolvable,
     Permissions,
@@ -12,12 +12,12 @@ export const Constants = {
         modes: modes,
     },
     colors: {
-        error: '#AA0000' as ColorResolvable,
-        warning: '#FF5555' as ColorResolvable,
-        normal: '#2f3136' as ColorResolvable, //#7289DA
-        ok: '#FFAA00' as ColorResolvable,
-        on: '#00AA00' as ColorResolvable,
-        off: '#555555' as ColorResolvable,
+        error: 0xAA0000 as ColorResolvable,
+        warning: 0xFF5555 as ColorResolvable,
+        normal: 0x2f3136 as ColorResolvable, //#7289DA
+        ok: 0xFFAA00 as ColorResolvable,
+        on: 0x00AA00 as ColorResolvable,
+        off: 0x555555 as ColorResolvable,
     },
     defaults: {
         language: 'en-US',
@@ -90,11 +90,11 @@ export const Constants = {
         },
     },
     tables: {
-        users: 'users' as Tables,
-        api: 'api' as Tables,
-        defender: 'defender' as Tables,
-        friends: 'friends' as Tables,
-        rewards: 'rewards' as Tables,
+        users: 'users' as Table,
+        api: 'api' as Table,
+        defender: 'defender' as Table,
+        friends: 'friends' as Table,
+        rewards: 'rewards' as Table,
         create: {
             api: `CREATE TABLE IF NOT EXISTS "api" (
                 "discordID" TEXT NOT NULL UNIQUE,

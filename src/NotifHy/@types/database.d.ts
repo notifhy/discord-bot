@@ -4,7 +4,7 @@ import type {
 } from './hypixel';
 import type { Field } from './locales';
 
-export type Tables =
+export type Table =
     | 'users'
     | 'api'
     | 'defender'

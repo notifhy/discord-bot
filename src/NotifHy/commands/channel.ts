@@ -6,7 +6,7 @@ import type { ClientCommand } from '../@types/client';
 import type {
     DefenderModule,
     FriendsModule,
-    Tables,
+    Table,
 } from '../@types/database';
 import { BetterEmbed } from '../../util/utility';
 import { ChannelTypes } from 'discord.js/typings/enums';
@@ -122,7 +122,7 @@ export const execute: ClientCommand['execute'] = async (
         return;
     }
 
-    let table: Tables;
+    let table: Table;
     let text: BaseEmbed;
 
     switch (type) {
