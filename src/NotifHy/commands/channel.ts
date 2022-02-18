@@ -15,9 +15,9 @@ import {
     Formatters,
     Permissions,
 } from 'discord.js';
+import { Log } from '../../util/Log';
 import { RegionLocales } from '../locales/RegionLocales';
 import { SQLite } from '../../util/SQLite';
-import { Log } from '../../util/Log';
 
 export const properties: ClientCommand['properties'] = {
     name: 'channel',
