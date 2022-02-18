@@ -3,6 +3,8 @@ import { BetterEmbed } from '../../util/utility';
 import { Constants } from '../util/Constants';
 import { Log } from '../../util/Log';
 import { RegionLocales } from '../locales/RegionLocales';
+import { SQLite } from '../../util/SQLite';
+import { UserAPIData } from '../@types/database';
 
 export const properties: ClientCommand['properties'] = {
     name: 'botstatus',
@@ -68,6 +70,16 @@ export const execute: ClientCommand['execute'] = async (
             .setDescription(text.cleared.description);
 
         interaction.client.customStatus = null;
+
+        interaction.client.user!.setActivity({
+            type: 'WATCHING',
+            name: `${(
+                await SQLite.getAllUsers<UserAPIData>({
+                    table: Constants.tables.api,
+                    columns: ['discordID'],
+                })
+            ).length} accounts | /register /help | ${interaction.client.guilds.cache.size} servers`,
+        });
     }
 
     Log.command(interaction, responseEmbed.description);

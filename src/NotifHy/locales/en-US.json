@@ -59,7 +59,7 @@
                 "description": "The status is now set to {{ status }}!"
             },
             "cleared": {
-                "title": "Status Cleared'",
+                "title": "Status Cleared",
                 "description": "The status is now automatic!"
             }
         },
