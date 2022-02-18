@@ -1,10 +1,10 @@
 import type { ClientCommand } from '../@types/client';
+import type { UserAPIData } from '../@types/database';
 import { BetterEmbed } from '../../util/utility';
 import { Constants } from '../util/Constants';
 import { Log } from '../../util/Log';
 import { RegionLocales } from '../locales/RegionLocales';
 import { SQLite } from '../../util/SQLite';
-import { UserAPIData } from '../@types/database';
 
 export const properties: ClientCommand['properties'] = {
     name: 'botstatus',
