@@ -1,7 +1,13 @@
 [![](https://i.imgur.com/tltt0Si.png)](https://youtu.be/gTpecimtHZw, "Trailer")
 
 ## Introduction
-NotifHy is a bot focused on alerts and notifications for the Hypixel server. Share logins with friends, get reminders when you are about to lose your daily reward streak, and get alerts on suspicious activity. This bot is the successor to HyGuard, which you can read about [here](https://hypixel.net/threads/discord-bot-hyguard-a-bot-that-monitors-your-account-24-7.4368395/ "Hypixel Forums").
+NotifHy is a bot focused on alerts and notifications for the Hypixel server. Share logins with friends, get reminders when you are about to lose your daily reward streak, and get alerts on suspicious activity.
+
+## Differences from HyGuard
+This bot is the successor to HyGuard, which you can read about [here](https://hypixel.net/threads/discord-bot-hyguard-a-bot-that-monitors-your-account-24-7.4368395/ "Hypixel Forums").
+- NotifHy now offers different types of notification as explained below
+- Data is now tracked, so you can view your history with **/data**
+- Configuring what kind of notifications you get have gone from 6+ different commands to **/modules**
 
 ## Modules
 Modules are how different types of notifications are separated. Once you register, simply select and configure the modules you want to use.

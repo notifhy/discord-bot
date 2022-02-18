@@ -49,7 +49,7 @@ export class Request {
                 response.status >= 500 &&
                 response.status < 600
             ) {
-                Log.debug('[REQUEST] Retrying due to a response between 500 and 600');
+                Log.debug(`[REQUEST] Retrying due to a response between 500 and 600: ${response.status}`);
                 return this.request(url, fetchOptions);
             }
 
