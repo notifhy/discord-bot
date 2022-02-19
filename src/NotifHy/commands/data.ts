@@ -29,6 +29,7 @@ import { GlobalConstants } from '../../util/Constants';
 import { Log } from '../../util/Log';
 import { RegionLocales } from '../locales/RegionLocales';
 import { SQLite } from '../../util/SQLite';
+import { setActivity } from '../util/utility';
 
 export const properties: ClientCommand['properties'] = {
     name: 'data',
@@ -173,15 +174,7 @@ export const execute: ClientCommand['execute'] = async (
                 components: disabledRows,
             });
 
-            interaction.client.user!.setActivity({
-                type: 'WATCHING',
-                name: interaction.client.customStatus ?? `${(
-                    await SQLite.getAllUsers<UserAPIData>({
-                        table: Constants.tables.api,
-                        columns: ['discordID'],
-                    })
-                ).length} accounts | /register /help | ${interaction.client.guilds.cache.size} servers`,
-            });
+            await setActivity(interaction.client);
         } else {
             const aborted = new BetterEmbed(interaction)
                 .setColor(Constants.colors.normal)

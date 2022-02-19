@@ -55,8 +55,20 @@
         },
         "botstatus": {
             "set": {
+                "none": "None",
                 "title": "Status Set",
-                "description": "The status is now set to {{ status }}!"
+                "type": {
+                    "name": "Type",
+                    "value": "{{ type }}"
+                },
+                "name": {
+                    "name": "Name",
+                    "value": "{{ name }}"
+                },
+                "url": {
+                    "name": "URL",
+                    "value": "{{ url }}"
+                }
             },
             "cleared": {
                 "title": "Status Cleared",

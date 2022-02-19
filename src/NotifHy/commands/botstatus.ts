@@ -1,10 +1,11 @@
+import type { ActivityTypes } from 'discord.js/typings/enums';
 import type { ClientCommand } from '../@types/client';
-import type { UserAPIData } from '../@types/database';
+import type { ExcludeEnum } from 'discord.js';
 import { BetterEmbed } from '../../util/utility';
 import { Constants } from '../util/Constants';
 import { Log } from '../../util/Log';
 import { RegionLocales } from '../locales/RegionLocales';
-import { SQLite } from '../../util/SQLite';
+import { setActivity } from '../util/utility';
 
 export const properties: ClientCommand['properties'] = {
     name: 'botstatus',
@@ -29,9 +30,43 @@ export const properties: ClientCommand['properties'] = {
                 type: 1,
                 options: [
                     {
-                        name: 'string',
+                        name: 'type',
                         type: 3,
-                        description: 'The status to display',
+                        description: 'The type to display',
+                        required: true,
+                        choices: [
+                            {
+                                name: 'Playing',
+                                value: 'PLAYING',
+                            },
+                            {
+                                name: 'Streaming',
+                                value: 'WATCHING',
+                            },
+                            {
+                                name: 'Listening',
+                                value: 'LISTENING',
+                            },
+                            {
+                                name: 'Watching',
+                                value: 'WATCHING',
+                            },
+                            {
+                                name: 'Competing',
+                                value: 'COMPETING',
+                            },
+                        ],
+                    },
+                    {
+                        name: 'name',
+                        type: 3,
+                        description: 'The message/name to display',
+                        required: true,
+                    },
+                    {
+                        name: 'url',
+                        type: 3,
+                        description: 'The url to stream at',
                         required: false,
                     },
                 ],
@@ -51,36 +86,47 @@ export const execute: ClientCommand['execute'] = async (
         .setColor(Constants.colors.normal);
 
     if (interaction.options.getSubcommand() === 'set') {
-        const status = interaction.options.getString('string', true);
-        interaction.client.customStatus = status;
+        const type = interaction.options.getString('type', true);
+        const name = interaction.options.getString('name', true);
+        const url = interaction.options.getString('url', false);
 
-        interaction.client.user?.setActivity({
-            type: 'WATCHING',
-            name: status,
-        });
+        interaction.client.customStatus = {
+            type: type as ExcludeEnum<typeof ActivityTypes, 'CUSTOM'>,
+            name: name,
+            url: url ?? undefined,
+        };
 
         responseEmbed
             .setTitle(text.set.title)
-            .setDescription(replace(text.set.description, {
-                status: status,
-            }));
+            .addFields([
+                {
+                    name: text.set.type.name,
+                    value: replace(text.set.type.value, {
+                        type: type,
+                    }),
+                },
+                {
+                    name: text.set.name.name,
+                    value: replace(text.set.name.value, {
+                        name: name,
+                    }),
+                },
+                {
+                    name: text.set.url.name,
+                    value: replace(text.set.url.value, {
+                        url: url ?? text.set.none,
+                    }),
+                },
+            ]);
     } else {
         responseEmbed
             .setTitle(text.cleared.title)
             .setDescription(text.cleared.description);
 
         interaction.client.customStatus = null;
-
-        interaction.client.user!.setActivity({
-            type: 'WATCHING',
-            name: `${(
-                await SQLite.getAllUsers<UserAPIData>({
-                    table: Constants.tables.api,
-                    columns: ['discordID'],
-                })
-            ).length} accounts | /register /help | ${interaction.client.guilds.cache.size} servers`,
-        });
     }
+
+    await setActivity(interaction.client);
 
     Log.command(interaction, responseEmbed.description);
 

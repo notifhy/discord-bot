@@ -89,7 +89,13 @@ export interface API {
 }
 
 export interface BotStatus {
-    set: BaseEmbed,
+    set: {
+        none: string,
+        title: string,
+        type: Field,
+        name: Field,
+        url: Field,
+    },
     cleared: BaseEmbed,
 }
 

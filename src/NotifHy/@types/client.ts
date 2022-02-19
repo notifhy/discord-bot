@@ -7,26 +7,6 @@ import type {
 import type { ClientModule } from './modules';
 import type { HypixelManager } from '../hypixel/HypixelManager';
 
-export interface WebhookConfig {
-    id: string,
-    token: string,
-}
-
-export interface Config {
-    blockedGuilds: string[],
-    blockedUsers: string[],
-    devMode: boolean,
-    enabled: boolean,
-}
-
-export interface ClientEvent {
-    properties: {
-        name: string,
-        once: boolean
-    },
-    execute(...parameters: unknown[]): Promise<void> | void,
-}
-
 export interface ClientCommand {
     properties: {
         name: string,
@@ -42,8 +22,28 @@ export interface ClientCommand {
         (
             interaction: CommandInteraction,
             locale: string,
-        ): Promise<void>,
+            ): Promise<void>,
+        },
+}
+
+export interface ClientEvent {
+    properties: {
+        name: string,
+        once: boolean
     },
+    execute(...parameters: unknown[]): Promise<void> | void,
+}
+
+export interface Config {
+    blockedGuilds: string[],
+    blockedUsers: string[],
+    devMode: boolean,
+    enabled: boolean,
+}
+
+export interface WebhookConfig {
+    id: string,
+    token: string,
 }
 
 declare module 'discord.js' {
@@ -51,7 +51,7 @@ declare module 'discord.js' {
         commands: Collection<string, ClientCommand>,
         cooldowns: Collection<string, Collection<string, number>>,
         config: Config,
-        customStatus: string | null,
+        customStatus: ActivityOptions | null,
         events: Collection<string, ClientEvent>,
         hypixel: HypixelManager,
         modules: Collection<string, ClientModule>,

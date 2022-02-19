@@ -1,10 +1,8 @@
 import type { ClientEvent } from '../@types/client';
 import type { Guild } from 'discord.js';
-import type { UserAPIData } from '../@types/database';
-import { Constants } from '../util/Constants';
 import { ErrorHandler } from '../../util/errors/ErrorHandler';
 import { Log } from '../../util/Log';
-import { SQLite } from '../../util/SQLite';
+import { setActivity } from '../util/utility';
 
 export const properties: ClientEvent['properties'] = {
     name: 'guildCreate',
@@ -31,7 +29,7 @@ export const execute: ClientEvent['execute'] = async (guild: Guild): Promise<voi
                 `Failed to auto leave a guild. Guild: ${guild.name} | ${guild.id}`,
             );
 
-            await new ErrorHandler(error).systemNotify();
+            await ErrorHandler.init(error);
         }
     } else {
         Log.log(
@@ -40,16 +38,8 @@ export const execute: ClientEvent['execute'] = async (guild: Guild): Promise<voi
     }
 
     try {
-        guild.client.user!.setActivity({
-            type: 'WATCHING',
-            name: guild.client.customStatus ?? `${(
-                await SQLite.getAllUsers<UserAPIData>({
-                    table: Constants.tables.api,
-                    columns: ['discordID'],
-                })
-            ).length} accounts | /register /help | ${guild.client.guilds.cache.size} servers`,
-        });
+        await setActivity(guild.client);
     } catch (error) {
-        await new ErrorHandler(error).systemNotify();
+        await ErrorHandler.init(error);
     }
 };

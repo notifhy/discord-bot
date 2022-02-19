@@ -1,5 +1,6 @@
 import { Table } from '../@types/database';
 import {
+    ActivityOptions,
     ColorResolvable,
     Permissions,
 } from 'discord.js';
@@ -31,6 +32,10 @@ export const Constants = {
             process: 0,
             modules: 0,
         },
+        presence: (): ActivityOptions => ({
+            name: '{{ accounts }} accounts | /register /help | {{ servers }} servers',
+            type: 'WATCHING',
+        }),
     },
     emoji: {
         alert: '<:alert:929126565240000513>',
