@@ -6,24 +6,24 @@ import type {
     UserAPIData,
     UserData,
 } from '../@types/database';
-import { BetterEmbed } from '../../util/utility';
+import { BetterEmbed } from '../../utility/utility';
 import {
     Collection,
     CommandInteraction,
 } from 'discord.js';
 import { CommandConstraintErrorHandler } from '../errors/CommandConstraintErrorHandler';
 import { CommandErrorHandler } from '../errors/CommandErrorHandler';
-import { Constants } from '../util/Constants';
+import { Constants } from '../utility/Constants';
 import { ConstraintError } from '../errors/ConstraintError';
-import { GlobalConstants } from '../../util/Constants';
+import { GlobalConstants } from '../../utility/Constants';
 import {
     locales,
     RegionLocales,
  } from '../locales/RegionLocales';
-import { Log } from '../../util/Log';
+import { Log } from '../../utility/Log';
 import { ownerID } from '../../../config.json';
-import { slashCommandResolver } from '../util/utility';
-import { SQLite } from '../../util/SQLite';
+import { slashCommandResolver } from '../utility/utility';
+import { SQLite } from '../../utility/SQLite';
 
 export const properties: ClientEvent['properties'] = {
     name: 'interactionCreate',

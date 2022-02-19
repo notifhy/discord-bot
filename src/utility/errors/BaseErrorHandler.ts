@@ -1,5 +1,5 @@
 import { BetterEmbed } from '../utility';
-import { Constants } from '../../NotifHy/util/Constants';
+import { Constants } from '../../NotifHy/utility/Constants';
 import {
     FileOptions,
     SnowflakeUtil,

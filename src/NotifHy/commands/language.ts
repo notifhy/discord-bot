@@ -1,10 +1,10 @@
 import type { ClientCommand } from '../@types/client';
 import type { UserData } from '../@types/database';
-import { BetterEmbed } from '../../util/utility';
-import { Constants } from '../util/Constants';
-import { Log } from '../../util/Log';
+import { BetterEmbed } from '../../utility/utility';
+import { Constants } from '../utility/Constants';
+import { Log } from '../../utility/Log';
 import { RegionLocales } from '../locales/RegionLocales';
-import { SQLite } from '../../util/SQLite';
+import { SQLite } from '../../utility/SQLite';
 
 export const properties: ClientCommand['properties'] = {
     name: 'language',

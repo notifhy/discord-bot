@@ -3,10 +3,10 @@ import {
     BetterEmbed,
     cleanLength,
     cleanRound,
-} from '../../util/utility';
-import { Constants } from '../util/Constants';
+} from '../../utility/utility';
+import { Constants } from '../utility/Constants';
 import { keyLimit } from '../../../config.json';
-import { Log } from '../../util/Log';
+import { Log } from '../../utility/Log';
 import { RegionLocales } from '../locales/RegionLocales';
 import { RequestManager } from '../hypixel/RequestManager';
 

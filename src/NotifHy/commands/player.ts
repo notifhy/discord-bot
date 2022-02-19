@@ -9,10 +9,10 @@ import {
     BetterEmbed,
     cleanLength,
     timestamp,
-} from '../../util/utility';
-import { Constants } from '../util/Constants';
+} from '../../utility/utility';
+import { Constants } from '../utility/Constants';
 import { CommandErrorHandler } from '../errors/CommandErrorHandler';
-import { disableComponents } from '../util/utility';
+import { disableComponents } from '../utility/utility';
 import {
     Constants as DiscordConstants,
     Formatters,
@@ -21,11 +21,11 @@ import {
     MessageButton,
     MessageComponentInteraction,
 } from 'discord.js';
-import { GlobalConstants } from '../../util/Constants';
+import { GlobalConstants } from '../../utility/Constants';
 import { HTTPError } from '../errors/HTTPError';
-import { Log } from '../../util/Log';
+import { Log } from '../../utility/Log';
 import { RegionLocales } from '../locales/RegionLocales';
-import { Request } from '../../util/Request';
+import { Request } from '../../utility/Request';
 
 export const properties: ClientCommand['properties'] = {
     name: 'player',

@@ -10,17 +10,17 @@ import {
     awaitComponent,
     disableComponents,
     setActivity,
-} from '../util/utility';
+} from '../utility/utility';
 import {
     BetterEmbed,
     capitolToNormal,
     cleanGameMode,
     cleanGameType,
     timestamp,
-} from '../../util/utility';
+} from '../../utility/utility';
 import { Buffer } from 'node:buffer';
 import { CommandErrorHandler } from '../errors/CommandErrorHandler';
-import { Constants } from '../util/Constants';
+import { Constants } from '../utility/Constants';
 import {
     Constants as DiscordConstants,
     Message,
@@ -28,10 +28,10 @@ import {
     MessageButton,
     MessageComponentInteraction,
 } from 'discord.js';
-import { GlobalConstants } from '../../util/Constants';
-import { Log } from '../../util/Log';
+import { GlobalConstants } from '../../utility/Constants';
+import { Log } from '../../utility/Log';
 import { RegionLocales } from '../locales/RegionLocales';
-import { SQLite } from '../../util/SQLite';
+import { SQLite } from '../../utility/SQLite';
 
 export const properties: ClientCommand['properties'] = {
     name: 'data',

@@ -5,10 +5,10 @@ import {
     MessageEmbed,
     TextChannel,
 } from 'discord.js';
-import { Constants } from '../util/Constants';
-import { Log } from '../../util/Log';
+import { Constants } from '../utility/Constants';
+import { Log } from '../../utility/Log';
 import { setTimeout } from 'timers/promises';
-import { SQLite } from '../../util/SQLite';
+import { SQLite } from '../../utility/SQLite';
 
 export const properties: ClientCommand['properties'] = {
     name: 'test',

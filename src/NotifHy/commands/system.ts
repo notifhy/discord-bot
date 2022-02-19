@@ -4,12 +4,12 @@ import {
     BetterEmbed,
     cleanLength,
     cleanRound,
-} from '../../util/utility';
-import { Constants } from '../util/Constants';
-import { GlobalConstants } from '../../util/Constants';
+} from '../../utility/utility';
+import { Constants } from '../utility/Constants';
+import { GlobalConstants } from '../../utility/Constants';
 import { keyLimit } from '../../../config.json';
 import { RegionLocales } from '../locales/RegionLocales';
-import { SQLite } from '../../util/SQLite';
+import { SQLite } from '../../utility/SQLite';
 import process from 'node:process';
 
 export const properties: ClientCommand['properties'] = {

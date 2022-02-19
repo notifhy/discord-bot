@@ -3,12 +3,12 @@ import {
     drive as googleDrive,
 } from '@googleapis/drive';
 import { Constants } from './util/Constants';
-import { ErrorHandler } from '../util/errors/ErrorHandler';
+import { ErrorHandler } from '../utility/errors/ErrorHandler';
 import { GaxiosError } from 'gaxios';
 import { googleCredentials } from '../../config.json';
-import { Log } from '../util/Log';
+import { Log } from '../utility/Log';
 import { setTimeout } from 'node:timers/promises';
-import { Timeout } from '../util/Timeout';
+import { Timeout } from '../utility/Timeout';
 import fsSync from 'node:fs';
 import process from 'node:process';
 

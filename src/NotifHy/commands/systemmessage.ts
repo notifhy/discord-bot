@@ -3,12 +3,12 @@ import type { UserData } from '../@types/database';
 import {
     awaitComponent,
     disableComponents,
-} from '../util/utility';
+} from '../utility/utility';
 import {
     BetterEmbed,
     timestamp,
-} from '../../util/utility';
-import { Constants } from '../util/Constants';
+} from '../../utility/utility';
+import { Constants } from '../utility/Constants';
 import {
     Constants as DiscordConstants,
     Message,
@@ -17,10 +17,10 @@ import {
     MessageComponentInteraction,
     MessageEmbed,
 } from 'discord.js';
-import { GlobalConstants } from '../../util/Constants';
-import { Log } from '../../util/Log';
+import { GlobalConstants } from '../../utility/Constants';
+import { Log } from '../../utility/Log';
 import { RegionLocales } from '../locales/RegionLocales';
-import { SQLite } from '../../util/SQLite';
+import { SQLite } from '../../utility/SQLite';
 
 export const properties: ClientCommand['properties'] = {
     name: 'systemmessage',

@@ -3,7 +3,7 @@ import {
     clientID,
     discordAPIkey,
 } from '../../config.json';
-import { Log } from '../util/Log';
+import { Log } from '../utility/Log';
 import { REST } from '@discordjs/rest';
 import { Routes } from 'discord-api-types/v9';
 

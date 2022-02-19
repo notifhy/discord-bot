@@ -7,15 +7,15 @@ import {
     BetterEmbed,
     cleanRound,
     sendWebHook,
-} from '../../util/utility';
+} from '../../utility/utility';
 import {
     ColorResolvable,
     CommandInteraction,
 } from 'discord.js';
-import { Constants } from '../util/Constants';
+import { Constants } from '../utility/Constants';
 import { ConstraintError } from './ConstraintError';
-import { ErrorHandler } from '../../util/errors/ErrorHandler';
-import { GlobalConstants } from '../../util/Constants';
+import { ErrorHandler } from '../../utility/errors/ErrorHandler';
+import { GlobalConstants } from '../../utility/Constants';
 import { nonFatalWebhook } from '../../../config.json';
 import { RegionLocales } from '../locales/RegionLocales';
 import { setTimeout } from 'node:timers/promises';

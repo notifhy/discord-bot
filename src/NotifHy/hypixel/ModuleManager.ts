@@ -15,10 +15,10 @@ import type { ModuleDifferences } from '../@types/modules';
 import {
     BetterEmbed,
     compare,
-} from '../../util/utility';
-import { Constants } from '../util/Constants';
+} from '../../utility/utility';
+import { Constants } from '../utility/Constants';
 import { RegionLocales } from '../locales/RegionLocales';
-import { SQLite } from '../../util/SQLite';
+import { SQLite } from '../../utility/SQLite';
 
 export class ModuleManager {
     client: Client;

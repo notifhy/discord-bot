@@ -1,11 +1,11 @@
 import { AbortError } from './AbortError';
-import { BaseErrorHandler } from '../../util/errors/BaseErrorHandler';
+import { BaseErrorHandler } from '../../utility/errors/BaseErrorHandler';
 import {
     cleanLength,
     cleanRound,
     sendWebHook,
-} from '../../util/utility';
-import { ErrorHandler } from '../../util/errors/ErrorHandler';
+} from '../../utility/utility';
+import { ErrorHandler } from '../../utility/errors/ErrorHandler';
 import {
     fatalWebhook,
     hypixelAPIWebhook,

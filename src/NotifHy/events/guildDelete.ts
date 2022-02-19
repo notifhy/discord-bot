@@ -1,9 +1,9 @@
 import type { ClientEvent } from '../@types/client';
 import type { Guild } from 'discord.js';
-import { ErrorHandler } from '../../util/errors/ErrorHandler';
-import { formattedUnix } from '../../util/utility';
-import { Log } from '../../util/Log';
-import { setActivity } from '../util/utility';
+import { ErrorHandler } from '../../utility/errors/ErrorHandler';
+import { formattedUnix } from '../../utility/utility';
+import { Log } from '../../utility/Log';
+import { setActivity } from '../utility/utility';
 
 export const properties: ClientEvent['properties'] = {
     name: 'guildDelete',

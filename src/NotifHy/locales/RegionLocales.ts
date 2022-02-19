@@ -3,7 +3,7 @@ import type {
     Locales,
     Parameters,
 } from '../@types/locales';
-import { Constants } from '../util/Constants';
+import { Constants } from '../utility/Constants';
 import en from './en-US.json';
 
 export const locales: Locales = {

@@ -1,8 +1,8 @@
 import type { ClientCommand } from '../@types/client';
-import { BetterEmbed } from '../../util/utility';
-import { Constants } from '../util/Constants';
+import { BetterEmbed } from '../../utility/utility';
+import { Constants } from '../utility/Constants';
 import { Formatters } from 'discord.js';
-import { Log } from '../../util/Log';
+import { Log } from '../../utility/Log';
 import { RegionLocales } from '../locales/RegionLocales';
 
 export const properties: ClientCommand['properties'] = {

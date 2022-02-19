@@ -8,16 +8,16 @@ import type {
     FriendsModule,
     Table,
 } from '../@types/database';
-import { BetterEmbed } from '../../util/utility';
+import { BetterEmbed } from '../../utility/utility';
 import { ChannelTypes } from 'discord.js/typings/enums';
-import { Constants } from '../util/Constants';
+import { Constants } from '../utility/Constants';
 import {
     Formatters,
     Permissions,
 } from 'discord.js';
-import { Log } from '../../util/Log';
+import { Log } from '../../utility/Log';
 import { RegionLocales } from '../locales/RegionLocales';
-import { SQLite } from '../../util/SQLite';
+import { SQLite } from '../../utility/SQLite';
 
 export const properties: ClientCommand['properties'] = {
     name: 'channel',

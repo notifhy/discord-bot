@@ -12,9 +12,9 @@ import type {
 import {
     combiner,
     Structures as baseStructures,
-} from '../util/Structures';
+} from '../utility/Structures';
 import { CommandErrorHandler } from '../errors/CommandErrorHandler';
-import { BetterEmbed } from '../../util/utility';
+import { BetterEmbed } from '../../utility/utility';
 import {
     ButtonInteraction,
     Message,
@@ -23,13 +23,13 @@ import {
     MessageSelectMenu,
     SelectMenuInteraction,
 } from 'discord.js';
-import { Constants } from '../util/Constants';
-import { disableComponents } from '../util/utility';
-import { GlobalConstants } from '../../util/Constants';
-import { Log } from '../../util/Log';
+import { Constants } from '../utility/Constants';
+import { disableComponents } from '../utility/utility';
+import { GlobalConstants } from '../../utility/Constants';
+import { Log } from '../../utility/Log';
 import { RegionLocales } from '../locales/RegionLocales';
-import { SQLite } from '../../util/SQLite';
-import { ToggleButtons } from '../util/ToggleButtons';
+import { SQLite } from '../../utility/SQLite';
+import { ToggleButtons } from '../utility/ToggleButtons';
 
 export const properties: ClientCommand['properties'] = {
     name: 'modules',

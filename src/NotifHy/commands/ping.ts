@@ -3,9 +3,9 @@ import {
     ColorResolvable,
     Message,
 } from 'discord.js';
-import { BetterEmbed } from '../../util/utility';
-import { Constants } from '../util/Constants';
-import { Log } from '../../util/Log';
+import { BetterEmbed } from '../../utility/utility';
+import { Constants } from '../utility/Constants';
+import { Log } from '../../utility/Log';
 import { RegionLocales } from '../locales/RegionLocales';
 
 export const properties: ClientCommand['properties'] = {

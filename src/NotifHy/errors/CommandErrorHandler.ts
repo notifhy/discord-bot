@@ -3,14 +3,14 @@ import {
     CommandInteraction,
     MessageEmbed,
 } from 'discord.js';
-import { Constants } from '../util/Constants';
-import { ErrorHandler } from '../../util/errors/ErrorHandler';
+import { Constants } from '../utility/Constants';
+import { ErrorHandler } from '../../utility/errors/ErrorHandler';
 import {
     fatalWebhook,
     ownerID,
 } from '../../../config.json';
 import { RegionLocales } from '../locales/RegionLocales';
-import { sendWebHook } from '../../util/utility';
+import { sendWebHook } from '../../utility/utility';
 
 export class CommandErrorHandler<E> extends BaseCommandErrorHandler<E> {
     readonly interaction: CommandInteraction;

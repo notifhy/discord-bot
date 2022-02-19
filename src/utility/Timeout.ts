@@ -2,7 +2,7 @@ import {
     clearTimeout,
     setTimeout,
 } from 'node:timers';
-import { GlobalConstants } from '../util/Constants';
+import { GlobalConstants } from './Constants';
 
 /* eslint-disable no-unused-vars */
 

@@ -1,10 +1,10 @@
 import type { ClientCommand } from '../@types/client';
-import { Constants } from '../util/Constants';
-import { BetterEmbed } from '../../util/utility';
-import { Log } from '../../util/Log';
+import { Constants } from '../utility/Constants';
+import { BetterEmbed } from '../../utility/utility';
+import { Log } from '../../utility/Log';
 import { RegionLocales } from '../locales/RegionLocales';
 import { setTimeout } from 'node:timers/promises';
-import { SQLite } from '../../util/SQLite';
+import { SQLite } from '../../utility/SQLite';
 
 export const properties: ClientCommand['properties'] = {
     name: 'accessdb',

@@ -12,10 +12,10 @@ import {
     Sweepers,
 } from 'discord.js';
 import { discordAPIkey } from '../../config.json';
-import { ErrorHandler } from '../util/errors/ErrorHandler';
+import { ErrorHandler } from '../utility/errors/ErrorHandler';
 import { HypixelManager } from './hypixel/HypixelManager';
-import { Log } from '../util/Log';
-import { SQLite } from '../util/SQLite';
+import { Log } from '../utility/Log';
+import { SQLite } from '../utility/SQLite';
 import fs from 'node:fs/promises';
 import process from 'node:process';
 

@@ -1,10 +1,10 @@
 import type { ActivityTypes } from 'discord.js/typings/enums';
 import type { ClientCommand } from '../@types/client';
 import type { ExcludeEnum } from 'discord.js';
-import { BetterEmbed } from '../../util/utility';
-import { Constants } from '../util/Constants';
+import { BetterEmbed } from '../../utility/utility';
+import { Constants } from '../utility/Constants';
 import { RegionLocales } from '../locales/RegionLocales';
-import { setActivity } from '../util/utility';
+import { setActivity } from '../utility/utility';
 
 export const properties: ClientCommand['properties'] = {
     name: 'botstatus',

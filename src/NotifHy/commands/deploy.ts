@@ -1,11 +1,11 @@
 import type { ClientCommand } from '../@types/client';
-import { BetterEmbed } from '../../util/utility';
+import { BetterEmbed } from '../../utility/utility';
 import {
     clientID,
     discordAPIkey as token,
 } from '../../../config.json';
-import { Constants } from '../util/Constants';
-import { Log } from '../../util/Log';
+import { Constants } from '../utility/Constants';
+import { Log } from '../../utility/Log';
 import { RegionLocales } from '../locales/RegionLocales';
 import { REST } from '@discordjs/rest';
 import { Routes } from 'discord-api-types/v9';

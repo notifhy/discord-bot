@@ -3,10 +3,10 @@ import type {
     ClientCommand,
 } from '../@types/client';
 import type { ClientModule } from '../@types/modules';
-import { BetterEmbed } from '../../util/utility';
+import { BetterEmbed } from '../../utility/utility';
 import { CommandInteraction } from 'discord.js';
-import { Constants } from '../util/Constants';
-import { Log } from '../../util/Log';
+import { Constants } from '../utility/Constants';
+import { Log } from '../../utility/Log';
 import { RegionLocales } from '../locales/RegionLocales';
 
 export const properties: ClientCommand['properties'] = {

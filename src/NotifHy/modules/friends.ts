@@ -7,18 +7,18 @@ import type {
 import {
     arrayRemove,
     timestamp,
-} from '../../util/utility';
+} from '../../utility/utility';
 import {
     Formatters,
     MessageEmbed,
     TextChannel,
 } from 'discord.js';
-import { Constants } from '../util/Constants';
-import { GlobalConstants } from '../../util/Constants';
-import { Log } from '../../util/Log';
+import { Constants } from '../utility/Constants';
+import { GlobalConstants } from '../../utility/Constants';
+import { Log } from '../../utility/Log';
 import { ModuleError } from '../errors/ModuleError';
 import { RegionLocales } from '../locales/RegionLocales';
-import { SQLite } from '../../util/SQLite';
+import { SQLite } from '../../utility/SQLite';
 
 export const properties: ClientModule['properties'] = {
     name: 'friends',

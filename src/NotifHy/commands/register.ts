@@ -6,14 +6,14 @@ import type {
     RewardsModule,
     UserAPIData,
 } from '../@types/database';
-import { BetterEmbed } from '../../util/utility';
-import { Constants } from '../util/Constants';
+import { BetterEmbed } from '../../utility/utility';
+import { Constants } from '../utility/Constants';
 import { HTTPError } from '../errors/HTTPError';
-import { Log } from '../../util/Log';
+import { Log } from '../../utility/Log';
 import { RegionLocales } from '../locales/RegionLocales';
-import { Request } from '../../util/Request';
-import { setActivity } from '../util/utility';
-import { SQLite } from '../../util/SQLite';
+import { Request } from '../../utility/Request';
+import { setActivity } from '../utility/utility';
+import { SQLite } from '../../utility/SQLite';
 
 export const properties: ClientCommand['properties'] = {
     name: 'register',

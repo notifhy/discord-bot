@@ -1,12 +1,12 @@
-import { BaseErrorHandler } from '../../util/errors/BaseErrorHandler';
-import { ErrorHandler } from '../../util/errors/ErrorHandler';
+import { BaseErrorHandler } from '../../utility/errors/BaseErrorHandler';
+import { ErrorHandler } from '../../utility/errors/ErrorHandler';
 import {
     fatalWebhook,
     ownerID,
 } from '../../../config.json';
 import { HypixelManager } from '../hypixel/HypixelManager';
 import { ModuleError } from './ModuleError';
-import { sendWebHook } from '../../util/utility';
+import { sendWebHook } from '../../utility/utility';
 import { Snowflake } from 'discord.js';
 
 export class ModuleErrorHandler extends BaseErrorHandler<

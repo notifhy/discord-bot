@@ -3,9 +3,9 @@ import {
     Client,
     DiscordAPIError,
 } from 'discord.js';
-import { Constants } from '../util/Constants';
-import { ErrorHandler } from '../../util/errors/ErrorHandler';
-import { GlobalConstants } from '../../util/Constants';
+import { Constants } from '../utility/Constants';
+import { ErrorHandler } from '../../utility/errors/ErrorHandler';
+import { GlobalConstants } from '../../utility/Constants';
 import { HypixelErrors } from './HypixelErrors';
 import { keyLimit } from '../../../config.json';
 import { ModuleDiscordErrorHandler } from '../errors/ModuleDiscordErrorHandler';
@@ -18,7 +18,7 @@ import {
 } from './RequestManager';
 import { RequestErrorHandler } from '../errors/RequestErrorHandler';
 import { setTimeout } from 'node:timers/promises';
-import { SQLite } from '../../util/SQLite';
+import { SQLite } from '../../utility/SQLite';
 
 /* eslint-disable no-await-in-loop */
 

@@ -1,4 +1,4 @@
-import { SQLite } from '../util/SQLite';
+import { SQLite } from '../utility/SQLite';
 
 SQLite.key();
 SQLite.removeKey();

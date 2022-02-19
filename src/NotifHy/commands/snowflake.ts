@@ -2,8 +2,8 @@ import type { ClientCommand } from '../@types/client';
 import {
     BetterEmbed,
     timestamp,
-} from '../../util/utility';
-import { Constants } from '../util/Constants';
+} from '../../utility/utility';
+import { Constants } from '../utility/Constants';
 import { RegionLocales } from '../locales/RegionLocales';
 import { SnowflakeUtil } from 'discord.js';
 

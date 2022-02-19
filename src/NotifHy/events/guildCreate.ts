@@ -1,8 +1,8 @@
 import type { ClientEvent } from '../@types/client';
 import type { Guild } from 'discord.js';
-import { ErrorHandler } from '../../util/errors/ErrorHandler';
-import { Log } from '../../util/Log';
-import { setActivity } from '../util/utility';
+import { ErrorHandler } from '../../utility/errors/ErrorHandler';
+import { Log } from '../../utility/Log';
+import { setActivity } from '../utility/utility';
 
 export const properties: ClientEvent['properties'] = {
     name: 'guildCreate',
