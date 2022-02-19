@@ -8,11 +8,14 @@ import type {
 } from '../@types/database';
 import {
     awaitComponent,
+    disableComponents,
+    setActivity,
+} from '../util/utility';
+import {
     BetterEmbed,
     capitolToNormal,
     cleanGameMode,
     cleanGameType,
-    disableComponents,
     timestamp,
 } from '../../util/utility';
 import { Buffer } from 'node:buffer';
@@ -29,7 +32,6 @@ import { GlobalConstants } from '../../util/Constants';
 import { Log } from '../../util/Log';
 import { RegionLocales } from '../locales/RegionLocales';
 import { SQLite } from '../../util/SQLite';
-import { setActivity } from '../util/utility';
 
 export const properties: ClientCommand['properties'] = {
     name: 'data',

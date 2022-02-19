@@ -8,11 +8,11 @@ import type {
 import {
     BetterEmbed,
     cleanLength,
-    disableComponents,
     timestamp,
 } from '../../util/utility';
 import { Constants } from '../util/Constants';
 import { CommandErrorHandler } from '../errors/CommandErrorHandler';
+import { disableComponents } from '../util/utility';
 import {
     Constants as DiscordConstants,
     Formatters,

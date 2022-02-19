@@ -5,7 +5,7 @@ import {
 } from 'discord.js';
 import { BaseErrorHandler } from '../../util/errors/BaseErrorHandler';
 import { GlobalConstants } from '../../util/Constants';
-import { slashCommandResolver } from '../../util/utility';
+import { slashCommandResolver } from '../util/utility';
 
 export class BaseCommandErrorHandler<E> extends BaseErrorHandler<E> {
     readonly interaction: CommandInteraction;

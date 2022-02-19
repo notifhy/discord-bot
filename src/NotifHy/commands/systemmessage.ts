@@ -2,8 +2,10 @@ import type { ClientCommand } from '../@types/client';
 import type { UserData } from '../@types/database';
 import {
     awaitComponent,
-    BetterEmbed,
     disableComponents,
+} from '../util/utility';
+import {
+    BetterEmbed,
     timestamp,
 } from '../../util/utility';
 import { Constants } from '../util/Constants';

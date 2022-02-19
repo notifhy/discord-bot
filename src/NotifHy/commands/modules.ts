@@ -14,10 +14,7 @@ import {
     Structures as baseStructures,
 } from '../util/Structures';
 import { CommandErrorHandler } from '../errors/CommandErrorHandler';
-import {
-    BetterEmbed,
-    disableComponents,
-} from '../../util/utility';
+import { BetterEmbed } from '../../util/utility';
 import {
     ButtonInteraction,
     Message,
@@ -27,6 +24,7 @@ import {
     SelectMenuInteraction,
 } from 'discord.js';
 import { Constants } from '../util/Constants';
+import { disableComponents } from '../util/utility';
 import { GlobalConstants } from '../../util/Constants';
 import { Log } from '../../util/Log';
 import { RegionLocales } from '../locales/RegionLocales';

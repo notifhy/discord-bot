@@ -6,10 +6,7 @@ import type {
     UserAPIData,
     UserData,
 } from '../@types/database';
-import {
-    BetterEmbed,
-    slashCommandResolver,
-} from '../../util/utility';
+import { BetterEmbed } from '../../util/utility';
 import {
     Collection,
     CommandInteraction,
@@ -25,6 +22,7 @@ import {
  } from '../locales/RegionLocales';
 import { Log } from '../../util/Log';
 import { ownerID } from '../../../config.json';
+import { slashCommandResolver } from '../util/utility';
 import { SQLite } from '../../util/SQLite';
 
 export const properties: ClientEvent['properties'] = {

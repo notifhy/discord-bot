@@ -1,15 +1,8 @@
 import type { WebhookConfig } from '../NotifHy/@types/client';
 import {
-    AwaitMessageCollectorOptionsParams,
     CommandInteraction,
     Formatters,
-    MessageActionRow,
-    MessageComponentType,
     MessageEmbed,
-    PermissionResolvable,
-    Permissions,
-    PermissionString,
-    TextBasedChannel,
     WebhookClient,
     WebhookMessageOptions,
 } from 'discord.js';
@@ -22,29 +15,6 @@ export function arrayRemove<Type extends unknown[]>(
     ...items: unknown[]
 ): Type {
     return array.filter(item => !(items.includes(item))) as Type;
-}
-
-export async function awaitComponent(
-    channel: TextBasedChannel,
-    component: MessageComponentType,
-    options: Omit<AwaitMessageCollectorOptionsParams<typeof component, true>, 'componentType'>,
-) {
-    try {
-        return await channel.awaitMessageComponent({
-            componentType: component,
-            ...options,
-        });
-    } catch (error) {
-        if (
-            error instanceof Error &&
-            (error as Error & { code: string })
-                ?.code === 'INTERACTION_COLLECTOR_ERROR'
-        ) {
-            return null;
-        }
-
-        throw error;
-    }
 }
 
 type Footer =
@@ -254,29 +224,6 @@ export function formattedUnix({
         }`;
 }
 
-export function disableComponents(messageActionRows: MessageActionRow[]) {
-    const actionRows = messageActionRows
-        .map(row => new MessageActionRow(row));
-
-    for (const actionRow of actionRows) {
-        const components = actionRow.components;
-
-        for (const component of components) {
-            component.disabled = true;
-        }
-    }
-
-    return actionRows;
-}
-
-export function matchPermissions(
-    required: PermissionResolvable,
-    subject: Permissions,
-): PermissionString[] {
-    const missing = subject.missing(required);
-    return missing;
-}
-
 type AcceptedValues = string | boolean | number;
 
 type GenericObject = {
@@ -344,39 +291,6 @@ export async function sendWebHook(
         throw err;
     }
 }
-
-export const slashCommandResolver = (interaction: CommandInteraction) => {
-    const commandOptions: (string | number | boolean)[] = [
-        `/${interaction.commandName}`,
-    ];
-
-    for (let option of interaction.options.data) {
-        if (option.value) {
-            commandOptions.push(
-                `${option.name}: ${option.value}`,
-            );
-        }
-
-        if (option.type === 'SUB_COMMAND_GROUP') {
-            commandOptions.push(option.name);
-            [option] = option.options!;
-        }
-
-        if (option.type === 'SUB_COMMAND') {
-            commandOptions.push(option.name);
-        }
-
-        if (Array.isArray(option.options)) {
-            for (const subOption of option.options) {
-                commandOptions.push(
-                    `${subOption.name}: ${subOption.value}`,
-                );
-            }
-        }
-    }
-
-    return commandOptions.join(' ');
-};
 
 export function timeAgo(ms: unknown): number | null {
     if (

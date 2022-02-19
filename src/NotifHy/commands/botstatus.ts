@@ -3,7 +3,6 @@ import type { ClientCommand } from '../@types/client';
 import type { ExcludeEnum } from 'discord.js';
 import { BetterEmbed } from '../../util/utility';
 import { Constants } from '../util/Constants';
-import { Log } from '../../util/Log';
 import { RegionLocales } from '../locales/RegionLocales';
 import { setActivity } from '../util/utility';
 
@@ -127,8 +126,6 @@ export const execute: ClientCommand['execute'] = async (
     }
 
     await setActivity(interaction.client);
-
-    Log.command(interaction, responseEmbed.description);
 
     await interaction.editReply({ embeds: [responseEmbed] });
 };
