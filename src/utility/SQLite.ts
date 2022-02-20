@@ -14,15 +14,15 @@ let db = new Database(`${__dirname}/../../database.db`);
 
 type JSONize<Type> = {
     [Property in keyof Type]:
-        Type[Property] extends Record<string, unknown>
-            ? string
-            : Type[Property] extends Array<unknown>
-            ? string
-            : Type[Property] extends boolean
-            ? string
-            : Type[Property] extends Record<string, unknown>
-            ? string
-            : Property;
+    Type[Property] extends Record<string, unknown>
+    ? string
+    : Type[Property] extends Array<unknown>
+    ? string
+    : Type[Property] extends boolean
+    ? string
+    : Type[Property] extends Record<string, unknown>
+    ? string
+    : Property;
 }
 
 type GetType<B> = {
@@ -72,9 +72,16 @@ export class SQLite {
         db.pragma(`rekey=''`);
     }
 
+    static createTransaction(transaction: () => void) {
+        const execute = db.transaction(() => {
+            transaction();
+        });
 
-    static createTablesIfNotExists(): Promise<void> {
-        return new Promise<void>(resolve => {
+        execute();
+    }
+
+    static createTablesIfNotExists(): void {
+        this.createTransaction(() => {
             Object.values(Constants.tables.create)
                 .map(value => db.prepare(value))
                 .forEach(table => table.run());
@@ -86,62 +93,53 @@ export class SQLite {
             if (typeof config === 'undefined') {
                 db.prepare('INSERT INTO config DEFAULT VALUES').run();
             }
-
-            resolve();
         });
     }
 
-    static queryGet<Type>(config: GetType<false>): Promise<Type>
-    static queryGet<Type>(config: GetType<true>): Promise<Type | undefined>
-    static queryGet<Type>(config: GetType<boolean>): Promise<Type | undefined>
+    static queryGet<Type>(config: GetType<false>): Type
+    static queryGet<Type>(config: GetType<true>): Type | undefined
+    static queryGet<Type>(config: GetType<boolean>): Type | undefined
     static queryGet<Type>(config: {
         query: string,
         allowUndefined?: boolean,
-    }): Promise<Type | undefined> {
+    }): Type | undefined {
         /*
-         *const string = '2';
-         *const output = await queryGet(`SELECT tests FROM test WHERE tests = '${string}' `);
-         *SELECT * FROM ${table}
+         * const string = '2';
+         * const output = queryGet(`SELECT tests FROM test WHERE tests = '${string}' `);
          */
 
-        return new Promise(resolve => {
-            const rawData =
-                db.prepare(config.query).get() as Record<string, unknown>;
+        const rawData = db
+            .prepare(config.query)
+            .get() as Record<string, unknown>;
 
-            if (
-                (
-                    config.allowUndefined === false ||
-                    typeof config.allowUndefined === 'undefined'
-                ) &&
-                typeof rawData === 'undefined'
-            ) {
-                throw new RangeError(
-                    `The query ${config.query} returned an undefined value`,
-                );
-            }
+        if (
+            (
+                config.allowUndefined === false ||
+                typeof config.allowUndefined === 'undefined'
+            ) &&
+            typeof rawData === 'undefined'
+        ) {
+            throw new RangeError(
+                `The query ${config.query} returned an undefined value`,
+            );
+        }
 
-            const data = this.JSONize(rawData);
-
-            resolve(data as Type | undefined);
-        });
+        return this.JSONize(rawData) as Type | undefined;
     }
 
-    static queryGetAll<Type>(query: string): Promise<Type[]> {
+    static queryGetAll<Type>(query: string): Type[] {
         /*
-         *const string = '2';
-         *const output = await queryGetAll(`SELECT tests FROM test WHERE tests = '${string}' `);
+         * const string = '2';
+         * const output = queryGetAll(`SELECT tests FROM test WHERE tests = '${string}' `);
          */
 
-        return new Promise<Type[]>(resolve => {
-            const rawData =
-                db.prepare(query).all() as Record<string, unknown>[];
+        const rawData = db
+            .prepare(query)
+            .all() as Record<string, unknown>[];
 
-            const data = rawData.map(rawData1 =>
-                this.JSONize(rawData1),
-            );
-
-            resolve(data as Type[]);
-        });
+        return rawData.map(rawData1 =>
+            this.JSONize(rawData1),
+        ) as Type[];
     }
 
     static queryRun({
@@ -150,69 +148,60 @@ export class SQLite {
     }: {
         query: string,
         data?: (string | number | null)[],
-    }): Promise<void> {
+    }): void {
         /*
-         *'CREATE TABLE IF NOT EXISTS servers(tests TEXT NOT NULL)'
-         *'UPDATE table SET offline = ? WHERE id = ?'
-         *'INSERT INTO servers VALUES(?,?,?)'
-         *'DELETE FROM users WHERE id=(?)'
+         * 'CREATE TABLE IF NOT EXISTS servers(tests TEXT NOT NULL)'
+         * 'UPDATE table SET offline = ? WHERE id = ?'
+         * 'INSERT INTO servers VALUES(?,?,?)'
+         * 'DELETE FROM users WHERE id=(?)'
          */
 
-        return new Promise<void>(resolve => {
-            db.prepare(query).run(data);
-
-            resolve();
-        });
+        db.prepare(query).run(data);
     }
 
-    static async getUser<Type>(
-        config: GetUserType<Type, false>): Promise<Type>
-    static async getUser<Type>(
-        config: GetUserType<Type, true>): Promise<Type | undefined>
-    static async getUser<Type>(
-        config: GetUserType<Type, boolean>): Promise<Type | undefined>
-    static async getUser<Type>(config: {
+    static getUser<Type>(
+        config: GetUserType<Type, false>): Type
+    static getUser<Type>(
+        config: GetUserType<Type, true>): Type | undefined
+    static getUser<Type>(
+        config: GetUserType<Type, boolean>): Type | undefined
+    static getUser<Type>(config: {
         discordID: string,
         table: Table,
         allowUndefined?: boolean,
         columns: (keyof Type | '*')[];
-    }): Promise<Type | undefined> {
-        const query = `SELECT ${
-            config.columns.join(', ')
-        } FROM ${config.table} WHERE discordID = '${config.discordID}'`;
+    }): Type | undefined {
+        const query = `SELECT ${config.columns.join(', ')
+            } FROM ${config.table} WHERE discordID = '${config.discordID}'`;
 
-        const data = await this.queryGet<Type>({
+        return this.queryGet<Type>({
             query: query,
             allowUndefined: config.allowUndefined ?? false,
         });
-
-        return data;
     }
 
-    static async getAllUsers<Type>({
+    static getAllUsers<Type>({
         table,
         columns,
     }: {
         table: Table,
         columns: (keyof Type | '*')[],
-    }): Promise<Type[]> {
+    }): Type[] {
         const query = `SELECT ${columns.join(', ')} FROM ${table}`;
-        const userData = await this.queryGetAll<Type>(query);
-
-        return userData as Type[];
+        return this.queryGetAll<Type>(query) as Type[];
     }
 
-    static async newUser<Type extends Omit<BaseUserData, never>>(
-        config: NewUserType<Type, false>): Promise<undefined>;
-    static async newUser<Type extends Omit<BaseUserData, never>>(
-        config: NewUserType<Type, true>): Promise<Type>;
-    static async newUser<Type extends Omit<BaseUserData, never>>(
-        config: NewUserType<Type, boolean>): Promise<Type | undefined>;
-    static async newUser<Type extends Omit<BaseUserData, never>>(config: {
+    static newUser<Type extends Omit<BaseUserData, never>>(
+        config: NewUserType<Type, false>): undefined;
+    static newUser<Type extends Omit<BaseUserData, never>>(
+        config: NewUserType<Type, true>): Type;
+    static newUser<Type extends Omit<BaseUserData, never>>(
+        config: NewUserType<Type, boolean>): Type | undefined;
+    static newUser<Type extends Omit<BaseUserData, never>>(config: {
         table: Table,
         returnNew?: boolean,
         data: Partial<Type>,
-    }): Promise<Type | undefined> {
+    }): Type | undefined {
         const values: string[] = [];
         const keys = Object.keys(config.data);
 
@@ -227,8 +216,10 @@ export class SQLite {
             >,
         );
 
-        await this.queryRun({
-            query: `INSERT INTO ${config.table} (${keys.join(', ')}) VALUES(${values.join(', ')})`,
+        this.queryRun({
+            query: `INSERT INTO ${config.table} (${keys.join(
+                ', ',
+            )}) VALUES(${values.join(', ')})`,
             data: Object.values(dataArray),
         });
 
@@ -239,28 +230,27 @@ export class SQLite {
             return;
         }
 
-        const returnQuery = `SELECT * FROM ${config.table} WHERE discordID = '${config.data.discordID}'`;
+        const returnQuery = `SELECT * FROM ${config.table} 
+        WHERE discordID = '${config.data.discordID}'`;
 
-        const newUserData = await this.queryGet<Type>({
+        return this.queryGet<Type>({
             query: returnQuery,
             allowUndefined: false,
         });
-
-        return newUserData;
     }
 
-    static async updateUser<Type extends Omit<BaseUserData, never>>(
-        config: UpdateUserType<Type, false>): Promise<undefined>
-    static async updateUser<Type extends Omit<BaseUserData, never>>(
-        config: UpdateUserType<Type, true>): Promise<Type>
-    static async updateUser<Type extends Omit<BaseUserData, never>>(
-        config: UpdateUserType<Type, boolean>): Promise<Type | undefined>
-    static async updateUser<Type extends Omit<BaseUserData, never>>(config: {
+    static updateUser<Type extends Omit<BaseUserData, never>>(
+        config: UpdateUserType<Type, false>): undefined
+    static updateUser<Type extends Omit<BaseUserData, never>>(
+        config: UpdateUserType<Type, true>): Type
+    static updateUser<Type extends Omit<BaseUserData, never>>(
+        config: UpdateUserType<Type, boolean>): Type | undefined
+    static updateUser<Type extends Omit<BaseUserData, never>>(config: {
         discordID: string,
         table: Table,
         returnNew?: boolean,
         data: Partial<Type>,
-    }): Promise<Type | undefined> {
+    }): Type | undefined {
         const setQuery: string[] = [];
 
         for (const key in config.data) {
@@ -277,7 +267,7 @@ export class SQLite {
             >,
         );
 
-        await this.queryRun({
+        this.queryRun({
             query: `UPDATE ${config.table} SET ${setQuery.join(
                 ', ',
             )} WHERE discordID = '${config.discordID}'`,
@@ -291,26 +281,24 @@ export class SQLite {
             return;
         }
 
-        const returnQuery = `SELECT * FROM ${config.table} WHERE discordID = '${config.discordID}'`;
+        const returnQuery = `SELECT * FROM ${config.table} 
+        WHERE discordID = '${config.discordID}'`;
 
-        const newUserData = await this.queryGet<Type>({
+        return this.queryGet<Type>({
             query: returnQuery,
             allowUndefined: false,
         });
-
-        return newUserData;
     }
 
-    static async deleteUser({
+    static deleteUser({
         discordID,
         table,
     }: {
         discordID: string,
         table: Table,
-    }): Promise<void> {
-        const query = `DELETE FROM ${table} WHERE discordID = ?`;
-        await this.queryRun({
-            query: query,
+    }): void {
+        this.queryRun({
+            query: `DELETE FROM ${table} WHERE discordID = ?`,
             data: [discordID],
         });
     }
@@ -343,7 +331,7 @@ export class SQLite {
                 if (this.isObject(type, input[key])) {
                     input[key] = JSONized as Record<string, unknown>;
                 }
-            } catch {} //eslint-disable-line no-empty
+            } catch { } //eslint-disable-line no-empty
         }
 
         return input;
@@ -357,12 +345,12 @@ export class SQLite {
         input: Record<
             string,
             Array<unknown>
-                | boolean
-                | null
-                | number
-                | Record<string, unknown>
-                | string
-                | undefined>,
+            | boolean
+            | null
+            | number
+            | Record<string, unknown>
+            | string
+            | undefined>,
     ): JSONize<typeof input> {
         for (const key in input) {
             //@ts-expect-error Types not added yet
@@ -380,7 +368,7 @@ export class SQLite {
                             input[key],
                         );
                     }
-                } catch {} //eslint-disable-line no-empty
+                } catch { } //eslint-disable-line no-empty
             }
         }
 

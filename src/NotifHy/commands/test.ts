@@ -54,7 +54,7 @@ export const execute: ClientCommand['execute'] = async (
 ): Promise<void> => {
     const channelIDs = (
         (
-            await SQLite.getAllUsers<DefenderModule>({
+            SQLite.getAllUsers<DefenderModule>({
                 table: Constants.tables.defender,
                 columns: ['channel'],
             })

@@ -27,7 +27,7 @@ export class ModuleManager {
         this.client = client;
     }
 
-    static async process(
+    static process(
         discordID: Snowflake,
         {
             player,
@@ -38,7 +38,7 @@ export class ModuleManager {
         },
     ) {
         const userAPIData =
-            await SQLite.getUser<UserAPIData>({
+            SQLite.getUser<UserAPIData>({
                 discordID: discordID,
                 table: Constants.tables.api,
                 allowUndefined: false,
@@ -64,7 +64,7 @@ export class ModuleManager {
 
         Object.assign(userAPIData, userAPIDataUpdate);
 
-        await SQLite.updateUser<UserAPIData>({
+        SQLite.updateUser<UserAPIData>({
             discordID: discordID,
             table: Constants.tables.api,
             data: userAPIDataUpdate,
@@ -93,7 +93,7 @@ export class ModuleManager {
             userAPIData.lastLogin !== null &&
             userAPIData.lastLogout !== null;
 
-        const userData = await SQLite.getUser<UserData>({
+        const userData = SQLite.getUser<UserData>({
             discordID: userAPIData.discordID,
             table: Constants.tables.users,
             allowUndefined: false,
@@ -148,8 +148,9 @@ export class ModuleManager {
         }
 
         if (embed) {
-            const user =
-                await this.client.users.fetch(userAPIData.discordID);
+            const user = await this.client.users.fetch(
+                userAPIData.discordID,
+            );
 
             await user.send({ embeds: [embed] });
         }

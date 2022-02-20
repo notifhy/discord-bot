@@ -141,28 +141,32 @@ export const execute: ClientCommand['execute'] = async (
                 components: disabledRows,
             });
         } else if (button.customId === 'true') {
-            Promise.all([
+            SQLite.createTransaction(() => {
                 SQLite.deleteUser({
                     discordID: interaction.user.id,
                     table: Constants.tables.users,
-                }),
+                });
+
                 SQLite.deleteUser({
                     discordID: interaction.user.id,
                     table: Constants.tables.api,
-                }),
+                });
+
                 SQLite.deleteUser({
                     discordID: interaction.user.id,
                     table: Constants.tables.defender,
-                }),
+                });
+
                 SQLite.deleteUser({
                     discordID: interaction.user.id,
                     table: Constants.tables.friends,
-                }),
+                });
+
                 SQLite.deleteUser({
                     discordID: interaction.user.id,
                     table: Constants.tables.rewards,
-                }),
-            ]);
+                });
+            });
 
             const deleted = new BetterEmbed(interaction)
                 .setColor(Constants.colors.normal)
@@ -176,7 +180,7 @@ export const execute: ClientCommand['execute'] = async (
                 components: disabledRows,
             });
 
-            await setActivity(interaction.client);
+            setActivity(interaction.client);
         } else {
             const aborted = new BetterEmbed(interaction)
                 .setColor(Constants.colors.normal)
@@ -193,45 +197,47 @@ export const execute: ClientCommand['execute'] = async (
     }
 
     async function viewAll() {
-        const data = await Promise.all([
-            SQLite.getUser<UserData>({
-                discordID: interaction.user.id,
-                table: Constants.tables.users,
-                allowUndefined: true,
-                columns: ['*'],
-            }),
-            SQLite.getUser<UserAPIData>({
-                discordID: interaction.user.id,
-                table: Constants.tables.api,
-                allowUndefined: true,
-                columns: ['*'],
-            }),
-            SQLite.getUser<DefenderModule>({
-                discordID: interaction.user.id,
-                table: Constants.tables.defender,
-                allowUndefined: true,
-                columns: ['*'],
-            }),
-            SQLite.getUser<FriendsModule>({
-                discordID: interaction.user.id,
-                table: Constants.tables.friends,
-                allowUndefined: true,
-                columns: ['*'],
-            }),
-            SQLite.getUser<RewardsModule>({
-                discordID: interaction.user.id,
-                table: Constants.tables.rewards,
-                allowUndefined: true,
-                columns: ['*'],
-            }),
-        ]);
+        const userData = SQLite.getUser<UserData>({
+            discordID: interaction.user.id,
+            table: Constants.tables.users,
+            allowUndefined: true,
+            columns: ['*'],
+        });
+
+        const userAPIData = SQLite.getUser<UserAPIData>({
+            discordID: interaction.user.id,
+            table: Constants.tables.api,
+            allowUndefined: true,
+            columns: ['*'],
+        });
+
+        const defender = SQLite.getUser<DefenderModule>({
+            discordID: interaction.user.id,
+            table: Constants.tables.defender,
+            allowUndefined: true,
+            columns: ['*'],
+        });
+
+        const friends = SQLite.getUser<FriendsModule>({
+            discordID: interaction.user.id,
+            table: Constants.tables.friends,
+            allowUndefined: true,
+            columns: ['*'],
+        });
+
+        const rewards = SQLite.getUser<RewardsModule>({
+            discordID: interaction.user.id,
+            table: Constants.tables.rewards,
+            allowUndefined: true,
+            columns: ['*'],
+        });
 
         const allUserData = {
-            userData: data[0],
-            userAPIData: data[1],
-            defender: data[2],
-            friends: data[3],
-            rewards: data[4],
+            userData: userData,
+            userAPIData: userAPIData,
+            defender: defender,
+            friends: friends,
+            rewards: rewards,
         };
 
         await interaction.editReply({
@@ -247,13 +253,12 @@ export const execute: ClientCommand['execute'] = async (
     }
 
     async function viewHistory() {
-        const userAPIData =
-            await SQLite.getUser<UserAPIData>({
-                discordID: interaction.user.id,
-                table: Constants.tables.api,
-                columns: ['*'],
-                allowUndefined: false,
-            });
+        const userAPIData = SQLite.getUser<UserAPIData>({
+            discordID: interaction.user.id,
+            table: Constants.tables.api,
+            columns: ['*'],
+            allowUndefined: false,
+        });
 
         const base = new MessageButton()
             .setStyle(
@@ -294,6 +299,7 @@ export const execute: ClientCommand['execute'] = async (
                 position + Constants.defaults.menuIncrements,
             );
 
+            //this is great
             const fields = shownData.map(({ date, ...event }) => ({
                 name: `${timestamp(date, 'D')} ${timestamp(date, 'T')}`,
                 value: Object.entries(event)

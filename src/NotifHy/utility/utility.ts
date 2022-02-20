@@ -48,8 +48,8 @@ export function disableComponents(messageActionRows: MessageActionRow[]) {
     return actionRows;
 }
 
-export async function setActivity(client: Client) {
-    const users = await SQLite.getAllUsers<UserAPIData>({
+export function setActivity(client: Client) {
+    const users = SQLite.getAllUsers<UserAPIData>({
         table: Constants.tables.api,
         columns: ['discordID'],
     });

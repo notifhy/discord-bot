@@ -113,7 +113,7 @@ export class ModuleDiscordErrorHandler extends BaseErrorHandler<
     }
 
     private async handleDiscordAPICode(error: DiscordAPIError) {
-        const userData = await SQLite.getUser<UserData>({
+        const userData = SQLite.getUser<UserData>({
             discordID: this.discordID,
             table: Constants.tables.users,
             allowUndefined: false,
@@ -180,7 +180,7 @@ export class ModuleDiscordErrorHandler extends BaseErrorHandler<
 
                 this.log('Attempting to disable module(s)');
 
-                const userAPIData = await SQLite.getUser<UserAPIData>({
+                const userAPIData = SQLite.getUser<UserAPIData>({
                     discordID: this.discordID,
                     table: Constants.tables.api,
                     columns: ['modules'],
@@ -194,7 +194,7 @@ export class ModuleDiscordErrorHandler extends BaseErrorHandler<
 
                 this.log('New modules:', modules);
 
-                await SQLite.updateUser<UserAPIData>({
+                SQLite.updateUser<UserAPIData>({
                     discordID: this.discordID,
                     table: Constants.tables.api,
                     data: {
@@ -202,7 +202,7 @@ export class ModuleDiscordErrorHandler extends BaseErrorHandler<
                     },
                 });
 
-                await SQLite.updateUser<UserData>({
+                SQLite.updateUser<UserData>({
                     discordID: this.discordID,
                     table: Constants.tables.users,
                     data: {

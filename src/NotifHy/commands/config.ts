@@ -68,7 +68,7 @@ export const execute: ClientCommand['execute'] = async (
     const text = RegionLocales.locale(locale).commands.config;
     const replace = RegionLocales.replace;
 
-    const config = await SQLite.queryGet<Config>({
+    const config = SQLite.queryGet<Config>({
         query: 'SELECT blockedGuilds, blockedUsers, devMode, enabled FROM config WHERE rowid = 1',
     });
 
@@ -203,7 +203,7 @@ export const execute: ClientCommand['execute'] = async (
 
     const newRawConfig = SQLite.unJSONize({ ...config });
 
-    await SQLite.queryRun({
+    SQLite.queryRun({
         query: 'UPDATE config set blockedGuilds = ?, blockedUsers = ?, devMode = ?, enabled = ? WHERE rowid = 1',
         data: Object.values(newRawConfig),
     });

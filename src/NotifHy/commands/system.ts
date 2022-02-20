@@ -45,7 +45,7 @@ export const execute: ClientCommand['execute'] = async (
         (60 / keyQueryLimit) * GlobalConstants.ms.second;
 
     const registeredUsers = (
-        await SQLite.getAllUsers<UserAPIData>({
+        SQLite.getAllUsers<UserAPIData>({
             table: Constants.tables.api,
             columns: ['modules'],
         })

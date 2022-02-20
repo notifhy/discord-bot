@@ -22,7 +22,7 @@ export const execute: ClientModule['execute'] = async ({
 }): Promise<void> => {
     try {
         const rewardsModule =
-            await SQLite.getUser<RewardsModule>({
+            SQLite.getUser<RewardsModule>({
                 discordID: userAPIData.discordID,
                 table: Constants.tables.rewards,
                 allowUndefined: false,
@@ -91,7 +91,7 @@ export const execute: ClientModule['execute'] = async ({
                 embeds: [rewardNotification],
             });
 
-            await SQLite.updateUser<RewardsModule>({
+            SQLite.updateUser<RewardsModule>({
                 discordID: userAPIData.discordID,
                 table: Constants.tables.rewards,
                 data: {

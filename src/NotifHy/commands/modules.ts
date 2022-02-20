@@ -233,15 +233,15 @@ export const execute: ClientCommand['execute'] = async (
 
         switch (selected) {
             case 'toggle': {
-                const { modules } = await getUserAPIData();
+                const { modules } = getUserAPIData();
 
                 const moduleData =
                     subCommand === 'defender'
-                        ? await getDefenderData()
+                        ? getDefenderData()
                         : subCommand === 'friends'
-                        ? await getFriendsData()
+                        ? getFriendsData()
                         : subCommand === 'rewards'
-                        ? await getRewardsData()
+                        ? getRewardsData()
                         : null!; //:)
 
                 const exceptions = {
@@ -292,7 +292,7 @@ export const execute: ClientCommand['execute'] = async (
                 break;
             }
             case 'alerts': {
-                const { alerts } = await getDefenderData();
+                const { alerts } = getDefenderData();
 
                 const menu = combiner(
                     (text as ModulesCommand['defender']).menu.alerts,
@@ -323,7 +323,7 @@ export const execute: ClientCommand['execute'] = async (
                 break;
             }
             case 'gameTypes': {
-                const { gameTypes } = await getDefenderData();
+                const { gameTypes } = getDefenderData();
 
                 const menu = combiner(
                     (text as ModulesCommand['defender']).menu.gameTypes,
@@ -342,7 +342,7 @@ export const execute: ClientCommand['execute'] = async (
                 break;
             }
             case 'languages': {
-                const { languages } = await getDefenderData();
+                const { languages } = getDefenderData();
 
                 const menu = combiner(
                     (text as ModulesCommand['defender']).menu.languages,
@@ -361,7 +361,7 @@ export const execute: ClientCommand['execute'] = async (
                 break;
             }
             case 'versions': {
-                const { versions } = await getDefenderData();
+                const { versions } = getDefenderData();
 
                 const menu = combiner(
                     (text as ModulesCommand['defender']).menu.versions,
@@ -380,7 +380,7 @@ export const execute: ClientCommand['execute'] = async (
                 break;
             }
             case 'alertTime': {
-                const { alertTime } = await getRewardsData();
+                const { alertTime } = getRewardsData();
 
                 const menu = combiner(
                     (text as ModulesCommand['rewards']).menu.alertTime,
@@ -400,7 +400,7 @@ export const execute: ClientCommand['execute'] = async (
                 break;
             }
             case 'claimNotification': {
-                const { claimNotification } = await getRewardsData();
+                const { claimNotification } = getRewardsData();
 
                 const component = new ToggleButtons({
                     allDisabled: false,
@@ -415,7 +415,7 @@ export const execute: ClientCommand['execute'] = async (
                 break;
             }
             case 'milestones': {
-                const { milestones } = await getRewardsData();
+                const { milestones } = getRewardsData();
 
                 const component = new ToggleButtons({
                     allDisabled: false,
@@ -430,7 +430,7 @@ export const execute: ClientCommand['execute'] = async (
                 break;
             }
             case 'notificationInterval': {
-                const { notificationInterval } = await getRewardsData();
+                const { notificationInterval } = getRewardsData();
 
                 const menu = combiner(
                     (text as ModulesCommand['rewards']).menu.notificationInterval,
@@ -503,7 +503,7 @@ export const execute: ClientCommand['execute'] = async (
 
                 components.push(component);
 
-                await SQLite.updateUser<UserAPIData>({
+                SQLite.updateUser<UserAPIData>({
                     discordID: userAPIData.discordID,
                     table: Constants.tables.api,
                     data: { modules: userAPIData.modules },
@@ -545,7 +545,7 @@ export const execute: ClientCommand['execute'] = async (
                         .addComponents(component),
                 );
 
-                await SQLite.updateUser<DefenderModule>({
+                SQLite.updateUser<DefenderModule>({
                     discordID: interaction.user.id,
                     table: Constants.tables.defender,
                     data: { alerts: base },
@@ -573,7 +573,7 @@ export const execute: ClientCommand['execute'] = async (
                         .addComponents(component),
                 );
 
-                await SQLite.updateUser<DefenderModule>({
+                SQLite.updateUser<DefenderModule>({
                     discordID: interaction.user.id,
                     table: Constants.tables.defender,
                     data: { gameTypes: selectedValues },
@@ -601,7 +601,7 @@ export const execute: ClientCommand['execute'] = async (
                         .addComponents(component),
                 );
 
-                await SQLite.updateUser<DefenderModule>({
+                SQLite.updateUser<DefenderModule>({
                     discordID: interaction.user.id,
                     table: Constants.tables.defender,
                     data: { languages: selectedValues },
@@ -629,7 +629,7 @@ export const execute: ClientCommand['execute'] = async (
                         .addComponents(component),
                 );
 
-                await SQLite.updateUser<DefenderModule>({
+                SQLite.updateUser<DefenderModule>({
                     discordID: interaction.user.id,
                     table: Constants.tables.defender,
                     data: { versions: selectedValues },
@@ -657,7 +657,7 @@ export const execute: ClientCommand['execute'] = async (
                         .addComponents(component),
                 );
 
-                await SQLite.updateUser<RewardsModule>({
+                SQLite.updateUser<RewardsModule>({
                     discordID: interaction.user.id,
                     table: Constants.tables.rewards,
                     data: { alertTime: Number(time) },
@@ -666,7 +666,7 @@ export const execute: ClientCommand['execute'] = async (
             }
             case 'claimNotification1':
             case 'claimNotification0': {
-                const userRewardData = await getRewardsData();
+                const userRewardData = getRewardsData();
 
                 const flipped = userRewardData.claimNotification === false;
 
@@ -681,7 +681,7 @@ export const execute: ClientCommand['execute'] = async (
 
                 components.push(component);
 
-                await SQLite.updateUser<RewardsModule>({
+                SQLite.updateUser<RewardsModule>({
                     discordID: interaction.user.id,
                     table: Constants.tables.rewards,
                     data: { claimNotification: flipped },
@@ -690,7 +690,7 @@ export const execute: ClientCommand['execute'] = async (
             }
             case 'milestones1':
             case 'milestones0': {
-                const userRewardData = await getRewardsData();
+                const userRewardData = getRewardsData();
 
                 const flipped = userRewardData.milestones === false;
 
@@ -705,7 +705,7 @@ export const execute: ClientCommand['execute'] = async (
 
                 components.push(component);
 
-                await SQLite.updateUser<RewardsModule>({
+                SQLite.updateUser<RewardsModule>({
                     discordID: interaction.user.id,
                     table: Constants.tables.rewards,
                     data: { milestones: flipped },
@@ -732,7 +732,7 @@ export const execute: ClientCommand['execute'] = async (
                     new MessageActionRow().addComponents(component),
                 );
 
-                await SQLite.updateUser<RewardsModule>({
+                SQLite.updateUser<RewardsModule>({
                     discordID: interaction.user.id,
                     table: Constants.tables.rewards,
                     data: { notificationInterval: Number(time) },

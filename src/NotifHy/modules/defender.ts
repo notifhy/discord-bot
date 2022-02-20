@@ -42,7 +42,7 @@ export const execute: ClientModule['execute'] = async ({
         }
 
         const defenderModule =
-            await SQLite.getUser<DefenderModule>({
+            SQLite.getUser<DefenderModule>({
                 discordID: userAPIData.discordID,
                 table: Constants.tables.defender,
                 allowUndefined: false,
@@ -157,7 +157,7 @@ export const execute: ClientModule['execute'] = async ({
                 )
             )
         ) {
-            const language = {
+            const gameType = {
                 name: locale.gameType.name,
                 value: replace(locale.gameType.value, {
                     sGameType:
@@ -169,7 +169,7 @@ export const execute: ClientModule['execute'] = async ({
                 }),
             };
 
-            fields.push(language);
+            fields.push(gameType);
 
             color = Constants.colors.warning;
         }
@@ -214,7 +214,7 @@ export const execute: ClientModule['execute'] = async ({
                 const newModules =
                     arrayRemove(userAPIData.modules, 'defender');
 
-                await SQLite.updateUser<UserAPIData>({
+                SQLite.updateUser<UserAPIData>({
                     discordID: userAPIData.discordID,
                     table: Constants.tables.api,
                     data: {
@@ -231,7 +231,7 @@ export const execute: ClientModule['execute'] = async ({
                     }),
                 };
 
-                await SQLite.updateUser<UserData>({
+                SQLite.updateUser<UserData>({
                     discordID: userAPIData.discordID,
                     table: Constants.tables.users,
                     data: {

@@ -42,7 +42,7 @@ export const execute: ClientCommand['execute'] = async (
     interaction,
 ): Promise<void> => {
     const userData =
-        await SQLite.getUser<UserData>({
+        SQLite.getUser<UserData>({
             discordID: interaction.user.id,
             table: Constants.tables.users,
             columns: ['localeOverride'],
@@ -73,7 +73,7 @@ export const execute: ClientCommand['execute'] = async (
         return;
     }
 
-    await SQLite.updateUser<UserData>({
+    SQLite.updateUser<UserData>({
         discordID: interaction.user.id,
         table: Constants.tables.users,
         data: {

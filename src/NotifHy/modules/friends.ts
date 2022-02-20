@@ -42,7 +42,7 @@ export const execute: ClientModule['execute'] = async ({
         }
 
         const friendModule =
-            await SQLite.getUser<FriendsModule>({
+            SQLite.getUser<FriendsModule>({
                 discordID: userAPIData.discordID,
                 table: Constants.tables.friends,
                 allowUndefined: false,
@@ -70,7 +70,7 @@ export const execute: ClientModule['execute'] = async ({
             const newModules =
                 arrayRemove(userAPIData.modules, 'friends') as string[];
 
-            await SQLite.updateUser<UserAPIData>({
+            SQLite.updateUser<UserAPIData>({
                 discordID: userAPIData.discordID,
                 table: Constants.tables.api,
                 data: {
@@ -86,7 +86,7 @@ export const execute: ClientModule['execute'] = async ({
                 }),
             };
 
-            await SQLite.updateUser<UserData>({
+            SQLite.updateUser<UserData>({
                 discordID: userAPIData.discordID,
                 table: Constants.tables.users,
                 data: {

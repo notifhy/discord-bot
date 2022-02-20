@@ -66,7 +66,7 @@ export const execute: ClientCommand['execute'] = async (
     const id = interaction.options.getString('id', true);
 
     const userData =
-        await SQLite.getUser<UserData>({
+        SQLite.getUser<UserData>({
             discordID: id,
             table: Constants.tables.users,
             columns: ['systemMessages'],
@@ -148,7 +148,7 @@ export const execute: ClientCommand['execute'] = async (
         return;
     }
 
-    await SQLite.updateUser<UserData>({
+    SQLite.updateUser<UserData>({
         discordID: id,
         table: Constants.tables.users,
         data: {

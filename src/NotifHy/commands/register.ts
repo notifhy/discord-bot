@@ -18,7 +18,7 @@ import { SQLite } from '../../utility/SQLite';
 export const properties: ClientCommand['properties'] = {
     name: 'register',
     description: 'Register and setup your profile to begin using the modules that this bot offers.',
-    cooldown: 15_000,
+    cooldown: 5_000,
     ephemeral: true,
     noDM: false,
     ownerOnly: false,
@@ -44,13 +44,12 @@ export const execute: ClientCommand['execute'] = async (
     const text = RegionLocales.locale(locale).commands.register;
     const replace = RegionLocales.replace;
 
-    const userAPIData =
-        await SQLite.getUser<UserAPIData>({
-            discordID: interaction.user.id,
-            table: Constants.tables.api,
-            allowUndefined: true,
-            columns: ['discordID'],
-        });
+    const userAPIData = SQLite.getUser<UserAPIData>({
+         discordID: interaction.user.id,
+        table: Constants.tables.api,
+        allowUndefined: true,
+        columns: ['discordID'],
+    });
 
     if (userAPIData !== undefined) {
         const alreadyRegisteredEmbed = new BetterEmbed(interaction)
@@ -122,7 +121,7 @@ export const execute: ClientCommand['execute'] = async (
     } = (await response.json()) as SlothpixelPlayer;
 
     const uuids = (
-        await SQLite.getAllUsers<UserAPIData>({
+        SQLite.getAllUsers<UserAPIData>({
             table: Constants.tables.api,
             columns: ['uuid'],
         })
@@ -166,7 +165,7 @@ export const execute: ClientCommand['execute'] = async (
         return;
     }
 
-    await Promise.all([
+    SQLite.createTransaction(() => {
         SQLite.newUser<UserAPIData>({
             table: Constants.tables.api,
             data: {
@@ -187,28 +186,31 @@ export const execute: ClientCommand['execute'] = async (
                 totalDailyRewards: claimed_daily,
                 totalRewards: claimed,
             },
-        }),
+        });
+
         SQLite.newUser<DefenderModule>({
             table: Constants.tables.defender,
             data: {
                 discordID: interaction.user.id,
                 languages: language ? [language] : [],
-                versions: mc_version ? [mc_version] : [],
+                versions: mc_version?.match(/^1.\d+/m) || [],
             },
-        }),
+        });
+
         SQLite.newUser<FriendsModule>({
             table: Constants.tables.friends,
             data: {
                 discordID: interaction.user.id,
             },
-        }),
+        });
+
         SQLite.newUser<RewardsModule>({
             table: Constants.tables.rewards,
             data: {
                 discordID: interaction.user.id,
             },
-        }),
-    ]);
+        });
+    });
 
     const registeredEmbed = new BetterEmbed(interaction)
         .setColor(Constants.colors.normal)
@@ -223,5 +225,5 @@ export const execute: ClientCommand['execute'] = async (
 
     await interaction.editReply({ embeds: [registeredEmbed] });
 
-    await setActivity(interaction.client);
+    setActivity(interaction.client);
 };

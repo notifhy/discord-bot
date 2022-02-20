@@ -52,7 +52,7 @@ export const execute: ClientEvent['execute'] = async (
             });
 
             userData =
-                await SQLite.getUser<UserData>({
+                SQLite.getUser<UserData>({
                     discordID: interaction.user.id,
                     table: Constants.tables.users,
                     allowUndefined: true,
@@ -60,7 +60,7 @@ export const execute: ClientEvent['execute'] = async (
                 });
 
             userData ??=
-                await SQLite.newUser<UserData>({
+                SQLite.newUser<UserData>({
                     table: Constants.tables.users,
                     returnNew: true,
                     data: {
@@ -111,7 +111,7 @@ async function updateLocale(
         userData.localeOverride === false &&
         Object.keys(locales).includes(interaction.locale)
     ) {
-        await SQLite.updateUser<UserData>({
+        SQLite.updateUser<UserData>({
             discordID: interaction.user.id,
             table: Constants.tables.users,
             data: {
@@ -150,7 +150,7 @@ async function generalConstraints(
 
     if (requireRegistration === true) {
         const data =
-            await SQLite.getUser<UserAPIData>({
+            SQLite.getUser<UserAPIData>({
                 discordID: interaction.user.id,
                 table: Constants.tables.api,
                 allowUndefined: true,
@@ -236,7 +236,7 @@ async function checkSystemMessages(
                 );
             });
 
-        await SQLite.updateUser<UserData>({
+        SQLite.updateUser<UserData>({
             discordID: interaction.user.id,
             table: Constants.tables.users,
             data: { systemMessages: [] },

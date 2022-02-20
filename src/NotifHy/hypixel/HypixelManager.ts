@@ -55,7 +55,7 @@ export class HypixelManager {
         }
 
         const users = (
-            await SQLite.getAllUsers<UserAPIData>({
+            SQLite.getAllUsers<UserAPIData>({
                 table: Constants.tables.api,
                 columns: [
                     'discordID',

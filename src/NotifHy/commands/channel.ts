@@ -106,8 +106,9 @@ export const execute: ClientCommand['execute'] = async (
         return;
     }
 
-    const userHasPermission =
-        interaction.member!.permissions.has(Permissions.FLAGS.MANAGE_CHANNELS);
+    const userHasPermission = interaction.member!.permissions.has(
+        Permissions.FLAGS.MANAGE_CHANNELS,
+    );
 
     if (userHasPermission === false) {
         const missingPermission = new BetterEmbed(interaction)
@@ -139,7 +140,7 @@ export const execute: ClientCommand['execute'] = async (
     }
 
     const { channel: currentChannel } =
-        await SQLite.getUser<DefenderModule | FriendsModule>({
+        SQLite.getUser<DefenderModule | FriendsModule>({
             discordID: interaction.user.id,
             table: table,
             allowUndefined: false,
@@ -165,7 +166,7 @@ export const execute: ClientCommand['execute'] = async (
         return;
     }
 
-    await SQLite.updateUser<DefenderModule | FriendsModule>({
+    SQLite.updateUser<DefenderModule | FriendsModule>({
         discordID: interaction.user.id,
         table: table,
         data: {

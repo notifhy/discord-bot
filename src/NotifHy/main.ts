@@ -157,9 +157,9 @@ client.modules = new Collection();
 
     SQLite.key();
 
-    await SQLite.createTablesIfNotExists();
+    SQLite.createTablesIfNotExists();
 
-    const config = await SQLite.queryGet<Config>({
+    const config = SQLite.queryGet<Config>({
         query: 'SELECT * FROM config WHERE rowid = 1',
         allowUndefined: false,
     });
