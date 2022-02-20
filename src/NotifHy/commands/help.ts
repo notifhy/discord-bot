@@ -104,16 +104,8 @@ export const execute: ClientCommand['execute'] = async (
                     value: text.information.other.value,
                 },
                 {
-                    name: text.information.gitHub.name,
-                    value: text.information.gitHub.value,
-                },
-                {
                     name: text.information.legal.name,
                     value: text.information.legal.value,
-                },
-                {
-                    name: text.information.contact.name,
-                    value: text.information.contact.value,
                 },
             );
 

@@ -236,17 +236,9 @@
                     "name": "Other Information",
                     "value": "Learn more at https://attituding.github.io/NotifHy/ or the GitHub page below."
                 },
-                "gitHub": {
-                    "name": "GitHub",
-                    "value": "This application's source code is available at this [GitHub](https://github.com/Attituding/NotifHy \"https://github.com/Attituding/NotifHy\") page under the MIT license. See the license for more details."
-                },
                 "legal": {
                     "name": "Legal Stuff",
                     "value": "By using this service, you agree to our [Privacy Policy](https://attituding.github.io/NotifHy/privacy/ \"Privacy Policy\") and our [Terms of Service](https://attituding.github.io/NotifHy/tos/ \"Terms of Service\")."
-                },
-                "contact": {
-                    "name": "Contact",
-                    "value": "Contact Attituding at [attituding@outlook.com](mailto:attituding@outlook.com \"attituding@outlook.com\") or Attituding#6517 on Discord for assistance, bug reports, or suggestions."
                 }
             },
             "all": {

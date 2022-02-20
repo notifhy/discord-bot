@@ -184,9 +184,7 @@ export interface Help {
         modules: Field,
         setup: Field,
         other: Field,
-        gitHub: Field,
         legal: Field,
-        contact: Field,
     },
     all: {
         title: string,
