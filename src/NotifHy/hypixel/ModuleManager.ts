@@ -37,13 +37,12 @@ export class ModuleManager {
             status: CleanHypixelStatus | undefined,
         },
     ) {
-        const userAPIData =
-            SQLite.getUser<UserAPIData>({
-                discordID: discordID,
-                table: Constants.tables.api,
-                allowUndefined: false,
-                columns: ['*'],
-            });
+        const userAPIData = SQLite.getUser<UserAPIData>({
+            discordID: discordID,
+            table: Constants.tables.api,
+            allowUndefined: false,
+            columns: ['*'],
+        });
 
         const { history } = userAPIData;
         const now = Date.now();

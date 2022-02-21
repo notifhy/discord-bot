@@ -92,7 +92,7 @@ export const execute: ClientCommand['execute'] = async (
             .setTitle(text.invalid.title)
             .setDescription(text.invalid.description);
 
-        Log.command(interaction, 'Invalid user:', input);
+        Log.interaction(interaction, 'Invalid user:', input);
 
         await interaction.editReply({ embeds: [invalidEmbed] });
         return;
@@ -422,7 +422,7 @@ export const execute: ClientCommand['execute'] = async (
                 inputType: inputType,
             }));
 
-        Log.command(interaction, 'User not found', input);
+        Log.interaction(interaction, 'User not found', input);
 
         await interaction.editReply({ embeds: [notFoundEmbed] });
     }

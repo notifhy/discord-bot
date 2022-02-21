@@ -7,5 +7,5 @@ export const properties: ClientEvent['properties'] = {
 };
 
 export const execute: ClientEvent['execute'] = (info: string): void => {
-    Log.warn('discord.js Warning', info);
+    Log.log('discord.js Warning', info);
 };

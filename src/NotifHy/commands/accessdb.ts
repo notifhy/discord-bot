@@ -43,7 +43,7 @@ export const execute: ClientCommand['execute'] = async (
     interaction.client.config.enabled = false;
     interaction.client.config.devMode = true;
 
-    Log.command(interaction, 'API disabled and Developer Mode enabled');
+    Log.interaction(interaction, 'API disabled and Developer Mode enabled');
 
     await setTimeout(5_000);
 
@@ -67,7 +67,7 @@ export const execute: ClientCommand['execute'] = async (
     interaction.client.config.enabled = currentAPI;
     interaction.client.config.devMode = curentDevMode;
 
-    Log.command(interaction, 'API and Developer Mode restored');
+    Log.interaction(interaction, 'API and Developer Mode restored');
 
     const encrypted = new BetterEmbed(interaction)
         .setColor(Constants.colors.normal)

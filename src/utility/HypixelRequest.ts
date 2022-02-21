@@ -11,14 +11,14 @@ import { Request } from './Request';
 
 export class HypixelRequest {
     readonly config: {
-        maxRetries?: number,
-        abortThreshold?: number,
+        restRequestTimeout?: number,
+        retryLimit?: number,
     } | undefined;
 
     constructor(
         config?: {
-            maxRetries?: number,
-            abortThreshold?: number,
+            restRequestTimeout?: number,
+            retryLimit?: number,
         },
     ) {
         this.config = config;
@@ -27,8 +27,8 @@ export class HypixelRequest {
     async call(url: string): Promise<HypixelAPIOk> {
         const response = (
             await new Request({
-                maxRetries: this.config?.maxRetries,
-                abortThreshold: this.config?.abortThreshold,
+                restRequestTimeout: this.config?.restRequestTimeout,
+                retryLimit: this.config?.retryLimit,
             }).request(url, {
                 headers: { 'API-Key': hypixelAPIkey },
             })

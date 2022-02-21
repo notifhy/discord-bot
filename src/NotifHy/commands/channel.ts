@@ -99,7 +99,7 @@ export const execute: ClientCommand['execute'] = async (
             .setTitle(baseLocale.botMissingPermission.title)
             .setDescription(baseLocale.botMissingPermission.description);
 
-        Log.command(interaction, 'Channel not viewable');
+        Log.interaction(interaction, 'Channel not viewable');
 
         await interaction.editReply({ embeds: [missingPermission] });
 
@@ -116,7 +116,7 @@ export const execute: ClientCommand['execute'] = async (
             .setTitle(baseLocale.userMissingPermission.title)
             .setDescription(baseLocale.userMissingPermission.description);
 
-        Log.command(interaction, 'User missing permission');
+        Log.interaction(interaction, 'User missing permission');
 
         await interaction.editReply({ embeds: [missingPermission] });
 
@@ -159,7 +159,7 @@ export const execute: ClientCommand['execute'] = async (
                     : `${baseLocale.dms}`,
             }));
 
-        Log.command(interaction, 'Channel already set');
+        Log.interaction(interaction, 'Channel already set');
 
         await interaction.editReply({ embeds: [alreadySetEmbed] });
 
@@ -183,7 +183,7 @@ export const execute: ClientCommand['execute'] = async (
                 : 'not_a_value',
         }));
 
-    Log.command(interaction, 'Channel updated');
+    Log.interaction(interaction, 'Channel updated');
 
     await interaction.editReply({ embeds: [embed] });
 };

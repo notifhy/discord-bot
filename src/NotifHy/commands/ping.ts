@@ -57,7 +57,7 @@ export const execute: ClientCommand['execute'] = async (
             rtPing: roundTripDelay,
         }));
 
-    Log.command(interaction, `WS: ${interaction.client.ws.ping}ms | RT: ${roundTripDelay}ms`);
+    Log.interaction(interaction, `WS: ${interaction.client.ws.ping}ms | RT: ${roundTripDelay}ms`);
 
     await interaction.editReply({ embeds: [pingEmbed] });
 };

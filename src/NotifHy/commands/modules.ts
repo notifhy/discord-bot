@@ -467,7 +467,7 @@ export const execute: ClientCommand['execute'] = async (
             }),
         ];
 
-        Log.command(interaction, `Update customID: ${messageComponentInteraction.customId}`);
+        Log.interaction(interaction, `Update customID: ${messageComponentInteraction.customId}`);
 
         switch (messageComponentInteraction.customId) {
             case 'toggle1':

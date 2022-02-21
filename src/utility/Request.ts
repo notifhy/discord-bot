@@ -3,21 +3,25 @@ import fetch, {
     RequestInit,
     Response,
 } from 'node-fetch';
+import { GlobalConstants } from './Constants';
 import { Log } from './Log';
 import { setTimeout } from 'node:timers';
 
 export class Request {
-    readonly abortThreshold: number;
-    readonly maxTries: number;
+    readonly restRequestTimeout: number;
     private try: number;
+    readonly tryLimit: number;
 
     constructor(config?: {
-        maxRetries?: number,
-        abortThreshold?: number,
+        retryLimit?: number,
+        restRequestTimeout?: number,
     }) {
-        this.abortThreshold = config?.abortThreshold ?? 2500;
-        this.maxTries = (config?.maxRetries ?? 2) + 1;
+        this.restRequestTimeout = config?.restRequestTimeout ??
+            GlobalConstants.defaults.request.restRequestTimeout;
+
         this.try = 0;
+
+        this.tryLimit = (config?.retryLimit ?? 2) + 1;
     }
 
     async request(url: string, fetchOptions?: RequestInit): Promise<Response> {
@@ -26,7 +30,7 @@ export class Request {
         const controller = new AbortController();
         const abortTimeout = setTimeout(
             () => controller.abort(),
-            this.abortThreshold,
+            this.restRequestTimeout,
         ).unref();
 
         try {
@@ -38,25 +42,25 @@ export class Request {
 
             if (response.ok === true) {
                 if (this.try > 1) {
-                    Log.debug('[REQUEST] Successfully fetched after a retry');
+                    Log.request('Successfully fetched after a retry');
                 }
 
                 return response;
             }
 
             if (
-                this.try < this.maxTries &&
+                this.try < this.tryLimit &&
                 response.status >= 500 &&
                 response.status < 600
             ) {
-                Log.debug(`[REQUEST] Retrying due to a response between 500 and 600: ${response.status}`);
+                Log.request(`Retrying due to a response between 500 and 600: ${response.status}`);
                 return this.request(url, fetchOptions);
             }
 
             return response;
         } catch (error) {
-            if (this.try < this.maxTries) {
-                Log.debug('[REQUEST] Retrying due to an AbortError');
+            if (this.try < this.tryLimit) {
+                Log.request('Retrying due to an AbortError');
                 return this.request(url, fetchOptions);
             }
 

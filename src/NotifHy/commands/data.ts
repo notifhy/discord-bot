@@ -135,7 +135,7 @@ export const execute: ClientCommand['execute'] = async (
         );
 
         if (button === null) {
-            Log.command(interaction, 'Ran out of time');
+            Log.interaction(interaction, 'Ran out of time');
 
             await interaction.editReply({
                 components: disabledRows,
@@ -173,7 +173,7 @@ export const execute: ClientCommand['execute'] = async (
                 .setTitle(text.delete.deleted.title)
                 .setDescription(text.delete.deleted.description);
 
-            Log.command(interaction, 'Accepted data deletion');
+            Log.interaction(interaction, 'Accepted data deletion');
 
             await button.update({
                 embeds: [deleted],
@@ -187,7 +187,7 @@ export const execute: ClientCommand['execute'] = async (
                 .setTitle(text.delete.aborted.title)
                 .setDescription(text.delete.aborted.description);
 
-            Log.command(interaction, 'Aborted data deletion');
+            Log.interaction(interaction, 'Aborted data deletion');
 
             await button.update({
                 embeds: [aborted],

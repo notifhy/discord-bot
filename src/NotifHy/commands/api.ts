@@ -39,16 +39,16 @@ export const properties: ClientCommand['properties'] = {
                         required: true,
                         choices: [
                             {
-                                name: 'abortThreshold',
-                                value: 'abortThreshold',
-                            },
-                            {
                                 name: 'keyPercentage',
                                 value: 'keyPercentage',
                             },
                             {
-                                name: 'maxRetries',
-                                value: 'maxRetries',
+                                name: 'restRequestTimeout',
+                                value: 'restRequestTimeout',
+                            },
+                            {
+                                name: 'retryLimit',
+                                value: 'retryLimit',
                             },
                         ],
                     },
@@ -263,7 +263,7 @@ export const execute: ClientCommand['execute'] = async (
                 value: value,
             }));
 
-        Log.command(interaction, setEmbed.description);
+        Log.interaction(interaction, setEmbed.description);
 
         await interaction.editReply({
             embeds: [setEmbed],
@@ -287,7 +287,7 @@ export const execute: ClientCommand['execute'] = async (
                 value: value,
             }));
 
-        Log.command(interaction, setEmbed.description);
+        Log.interaction(interaction, setEmbed.description);
 
         await interaction.editReply({
             embeds: [setEmbed],
@@ -316,7 +316,7 @@ export const execute: ClientCommand['execute'] = async (
                 method: method,
             }));
 
-        Log.command(interaction, callEmbed.description);
+        Log.interaction(interaction, callEmbed.description);
 
         await stats();
         await interaction.followUp({

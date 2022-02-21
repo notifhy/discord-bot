@@ -102,7 +102,7 @@ export const execute: ClientCommand['execute'] = async (
 
         payload.embeds = [apiEmbed];
 
-        Log.command(interaction, apiEmbed.description);
+        Log.interaction(interaction, apiEmbed.description);
     }
 
     async function blockGuildCommand() {
@@ -131,7 +131,7 @@ export const execute: ClientCommand['execute'] = async (
                 },
             ];
 
-            Log.command(interaction, guildEmbed.description);
+            Log.interaction(interaction, guildEmbed.description);
         } else {
             config.blockedGuilds.splice(blockedGuildIndex, 1);
 
@@ -148,7 +148,7 @@ export const execute: ClientCommand['execute'] = async (
 
         interaction.client.config.blockedGuilds = config.blockedGuilds;
 
-        Log.command(interaction, guildEmbed.description);
+        Log.interaction(interaction, guildEmbed.description);
     }
 
     function blockUserCommand() {
@@ -180,7 +180,7 @@ export const execute: ClientCommand['execute'] = async (
 
         interaction.client.config.blockedUsers = config.blockedUsers;
 
-        Log.command(interaction, userEmbed.description);
+        Log.interaction(interaction, userEmbed.description);
     }
 
     function devModeCommand() {
@@ -198,7 +198,7 @@ export const execute: ClientCommand['execute'] = async (
 
         payload.embeds = [devModeEmbed];
 
-        Log.command(interaction, devModeEmbed.description);
+        Log.interaction(interaction, devModeEmbed.description);
     }
 
     const newRawConfig = SQLite.unJSONize({ ...config });

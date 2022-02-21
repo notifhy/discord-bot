@@ -85,7 +85,7 @@ export const execute: ClientCommand['execute'] = async (
             });
         }
 
-        Log.command(interaction, 'Output: ', output);
+        Log.interaction(interaction, 'Output: ', output);
 
         await interaction.editReply({ embeds: [evalEmbed] });
     } catch (error) {

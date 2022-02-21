@@ -149,7 +149,6 @@ export class HypixelManager {
         const intervalBetweenRequests = (60 / keyQueryLimit) * 1000;
         const total = intervalBetweenRequests * urls.length;
 
-        //Math.abs(total) ?
         return Math.max(total - (performance?.total ?? 0), 0);
     }
 

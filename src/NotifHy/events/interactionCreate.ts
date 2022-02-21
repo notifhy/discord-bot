@@ -44,7 +44,7 @@ export const execute: ClientEvent['execute'] = async (
                 return;
             }
 
-            Log.command(interaction, slashCommandResolver(interaction));
+            Log.interaction(interaction, slashCommandResolver(interaction));
 
             await interaction.deferReply({
                 ephemeral: command.properties.ephemeral &&
@@ -229,7 +229,7 @@ async function checkSystemMessages(
 
         promises.filter(promise => promise.status === 'rejected')
             .forEach(rejected => {
-                Log.command(
+                Log.interaction(
                     interaction,
                     'Error while sending system notifications',
                     (rejected as PromiseRejectedResult)?.reason,

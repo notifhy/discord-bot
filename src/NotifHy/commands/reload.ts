@@ -104,7 +104,7 @@ export const execute: ClientCommand['execute'] = async (
                 timeTaken: Date.now() - now,
             }));
 
-        Log.command(interaction, `All imports have been reloaded after ${
+        Log.interaction(interaction, `All imports have been reloaded after ${
             Date.now() - now
         } milliseconds.`);
 
@@ -154,7 +154,7 @@ export const execute: ClientCommand['execute'] = async (
                 timeTaken: Date.now() - now,
             }));
 
-        Log.command(interaction, `${typeName}.${item} was successfully reloaded after ${
+        Log.interaction(interaction, `${typeName}.${item} was successfully reloaded after ${
             Date.now() - now
         } milliseconds.`);
 

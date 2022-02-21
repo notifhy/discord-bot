@@ -133,7 +133,7 @@ export const execute: ClientCommand['execute'] = async (
             ) ?? text.none,
         );
 
-    Log.command(interaction, `Scope: ${scope} | Type: ${type} | Guild ID: ${guildID}`);
+    Log.interaction(interaction, `Scope: ${scope} | Type: ${type} | Guild ID: ${guildID}`);
 
     await interaction.editReply({ embeds: [successEmbed] });
 };

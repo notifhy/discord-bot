@@ -8,5 +8,5 @@ export const properties: ClientEvent['properties'] = {
 
 export const execute: ClientEvent['execute'] = (info: string): void => {
     return;
-    Log.debug(info);
+    Log.log(info);
 };

@@ -6,8 +6,8 @@ import type {
 } from '../@types/hypixel';
 import type { UserAPIData } from '../@types/database';
 import { Constants } from '../utility/Constants';
+import { GlobalConstants } from '../../utility/Constants';
 import { HypixelRequest } from '../../utility/HypixelRequest';
-//import { Log } from '../../util/Log';
 
 export type Performance = {
     start: number;
@@ -19,9 +19,9 @@ export type Performance = {
 }
 
 export class RequestManager {
-    abortThreshold: number;
+    restRequestTimeout: number;
     keyPercentage: number;
-    maxRetries: number;
+    retryLimit: number;
     uses: number;
 
     readonly baseURL: string;
@@ -34,9 +34,11 @@ export class RequestManager {
     hypixelRequest: HypixelRequest;
 
     constructor() {
-        this.abortThreshold = 5000;
+        const { request } = GlobalConstants.defaults;
+
         this.keyPercentage = 0.9;
-        this.maxRetries = 2;
+        this.restRequestTimeout = request.restRequestTimeout;
+        this.retryLimit = request.retryLimit;
         this.uses = 0;
 
         this.baseURL = `${Constants.urls.hypixel}%{type}%?uuid=%{uuid}%`;
@@ -50,8 +52,6 @@ export class RequestManager {
     }
 
     async request(user: UserAPIData, urls: string[]) {
-        //Log.debug(user.uuid);
-
         const [player, status] =
             await Promise.all(
                 urls.map(url => this.hypixelRequest.call(url)),

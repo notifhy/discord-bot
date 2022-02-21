@@ -139,7 +139,7 @@ export const execute: ClientCommand['execute'] = async (
     );
 
     if (button === null) {
-        Log.command(interaction, 'Ran out of time');
+        Log.interaction(interaction, 'Ran out of time');
 
         await interaction.editReply({
             components: disabledRows,
@@ -166,7 +166,7 @@ export const execute: ClientCommand['execute'] = async (
         .setTitle(text.success.title)
         .setDescription(text.success.description);
 
-    Log.command(interaction, name);
+    Log.interaction(interaction, name);
 
     await button.update({
         embeds: [successEmbed],

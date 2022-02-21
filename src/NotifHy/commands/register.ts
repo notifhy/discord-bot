@@ -57,7 +57,7 @@ export const execute: ClientCommand['execute'] = async (
             .setTitle(text.alreadyRegistered.title)
             .setDescription(text.alreadyRegistered.description);
 
-        Log.command(interaction, 'Already registered');
+        Log.interaction(interaction, 'Already registered');
 
         await interaction.editReply({ embeds: [alreadyRegisteredEmbed] });
         return;
@@ -78,7 +78,7 @@ export const execute: ClientCommand['execute'] = async (
             .setTitle(text.invalid.title)
             .setDescription(text.invalid.description);
 
-        Log.command(interaction, 'Invalid input', input);
+        Log.interaction(interaction, 'Invalid input', input);
 
         await interaction.editReply({ embeds: [invalidEmbed] });
         return;
@@ -95,7 +95,7 @@ export const execute: ClientCommand['execute'] = async (
                 inputType: inputType,
             }));
 
-        Log.command(interaction, 404);
+        Log.interaction(interaction, 404);
 
         await interaction.editReply({ embeds: [notFoundEmbed] });
         return;
@@ -133,7 +133,7 @@ export const execute: ClientCommand['execute'] = async (
             .setTitle(text.alreadyUsed.title)
             .setDescription(text.alreadyUsed.description);
 
-        Log.command(interaction, 'UUID already used');
+        Log.interaction(interaction, 'UUID already used');
 
         await interaction.editReply({ embeds: [alreadyUsedEmbed] });
         return;
@@ -146,7 +146,7 @@ export const execute: ClientCommand['execute'] = async (
             .setDescription(text.unlinked.description)
             .setImage(Constants.urls.linkDiscord);
 
-        Log.command(interaction, 'Not linked');
+        Log.interaction(interaction, 'Not linked');
 
         await interaction.editReply({ embeds: [unlinkedEmbed] });
         return;
@@ -159,7 +159,7 @@ export const execute: ClientCommand['execute'] = async (
             .setDescription(text.mismatched.description)
             .setImage(Constants.urls.linkDiscord);
 
-        Log.command(interaction, 'Mismatch');
+        Log.interaction(interaction, 'Mismatch');
 
         await interaction.editReply({ embeds: [mismatchedEmbed] });
         return;
@@ -221,7 +221,7 @@ export const execute: ClientCommand['execute'] = async (
             value: text.field.value,
         });
 
-    Log.command(interaction, 'Success');
+    Log.interaction(interaction, 'Success');
 
     await interaction.editReply({ embeds: [registeredEmbed] });
 

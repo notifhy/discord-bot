@@ -19,6 +19,7 @@ export const execute: ClientModule['execute'] = async ({
     baseLocale,
     differences: { newData },
     userAPIData,
+    userData,
 }): Promise<void> => {
     try {
         const rewardsModule =
@@ -99,7 +100,7 @@ export const execute: ClientModule['execute'] = async ({
                 },
             });
 
-            Log.debug('[REWARDS]', userAPIData.discordID, 'Delivered Reminder');
+            Log.module(properties.name, userData, 'Delivered reminder');
         }
 
         if (typeof newData.rewardScore === 'undefined') {
@@ -132,7 +133,7 @@ export const execute: ClientModule['execute'] = async ({
                     embeds: [milestoneNotification],
                 });
 
-                Log.debug('[REWARDS]', userAPIData.discordID, 'Delivered Milestone');
+                Log.module(properties.name, userData, 'Delivered milestone');
             } else if (rewardsModule.claimNotification === true) {
                 const claimedNotification = new BetterEmbed({
                     text: locale.claimedNotification.footer,
@@ -152,7 +153,7 @@ export const execute: ClientModule['execute'] = async ({
                     embeds: [claimedNotification],
                 });
 
-                Log.debug('[REWARDS]', userAPIData.discordID, 'Delivered Claimed Notification');
+                Log.module(properties.name, userData, 'Delivered claimed notification');
             }
         }
     } catch (error) {

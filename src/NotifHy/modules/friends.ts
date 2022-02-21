@@ -65,10 +65,12 @@ export const execute: ClientModule['execute'] = async ({
             .missing(Constants.modules.friends.permissions);
 
         if (missingPermissions.length !== 0) {
-            Log.warn('[FRIENDS]', userAPIData.discordID, `Missing ${missingPermissions.join(', ')}`);
+            Log.module(properties.name, userData, `Missing ${missingPermissions.join(', ')}`);
 
-            const newModules =
-                arrayRemove(userAPIData.modules, 'friends') as string[];
+            const newModules = arrayRemove(
+                userAPIData.modules,
+                'friends',
+            );
 
             SQLite.updateUser<UserAPIData>({
                 discordID: userAPIData.discordID,
@@ -160,7 +162,7 @@ export const execute: ClientModule['execute'] = async ({
                 },
             });
 
-            Log.debug('[FRIENDS]', userAPIData.discordID, 'Delivered Notifications');
+            Log.module(properties.name, userData, 'Delivered notifications');
         }
     } catch (error) {
         throw new ModuleError({

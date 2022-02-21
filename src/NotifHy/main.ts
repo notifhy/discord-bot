@@ -25,13 +25,13 @@ process.on('exit', code => {
 });
 
 process.on('unhandledRejection', async error => {
-    Log.error('unhandledRejection', error);
+    Log.error('unhandledRejection');
     await ErrorHandler.init(error);
     process.exit(1);
 });
 
 process.on('uncaughtException', async error => {
-    Log.error('uncaughtException', error);
+    Log.error('uncaughtException');
     await ErrorHandler.init(error);
     process.exit(1);
 });

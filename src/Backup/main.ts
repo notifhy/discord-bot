@@ -71,7 +71,7 @@ const {
                 },
             });
 
-            Log.debug('Uploaded backup');
+            Log.log('Uploaded backup');
 
             await setTimeout(Constants.interval);
         } catch (error) {
@@ -85,7 +85,7 @@ const {
                     code === 408
                 ) {
                     addError();
-                    Log.warn(`Added timeout, pausing for ${getPauseFor()}ms`);
+                    Log.log(`Added timeout, pausing for ${getPauseFor()}ms`);
                     continue;
                 }
             }

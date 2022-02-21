@@ -66,7 +66,7 @@ export const execute: ClientCommand['execute'] = async (
             .setTitle(text.alreadyRemoved.title)
             .setDescription(text.alreadyRemoved.description);
 
-        Log.command(interaction, 'Locale already set to auto');
+        Log.interaction(interaction, 'Locale already set to auto');
 
         await interaction.editReply({ embeds: [alreadyRemovedEmbed] });
 
@@ -90,7 +90,7 @@ export const execute: ClientCommand['execute'] = async (
             .setTitle(text.reset.title)
             .setDescription(text.reset.description);
 
-        Log.command(interaction, 'Locale reset');
+        Log.interaction(interaction, 'Locale reset');
     } else {
         languageEmbed
             .setTitle(text.set.title)
@@ -98,7 +98,7 @@ export const execute: ClientCommand['execute'] = async (
                 locale: newLocale,
             }));
 
-        Log.command(interaction, `Locale set to ${newLocale}`);
+        Log.interaction(interaction, `Locale set to ${newLocale}`);
     }
 
     await interaction.editReply({ embeds: [languageEmbed] });
