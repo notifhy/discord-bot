@@ -8,7 +8,6 @@ import {
 } from 'discord.js';
 import { Constants } from '../NotifHy/utility/Constants';
 import { GlobalConstants } from './Constants';
-import { Log } from './Log';
 
 export function arrayRemove<Type extends unknown[]>(
     array: Type,
@@ -224,6 +223,16 @@ export function formattedUnix({
         }`;
 }
 
+export function generateStackTrace() {
+    const stack = new Error().stack ?? '';
+    const cleanStack = stack
+        .split('\n')
+        .splice(2)
+        .join('\n');
+
+    return cleanStack;
+}
+
 type AcceptedValues = string | boolean | number;
 
 type GenericObject = {
@@ -282,13 +291,9 @@ export async function sendWebHook(
         await new WebhookClient({ id: webhook.id, token: webhook.token })
             .send(payload);
     } catch (err) {
-        Log.error(`An error has occurred while sending an WebHook`, err);
-
-        if (suppressError === true) {
-            return;
+        if (suppressError === false) {
+            throw err;
         }
-
-        throw err;
     }
 }
 
