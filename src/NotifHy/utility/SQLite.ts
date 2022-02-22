@@ -10,7 +10,7 @@ import Database from 'better-sqlite3-multiple-ciphers';
 /* eslint-disable consistent-return */
 /* eslint-disable no-unused-vars */
 
-let db = new Database(`${__dirname}/../../database.db`);
+let db = new Database(`${__dirname}/../../../database.db`);
 
 type JSONize<Type> = {
     [Property in keyof Type]:
@@ -52,7 +52,7 @@ type UpdateUserType<Type, B> = {
 
 export class SQLite {
     static open() {
-        db = new Database(`${__dirname}/../../database.db`);
+        db = new Database(`${__dirname}/../../../database.db`);
     }
 
     //Calling this even after the database is closed doesn't break anything
