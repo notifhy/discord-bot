@@ -8,7 +8,7 @@ import {
     TextBasedChannel,
 } from 'discord.js';
 import { Constants } from './Constants';
-import { SQLite } from '../../utility/SQLite';
+import { SQLite } from './SQLite';
 
 export async function awaitComponent(
     channel: TextBasedChannel,

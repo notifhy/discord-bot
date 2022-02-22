@@ -18,7 +18,7 @@ import {
 } from '../../utility/utility';
 import { Constants } from '../utility/Constants';
 import { RegionLocales } from '../locales/RegionLocales';
-import { SQLite } from '../../utility/SQLite';
+import { SQLite } from '../utility/SQLite';
 
 export class ModuleManager {
     client: Client;

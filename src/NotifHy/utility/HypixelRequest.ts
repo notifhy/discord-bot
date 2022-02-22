@@ -3,11 +3,11 @@ import type {
     HypixelAPIError,
     HypixelAPINotOK,
     HypixelAPIOk,
-} from '../NotifHy/@types/hypixel';
-import { HTTPError } from '../NotifHy/errors/HTTPError';
-import { hypixelAPIkey } from '../../config.json';
-import { RateLimitError } from '../NotifHy/errors/RateLimitError';
-import { Request } from './Request';
+} from '../@types/hypixel';
+import { HTTPError } from '../errors/HTTPError';
+import { hypixelAPIkey } from '../../../config.json';
+import { RateLimitError } from '../errors/RateLimitError';
+import { Request } from '../../utility/Request';
 
 export class HypixelRequest {
     readonly config: {

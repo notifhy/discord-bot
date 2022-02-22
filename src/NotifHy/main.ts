@@ -15,7 +15,7 @@ import { discordAPIkey } from '../../config.json';
 import { ErrorHandler } from '../utility/errors/ErrorHandler';
 import { HypixelManager } from './hypixel/HypixelManager';
 import { Log } from '../utility/Log';
-import { SQLite } from '../utility/SQLite';
+import { SQLite } from './utility/SQLite';
 import fs from 'node:fs/promises';
 import process from 'node:process';
 

@@ -31,7 +31,7 @@ import {
 import { GlobalConstants } from '../../utility/Constants';
 import { Log } from '../../utility/Log';
 import { RegionLocales } from '../locales/RegionLocales';
-import { SQLite } from '../../utility/SQLite';
+import { SQLite } from '../utility/SQLite';
 
 export const properties: ClientCommand['properties'] = {
     name: 'data',

@@ -23,7 +23,7 @@ import {
 import { Log } from '../../utility/Log';
 import { ownerID } from '../../../config.json';
 import { slashCommandResolver } from '../utility/utility';
-import { SQLite } from '../../utility/SQLite';
+import { SQLite } from '../utility/SQLite';
 
 export const properties: ClientEvent['properties'] = {
     name: 'interactionCreate',

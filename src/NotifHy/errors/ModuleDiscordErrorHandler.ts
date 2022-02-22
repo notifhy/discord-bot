@@ -23,7 +23,7 @@ import {
 } from '../../../config.json';
 import { ModuleError } from './ModuleError';
 import { RegionLocales } from '../locales/RegionLocales';
-import { SQLite } from '../../utility/SQLite';
+import { SQLite } from '../utility/SQLite';
 
 export class ModuleDiscordErrorHandler extends BaseErrorHandler<
     DiscordAPIError | (Omit<ModuleError, 'raw'> & { raw: DiscordAPIError })

@@ -1,9 +1,9 @@
 import {
     BaseUserData,
     Table,
-} from '../NotifHy/@types/database';
-import { Constants } from '../NotifHy/utility/Constants';
-import { databaseKey } from '../../config.json';
+} from '../@types/database';
+import { Constants } from './Constants';
+import { databaseKey } from '../../../config.json';
 import Database from 'better-sqlite3-multiple-ciphers';
 
 /* eslint-disable @typescript-eslint/no-unused-vars */

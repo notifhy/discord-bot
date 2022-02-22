@@ -9,7 +9,7 @@ import { Constants } from '../utility/Constants';
 import { GlobalConstants } from '../../utility/Constants';
 import { keyLimit } from '../../../config.json';
 import { RegionLocales } from '../locales/RegionLocales';
-import { SQLite } from '../../utility/SQLite';
+import { SQLite } from '../utility/SQLite';
 import process from 'node:process';
 
 export const properties: ClientCommand['properties'] = {

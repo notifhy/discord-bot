@@ -18,7 +18,7 @@ import {
 } from './RequestManager';
 import { RequestErrorHandler } from '../errors/RequestErrorHandler';
 import { setTimeout } from 'node:timers/promises';
-import { SQLite } from '../../utility/SQLite';
+import { SQLite } from '../utility/SQLite';
 
 /* eslint-disable no-await-in-loop */
 

@@ -8,7 +8,7 @@ import {
 import { Constants } from '../utility/Constants';
 import { Log } from '../../utility/Log';
 import { setTimeout } from 'timers/promises';
-import { SQLite } from '../../utility/SQLite';
+import { SQLite } from '../utility/SQLite';
 
 export const properties: ClientCommand['properties'] = {
     name: 'test',

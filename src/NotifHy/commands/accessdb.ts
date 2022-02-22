@@ -4,7 +4,7 @@ import { BetterEmbed } from '../../utility/utility';
 import { Log } from '../../utility/Log';
 import { RegionLocales } from '../locales/RegionLocales';
 import { setTimeout } from 'node:timers/promises';
-import { SQLite } from '../../utility/SQLite';
+import { SQLite } from '../utility/SQLite';
 
 export const properties: ClientCommand['properties'] = {
     name: 'accessdb',

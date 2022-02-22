@@ -13,7 +13,7 @@ import { Log } from '../../utility/Log';
 import { RegionLocales } from '../locales/RegionLocales';
 import { Request } from '../../utility/Request';
 import { setActivity } from '../utility/utility';
-import { SQLite } from '../../utility/SQLite';
+import { SQLite } from '../utility/SQLite';
 
 export const properties: ClientCommand['properties'] = {
     name: 'register',
