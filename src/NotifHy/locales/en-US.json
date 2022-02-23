@@ -36,7 +36,7 @@
                 },
                 "apiKey": {
                     "name": "API Key",
-                    "value": "Dedicated Queries: {{ queries }} or {{ percentage }}\n%Instance Queries: {{ uses }}"
+                    "value": "Dedicated Queries: {{ queries }} or {{ percentage }}\nInstance Queries: {{ uses }}"
                 }
             },
             "instance": {
