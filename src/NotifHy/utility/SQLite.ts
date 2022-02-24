@@ -34,7 +34,7 @@ type GetUserType<T, B> = {
     discordID: string,
     table: Table,
     allowUndefined?: B,
-    columns: (keyof T | '*')[],
+    columns: (keyof T)[] | ['*'],
 }
 
 type NewUserType<Type, B> = {
@@ -169,7 +169,7 @@ export class SQLite {
         discordID: string,
         table: Table,
         allowUndefined?: boolean,
-        columns: (keyof Type | '*')[];
+        columns: (keyof Type)[] | ['*'];
     }): Type | undefined {
         const query = `SELECT ${config.columns.join(', ')
         } FROM ${config.table} WHERE discordID = '${config.discordID}'`;
@@ -185,7 +185,7 @@ export class SQLite {
         columns,
     }: {
         table: Table,
-        columns: (keyof Type | '*')[],
+        columns: (keyof Type)[] | ['*'],
     }): Type[] {
         const query = `SELECT ${columns.join(', ')} FROM ${table}`;
         return this.queryGetAll<Type>(query) as Type[];
