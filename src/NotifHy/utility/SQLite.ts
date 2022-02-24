@@ -14,15 +14,15 @@ let db = new Database(`${__dirname}/../../../database.db`);
 
 type JSONize<Type> = {
     [Property in keyof Type]:
-    Type[Property] extends Record<string, unknown>
-    ? string
-    : Type[Property] extends Array<unknown>
-    ? string
-    : Type[Property] extends boolean
-    ? string
-    : Type[Property] extends Record<string, unknown>
-    ? string
-    : Property;
+        Type[Property] extends Record<string, unknown>
+            ? string
+            : Type[Property] extends Array<unknown>
+            ? string
+            : Type[Property] extends boolean
+            ? string
+            : Type[Property] extends Record<string, unknown>
+            ? string
+            : Property;
 }
 
 type GetType<B> = {
@@ -159,12 +159,12 @@ export class SQLite {
         db.prepare(query).run(data);
     }
 
-    static getUser<Type>(
-        config: GetUserType<Type, false>): Type
-    static getUser<Type>(
-        config: GetUserType<Type, true>): Type | undefined
-    static getUser<Type>(
-        config: GetUserType<Type, boolean>): Type | undefined
+    static getUser<Type>(config:
+        GetUserType<Type, false>): Type
+    static getUser<Type>(config:
+        GetUserType<Type, true>): Type | undefined
+    static getUser<Type>(config:
+        GetUserType<Type, boolean>): Type | undefined
     static getUser<Type>(config: {
         discordID: string,
         table: Table,
@@ -172,7 +172,7 @@ export class SQLite {
         columns: (keyof Type | '*')[];
     }): Type | undefined {
         const query = `SELECT ${config.columns.join(', ')
-            } FROM ${config.table} WHERE discordID = '${config.discordID}'`;
+        } FROM ${config.table} WHERE discordID = '${config.discordID}'`;
 
         return this.queryGet<Type>({
             query: query,
@@ -191,12 +191,12 @@ export class SQLite {
         return this.queryGetAll<Type>(query) as Type[];
     }
 
-    static newUser<Type extends Omit<BaseUserData, never>>(
-        config: NewUserType<Type, false>): undefined;
-    static newUser<Type extends Omit<BaseUserData, never>>(
-        config: NewUserType<Type, true>): Type;
-    static newUser<Type extends Omit<BaseUserData, never>>(
-        config: NewUserType<Type, boolean>): Type | undefined;
+    static newUser<Type extends Omit<BaseUserData, never>>(config:
+        NewUserType<Type, false>): undefined;
+    static newUser<Type extends Omit<BaseUserData, never>>(config:
+        NewUserType<Type, true>): Type;
+    static newUser<Type extends Omit<BaseUserData, never>>(config:
+        NewUserType<Type, boolean>): Type | undefined;
     static newUser<Type extends Omit<BaseUserData, never>>(config: {
         table: Table,
         returnNew?: boolean,
@@ -239,12 +239,12 @@ export class SQLite {
         });
     }
 
-    static updateUser<Type extends Omit<BaseUserData, never>>(
-        config: UpdateUserType<Type, false>): undefined
-    static updateUser<Type extends Omit<BaseUserData, never>>(
-        config: UpdateUserType<Type, true>): Type
-    static updateUser<Type extends Omit<BaseUserData, never>>(
-        config: UpdateUserType<Type, boolean>): Type | undefined
+    static updateUser<Type extends Omit<BaseUserData, never>>(config:
+        UpdateUserType<Type, false>): undefined
+    static updateUser<Type extends Omit<BaseUserData, never>>(config:
+        UpdateUserType<Type, true>): Type
+    static updateUser<Type extends Omit<BaseUserData, never>>(config:
+        UpdateUserType<Type, boolean>): Type | undefined
     static updateUser<Type extends Omit<BaseUserData, never>>(config: {
         discordID: string,
         table: Table,
