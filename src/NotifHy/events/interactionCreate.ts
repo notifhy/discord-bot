@@ -66,8 +66,8 @@ export const execute: ClientEvent['execute'] = async (
                 },
             });
 
-            await updateLocale(interaction, userData);
-            await generalConstraints(interaction, command);
+            updateLocale(interaction, userData);
+            generalConstraints(interaction, command);
             cooldownConstraint(interaction, command);
 
             await command.execute(
@@ -100,7 +100,7 @@ export const execute: ClientEvent['execute'] = async (
     }
 };
 
-async function updateLocale(
+function updateLocale(
     interaction: CommandInteraction,
     userData: UserData,
 ) {
@@ -121,7 +121,7 @@ async function updateLocale(
     }
 }
 
-async function generalConstraints(
+function generalConstraints(
     interaction: CommandInteraction,
     command: ClientCommand,
 ) {
