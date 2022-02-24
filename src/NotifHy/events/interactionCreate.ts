@@ -51,22 +51,20 @@ export const execute: ClientEvent['execute'] = async (
                     interaction.inGuild(),
             });
 
-            userData =
-                SQLite.getUser<UserData>({
-                    discordID: interaction.user.id,
-                    table: Constants.tables.users,
-                    allowUndefined: true,
-                    columns: ['*'],
-                });
+            userData = SQLite.getUser<UserData>({
+                discordID: interaction.user.id,
+                table: Constants.tables.users,
+                allowUndefined: true,
+                columns: ['*'],
+            });
 
-            userData ??=
-                SQLite.newUser<UserData>({
-                    table: Constants.tables.users,
-                    returnNew: true,
-                    data: {
-                        discordID: interaction.user.id,
-                    },
-                });
+            userData ??= SQLite.newUser<UserData>({
+                table: Constants.tables.users,
+                returnNew: true,
+                data: {
+                    discordID: interaction.user.id,
+                },
+            });
 
             await updateLocale(interaction, userData);
             await generalConstraints(interaction, command);
@@ -149,13 +147,12 @@ async function generalConstraints(
     }
 
     if (requireRegistration === true) {
-        const data =
-            SQLite.getUser<UserAPIData>({
-                discordID: interaction.user.id,
-                table: Constants.tables.api,
-                allowUndefined: true,
-                columns: ['discordID'],
-            });
+        const data = SQLite.getUser<UserAPIData>({
+            discordID: interaction.user.id,
+            table: Constants.tables.api,
+            allowUndefined: true,
+            columns: ['discordID'],
+        });
 
         if (typeof data === 'undefined') {
             throw new ConstraintError('register');

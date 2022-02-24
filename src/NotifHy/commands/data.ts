@@ -36,7 +36,7 @@ import { SQLite } from '../utility/SQLite';
 export const properties: ClientCommand['properties'] = {
     name: 'data',
     description: 'View or delete your data stored by this bot.',
-    cooldown: 30_000,
+    cooldown: 15_000,
     ephemeral: true,
     noDM: false,
     ownerOnly: false,
@@ -283,11 +283,11 @@ export const execute: ClientCommand['execute'] = async (
             .setCustomId('fastForward')
             .setEmoji(Constants.emoji.fastForward);
 
-        rightButton.disabled =
-            userAPIData.history.length <= Constants.defaults.menuFastIncrements;
+        rightButton.disabled = userAPIData.history.length <=
+            Constants.defaults.menuFastIncrements;
 
-        fastRightButton.disabled =
-            userAPIData.history.length <= Constants.defaults.menuIncrements;
+        fastRightButton.disabled = userAPIData.history.length <=
+            Constants.defaults.menuIncrements;
 
         const keys = text.history.keys;
         const epoch = /^\d{13,}$/gm;
@@ -303,9 +303,9 @@ export const execute: ClientCommand['execute'] = async (
             const fields = shownData.map(({ date, ...event }) => ({
                 name: `${timestamp(date, 'D')} ${timestamp(date, 'T')}`,
                 value: Object.entries(event)
-                    .map(
-                        ([key, value]) =>
-                            `${keys[key as keyof typeof keys]} ${String(value).match(epoch)
+                    .map(([key, value]) =>
+                        `${keys[key as keyof typeof keys]} ${
+                            String(value).match(epoch)
                                 ? timestamp(value, 'T')
                                 : (
                                     key === 'gameType'
@@ -313,7 +313,8 @@ export const execute: ClientCommand['execute'] = async (
                                         : key === 'gameMode'
                                         ? cleanGameMode(value)
                                         : capitolToNormal(value)
-                                ) ?? text.history.null}`,
+                                ) ?? text.history.null
+                        }`,
                     )
                     .join('\n'),
             }));
@@ -375,19 +376,19 @@ export const execute: ClientCommand['execute'] = async (
                     //No default
                 }
 
-                fastLeftButton.disabled =
-                    currentIndex - Constants.defaults.menuFastIncrements < 0;
+                fastLeftButton.disabled = currentIndex -
+                    Constants.defaults.menuFastIncrements < 0;
 
-                leftButton.disabled =
-                    currentIndex - Constants.defaults.menuIncrements < 0;
+                leftButton.disabled = currentIndex -
+                    Constants.defaults.menuIncrements < 0;
 
-                rightButton.disabled =
-                    currentIndex + Constants.defaults.menuIncrements >=
-                    userAPIData.history.length;
+                rightButton.disabled = currentIndex +
+                    Constants.defaults.menuIncrements >=
+                        userAPIData.history.length;
 
-                fastRightButton.disabled =
-                    currentIndex + Constants.defaults.menuFastIncrements >=
-                    userAPIData.history.length;
+                fastRightButton.disabled = currentIndex +
+                    Constants.defaults.menuFastIncrements >=
+                        userAPIData.history.length;
 
                 buttons.setComponents(
                     fastLeftButton,

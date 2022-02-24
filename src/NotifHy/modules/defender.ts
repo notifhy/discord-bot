@@ -41,19 +41,18 @@ export const execute: ClientModule['execute'] = async ({
             return;
         }
 
-        const defenderModule =
-            SQLite.getUser<DefenderModule>({
-                discordID: userAPIData.discordID,
-                table: Constants.tables.defender,
-                allowUndefined: false,
-                columns: [
-                    'alerts',
-                    'channel',
-                    'gameTypes',
-                    'languages',
-                    'versions',
-                ],
-            });
+        const defenderModule = SQLite.getUser<DefenderModule>({
+            discordID: userAPIData.discordID,
+            table: Constants.tables.defender,
+            allowUndefined: false,
+             columns: [
+                'alerts',
+                'channel',
+                'gameTypes',
+                'languages',
+                'versions',
+            ],
+        });
 
         const locale = baseLocale.defender;
         const { replace } = RegionLocales;
