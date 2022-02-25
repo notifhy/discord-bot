@@ -49,23 +49,25 @@ export class BaseCommandErrorHandler<E> extends BaseErrorHandler<E> {
                 },
                 {
                     name: 'Guild',
-                    value: `Guild ID: ${guild?.id}
-                    Guild Name: ${guild?.name}
-                    Owner ID: ${guild?.ownerId ?? 'None'}
-                    Guild Member Count: ${guild?.memberCount}
-                    Permissions: ${guild?.me?.permissions.bitfield}`,
+                    value: `Guild ID: ${guild?.id ?? 'N/A'}
+                    Guild Name: ${guild?.name ?? 'N/A'}
+                    Owner ID: ${guild?.ownerId ?? 'N/A'}
+                    Guild Member Count: ${guild?.memberCount ?? 'N/A'}
+                    Permissions: ${guild?.me?.permissions.bitfield ?? 'N/A'}`,
                 },
                 {
                     name: 'Channel',
-                    value: `Channel ID: ${channel?.id}
-                    Channel Type: ${channel?.type}
-                    Name: ${channel instanceof TextChannel
-                        ? channel.name
-                        : 'N/A'
+                    value: `Channel ID: ${channel?.id ?? 'N/A'}
+                    Channel Type: ${channel?.type ?? 'N/A'}
+                    Name: ${
+                        channel instanceof TextChannel
+                            ? channel.name
+                            : 'N/A'
                     }
-                    Permissions: ${channel instanceof GuildChannel
-                        ? guild?.me?.permissionsIn(channel).bitfield
-                        : 'N/A'
+                    Permissions: ${
+                        channel instanceof GuildChannel
+                            ? guild?.me?.permissionsIn(channel).bitfield
+                            : 'N/A'
                     }`,
                 },
                 {

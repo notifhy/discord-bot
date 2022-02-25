@@ -85,9 +85,11 @@ export class CommandConstraintErrorHandler
                     cooldown:
                         (command?.properties.cooldown ?? 0) /
                         GlobalConstants.ms.second,
-                    timeLeft:
-                        cleanRound(this.error.cooldown! /
-                        GlobalConstants.ms.second, 1),
+                    timeLeft: cleanRound(
+                        this.error.cooldown! /
+                        GlobalConstants.ms.second,
+                        1,
+                    ),
                 }),
             );
 

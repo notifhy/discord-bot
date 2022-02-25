@@ -30,7 +30,7 @@ export class Timeout {
         //Holds a setTimeout Id for clearing
         this.clearTimeout = undefined;
 
-        //Number of addError calls int he last minute
+        //Number of addError calls in the last minute
         this.lastMinute = 0;
 
         //Upper limit to this.timeout

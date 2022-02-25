@@ -510,5 +510,5 @@ export interface Locales {
 }
 
 export interface Parameters {
-    [index: string]: string | number,
+    [index: string]: unknown,
 }

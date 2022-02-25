@@ -223,9 +223,9 @@ export const execute: ClientCommand['execute'] = async (
                 {
                     name: text.api.nextTimeouts.name,
                     value: replace(text.api.nextTimeouts.value, {
-                        abort: abort.timeout,
-                        rateLimit: rateLimit.timeout,
-                        error: error.timeout,
+                        abort: cleanLength(abort.timeout),
+                        rateLimit: cleanLength(rateLimit.timeout),
+                        error: cleanLength(error.timeout),
                     }),
                 },
                 {

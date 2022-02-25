@@ -29,11 +29,11 @@ export const properties: ClientCommand['properties'] = {
     requireRegistration: true,
     structure: {
         name: 'channel',
-        description: 'Set a channel for the Defender or Friends Module',
+        description: 'Configure a channel for the Defender or Friends Module',
         options: [
             {
                 name: 'defender',
-                description: 'Add or remove the channel from the Defender Module',
+                description: 'Set or remove the channel from the Defender Module',
                 type: 2,
                 options: [
                     {
@@ -60,14 +60,21 @@ export const properties: ClientCommand['properties'] = {
             {
                 name: 'friends',
                 description: 'Set a channel for the Friends Module',
-                type: 1,
+                type: 2,
                 options: [
                     {
-                        name: 'channel',
-                        description: 'A channel to send logins and logouts to',
-                        type: 7,
-                        channel_types: [ChannelTypes.GUILD_TEXT],
-                        required: true,
+                        name: 'set',
+                        description: 'Set a channel for the Friends Module',
+                        type: 1,
+                        options: [
+                            {
+                                name: 'channel',
+                                description: 'A channel to send logins and logouts to',
+                                type: 7,
+                                channel_types: [ChannelTypes.GUILD_TEXT],
+                                required: true,
+                            },
+                        ],
                     },
                 ],
             },
@@ -86,7 +93,7 @@ export const execute: ClientCommand['execute'] = async (
     }
 
     const channel = interaction.options.getChannel('channel');
-    const type = interaction.options.getSubcommand() === 'friends'
+    const type = interaction.options.getSubcommandGroup() === 'friends'
         ? 'friends'
         : 'defender';
 
@@ -180,7 +187,7 @@ export const execute: ClientCommand['execute'] = async (
         .setDescription(replace(text.description, {
             channel: channel
                 ? Formatters.channelMention(channel.id)
-                : 'not_a_value',
+                : 'something_has_gone_wrong',
         }));
 
     Log.interaction(interaction, 'Channel updated');
