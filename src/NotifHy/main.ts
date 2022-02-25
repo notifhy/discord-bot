@@ -94,7 +94,7 @@ const client = new Client({
 
 client.commands = new Collection();
 client.cooldowns = new Collection();
-client.customStatus = null;
+client.customPresence = null;
 client.events = new Collection();
 client.hypixel = new HypixelManager(client);
 client.modules = new Collection();

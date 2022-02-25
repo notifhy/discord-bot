@@ -48,22 +48,25 @@ export function disableComponents(messageActionRows: MessageActionRow[]) {
     return actionRows;
 }
 
-export function setActivity(client: Client) {
+export function setPresence(client: Client) {
     const users = SQLite.getAllUsers<UserAPIData>({
         table: Constants.tables.api,
         columns: ['discordID'],
     });
 
-    let activity = client.customStatus;
+    let presence = client.customPresence;
 
-    if (activity === null) {
-        activity = Constants.defaults.presence();
-        activity.name = activity.name
-            ?.replace('{{ accounts }}', String(users.length))
-            ?.replace('{{ servers }}', String(client.guilds.cache.size));
+    if (presence === null) {
+        presence = Constants.defaults.presence;
+
+        presence.activities?.forEach(activity => {
+            activity.name = activity.name
+                ?.replace('{{ accounts }}', String(users.length))
+                ?.replace('{{ servers }}', String(client.guilds.cache.size));
+        });
     }
 
-    client.user?.setActivity(activity);
+    client.user?.setPresence(presence);
 }
 
 export const slashCommandResolver = (interaction: CommandInteraction) => {

@@ -51,7 +51,7 @@ declare module 'discord.js' {
         commands: Collection<string, ClientCommand>,
         cooldowns: Collection<string, Collection<string, number>>,
         config: Config,
-        customStatus: ActivityOptions | null,
+        customPresence: PresenceData | null,
         events: Collection<string, ClientEvent>,
         hypixel: HypixelManager,
         modules: Collection<string, ClientModule>,

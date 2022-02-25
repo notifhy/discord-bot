@@ -1,33 +1,57 @@
 import type { ActivityTypes } from 'discord.js/typings/enums';
 import type { ClientCommand } from '../@types/client';
-import type { ExcludeEnum } from 'discord.js';
+import type { ExcludeEnum, PresenceStatusData } from 'discord.js';
 import { BetterEmbed } from '../../utility/utility';
 import { Constants } from '../utility/Constants';
 import { RegionLocales } from '../locales/RegionLocales';
-import { setActivity } from '../utility/utility';
+import { setPresence } from '../utility/utility';
 
 export const properties: ClientCommand['properties'] = {
-    name: 'botstatus',
-    description: 'Set a custom status.',
+    name: 'presence',
+    description: 'Set a custom presence.',
     cooldown: 0,
     ephemeral: true,
     noDM: false,
     ownerOnly: true,
     requireRegistration: false,
     structure: {
-        name: 'botstatus',
-        description: 'Set a custom for the bot',
+        name: 'presence',
+        description: 'Set a custom presence for the bot',
         options: [
             {
                 name: 'clear',
                 type: 1,
-                description: 'Clear the custom status',
+                description: 'Clear the custom presence',
             },
             {
                 name: 'set',
-                description: 'Set a custom status',
+                description: 'Set a custom presence',
                 type: 1,
                 options: [
+                    {
+                        name: 'status',
+                        type: 3,
+                        description: 'The status to use',
+                        required: true,
+                        choices: [
+                            {
+                                name: 'Online',
+                                value: 'online',
+                            },
+                            {
+                                name: 'Idle',
+                                value: 'idle',
+                            },
+                            {
+                                name: 'Invisible',
+                                value: 'invisible',
+                            },
+                            {
+                                name: 'Do Not Disturb ',
+                                value: 'dnd ',
+                            },
+                        ],
+                    },
                     {
                         name: 'type',
                         type: 3,
@@ -40,7 +64,7 @@ export const properties: ClientCommand['properties'] = {
                             },
                             {
                                 name: 'Streaming',
-                                value: 'WATCHING',
+                                value: 'STREAMING',
                             },
                             {
                                 name: 'Listening',
@@ -78,7 +102,7 @@ export const execute: ClientCommand['execute'] = async (
     interaction,
     locale,
 ): Promise<void> => {
-    const text = RegionLocales.locale(locale).commands.botstatus;
+    const text = RegionLocales.locale(locale).commands.presence;
     const { replace } = RegionLocales;
 
     const responseEmbed = new BetterEmbed(interaction)
@@ -88,16 +112,26 @@ export const execute: ClientCommand['execute'] = async (
         const type = interaction.options.getString('type', true);
         const name = interaction.options.getString('name', true);
         const url = interaction.options.getString('url', false);
+        const status = interaction.options.getString('status', true);
 
-        interaction.client.customStatus = {
-            type: type as ExcludeEnum<typeof ActivityTypes, 'CUSTOM'>,
-            name: name,
-            url: url ?? undefined,
+        interaction.client.customPresence = {
+            activities: [{
+                type: type as ExcludeEnum<typeof ActivityTypes, 'CUSTOM'>,
+                name: name,
+                url: url ?? undefined,
+            }],
+            status: status as PresenceStatusData,
         };
 
         responseEmbed
             .setTitle(text.set.title)
             .addFields([
+                {
+                    name: text.set.status.name,
+                    value: replace(text.set.status.value, {
+                        status: status,
+                    }),
+                },
                 {
                     name: text.set.type.name,
                     value: replace(text.set.type.value, {
@@ -122,10 +156,10 @@ export const execute: ClientCommand['execute'] = async (
             .setTitle(text.cleared.title)
             .setDescription(text.cleared.description);
 
-        interaction.client.customStatus = null;
+        interaction.client.customPresence = null;
     }
 
-    await setActivity(interaction.client);
+    setPresence(interaction.client);
 
     await interaction.editReply({ embeds: [responseEmbed] });
 };

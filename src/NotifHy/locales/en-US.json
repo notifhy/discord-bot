@@ -53,28 +53,6 @@
                 "description": "Executed <HypixelErrors>.{{ method }}."
             }
         },
-        "botstatus": {
-            "set": {
-                "none": "None",
-                "title": "Status Set",
-                "type": {
-                    "name": "Type",
-                    "value": "{{ type }}"
-                },
-                "name": {
-                    "name": "Name",
-                    "value": "{{ name }}"
-                },
-                "url": {
-                    "name": "URL",
-                    "value": "{{ url }}"
-                }
-            },
-            "cleared": {
-                "title": "Status Cleared",
-                "description": "The status is now automatic!"
-            }
-        },
         "channel": {
             "dms": "DMs",
             "botMissingPermission": {
@@ -812,6 +790,32 @@
                         "value": "Game Start: {{ start }}\nGame End: {{ end }}\n{{ playTime }}{{ mode }}{{ map }}"
                     }
                 }
+            }
+        },
+        "presence": {
+            "set": {
+                "none": "None",
+                "title": "Presence Set",
+                "status": {
+                    "name": "Status",
+                    "value": "{{ status }}"
+                },
+                "type": {
+                    "name": "Type",
+                    "value": "{{ type }}"
+                },
+                "name": {
+                    "name": "Name",
+                    "value": "{{ name }}"
+                },
+                "url": {
+                    "name": "URL",
+                    "value": "{{ url }}"
+                }
+            },
+            "cleared": {
+                "title": "Presence Cleared",
+                "description": "The presence is now set to the default!"
             }
         },
         "register": {

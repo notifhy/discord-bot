@@ -127,7 +127,7 @@ export const execute: ClientCommand['execute'] = async (
         .setColor(Constants.colors.normal)
         .setTitle(text.title)
         .setDescription(
-            JSON.stringify(commands, null, 2).slice(
+            JSON.stringify(commands).slice(
                 0,
                 Constants.limits.embedDescription,
             ) ?? text.none,

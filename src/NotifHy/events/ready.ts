@@ -3,7 +3,7 @@ import type { ClientEvent } from '../@types/client';
 import { ErrorHandler } from '../../utility/errors/ErrorHandler';
 import { GlobalConstants } from '../../utility/Constants';
 import { Log } from '../../utility/Log';
-import { setActivity } from '../utility/utility';
+import { setPresence } from '../utility/utility';
 
 export const properties: ClientEvent['properties'] = {
     name: 'ready',
@@ -19,7 +19,7 @@ export const execute: ClientEvent['execute'] = async (client: Client) => {
 
     async function set() {
         try {
-            await setActivity(client);
+            setPresence(client);
         } catch (error) {
             await ErrorHandler.init(error);
         }

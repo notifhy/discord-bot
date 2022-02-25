@@ -1,8 +1,8 @@
 import { Table } from '../@types/database';
 import {
-    ActivityOptions,
     ColorResolvable,
     Permissions,
+    PresenceData,
 } from 'discord.js';
 import gameTypes from '../../../assets/gameTypes.json';
 import modes from '../../../assets/modes.json';
@@ -32,10 +32,13 @@ export const Constants = {
             process: 0,
             modules: 0,
         },
-        presence: (): ActivityOptions => ({
-            name: '{{ accounts }} accounts | /register /help | {{ servers }} servers',
-            type: 'WATCHING',
-        }),
+        presence: {
+            activities: [{
+                name: '{{ accounts }} accounts | /register /help | {{ servers }} servers',
+                type: 'WATCHING',
+            }],
+            status: 'online',
+        } as PresenceData,
     },
     emoji: {
         alert: '<:alert:929126565240000513>',

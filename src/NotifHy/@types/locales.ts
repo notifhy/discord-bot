@@ -88,17 +88,6 @@ export interface API {
     call: BaseEmbed,
 }
 
-export interface BotStatus {
-    set: {
-        none: string,
-        title: string,
-        type: Field,
-        name: Field,
-        url: Field,
-    },
-    cleared: BaseEmbed,
-}
-
 export interface Channel {
     dms: string,
     botMissingPermission: BaseEmbed,
@@ -320,6 +309,18 @@ export interface Player {
     }
 }
 
+export interface Presence {
+    set: {
+        none: string,
+        title: string,
+        status: Field,
+        type: Field,
+        name: Field,
+        url: Field,
+    },
+    cleared: BaseEmbed,
+}
+
 export interface Register {
     alreadyRegistered: BaseEmbed;
     invalid: BaseEmbed,
@@ -373,7 +374,6 @@ export interface SystemMessage {
 export interface Commands {
     accessdb: AccessDB,
     api: API,
-    botstatus: BotStatus,
     channel: Channel,
     config: Config,
     data: Data,
@@ -385,6 +385,7 @@ export interface Commands {
     performance: Performance,
     ping: Ping,
     player: Player,
+    presence: Presence,
     register: Register,
     reload: Reload,
     snowflake: Snowflake,

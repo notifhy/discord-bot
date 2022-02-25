@@ -3,7 +3,7 @@ import type { Guild } from 'discord.js';
 import { ErrorHandler } from '../../utility/errors/ErrorHandler';
 import { formattedUnix } from '../../utility/utility';
 import { Log } from '../../utility/Log';
-import { setActivity } from '../utility/utility';
+import { setPresence } from '../utility/utility';
 
 export const properties: ClientEvent['properties'] = {
     name: 'guildDelete',
@@ -33,7 +33,7 @@ export const execute: ClientEvent['execute'] = async (guild: Guild): Promise<voi
     );
 
     try {
-        await setActivity(guild.client);
+        setPresence(guild.client);
     } catch (error) {
         await ErrorHandler.init(error);
     }

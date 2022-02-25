@@ -9,7 +9,7 @@ import type {
 import {
     awaitComponent,
     disableComponents,
-    setActivity,
+    setPresence,
 } from '../utility/utility';
 import {
     BetterEmbed,
@@ -180,7 +180,7 @@ export const execute: ClientCommand['execute'] = async (
                 components: disabledRows,
             });
 
-            setActivity(interaction.client);
+            setPresence(interaction.client);
         } else {
             const aborted = new BetterEmbed(interaction)
                 .setColor(Constants.colors.normal)
