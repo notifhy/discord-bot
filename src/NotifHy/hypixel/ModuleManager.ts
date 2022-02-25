@@ -111,33 +111,28 @@ export class ModuleManager {
             )
         ));
 
-        const promises: Promise<void>[] = [];
 
         for (const module of modules.values()) {
-            promises.push(
-                module
-                    .execute({
-                        client: this.client,
-                        differences: differences,
-                        baseLocale: locale,
-                        userAPIData: userAPIData,
-                        userData: userData,
-                    }),
-            );
+            //eslint-disable-next-line no-await-in-loop
+            await module.execute({
+                client: this.client,
+                differences: differences,
+                baseLocale: locale,
+                userAPIData: userAPIData,
+                userData: userData,
+            });
         }
-
-        await Promise.all(promises);
 
         let embed;
 
-        if (ModuleManager.isMissingAPIData(differences)) {
+        if (ModuleManager.missedAPIData(differences)) {
             embed = new BetterEmbed({
                 text: locale.statusAPIMissing.footer,
             })
                 .setColor(Constants.colors.warning)
                 .setTitle(locale.statusAPIMissing.title)
                 .setDescription(locale.statusAPIMissing.description);
-        } else if (ModuleManager.isReceivedAPIData(differences)) {
+        } else if (ModuleManager.receivedAPIData(differences)) {
             embed = new BetterEmbed({
                 text: locale.statusAPIReceived.footer,
             })
@@ -155,14 +150,14 @@ export class ModuleManager {
         }
     }
 
-    static isMissingAPIData(differences: ModuleDifferences) {
+    static missedAPIData(differences: ModuleDifferences) {
         return (differences.oldData.lastLogin === null &&
             differences.oldData.lastLogin !== null) ||
         (differences.oldData.lastLogout === null &&
             differences.oldData.lastLogout !== null);
     }
 
-    static isReceivedAPIData(differences: ModuleDifferences) {
+    static receivedAPIData(differences: ModuleDifferences) {
         return (differences.oldData.lastLogin !== null &&
             differences.oldData.lastLogin === null) ||
         (differences.oldData.lastLogout !== null &&
