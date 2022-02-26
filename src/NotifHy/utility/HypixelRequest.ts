@@ -25,17 +25,16 @@ export class HypixelRequest {
     }
 
     async call(url: string): Promise<HypixelAPIOk> {
-        const response = (
-            await new Request({
-                restRequestTimeout: this.config?.restRequestTimeout,
-                retryLimit: this.config?.retryLimit,
-            }).request(url, {
-                headers: { 'API-Key': hypixelAPIkey },
-            })
-        );
+        const response = await new Request({
+            restRequestTimeout: this.config?.restRequestTimeout,
+            retryLimit: this.config?.retryLimit,
+        }).request(url, {
+            headers: { 'API-Key': hypixelAPIkey },
+        });
 
-        const JSON =
-            await Request.tryParse<HypixelAPIOk | HypixelAPIError>(response);
+        const JSON = await Request.tryParse<
+            HypixelAPIOk | HypixelAPIError
+        >(response);
 
         const status = response.status;
 

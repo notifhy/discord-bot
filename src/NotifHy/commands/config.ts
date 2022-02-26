@@ -22,11 +22,6 @@ export const properties: ClientCommand['properties'] = {
         description: 'Toggles dynamic settings',
         options: [
             {
-                name: 'api',
-                type: 1,
-                description: 'Toggle API commands and functions',
-            },
-            {
                 name: 'blockguild',
                 description: 'Blacklists the bot from joining specific guilds',
                 type: 1,
@@ -53,9 +48,64 @@ export const properties: ClientCommand['properties'] = {
                 ],
             },
             {
+                name: 'core',
+                type: 1,
+                description: 'Toggle the core',
+            },
+            {
                 name: 'devmode',
                 type: 1,
                 description: 'Toggle Developer Mode',
+            },
+            {
+                name: 'keypercentage',
+                description: 'Set how much of the Hypixel API key should be used',
+                type: 1,
+                options: [
+                    {
+                        name: 'percentage',
+                        type: 10,
+                        description: 'The percentage as a decimal',
+                        required: true,
+                        minValue: 0.01,
+                        maxValue: 1,
+                    },
+                ],
+            },
+            {
+                name: 'restrequesttimeout',
+                description: 'Set the request timeout before an abort error is thrown',
+                type: 1,
+                options: [
+                    {
+                        name: 'milliseconds',
+                        type: 4,
+                        description: 'The timeout in milliseconds',
+                        required: true,
+                        minValue: 0,
+                        maxValue: 100000,
+                    },
+                ],
+            },
+            {
+                name: 'retrylimit',
+                description: 'Set the number of request retries before throwing',
+                type: 1,
+                options: [
+                    {
+                        name: 'limit',
+                        type: 4,
+                        description: 'The number of retries',
+                        required: true,
+                        minValue: 0,
+                        maxValue: 100,
+                    },
+                ],
+            },
+            {
+                name: 'view',
+                description: 'View the current configuration',
+                type: 1,
             },
         ],
     },
@@ -69,40 +119,30 @@ export const execute: ClientCommand['execute'] = async (
     const replace = RegionLocales.replace;
 
     const config = SQLite.queryGet<Config>({
-        query: 'SELECT blockedGuilds, blockedUsers, devMode, enabled FROM config WHERE rowid = 1',
+        query: 'SELECT blockedGuilds, blockedUsers, core, devMode, keyPercentage, restRequestTimeout, retryLimit FROM config WHERE rowid = 1',
     });
 
     const payload: WebhookEditMessageOptions = {};
 
 
     switch (interaction.options.getSubcommand()) {
-        case 'api': apiCommand();
-        break;
         case 'blockguild': await blockGuildCommand();
         break;
         case 'blockuser': blockUserCommand();
         break;
+        case 'core': coreCommand();
+        break;
         case 'devmode': devModeCommand();
         break;
+        case 'keypercentage': keyPercentageCommand();
+        break;
+        case 'restrequesttimeout': restRequestTimeoutCommand();
+        break;
+        case 'retrylimit': retryLimitCommand();
+        break;
+        case 'view': viewCommand();
+        break;
         //no default
-    }
-
-    function apiCommand() {
-        config.enabled = !config.enabled;
-        interaction.client.config.enabled = config.enabled;
-
-        const apiEmbed = new BetterEmbed(interaction)
-            .setColor(Constants.colors.normal)
-            .setTitle(text.api.title)
-            .setDescription(replace(text.api.description, {
-                state: config.enabled === true
-                    ? text.on
-                    : text.off,
-            }));
-
-        payload.embeds = [apiEmbed];
-
-        Log.interaction(interaction, apiEmbed.description);
     }
 
     async function blockGuildCommand() {
@@ -156,7 +196,7 @@ export const execute: ClientCommand['execute'] = async (
         const blockedUserIndex = config.blockedUsers.indexOf(userID);
 
         const userEmbed = new BetterEmbed(interaction)
-                .setColor(Constants.colors.normal);
+            .setColor(Constants.colors.normal);
 
         if (blockedUserIndex === -1) {
             config.blockedUsers.push(userID);
@@ -183,6 +223,24 @@ export const execute: ClientCommand['execute'] = async (
         Log.interaction(interaction, userEmbed.description);
     }
 
+    function coreCommand() {
+        config.core = !config.core;
+        interaction.client.config.core = config.core;
+
+        const coreEmbed = new BetterEmbed(interaction)
+            .setColor(Constants.colors.normal)
+            .setTitle(text.core.title)
+            .setDescription(replace(text.core.description, {
+                state: config.core === true
+                    ? text.on
+                    : text.off,
+            }));
+
+        payload.embeds = [coreEmbed];
+
+        Log.interaction(interaction, coreEmbed.description);
+    }
+
     function devModeCommand() {
         config.devMode = !config.devMode;
         interaction.client.config.devMode = config.devMode;
@@ -201,10 +259,78 @@ export const execute: ClientCommand['execute'] = async (
         Log.interaction(interaction, devModeEmbed.description);
     }
 
+    function keyPercentageCommand() {
+        const percentage = interaction.options.getNumber('percentage', true);
+        config.keyPercentage = percentage;
+        interaction.client.config.keyPercentage = percentage;
+
+        const keyPercentageEmbed = new BetterEmbed(interaction)
+            .setColor(Constants.colors.normal)
+            .setTitle(text.keyPercentage.title)
+            .setDescription(replace(text.keyPercentage.description, {
+                percentage: percentage,
+            }));
+
+        payload.embeds = [keyPercentageEmbed];
+
+        Log.interaction(interaction, keyPercentageEmbed.description);
+    }
+
+    function restRequestTimeoutCommand() {
+        const milliseconds = interaction.options.getInteger('milliseconds', true);
+        config.restRequestTimeout = milliseconds;
+        interaction.client.config.restRequestTimeout = milliseconds;
+
+        const keyPercentageEmbed = new BetterEmbed(interaction)
+            .setColor(Constants.colors.normal)
+            .setTitle(text.restRequestTimeout.title)
+            .setDescription(replace(text.restRequestTimeout.description, {
+                milliseconds: milliseconds,
+            }));
+
+        payload.embeds = [keyPercentageEmbed];
+
+        Log.interaction(interaction, keyPercentageEmbed.description);
+    }
+
+    function retryLimitCommand() {
+        const limit = interaction.options.getInteger('limit', true);
+        config.retryLimit = limit;
+        interaction.client.config.retryLimit = limit;
+
+        const keyPercentageEmbed = new BetterEmbed(interaction)
+            .setColor(Constants.colors.normal)
+            .setTitle(text.retryLimit.title)
+            .setDescription(replace(text.retryLimit.description, {
+                limit: limit,
+            }));
+
+        payload.embeds = [keyPercentageEmbed];
+
+        Log.interaction(interaction, keyPercentageEmbed.description);
+    }
+
+    function viewCommand() {
+        const viewEmbed = new BetterEmbed(interaction)
+            .setColor(Constants.colors.normal)
+            .setTitle(text.view.title)
+            .setDescription(replace(text.view.description, {
+                blockedGuilds: config.blockedGuilds.join(', '),
+                blockedUsers: config.blockedUsers.join(', '),
+                core: config.core === true ? text.on : text.off,
+                devMode: config.devMode === true ? text.on : text.off,
+                keyPercentage: config.keyPercentage * 100,
+                restRequestTimeout: config.restRequestTimeout,
+                retryLimit: config.retryLimit,
+            }));
+
+        payload.embeds = [viewEmbed];
+    }
+
     const newRawConfig = SQLite.unJSONize({ ...config });
 
     SQLite.queryRun({
-        query: 'UPDATE config set blockedGuilds = ?, blockedUsers = ?, devMode = ?, enabled = ? WHERE rowid = 1',
+        query: 'UPDATE config set blockedGuilds = ?, blockedUsers = ?, core = ?, devMode = ?, keyPercentage = ?, restRequestTimeout = ?, retryLimit = ? WHERE rowid = 1',
         data: Object.values(newRawConfig),
     });
 

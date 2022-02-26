@@ -5,6 +5,7 @@ import {
     cleanRound,
     sendWebHook,
 } from '../../utility/utility';
+import { Core } from '../core/core';
 import { ErrorHandler } from '../../utility/errors/ErrorHandler';
 import {
     fatalWebhook,
@@ -14,37 +15,38 @@ import {
 } from '../../../config.json';
 import { FetchError } from 'node-fetch';
 import { HTTPError } from './HTTPError';
-import { HypixelManager } from '../hypixel/HypixelManager';
 import { RateLimitError } from './RateLimitError';
 
 export class RequestErrorHandler<E> extends BaseErrorHandler<E> {
-    readonly hypixelManager: HypixelManager;
+    readonly core: Core;
     readonly timeout: string | null;
 
-    constructor(error: E, hypixelManager: HypixelManager) {
+    constructor(error: E, core: Core) {
         super(error);
-        this.hypixelManager = hypixelManager;
+        this.core = core;
 
-        const { errors } = this.hypixelManager;
+        const { error: coreErrors } = this.core;
 
         if (this.error instanceof AbortError) {
-            errors.addAbort();
+            coreErrors.addAbort();
         } else if (this.error instanceof RateLimitError) {
-            errors.addRateLimit({
+            coreErrors.addRatelimit({
                 rateLimitGlobal: this.error.json?.global ?? null,
-                ratelimitReset: this.error.response?.headers?.get('ratelimit-reset') ?? null,
+                rateLimitReset: this.error.response?.headers?.get('rateLimit-reset') ?? null,
             });
+        } else if (this.error instanceof HTTPError) {
+            coreErrors.addHTTP();
         } else {
-            errors.addError();
+            coreErrors.addGeneric();
         }
 
-        const resumeAfter = this.hypixelManager.errors.getTimeout();
+        const resumeAfter = coreErrors.getTimeout();
 
         this.timeout = cleanLength(resumeAfter, true);
     }
 
-    static async init<T>(error: T, hypixelManager: HypixelManager) {
-        const handler = new RequestErrorHandler(error, hypixelManager);
+    static async init<T>(error: T, core: Core) {
+        const handler = new RequestErrorHandler(error, core);
 
         try {
             handler.errorLog();
@@ -64,17 +66,17 @@ export class RequestErrorHandler<E> extends BaseErrorHandler<E> {
 
     private statusEmbed() {
         const {
-            errors: {
+            error: {
                 isGlobal,
                 abort,
+                generic,
+                http,
                 rateLimit,
-                error,
             },
             request: {
-                keyPercentage,
                 uses,
             },
-        } = this.hypixelManager;
+        } = this.core;
 
         const embed = this.baseErrorEmbed()
             .setTitle('Degraded Performance')
@@ -103,8 +105,9 @@ export class RequestErrorHandler<E> extends BaseErrorHandler<E> {
                 {
                     name: 'Last Minute Statistics',
                     value: `Abort Errors: ${abort.lastMinute} 
+                    HTTP Errors: ${http.lastMinute}
                     Rate Limit Hits: ${rateLimit.lastMinute}
-                    Other Errors: ${error.lastMinute}`,
+                    Other Errors: ${generic.lastMinute}`,
                 },
                 {
                     name: 'Next Timeouts',
@@ -112,18 +115,23 @@ export class RequestErrorHandler<E> extends BaseErrorHandler<E> {
                      Abort Errors: ${cleanLength(
                         abort.timeout,
                     )}
+                    HTTP Errors: ${cleanLength(
+                        http.timeout,
+                    )}
                     Rate Limit Errors: ${cleanLength(
                         rateLimit.timeout,
                     )}
                     Other Errors: ${cleanLength(
-                        error.timeout,
+                        generic.timeout,
                     )}`,
                 },
                 {
                     name: 'API Key',
                     value: `Dedicated Queries: ${cleanRound(
-                        keyPercentage * keyLimit,
-                    )} or ${cleanRound(keyPercentage * 100)}%
+                        this.core.client.config.keyPercentage * keyLimit,
+                    )} or ${cleanRound(
+                        this.core.client.config.keyPercentage * 100,
+                    )}%
                     Instance Queries: ${uses}`,
                 },
             );
@@ -148,8 +156,8 @@ export class RequestErrorHandler<E> extends BaseErrorHandler<E> {
                 )
                 .addFields({
                     name: 'Header Data',
-                    value: `Remaining: ${headers?.get('ratelimit-remaining') ?? 'Unknown'}
-                    Reset: ${headers?.get('ratelimit-reset') ?? 'Unknown'}`,
+                    value: `Remaining: ${headers?.get('rateLimit-remaining') ?? 'Unknown'}
+                    Reset: ${headers?.get('rateLimit-reset') ?? 'Unknown'}`,
                 });
         } else if (this.error instanceof HTTPError) {
             embed

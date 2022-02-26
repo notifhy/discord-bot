@@ -5,7 +5,7 @@ import type {
     CommandInteraction,
 } from 'discord.js';
 import type { ClientModule } from './modules';
-import type { HypixelManager } from '../hypixel/HypixelManager';
+import type { Core } from '../core/core';
 
 export interface ClientCommand {
     properties: {
@@ -22,8 +22,8 @@ export interface ClientCommand {
         (
             interaction: CommandInteraction,
             locale: string,
-            ): Promise<void>,
-        },
+        ): Promise<void>,
+    },
 }
 
 export interface ClientEvent {
@@ -37,8 +37,11 @@ export interface ClientEvent {
 export interface Config {
     blockedGuilds: string[],
     blockedUsers: string[],
+    core: boolean,
     devMode: boolean,
-    enabled: boolean,
+    keyPercentage: number,
+    restRequestTimeout: number,
+    retryLimit: number,
 }
 
 export interface WebhookConfig {
@@ -49,11 +52,11 @@ export interface WebhookConfig {
 declare module 'discord.js' {
     interface Client {
         commands: Collection<string, ClientCommand>,
-        cooldowns: Collection<string, Collection<string, number>>,
         config: Config,
+        cooldowns: Collection<string, Collection<string, number>>,
+        core: Core,
         customPresence: PresenceData | null,
         events: Collection<string, ClientEvent>,
-        hypixel: HypixelManager,
         modules: Collection<string, ClientModule>,
     }
 }

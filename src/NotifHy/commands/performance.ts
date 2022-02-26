@@ -29,7 +29,7 @@ export const execute: ClientCommand['execute'] = async (
         process: processPerformance,
         modules: modulePerformance,
         total,
-    } = interaction.client.hypixel.request.performance.latest!;
+    } = interaction.client.core.performance.latest!;
 
     const responseEmbed = new BetterEmbed(interaction)
         .setColor(Constants.colors.normal)

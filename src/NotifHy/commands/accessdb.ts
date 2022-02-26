@@ -37,10 +37,10 @@ export const execute: ClientCommand['execute'] = async (
 
     const timeout = interaction.options.getInteger('timeout', true);
 
-    const currentAPI = interaction.client.config.enabled;
+    const currentAPI = interaction.client.config.core;
     const curentDevMode = interaction.client.config.devMode;
 
-    interaction.client.config.enabled = false;
+    interaction.client.config.core = false;
     interaction.client.config.devMode = true;
 
     Log.interaction(interaction, 'API disabled and Developer Mode enabled');
@@ -64,7 +64,7 @@ export const execute: ClientCommand['execute'] = async (
     SQLite.open();
     SQLite.rekey();
 
-    interaction.client.config.enabled = currentAPI;
+    interaction.client.config.core = currentAPI;
     interaction.client.config.devMode = curentDevMode;
 
     Log.interaction(interaction, 'API and Developer Mode restored');

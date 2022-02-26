@@ -47,7 +47,7 @@ export class Core {
             latest: null,
             history: [],
         };
-        this.request = new CoreRequest();
+        this.request = new CoreRequest(this.client);
     }
 
     async start() {
@@ -63,6 +63,11 @@ export class Core {
     private async checkSystem() {
         if (this.error.isTimeout()) {
             await setTimeout(this.error.getTimeout());
+        }
+
+        if (this.client.config.core === false) {
+            await setTimeout(2500);
+            return;
         }
 
         const users = SQLite.getAllUsers<UserAPIData>({
@@ -84,7 +89,8 @@ export class Core {
         for (const user of users) {
             if (
                 this.error.isTimeout() ||
-                this.client.config.enabled === false
+                //@ts-expect-error possibility to not be true?
+                this.client.config.core === false
             ) {
                 return;
             }
@@ -114,7 +120,7 @@ export class Core {
         }
 
         try {
-            payload = await CoreData.process(user.discordID, data);
+            payload = CoreData.process(user.discordID, data);
             performance.process = Date.now();
         } catch (error) {
             await ErrorHandler.init(error);
@@ -156,7 +162,7 @@ export class Core {
     }
 
     private getTimeout(urls: string[], performance?: Performance) {
-        const keyQueryLimit = keyLimit * this.request.keyPercentage;
+        const keyQueryLimit = keyLimit * this.client.config.keyPercentage;
         const intervalBetweenRequests = (60 / keyQueryLimit) * 1000;
         const total = intervalBetweenRequests * urls.length;
 

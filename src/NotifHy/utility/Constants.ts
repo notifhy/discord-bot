@@ -127,8 +127,11 @@ export const Constants = {
             config: `CREATE TABLE IF NOT EXISTS "config" (
                 "blockedGuilds" TEXT NOT NULL DEFAULT '[]',
                 "blockedUsers" TEXT NOT NULL DEFAULT '[]',
+                "core" TEXT NOT NULL DEFAULT 'true',
                 "devMode" TEXT NOT NULL DEFAULT 'false',
-                "enabled" TEXT NOT NULL DEFAULT 'true'
+                "keyPercentage" INTEGER NOT NULL DEFAULT 0.5,
+                "restRequestTimeout" INTEGER NOT NULL DEFAULT 5000,
+                "retryLimit" INTEGER NOT NULL DEFAULT 2
             )`,
             defender: `CREATE TABLE IF NOT EXISTS "defender" (
                 "discordID" TEXT NOT NULL UNIQUE,

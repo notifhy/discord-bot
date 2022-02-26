@@ -6,7 +6,7 @@ export class CoreError {
 
     readonly abort: Timeout;
     readonly http: Timeout;
-    readonly ratelimit: Timeout;
+    readonly rateLimit: Timeout;
     readonly generic: Timeout;
 
     constructor() {
@@ -15,13 +15,13 @@ export class CoreError {
         this.abort = new Timeout({ baseTimeout: 0 });
         this.generic = new Timeout({ baseTimeout: 30_000 });
         this.http = new Timeout({ baseTimeout: 30_000 });
-        this.ratelimit = new Timeout({ baseTimeout: 30_000 });
+        this.rateLimit = new Timeout({ baseTimeout: 30_000 });
 
 
         this.addAbort = this.addAbort.bind(this);
         this.addGeneric = this.addGeneric.bind(this);
         this.addHTTP = this.addHTTP.bind(this);
-        this.addRateLimit = this.addRateLimit.bind(this);
+        this.addRatelimit = this.addRatelimit.bind(this);
         this.isTimeout = this.isTimeout.bind(this);
         this.getTimeout = this.getTimeout.bind(this);
     }
@@ -38,20 +38,20 @@ export class CoreError {
         this.http.addError();
     }
 
-    addRateLimit({
+    addRatelimit({
         rateLimitGlobal,
-        ratelimitReset,
+        rateLimitReset,
     }: {
         rateLimitGlobal: boolean | null,
-        ratelimitReset: string | null;
+        rateLimitReset: string | null;
     }) {
-        if (ratelimitReset !== null) {
-            this.ratelimit.timeout =
-                (Number(ratelimitReset) + 1) * GlobalConstants.ms.second;
+        if (rateLimitReset !== null) {
+            this.rateLimit.timeout =
+                (Number(rateLimitReset) + 1) * GlobalConstants.ms.second;
         }
 
         this.isGlobal = rateLimitGlobal ?? this.isGlobal;
-        this.ratelimit.addError();
+        this.rateLimit.addError();
     }
 
     isTimeout() {
@@ -59,7 +59,7 @@ export class CoreError {
             this.abort.isTimeout() ||
             this.generic.isTimeout() ||
             this.http.isTimeout() ||
-            this.ratelimit.isTimeout()
+            this.rateLimit.isTimeout()
         );
     }
 
@@ -69,7 +69,7 @@ export class CoreError {
                 this.abort.pauseFor,
                 this.generic.pauseFor,
                 this.http.pauseFor,
-                this.ratelimit.pauseFor,
+                this.rateLimit.pauseFor,
             )
             : 0;
     }

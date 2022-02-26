@@ -11,9 +11,9 @@ import {
     Options,
     Sweepers,
 } from 'discord.js';
+import { Core } from './core/core';
 import { discordAPIkey } from '../../config.json';
 import { ErrorHandler } from '../utility/errors/ErrorHandler';
-import { HypixelManager } from './hypixel/HypixelManager';
 import { Log } from '../utility/Log';
 import { SQLite } from './utility/SQLite';
 import fs from 'node:fs/promises';
@@ -92,11 +92,18 @@ const client = new Client({
     },
 });
 
+SQLite.key();
+SQLite.createTablesIfNotExists();
+
 client.commands = new Collection();
+client.config = SQLite.queryGet<Config>({
+    query: 'SELECT * FROM config WHERE rowid = 1',
+    allowUndefined: false,
+});
 client.cooldowns = new Collection();
+client.core = new Core(client);
 client.customPresence = null;
 client.events = new Collection();
-client.hypixel = new HypixelManager(client);
 client.modules = new Collection();
 
 (async () => {
@@ -154,22 +161,6 @@ client.modules = new Collection();
             client.once(name, execute);
         }
     }
-
-    SQLite.key();
-
-    SQLite.createTablesIfNotExists();
-
-    const config = SQLite.queryGet<Config>({
-        query: 'SELECT * FROM config WHERE rowid = 1',
-        allowUndefined: false,
-    });
-
-    client.config = {
-        blockedGuilds: config.blockedGuilds,
-        blockedUsers: config.blockedUsers,
-        devMode: config.devMode,
-        enabled: config.enabled,
-    };
 
     await client.login(discordAPIkey);
 })();

@@ -4,18 +4,21 @@ import type {
     RawHypixelPlayer,
     RawHypixelStatus,
 } from '../@types/hypixel';
+import type { Client } from 'discord.js';
 import type { UserAPIData } from '../@types/database';
 import { Constants } from '../utility/Constants';
 import { HypixelRequest } from '../utility/HypixelRequest';
 
 export class CoreRequest {
     readonly baseURL: string;
-    hypixelRequest: HypixelRequest;
+    readonly client: Client;
+    readonly hypixelRequest: HypixelRequest;
     uses: number;
 
-    constructor() {
+    constructor(client: Client) {
         this.baseURL = `${Constants.urls.hypixel}%{type}%?uuid=%{uuid}%`;
-        this.hypixelRequest = new HypixelRequest(this);
+        this.client = client;
+        this.hypixelRequest = new HypixelRequest(this.client.config);
         this.uses = 0;
     }
 

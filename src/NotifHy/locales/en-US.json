@@ -28,21 +28,16 @@
                 },
                 "lastMinute": {
                     "name": "Last Minute Statistic",
-                    "value": "Aborts: {{ abort }}\nRate Limit Hits: {{ rateLimit }}\nOther Errors: {{ error }}"
+                    "value": "Aborts: {{ abort }}\nGeneric Errors: {{ generic }}\nHTTP: {{ http }}\nRate Limit Hits: {{ rateLimit }}"
                 },
                 "nextTimeouts": {
                     "name": "Next Timeout Lengths",
-                    "value": "May not be accurate\nAbort Errors: {{ abort }}\nRate Limit Errors: {{ rateLimit }}\nOther Errors: {{ error }}"
+                    "value": "May not be accurate\nAbort Errors: {{ abort }}\nGeneric Errors: {{ generic }}\nHTTP Errors: {{ http }}\nRate Limit Errors: {{ rateLimit }}"
                 },
                 "apiKey": {
                     "name": "API Key",
                     "value": "Dedicated Queries: {{ queries }} or {{ percentage }}\nInstance Queries: {{ uses }}"
                 }
-            },
-            "instance": {
-                "tooHigh": "Too high, must be below 1",
-                "title": "Updated Value",
-                "description": "<RequestManager>.instance.{{ type }} is now {{ value }}."
             },
             "set": {
                 "title": "Updated Value",
@@ -91,10 +86,6 @@
         "config": {
             "on": "on",
             "off": "off",
-            "api": {
-                "title": "API State Updated",
-                "description": "API commands and functions are now {{ state }}!"
-            },
             "blockGuild": {
                 "add": {
                     "title": "Guild Added",
@@ -115,9 +106,29 @@
                     "description": "{{ userID }} was removed to the blacklist!"
                 }
             },
+            "core": {
+                "title": "Core State Updated",
+                "description": "The core is now {{ state }}!"
+            },
             "devMode": {
                 "title": "Developer Mode Updated",
                 "description": "Developer Mode is now {{ state }}!"
+            },
+            "keyPercentage": {
+                "title": "Key Percentage Updated",
+                "description": "The key percentage is now {{ percentage }}!"
+            },
+            "restRequestTimeout": {
+                "title": "Rest Request Timeout Updated",
+                "description": "The rest request timeout is now {{ milliseconds }}!"
+            },
+            "retryLimit": {
+                "title": "Retry Limit Updated",
+                "description": "The retry limit is now {{ limit }}!"
+            },
+            "view": {
+                "title": "Current Configuration",
+                "description": "Blocked Guilds: {{ blockedGuilds }}\nBlocked Users: {{ blockedUsers }}\nCore: {{ core }}\nDeveloper Mode: {{ devMode }}\nKey Percentage {{ keyPercentage }}%\nRest Request Timeout: {{ restRequestTimeout }}ms\nRetry Limit: {{ retryLimit }}"
             }
         },
         "data": {

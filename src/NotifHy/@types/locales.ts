@@ -81,9 +81,6 @@ export interface API {
         nextTimeouts: Field,
         apiKey: Field,
     }
-    instance: {
-        tooHigh: string,
-    } & BaseEmbed,
     set: BaseEmbed,
     call: BaseEmbed,
 }
@@ -106,7 +103,6 @@ export interface Channel {
 export interface Config {
     on: string,
     off: string,
-    api: BaseEmbed,
     blockGuild: {
         add: BaseEmbed,
         remove: BaseEmbed,
@@ -115,7 +111,12 @@ export interface Config {
         add: BaseEmbed,
         remove: BaseEmbed,
     },
+    core: BaseEmbed,
     devMode: BaseEmbed,
+    keyPercentage: BaseEmbed,
+    restRequestTimeout: BaseEmbed,
+    retryLimit: BaseEmbed,
+    view: BaseEmbed;
 }
 
 export interface Data {

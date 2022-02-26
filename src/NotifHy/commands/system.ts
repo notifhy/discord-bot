@@ -33,16 +33,15 @@ export const execute: ClientCommand['execute'] = async (
     const text = RegionLocales.locale(locale).commands.system;
     const { replace } = RegionLocales;
 
-    const { request } = interaction.client.hypixel;
+    const { keyPercentage } = interaction.client.config;
 
-    const memoryMegaBytes =
-        process.memoryUsage.rss() / (2 ** 20);
+    const memoryMegaBytes = process.memoryUsage.rss() / (2 ** 20);
 
-    const keyQueryLimit =
-        keyLimit * request.keyPercentage;
+    const keyQueryLimit = keyLimit * keyPercentage;
 
-    const intervalBetweenRequests =
-        (60 / keyQueryLimit) * GlobalConstants.ms.second;
+    const intervalBetweenRequests = (
+        60 / keyQueryLimit
+    ) * GlobalConstants.ms.second;
 
     const registeredUsers = (
         SQLite.getAllUsers<UserAPIData>({
@@ -96,7 +95,7 @@ export const execute: ClientCommand['execute'] = async (
             {
                 name: text.embed.field6.name,
                 value: replace(text.embed.field6.value, {
-                    uses: request.uses,
+                    uses: interaction.client.core.request.uses,
                     updateInterval: cleanLength(updateInterval)!,
                 }),
             },

@@ -8,7 +8,6 @@ import { Constants } from '../utility/Constants';
 import { keyLimit } from '../../../config.json';
 import { Log } from '../../utility/Log';
 import { RegionLocales } from '../locales/RegionLocales';
-import { RequestManager } from '../hypixel/RequestManager';
 
 export const properties: ClientCommand['properties'] = {
     name: 'api',
@@ -28,39 +27,6 @@ export const properties: ClientCommand['properties'] = {
                 description: 'Returns some stats about the API Request Handler',
             },
             {
-                name: 'instance',
-                type: 1,
-                description: 'Modify data held by RequestInstance',
-                options: [
-                    {
-                        name: 'type',
-                        type: 3,
-                        description: 'The type to execute on',
-                        required: true,
-                        choices: [
-                            {
-                                name: 'keyPercentage',
-                                value: 'keyPercentage',
-                            },
-                            {
-                                name: 'restRequestTimeout',
-                                value: 'restRequestTimeout',
-                            },
-                            {
-                                name: 'retryLimit',
-                                value: 'retryLimit',
-                            },
-                        ],
-                    },
-                    {
-                        name: 'value',
-                        type: 10,
-                        description: 'An integer as an input',
-                        required: true,
-                    },
-                ],
-            },
-            {
                 name: 'set',
                 type: 1,
                 description: 'Set data for the API Request Handler',
@@ -76,12 +42,16 @@ export const properties: ClientCommand['properties'] = {
                                 value: 'abort',
                             },
                             {
-                                name: 'rateLimit',
-                                value: 'rateLimit',
+                                name: 'generic',
+                                value: 'generic',
                             },
                             {
-                                name: 'error',
-                                value: 'error',
+                                name: 'http',
+                                value: 'http',
+                            },
+                            {
+                                name: 'rateLimit',
+                                value: 'rateLimit',
                             },
                         ],
                     },
@@ -130,20 +100,23 @@ export const properties: ClientCommand['properties'] = {
                                 value: 'addAbort',
                             },
                             {
-                                name: 'addRateLimit()',
-                                value: 'addRateLimit',
+                                name: 'addGeneric()',
+                                value: 'addGeneric',
                             },
                             {
-                                name: 'addError()',
-                                value: 'addError',
+                                name: 'addHTTP()',
+                                value: 'addHTTP',
+                            },
+                            {
+                                name: 'addRatelimit()',
+                                value: 'addRatelimit',
                             },
                         ],
                     },
                     {
                         name: 'value',
                         type: 5,
-                        description:
-                            'A value used for isGlobal in addRateLimit()',
+                        description: 'A value used for isGlobal in addRatelimit()',
                         required: false,
                     },
                 ],
@@ -152,7 +125,7 @@ export const properties: ClientCommand['properties'] = {
     },
 };
 
-type errorTypes = 'abort' | 'rateLimit' | 'error';
+type errorTypes = 'abort' | 'generic' | 'http' | 'rateLimit';
 
 type TimeoutSettables = 'timeout' | 'resumeAfter';
 
@@ -166,8 +139,6 @@ export const execute: ClientCommand['execute'] = async (
     switch (interaction.options.getSubcommand()) {
         case 'stats': await stats();
         break;
-        case 'instance': await instance();
-        break;
         case 'set': await set();
         break;
         case 'call': await call();
@@ -176,23 +147,25 @@ export const execute: ClientCommand['execute'] = async (
     }
 
     async function stats() {
-        const { abort, isGlobal, rateLimit, error, getTimeout } =
-            interaction.client.hypixel.errors;
-        const { uses, keyPercentage } =
-            interaction.client.hypixel.request;
+        const { abort, generic, http, isGlobal, rateLimit, getTimeout } =
+            interaction.client.core.error;
+        const { uses } =
+            interaction.client.core.request;
+        const { keyPercentage } =
+            interaction.client.config;
 
         const statsEmbed = new BetterEmbed(interaction)
             .setColor(Constants.colors.normal)
             .setDescription(
                 JSON.stringify(
-                    interaction.client.hypixel.request.performance,
+                    interaction.client.core.performance,
                 ).slice(0, Constants.limits.embedDescription),
             )
             .addFields(
                 {
                     name: text.api.enabled.name,
                     value: replace(text.api.enabled.value, {
-                        state: interaction.client.config.enabled === true
+                        state: interaction.client.config.core === true
                             ? text.api.yes
                             : text.api.no,
                     }),
@@ -216,16 +189,18 @@ export const execute: ClientCommand['execute'] = async (
                     name: text.api.lastMinute.name,
                     value: replace(text.api.lastMinute.value, {
                         abort: abort.lastMinute,
+                        generic: generic.lastMinute,
+                        http: http.lastMinute,
                         rateLimit: rateLimit.lastMinute,
-                        error: error.lastMinute,
                     }),
                 },
                 {
                     name: text.api.nextTimeouts.name,
                     value: replace(text.api.nextTimeouts.value, {
                         abort: cleanLength(abort.timeout),
+                        generic: cleanLength(generic.timeout),
+                        http: cleanLength(http.timeout),
                         rateLimit: cleanLength(rateLimit.timeout),
-                        error: cleanLength(error.timeout),
                     }),
                 },
                 {
@@ -243,39 +218,12 @@ export const execute: ClientCommand['execute'] = async (
         });
     }
 
-    async function instance() {
-        const type = interaction.options.getString('type', true);
-        const value = interaction.options.getNumber('value', true);
-
-        if (type === 'keyPercentage' && value > 1) {
-            throw new Error(text.instance.tooHigh);
-        }
-
-        interaction.client.hypixel.request[
-            type as keyof Omit<RequestManager, 'baseURL' | 'getURLs' | 'hypixelRequest' | 'performance' | 'request'>
-        ] = value;
-
-        const setEmbed = new BetterEmbed(interaction)
-            .setColor(Constants.colors.normal)
-            .setTitle(text.instance.title)
-            .setDescription(replace(text.instance.description, {
-                type: type,
-                value: value,
-            }));
-
-        Log.interaction(interaction, setEmbed.description);
-
-        await interaction.editReply({
-            embeds: [setEmbed],
-        });
-    }
-
     async function set() {
         const category = interaction.options.getString('category', true) as errorTypes;
         const type = interaction.options.getString('type', true);
         const value = interaction.options.getNumber('value', true);
 
-        interaction.client.hypixel.errors[category][
+        interaction.client.core.error[category][
             type as TimeoutSettables
         ] = value;
         const setEmbed = new BetterEmbed(interaction)
@@ -298,14 +246,18 @@ export const execute: ClientCommand['execute'] = async (
         const method = interaction.options.getString('method', true);
         const value = interaction.options.getBoolean('value');
 
-        const hypixelModuleErrors = interaction.client.hypixel.errors;
+        const hypixelModuleErrors = interaction.client.core.error;
 
-        if (method === 'addAbort' || method === 'addError') {
+        if (
+            method === 'addAbort' ||
+            method === 'addGeneric' ||
+            method === 'addHTTP'
+        ) {
             hypixelModuleErrors[method]();
-        } else if (method === 'addRateLimit') {
+        } else if (method === 'addRatelimit') {
             hypixelModuleErrors[method]({
                 rateLimitGlobal: value ?? false,
-                ratelimitReset: null,
+                rateLimitReset: null,
             });
         }
 

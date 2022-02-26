@@ -1,10 +1,10 @@
 import { BaseErrorHandler } from '../../utility/errors/BaseErrorHandler';
+import { Core } from '../core/core';
 import { ErrorHandler } from '../../utility/errors/ErrorHandler';
 import {
     fatalWebhook,
     ownerID,
 } from '../../../config.json';
-import { HypixelManager } from '../hypixel/HypixelManager';
 import { ModuleError } from './ModuleError';
 import { sendWebHook } from '../../utility/utility';
 import { Snowflake } from 'discord.js';
@@ -41,12 +41,12 @@ export class ModuleErrorHandler extends BaseErrorHandler<
     static async init<T>(
         error: T,
         discordID: Snowflake,
-        hypixelManager: HypixelManager,
+        core: Core,
     ) {
         const handler = new ModuleErrorHandler(error, discordID);
 
         try {
-            hypixelManager.errors.addError();
+            core.error.addGeneric();
 
             handler.errorLog();
             await handler.systemNotify();

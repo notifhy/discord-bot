@@ -25,5 +25,5 @@ export const execute: ClientEvent['execute'] = async (client: Client) => {
         }
     }
 
-    await client.hypixel.ready(); //eslint-disable-line no-await-in-loop
+    await client.core.start(); //eslint-disable-line no-await-in-loop
 };
