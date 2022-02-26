@@ -193,12 +193,14 @@ export const execute: ClientCommand['execute'] = async (
                     i.customId === 'main' &&
                     i.isSelectMenu()
                 ) {
+                    Log.interaction(interaction, `Menu update value: ${i.values[0]}`);
                     await menuUpdate(i);
                 } else {
+                    Log.interaction(interaction, `Data update customID: ${i.customId}`);
                     await dataUpdate(i);
                 }
             } catch (error) {
-                new CommandErrorHandler(error, interaction, locale);
+                await CommandErrorHandler.init(error, interaction, locale);
             }
         },
     );
@@ -467,8 +469,6 @@ export const execute: ClientCommand['execute'] = async (
             }),
         ];
 
-        Log.interaction(interaction, `Update customID: ${messageComponentInteraction.customId}`);
-
         switch (messageComponentInteraction.customId) {
             case 'toggle1':
             case 'toggle0': {
@@ -516,16 +516,10 @@ export const execute: ClientCommand['execute'] = async (
                     messageComponentInteraction as SelectMenuInteraction
                 ).values;
 
-                const base = {
-                    login: false,
-                    logout: false,
-                    version: false,
-                    gameType: false,
-                    language: false,
-                };
+                const alerts = { ...Constants.defaults.defenderAlerts };
 
                 for (const value of selectedValues) {
-                    base[value as keyof typeof base] = true;
+                    alerts[value as keyof typeof alerts] = true;
                 }
 
                 const updatedMenu = combiner(
@@ -534,8 +528,9 @@ export const execute: ClientCommand['execute'] = async (
                 ).select;
 
                 for (const option of updatedMenu.options!) {
-                    option.default =
-                        base[option.value as keyof typeof base] === true;
+                    option.default = alerts[
+                        option.value as keyof typeof alerts
+                    ] === true;
                 }
 
                 const component = new MessageSelectMenu(updatedMenu);
@@ -548,7 +543,7 @@ export const execute: ClientCommand['execute'] = async (
                 SQLite.updateUser<DefenderModule>({
                     discordID: interaction.user.id,
                     table: Constants.tables.defender,
-                    data: { alerts: base },
+                    data: { alerts: alerts },
                 });
                 break;
             }

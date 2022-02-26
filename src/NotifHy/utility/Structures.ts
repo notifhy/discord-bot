@@ -243,20 +243,14 @@ export const Structures = {
             select: {
                 customId: 'versions',
                 minValues: 0,
-                maxValues: 9,
+                maxValues: 8,
                 disabled: false,
                 options: [
                     {
                         value: '1.8',
                     },
                     {
-                        value: '1.11',
-                    },
-                    {
                         value: '1.12',
-                    },
-                    {
-                        value: '1.13',
                     },
                     {
                         value: '1.14',
@@ -272,6 +266,9 @@ export const Structures = {
                     },
                     {
                         value: '1.18',
+                    },
+                    {
+                        value: '1.19',
                     },
                 ],
             },

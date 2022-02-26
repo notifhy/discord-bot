@@ -21,6 +21,13 @@ export const Constants = {
         off: 0x555555 as ColorResolvable,
     },
     defaults: {
+        defenderAlerts: {
+            login: false,
+            logout: false,
+            version: false,
+            gameType: false,
+            language: false,
+        },
         language: 'en-US',
         menuIncrements: 5,
         menuFastIncrements: 20,
