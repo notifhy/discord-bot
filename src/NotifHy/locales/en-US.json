@@ -1100,12 +1100,14 @@
                 "title": "Daily Reward Reminder",
                 "footer": "Notification",
                 "description": [
+                    "This is your reminder to claim your daily reward!",
+                    "This is 🎉 your 👈➡ reminder 🔔 to claim your daily 📆 reward 🏆🏆 🏆🙄",
+                    "This here be yer reminder to claim yer daily reward!",
+                    "Your daily reward is available to claim!",
                     "You haven't claimed your daily reward yet!",
-                    "This is a reminder to claim your daily reward as it appears you haven't claimed it!",
-                    "It appears that you have not claimed your daily reward yet!",
+                    "This is a reminder to claim your daily reward!",
                     "You should go collect your daily reward!",
                     "Go claim your daily reward!",
-                    "Your daily reward is waiting for you!",
                     "It is time to go claim your daily reward!",
                     "Your daily reward awaits collection!",
                     "Your daily reward is waiting!"
