@@ -223,11 +223,11 @@
                 },
                 "other": {
                     "name": "Other Information",
-                    "value": "Learn more at https://notifhy.gitbook.io/ or the GitHub page below."
+                    "value": "Learn more at https://attituding.github.io/NotifHy/ or the GitHub page below."
                 },
                 "legal": {
                     "name": "Legal Stuff",
-                    "value": "By using this service, you agree to our [Privacy Policy](https://notifhy.gitbook.io/docs/legal/privacy-policy \"Privacy Policy\") and our [Terms of Service](https://notifhy.gitbook.io/docs/legal/terms-of-service \"Terms of Service\")."
+                    "value": "By using this service, you agree to our [Privacy Policy](https://attituding.github.io/NotifHy/legal/privacy-policy/ \"Privacy Policy\") and our [Terms of Service](https://attituding.github.io/NotifHy/legal/terms-of-service/ \"Terms of Service\")."
                 }
             },
             "all": {
