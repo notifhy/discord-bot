@@ -60,8 +60,6 @@ export function setPresence(client: Client) {
         //@ts-expect-error typings not available yet for structuredClone
         presence = structuredClone(Constants.defaults.presence);
 
-        console.log(Constants.defaults.presence);
-
         presence!.activities?.forEach(activity => {
             activity.name = activity.name
                 ?.replace('{{ accounts }}', String(users.length))
