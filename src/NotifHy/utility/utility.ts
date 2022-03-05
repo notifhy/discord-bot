@@ -57,16 +57,19 @@ export function setPresence(client: Client) {
     let presence = client.customPresence;
 
     if (presence === null) {
-        presence = Constants.defaults.presence;
+        //@ts-expect-error typings not available yet for structuredClone
+        presence = structuredClone(Constants.defaults.presence);
 
-        presence.activities?.forEach(activity => {
+        console.log(Constants.defaults.presence);
+
+        presence!.activities?.forEach(activity => {
             activity.name = activity.name
                 ?.replace('{{ accounts }}', String(users.length))
                 ?.replace('{{ servers }}', String(client.guilds.cache.size));
         });
     }
 
-    client.user?.setPresence(presence);
+    client.user?.setPresence(presence!);
 }
 
 export const slashCommandResolver = (interaction: CommandInteraction) => {
