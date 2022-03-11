@@ -299,12 +299,26 @@ export class SQLite {
         allowUndefined: boolean,
         table: Table,
     }): void {
-        const query = allowUndefined === true
-            ? `DELETE FROM ${table} WHERE EXISTS(SELECT 1 FROM ${table} WHERE discordID = ?)`
-            : `DELETE FROM ${table} WHERE discordID = ?`;
+        if (allowUndefined === true) {
+            const user = this.getUser({
+                discordID: discordID,
+                table: table,
+                allowUndefined: true,
+                columns: ['discordID'],
+            });
+
+            if (user) {
+                this.queryRun({
+                    query: `DELETE FROM ${table} WHERE discordID = ?`,
+                    data: [discordID],
+                });
+            }
+
+            return;
+        }
 
         this.queryRun({
-            query: query,
+            query: `DELETE FROM ${table} WHERE discordID = ?`,
             data: [discordID],
         });
     }
