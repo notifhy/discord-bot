@@ -56,7 +56,7 @@
             },
             "userMissingPermission": {
                 "title": "Missing Permission",
-                "description": "As a temporary workaround, you must have the Manage Channels permission to use this command. You are advised to use this bot in a server that you own or share with close friends.\n\nShould you decided to move to a different server, all your settings will remain the same.\n\nFor community owners, an option to whitelist or create channels will be added soon™."
+                "description": "You must have the **Manage Channel(s)** or **Manage Webhook(s)** permission to use this command. Therefore, you are advised to use this bot in a server that you own or share with close friends.\n\nShould you decide to use a different server, all your settings will be synced and saved globally; settings are not tied to servers.\n\nFor community owners, an option to whitelist or create channels might be added soon™. In the meantime, the above permission(s) can either be given server-wide or given through a channel's advanced permissions."
             },
             "defender": {
                 "alreadySet": {

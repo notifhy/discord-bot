@@ -113,9 +113,12 @@ export const execute: ClientCommand['execute'] = async (
         return;
     }
 
-    const userHasPermission = interaction.member!.permissions.has(
-        Permissions.FLAGS.MANAGE_CHANNELS,
-    );
+    const userHasPermission = interaction.channel!
+        .permissionsFor(interaction.member)
+        .any([
+            Permissions.FLAGS.MANAGE_CHANNELS,
+            Permissions.FLAGS.MANAGE_WEBHOOKS,
+        ]);
 
     if (userHasPermission === false) {
         const missingPermission = new BetterEmbed(interaction)
