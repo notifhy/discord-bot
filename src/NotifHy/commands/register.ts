@@ -14,6 +14,7 @@ import { RegionLocales } from '../locales/RegionLocales';
 import { Request } from '../../utility/Request';
 import { setPresence } from '../utility/utility';
 import { SQLite } from '../utility/SQLite';
+import { DiscordAPIError } from 'discord.js';
 
 export const properties: ClientCommand['properties'] = {
     name: 'register',
@@ -214,12 +215,35 @@ export const execute: ClientCommand['execute'] = async (
 
     const registeredEmbed = new BetterEmbed(interaction)
         .setColor(Constants.colors.normal)
-        .setTitle(text.title)
-        .setDescription(text.description)
+        .setTitle(text.success.title)
+        .setDescription(text.success.description)
         .addFields({
-            name: text.field.name,
-            value: text.field.value,
+            name: text.next.name,
+            value: text.next.value,
         });
+
+    try {
+        const testEmbed = new BetterEmbed(interaction)
+            .setColor(Constants.colors.normal)
+            .setTitle(text.testEmbed.title)
+            .setDescription(text.testEmbed.description);
+
+        await interaction.user.send({ embeds: [testEmbed] });
+    } catch (error) {
+        if (
+            error instanceof DiscordAPIError &&
+            error.code === 50007
+        ) {
+            registeredEmbed
+                .setColor(Constants.colors.ok)
+                .unshiftFields({
+                    name: text.cannotMessage.name,
+                    value: text.cannotMessage.value,
+                });
+        } else {
+            throw error;
+        }
+    }
 
     Log.interaction(interaction, 'Success');
 

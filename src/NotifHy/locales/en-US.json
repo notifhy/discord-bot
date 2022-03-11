@@ -851,9 +851,19 @@
                 "title": "Mismatched Tag",
                 "description": "That Minecraft account currently has a different Discord account linked! If that is your account, follow the guide below to relink it. If you just relinked it, please wait a few minutes and try again."
             },
-            "title": "Registered",
-            "description": "Registered successfully!",
-            "field": {
+            "testEmbed": {
+                "title": "Test Message",
+                "description": "This is a message to test messaging capabilities. You may ignore this message."
+            },
+            "success": {
+                "title": "Registered",
+                "description": "Registered successfully!"
+            },
+            "cannotMessage": {
+                "name": "Unable to DM",
+                "value": "You have successfully registered, but this bot is currently unable to message you through DMs. You should check your privacy settings and ensure this bot can message you before enabling modules."
+            },
+            "next": {
                 "name": "Next Steps",
                 "value": "**/modules** • Configure modules and set up notifications\n**/help** • See information about any command or about this bot"
             }

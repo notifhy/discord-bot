@@ -1,6 +1,7 @@
 import type { WebhookConfig } from '../NotifHy/@types/client';
 import {
     CommandInteraction,
+    EmbedFieldData,
     Formatters,
     MessageEmbed,
     WebhookClient,
@@ -26,19 +27,19 @@ type Footer =
 export class BetterEmbed extends MessageEmbed {
     constructor(footer?: Footer) {
         super();
-        super.setTimestamp();
+        this.setTimestamp();
 
         if (footer instanceof CommandInteraction) {
             const interaction = footer;
             const avatar = interaction.user.displayAvatarURL({ dynamic: true });
-            super.setFooter({ text: `/${interaction.commandName}`, iconURL: avatar });
+            this.setFooter({ text: `/${interaction.commandName}`, iconURL: avatar });
         } else if (footer !== undefined) {
-            super.setFooter({ text: footer.text, iconURL: footer.iconURL });
+            this.setFooter({ text: footer.text, iconURL: footer.iconURL });
         }
     }
 
     setField(name: string, value: string, inline?: boolean | undefined): this {
-        super.setFields([{ name: name, value: value, inline: inline }]);
+        this.setFields({ name: name, value: value, inline: inline });
 
         return this;
     }
@@ -48,10 +49,13 @@ export class BetterEmbed extends MessageEmbed {
         value: string,
         inline?: boolean | undefined,
     ): this {
-        super.setFields(
-            { name: name, value: value, inline: inline },
-            ...this.fields,
-        );
+        this.unshiftFields({ name: name, value: value, inline: inline });
+
+        return this;
+    }
+
+    unshiftFields(...fields: EmbedFieldData[] | EmbedFieldData[][]): this {
+        this.fields.unshift(...MessageEmbed.normalizeFields(...fields));
 
         return this;
     }

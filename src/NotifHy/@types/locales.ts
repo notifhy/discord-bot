@@ -329,9 +329,10 @@ export interface Register {
     alreadyUsed: BaseEmbed,
     unlinked: BaseEmbed,
     mismatched: BaseEmbed,
-    title: string,
-    description: string,
-    field: Field,
+    testEmbed: BaseEmbed,
+    success: BaseEmbed,
+    cannotMessage: Field,
+    next: Field,
 }
 
 export interface Reload {
