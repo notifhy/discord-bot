@@ -18,7 +18,7 @@ import { DiscordAPIError } from 'discord.js';
 
 export const properties: ClientCommand['properties'] = {
     name: 'register',
-    description: 'Register and setup your profile to begin using the modules that this bot offers.',
+    description: 'Link your Minecraft account and start using the modules offered.',
     cooldown: 5_000,
     ephemeral: true,
     noDM: false,
