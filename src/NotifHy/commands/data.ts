@@ -36,11 +36,11 @@ import { SQLite } from '../utility/SQLite';
 export const properties: ClientCommand['properties'] = {
     name: 'data',
     description: 'View or delete your data stored by this bot.',
-    cooldown: 15_000,
+    cooldown: 10_000,
     ephemeral: true,
     noDM: false,
     ownerOnly: false,
-    requireRegistration: true,
+    requireRegistration: false,
     structure: {
         name: 'data',
         description: 'View or delete your data stored by this bot',
@@ -144,26 +144,31 @@ export const execute: ClientCommand['execute'] = async (
             SQLite.createTransaction(() => {
                 SQLite.deleteUser({
                     discordID: interaction.user.id,
+                    allowUndefined: true,
                     table: Constants.tables.users,
                 });
 
                 SQLite.deleteUser({
                     discordID: interaction.user.id,
+                    allowUndefined: true,
                     table: Constants.tables.api,
                 });
 
                 SQLite.deleteUser({
                     discordID: interaction.user.id,
+                    allowUndefined: true,
                     table: Constants.tables.defender,
                 });
 
                 SQLite.deleteUser({
                     discordID: interaction.user.id,
+                    allowUndefined: true,
                     table: Constants.tables.friends,
                 });
 
                 SQLite.deleteUser({
                     discordID: interaction.user.id,
+                    allowUndefined: true,
                     table: Constants.tables.rewards,
                 });
             });
@@ -257,8 +262,10 @@ export const execute: ClientCommand['execute'] = async (
             discordID: interaction.user.id,
             table: Constants.tables.api,
             columns: ['*'],
-            allowUndefined: false,
-        });
+            allowUndefined: true,
+        }) ?? {
+            history: [],
+        };
 
         const base = new MessageButton()
             .setStyle(

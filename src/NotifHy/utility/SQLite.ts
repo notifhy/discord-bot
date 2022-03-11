@@ -292,13 +292,19 @@ export class SQLite {
 
     static deleteUser({
         discordID,
+        allowUndefined,
         table,
     }: {
         discordID: string,
+        allowUndefined: boolean,
         table: Table,
     }): void {
+        const query = allowUndefined === true
+            ? `DELETE FROM ${table} WHERE EXISTS(SELECT 1 FROM ${table} WHERE discordID = ?)`
+            : `DELETE FROM ${table} WHERE discordID = ?`;
+
         this.queryRun({
-            query: `DELETE FROM ${table} WHERE discordID = ?`,
+            query: query,
             data: [discordID],
         });
     }
