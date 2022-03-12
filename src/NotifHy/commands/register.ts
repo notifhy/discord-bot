@@ -8,13 +8,13 @@ import type {
 } from '../@types/database';
 import { BetterEmbed } from '../../utility/utility';
 import { Constants } from '../utility/Constants';
+import { DiscordAPIError } from 'discord.js';
 import { HTTPError } from '../errors/HTTPError';
 import { Log } from '../../utility/Log';
 import { RegionLocales } from '../locales/RegionLocales';
 import { Request } from '../../utility/Request';
 import { setPresence } from '../utility/utility';
 import { SQLite } from '../utility/SQLite';
-import { DiscordAPIError } from 'discord.js';
 
 export const properties: ClientCommand['properties'] = {
     name: 'register',
