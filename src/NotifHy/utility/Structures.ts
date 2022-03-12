@@ -38,7 +38,7 @@ export const Structures = {
     defender: {
         toggle: {
             value: 'toggle',
-            emoji: Constants.emoji.power,
+            emoji: Constants.emoji.zap,
             button: {
                 enableCustomID: 'toggle1',
                 disableCustomID: 'toggle0',
@@ -46,7 +46,7 @@ export const Structures = {
         },
         alerts: {
             value: 'alerts',
-            emoji: Constants.emoji.alert,
+            emoji: Constants.emoji.bell,
             select: {
                 customId: 'alerts',
                 minValues: 0,
@@ -73,7 +73,7 @@ export const Structures = {
         },
         channel: {
             value: 'channel',
-            emoji: Constants.emoji.hashtag,
+            emoji: Constants.emoji.hash,
             select: {
                 customId: 'null',
                 disabled: true,
@@ -86,7 +86,7 @@ export const Structures = {
         },
         gameTypes: {
             value: 'gameTypes',
-            emoji: Constants.emoji.swords,
+            emoji: Constants.emoji.shieldlock,
             select: {
                 customId: 'gameTypes',
                 minValues: 0,
@@ -173,7 +173,7 @@ export const Structures = {
         },
         languages: {
             value: 'languages',
-            emoji: Constants.emoji.speech,
+            emoji: Constants.emoji.commentdiscussion,
             select: {
                 customId: 'languages',
                 minValues: 0,
@@ -239,7 +239,7 @@ export const Structures = {
         },
         versions: {
             value: 'versions',
-            emoji: Constants.emoji.version,
+            emoji: Constants.emoji.gitbranch,
             select: {
                 customId: 'versions',
                 minValues: 0,
@@ -277,7 +277,7 @@ export const Structures = {
     friends: {
         toggle: {
             value: 'toggle',
-            emoji: Constants.emoji.power,
+            emoji: Constants.emoji.zap,
             button: {
                 enableCustomID: 'toggle1',
                 disableCustomID: 'toggle0',
@@ -285,7 +285,7 @@ export const Structures = {
         },
         channel: {
             value: 'channel',
-            emoji: Constants.emoji.hashtag,
+            emoji: Constants.emoji.hash,
             select: {
                 customId: 'null',
                 disabled: true,
@@ -300,7 +300,7 @@ export const Structures = {
     rewards: {
         toggle: {
             value: 'toggle',
-            emoji: Constants.emoji.power,
+            emoji: Constants.emoji.zap,
             button: {
                 enableCustomID: 'toggle1',
                 disableCustomID: 'toggle0',
@@ -308,7 +308,7 @@ export const Structures = {
         },
         alertTime: {
             value: 'alertTime',
-            emoji: Constants.emoji.clock,
+            emoji: Constants.emoji.hourglass,
             select: {
                 customId: 'alertTime',
                 disabled: false,
@@ -390,7 +390,7 @@ export const Structures = {
         },
         claimNotification: {
             value: 'claimNotification',
-            emoji: Constants.emoji.checkmark,
+            emoji: Constants.emoji.issueclosed,
             button: {
                 enableCustomID: 'claimNotification1',
                 disableCustomID: 'claimNotification0',
@@ -398,7 +398,7 @@ export const Structures = {
         },
         milestones: {
             value: 'milestones',
-            emoji: Constants.emoji.celebration,
+            emoji: Constants.emoji.trophy,
             button: {
                 enableCustomID: 'milestones1',
                 disableCustomID: 'milestones0',
@@ -406,7 +406,7 @@ export const Structures = {
         },
         notificationInterval: {
             value: 'notificationInterval',
-            emoji: Constants.emoji.interval,
+            emoji: Constants.emoji.sync,
             select: {
                 customId: 'notificationInterval',
                 disabled: false,
