@@ -211,7 +211,7 @@
             "information": {
                 "introduction": {
                     "name": "Introduction",
-                    "value": "NotifHy is a notification bot for Hypixel. Share logins with friends, get reminders to claim your daily rewards, and get alerts on suspicious activity.. This bot is the successor to HyGuard, which you can read about [here](https://hypixel.net/threads/discord-bot-hyguard-a-bot-that-monitors-your-account-24-7.4368395/ \"Hypixel Forums\")."
+                    "value": "NotifHy is a notification bot for Hypixel. Share logins with friends, get reminders to claim daily rewards, and get alerts on suspicious activity.. This bot is the successor to HyGuard, which you can read about [here](https://hypixel.net/threads/discord-bot-hyguard-a-bot-that-monitors-your-account-24-7.4368395/ \"Hypixel Forums\")."
                 },
                 "modules": {
                     "name": "Modules",
