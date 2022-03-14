@@ -219,15 +219,15 @@
                 },
                 "setup": {
                     "name": "Setup",
-                    "value": "• You should use a server that you own or is owned by your friends\n• Invite the bot by clicking [here](https://attituding.github.io/NotifHy/invite/ \"Invite\") and granting the OAuth2 scopes\n• Use **/register** followed by your username or UUID\n• Using **/discord** on Hypixel may be required to link or relink your Discord account to your Minecraft account\n• Use **/modules** followed by the module you are interested in\n• Configure the module by clicking on the select menus and buttons. The **Toggle** setting will tell you what settings need to be configured before you can enable the module\n• **/channel** may be required for some modules in order to tell the bot where you want alerts/notifications to go"
+                    "value": "• You should use a server that you own or is owned by your friends\n• Invite the bot by clicking [here](https://notifhy.attituding.live/invite/ \"Invite\") and granting the OAuth2 scopes\n• Use **/register** followed by your username or UUID\n• Using **/discord** on Hypixel may be required to link or relink your Discord account to your Minecraft account\n• Use **/modules** followed by the module you are interested in\n• Configure the module by clicking on the select menus and buttons. The **Toggle** setting will tell you what settings need to be configured before you can enable the module\n• **/channel** may be required for some modules in order to tell the bot where you want alerts/notifications to go"
                 },
                 "other": {
                     "name": "Other Information",
-                    "value": "Learn more at https://attituding.github.io/NotifHy/ or the GitHub page below."
+                    "value": "Learn more at https://notifhy.attituding.live/ or the GitHub page below."
                 },
                 "legal": {
                     "name": "Legal Stuff",
-                    "value": "By using this service, you agree to our [Privacy Policy](https://attituding.github.io/NotifHy/legal/privacy-policy/ \"Privacy Policy\") and our [Terms of Service](https://attituding.github.io/NotifHy/legal/terms-of-service/ \"Terms of Service\")."
+                    "value": "By using this service, you agree to our [Privacy Policy](https://notifhy.attituding.live/legal/privacy-policy/ \"Privacy Policy\") and our [Terms of Service](https://notifhy.attituding.live/legal/terms-of-service/ \"Terms of Service\")."
                 }
             },
             "all": {
