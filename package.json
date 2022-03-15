@@ -4,22 +4,22 @@
     "author": "Attituding <Attituding@outlook.com>",
     "main": "src/main.ts",
     "devDependencies": {
-        "@typescript-eslint/eslint-plugin": "^5.13.0",
-        "@typescript-eslint/parser": "^5.13.0",
-        "eslint": "^8.10.0",
+        "@typescript-eslint/eslint-plugin": "^5.15.0",
+        "@typescript-eslint/parser": "^5.15.0",
+        "eslint": "^8.11.0",
         "eslint-config-airbnb": "19.0.4"
     },
     "dependencies": {
         "@discordjs/rest": "0.3.0",
-        "@googleapis/drive": "^2.2.0",
+        "@googleapis/drive": "^2.3.0",
         "@types/better-sqlite3": "^7.5.0",
         "@types/node": "^17.0.21",
         "@types/node-fetch": "^2.6.1",
         "better-sqlite3-multiple-ciphers": "^7.5.0",
-        "discord-api-types": "^0.27.3",
+        "discord-api-types": "^0.29.0",
         "discord.js": "^13.6.0",
         "node-fetch": "^2.6.7",
-        "ts-node": "^10.6.0",
+        "ts-node": "^10.7.0",
         "typescript": "^4.6.2"
     },
     "scripts": {
