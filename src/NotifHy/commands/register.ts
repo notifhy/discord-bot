@@ -18,7 +18,7 @@ import { SQLite } from '../utility/SQLite';
 
 export const properties: ClientCommand['properties'] = {
     name: 'register',
-    description: 'Link your Minecraft account and start using the modules offered.',
+    description: 'Link your Minecraft account to begin using the modules offered.',
     cooldown: 5_000,
     ephemeral: true,
     noDM: false,
@@ -26,7 +26,7 @@ export const properties: ClientCommand['properties'] = {
     requireRegistration: false,
     structure: {
         name: 'register',
-        description: 'Register to begin using the modules that this bot offers',
+        description: 'Link your Minecraft account to begin using the modules offered',
         options: [
             {
                 name: 'player',
