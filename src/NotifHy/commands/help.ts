@@ -61,7 +61,7 @@ export const properties: ClientCommand['properties'] = {
             },
             {
                 name: 'information',
-                description: 'Returns information about this bot ',
+                description: 'Returns information about this bot',
                 type: 1,
             },
         ],
