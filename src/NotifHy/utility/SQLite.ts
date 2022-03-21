@@ -10,6 +10,8 @@ import Database from 'better-sqlite3-multiple-ciphers';
 /* eslint-disable consistent-return */
 /* eslint-disable no-unused-vars */
 
+//Probably vulnerable.
+
 let db = new Database(`${__dirname}/../../../database.db`);
 
 type JSONize<Type> = {
@@ -326,6 +328,8 @@ export class SQLite {
     /*
      * Taken from https://stackoverflow.com/a/52799327 under CC BY-SA 4.0
      * Takes an input and tests for a JSON structure (excluding primitives)
+     *
+     * Also, if a string is valid JSON, it is probably possible for the whole bot to crash.
      */
     static JSONize(input: Record<string, unknown>) {
         for (const key in input) {
