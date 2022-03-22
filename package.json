@@ -2,7 +2,7 @@
     "name": "notifhy",
     "license": "MIT",
     "author": "Attituding <Attituding@outlook.com>",
-    "main": "src/main.ts",
+    "main": "src/NotifHy/main.ts",
     "devDependencies": {
         "@typescript-eslint/eslint-plugin": "^5.15.0",
         "@typescript-eslint/parser": "^5.15.0",
