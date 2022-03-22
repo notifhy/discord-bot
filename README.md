@@ -1,4 +1,4 @@
-[![](https://i.imgur.com/cbOmoWk.png)](https://youtu.be/_yAVuZBMcdk, "Trailer")
+[![](https://i.imgur.com/EpnBH0u.png)](https://youtu.be/_yAVuZBMcdk, "Trailer")
 
 ## Introduction
 NotifHy is a bot focused on alerts and notifications for the Hypixel server. Share logins with friends, get reminders when you are about to lose your daily reward streak, and get alerts on suspicious activity.
