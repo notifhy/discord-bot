@@ -131,8 +131,9 @@ export function cleanGameType(type: string | null) {
 
     const gameTypes = Constants.clean.gameTypes;
 
-    const gameType =
-        gameTypes[type as keyof typeof Constants.clean.gameTypes];
+    const gameType = gameTypes[
+        type as keyof typeof Constants.clean.gameTypes
+    ];
 
     return gameType ?? type;
 }

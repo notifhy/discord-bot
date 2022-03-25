@@ -14,6 +14,7 @@ import {
     DiscordAPIError,
     Constants as DiscordConstants,
     Snowflake,
+    HTTPError,
 } from 'discord.js';
 import { Constants } from '../utility/Constants';
 import { ErrorHandler } from '../../utility/errors/ErrorHandler';
@@ -24,20 +25,29 @@ import {
 import { ModuleError } from './ModuleError';
 import { RegionLocales } from '../locales/RegionLocales';
 import { SQLite } from '../utility/SQLite';
+import { Locale } from '../@types/locales';
 
-export class ModuleDiscordErrorHandler extends BaseErrorHandler<
-    DiscordAPIError | (Omit<ModuleError, 'raw'> & { raw: DiscordAPIError })
+export class ModuleHTTPErrorHandler extends BaseErrorHandler<
+    DiscordAPIError
+        | HTTPError
+        | (Omit<ModuleError, 'raw'> &
+            { raw: DiscordAPIError | HTTPError })
 > {
     readonly cleanModule: string;
     readonly client: Client;
     readonly discordID: string;
     readonly module: string | null;
     readonly raw: unknown | null;
+    readonly userData: UserData;
+    readonly locale: Locale['errors']['moduleErrors'];
 
     constructor(
         client: Client,
         discordID: Snowflake,
-        error: DiscordAPIError | (Omit<ModuleError, 'raw'> & { raw: DiscordAPIError }),
+        error: DiscordAPIError
+            | HTTPError
+            | (Omit<ModuleError, 'raw'> &
+                { raw: DiscordAPIError | HTTPError }),
     ) {
         super(error);
 
@@ -56,14 +66,32 @@ export class ModuleDiscordErrorHandler extends BaseErrorHandler<
         this.raw = error instanceof ModuleError
             ? error.raw
             : null;
+
+        this.userData = SQLite.getUser<UserData>({
+             discordID: this.discordID,
+            table: Constants.tables.users,
+            allowUndefined: false,
+            columns: [
+                'locale',
+                'systemMessages',
+            ],
+        });
+
+        this.locale = RegionLocales
+            .locale(this.userData.locale)
+            .errors
+            .moduleErrors;
     }
 
     static async init(
         client: Client,
         discordID: Snowflake,
-        error: DiscordAPIError | (ModuleError & { raw: DiscordAPIError }),
+        error: DiscordAPIError
+            | HTTPError
+            | (ModuleError
+                & { raw: DiscordAPIError | HTTPError }),
     ) {
-        const handler = new ModuleDiscordErrorHandler(client, discordID, error);
+        const handler = new ModuleHTTPErrorHandler(client, discordID, error);
 
         try {
             handler.errorLog();
@@ -71,8 +99,13 @@ export class ModuleDiscordErrorHandler extends BaseErrorHandler<
 
             if (error instanceof DiscordAPIError) {
                 await handler.handleDiscordAPICode(error);
-            } else {
+            } else if (
+                error instanceof ModuleError &&
+                error.raw instanceof DiscordAPIError
+            ) {
                 await handler.handleDiscordAPICode(error.raw);
+            } else {
+                await handler.handleHTTPError();
             }
         } catch (error2) {
             await ErrorHandler.init(error2, handler.incidentID);
@@ -113,21 +146,6 @@ export class ModuleDiscordErrorHandler extends BaseErrorHandler<
     }
 
     private async handleDiscordAPICode(error: DiscordAPIError) {
-        const userData = SQLite.getUser<UserData>({
-            discordID: this.discordID,
-            table: Constants.tables.users,
-            allowUndefined: false,
-            columns: [
-                'locale',
-                'systemMessages',
-            ],
-        });
-
-        const locale = RegionLocales
-            .locale(userData.locale)
-            .errors
-            .moduleErrors;
-
         const { replace } = RegionLocales;
         const { APIErrors } = DiscordConstants;
 
@@ -139,13 +157,13 @@ export class ModuleDiscordErrorHandler extends BaseErrorHandler<
 
         const message = {
             name: replace(
-                locale[
-                    error.code as unknown as keyof Omit<typeof locale, 'alert'>
+                this.locale[
+                    error.code as unknown as keyof Omit<typeof this.locale, 'alert'>
                 ].name,
                 cleanModule),
             value: replace(
-                locale[
-                    error.code as unknown as keyof Omit<typeof locale, 'alert'>
+                this.locale[
+                    error.code as unknown as keyof Omit<typeof this.locale, 'alert'>
                 ].value,
                 cleanModule,
             ),
@@ -158,7 +176,7 @@ export class ModuleDiscordErrorHandler extends BaseErrorHandler<
                 try {
                     const user = await this.client.users.fetch(this.discordID);
 
-                    const { footer, title } = locale.alert;
+                    const { footer, title } = this.locale.alert;
 
                     const alertEmbed = new BetterEmbed({ text: footer })
                         .setTitle(title)
@@ -170,9 +188,9 @@ export class ModuleDiscordErrorHandler extends BaseErrorHandler<
                     await user.send({ embeds: [alertEmbed] });
                 } catch (error3) {
                     this.log('Failed to send DM alert');
-                    await ErrorHandler.init(error3, this.incidentID);
+                    throw error3;
                 }
-                //falls through - eslint
+                //fall through - eslint
             }
             case APIErrors.UNKNOWN_USER: //Unknown user
             case APIErrors.CANNOT_MESSAGE_USER: { //Cannot send messages to this user
@@ -207,7 +225,7 @@ export class ModuleDiscordErrorHandler extends BaseErrorHandler<
                     table: Constants.tables.users,
                     data: {
                         systemMessages: [
-                            ...userData.systemMessages,
+                            ...this.userData.systemMessages,
                             message,
                         ],
                     },
@@ -216,7 +234,47 @@ export class ModuleDiscordErrorHandler extends BaseErrorHandler<
                 this.log('Handled Discord API error', error.code);
             }
             break;
-            //No default
+            default: this.handleHTTPError();
+        }
+    }
+
+    private async handleHTTPError() {
+        try {
+            const user = await this.client.users.fetch(this.discordID);
+
+            const { footer, title } = this.locale.alert;
+
+            const message = {
+                name: this.locale.http.name,
+                value: this.locale.http.value,
+            };
+
+            const alertEmbed = new BetterEmbed({ text: footer })
+                .setTitle(title)
+                .addFields(message);
+
+            const settledPromises = await Promise.allSettled([
+                user.send({ embeds: [alertEmbed] }),
+                SQLite.updateUser<UserData>({
+                    discordID: this.discordID,
+                    table: Constants.tables.users,
+                    data: {
+                        systemMessages: [
+                            ...this.userData.systemMessages,
+                            message,
+                        ],
+                    },
+                }),
+            ]);
+
+            for (const promise of settledPromises) {
+                if (promise.status === 'rejected') {
+                    this.log('Failed to handle part of the HTTPError due to', promise.reason);
+                }
+            }
+        } catch (error3) {
+            this.log('Failed to send DM alert');
+            await ErrorHandler.init(error3, this.incidentID);
         }
     }
 }

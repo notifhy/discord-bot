@@ -1023,6 +1023,10 @@
             "50013": {
                 "name": "{{ cleanModule }} Disabled",
                 "value": "This bot lacked permission(s) to perform an action. Discord does not specify the missing permission(s), so this is all we know. [Code 50013](https://discord.com/developers/docs/topics/opcodes-and-status-codes#json-json-error-codes \"Opcodes and Status codes\")"
+            },
+            "http": {
+                "name": "Failed to Deliver Alert",
+                "value": "This bot failed to deliver an alert after retrying 5 times."
             }
         },
         "systemMessages": {

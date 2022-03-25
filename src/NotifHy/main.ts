@@ -59,6 +59,7 @@ const client = new Client({
         ThreadMemberManager: 0,
         VoiceStateManager: 0,
     }),
+    retryLimit: 5,
     presence: {
         status: 'online',
     },

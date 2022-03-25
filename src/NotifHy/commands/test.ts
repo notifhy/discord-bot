@@ -43,5 +43,6 @@ export const properties: ClientCommand['properties'] = {
 export const execute: ClientCommand['execute'] = async (
     interaction: CommandInteraction,
 ): Promise<void> => {
-    await interaction.followUp({ content: 'Done!' });
+    await interaction.followUp({ content: 'e' });
+    throw new TypeError('a');
 };

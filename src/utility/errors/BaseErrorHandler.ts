@@ -1,4 +1,7 @@
-import { BetterEmbed } from '../utility';
+import {
+    BetterEmbed,
+    generateStackTrace,
+} from '../utility';
 import { Constants } from '../../NotifHy/utility/Constants';
 import {
     FileOptions,
@@ -14,6 +17,11 @@ export class BaseErrorHandler<E> {
     constructor(error: E) {
         this.error = error;
         this.incidentID = SnowflakeUtil.generate();
+
+        Object.defineProperty(error, 'fullStack', {
+            value: generateStackTrace(),
+        });
+
         this.stackAttachment = {
             attachment: Buffer.from(
                 JSON.stringify(

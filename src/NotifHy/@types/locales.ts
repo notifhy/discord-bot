@@ -426,6 +426,7 @@ export interface ModuleErrors {
     50001: Field,
     50007: Field,
     50013: Field,
+    http: Field,
 }
 
 export interface SystemMessages {

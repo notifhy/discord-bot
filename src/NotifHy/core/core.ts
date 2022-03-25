@@ -2,6 +2,7 @@ import type { UserAPIData } from '../@types/database';
 import {
     Client,
     DiscordAPIError,
+    HTTPError,
 } from 'discord.js';
 import { Constants } from '../utility/Constants';
 import { CoreData } from './data';
@@ -11,7 +12,7 @@ import { CoreRequest } from './request';
 import { ErrorHandler } from '../../utility/errors/ErrorHandler';
 import { GlobalConstants } from '../../utility/Constants';
 import { keyLimit } from '../../../config.json';
-import { ModuleDiscordErrorHandler } from '../errors/ModuleDiscordErrorHandler';
+import { ModuleHTTPErrorHandler } from '../errors/ModuleHTTPErrorHandler';
 import { ModuleError } from '../errors/ModuleError';
 import { ModuleErrorHandler } from '../errors/ModuleErrorHandler';
 import { RequestErrorHandler } from '../errors/RequestErrorHandler';
@@ -132,19 +133,24 @@ export class Core {
             await this.module.execute(payload);
             performance.modules = Date.now();
         } catch (error) {
+            //beautiful
             if (
                 (
                     error instanceof ModuleError &&
-                    error.raw instanceof DiscordAPIError
+                    (
+                        error.raw instanceof DiscordAPIError ||
+                        error.raw instanceof HTTPError
+                    )
                 ) ||
-                error instanceof DiscordAPIError
+                error instanceof DiscordAPIError ||
+                error instanceof HTTPError
             ) {
-                await ModuleDiscordErrorHandler.init(
+                await ModuleHTTPErrorHandler.init(
                     this.client,
                     user.discordID,
                     error as (
-                        DiscordAPIError |
-                        (Omit<ModuleError, 'raw'> & { raw: DiscordAPIError })
+                        HTTPError |
+                        (Omit<ModuleError, 'raw'> & { raw: HTTPError })
                     ),
                 );
             } else {

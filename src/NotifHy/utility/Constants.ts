@@ -141,7 +141,7 @@ export const Constants = {
             )`,
             defender: `CREATE TABLE IF NOT EXISTS "defender" (
                 "discordID" TEXT NOT NULL UNIQUE,
-                "alerts" TEXT NOT NULL DEFAULT '{"login":true,"logout":true,"version":true,"gameTypes":true,"language":true}',
+                "alerts" TEXT NOT NULL DEFAULT '{"login":true,"logout":true,"version":true,"gameType":true,"language":true}',
                 "gameTypes" TEXT NOT NULL DEFAULT '[]',
                 "channel" TEXT DEFAULT null,
                 "languages" TEXT NOT NULL DEFAULT '[]',
