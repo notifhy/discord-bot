@@ -1026,7 +1026,7 @@
             },
             "http": {
                 "name": "Failed to Deliver Alert",
-                "value": "This bot failed to deliver an alert after retrying 5 times."
+                "value": "This bot failed to deliver an alert, likely after retrying multiple times. This type of error should be extremely uncommon. Sorry."
             }
         },
         "systemMessages": {
