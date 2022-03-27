@@ -21,7 +21,7 @@ export const properties: ClientCommand['properties'] = {
     requireRegistration: false,
     structure: {
         name: 'deploy',
-        description: 'Displays helpful information and available commands',
+        description: 'Deploy commands',
         options: [
             {
                 name: 'scope',
