@@ -41,11 +41,11 @@
             },
             "set": {
                 "title": "Updated Value",
-                "description": "<HypixelErrors>.{{ category }}.{{ type }} is now {{ value }}."
+                "description": "<CoreErrors>.{{ category }}.{{ type }} is now {{ value }}."
             },
             "call": {
                 "title": "Executed!",
-                "description": "Executed <HypixelErrors>.{{ method }}."
+                "description": "Executed <CoreErrors>.{{ method }}."
             }
         },
         "channel": {
@@ -128,7 +128,7 @@
             },
             "view": {
                 "title": "Current Configuration",
-                "description": "Blocked Guilds: {{ blockedGuilds }}\nBlocked Users: {{ blockedUsers }}\nCore: {{ core }}\nDeveloper Mode: {{ devMode }}\nKey Percentage {{ keyPercentage }}%\nRest Request Timeout: {{ restRequestTimeout }}ms\nRetry Limit: {{ retryLimit }}"
+                "description": "Blocked Guilds: {{ blockedGuilds }}\nBlocked Users: {{ blockedUsers }}\nCore: {{ core }}\nDeveloper Mode: {{ devMode }}\nKey Percentage: {{ keyPercentage }}%\nRest Request Timeout: {{ restRequestTimeout }}ms\nRetry Limit: {{ retryLimit }}"
             }
         },
         "data": {
