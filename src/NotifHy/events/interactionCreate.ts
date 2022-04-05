@@ -37,6 +37,11 @@ export const execute: ClientEvent['execute'] = async (
 
     try {
         if (interaction.isCommand()) {
+            if (interaction.channel?.isVoice()) {
+                await interaction.reply('Channel type (text in voice) currently unsupported');
+                return;
+            }
+
             const command: ClientCommand | undefined =
                 interaction.client.commands.get(interaction.commandName);
 
