@@ -12,12 +12,14 @@ import { CoreRequest } from './request';
 import { ErrorHandler } from '../../utility/errors/ErrorHandler';
 import { GlobalConstants } from '../../utility/Constants';
 import { keyLimit } from '../../../config.json';
+import { Log } from '../../utility/Log';
 import { ModuleHTTPErrorHandler } from '../errors/ModuleHTTPErrorHandler';
 import { ModuleError } from '../errors/ModuleError';
 import { ModuleErrorHandler } from '../errors/ModuleErrorHandler';
 import { RequestErrorHandler } from '../errors/RequestErrorHandler';
 import { setTimeout } from 'node:timers/promises';
 import { SQLite } from '../utility/SQLite';
+import { generateStackTrace } from '../../utility/utility';
 
 /* eslint-disable no-await-in-loop */
 
@@ -54,16 +56,30 @@ export class Core {
     async start() {
         while (true) {
             try {
-                await this.checkSystem();
+                const reachedMaxTimeout = await Promise.race([
+                    this.checkSystem(),
+                    Core.maxTimeout(900000),
+                ]);
+
+                if (reachedMaxTimeout === true) {
+                    Log.error('Hit a max timeout of 900000\n', generateStackTrace());
+                }
             } catch (error) {
+                this.error.addGeneric();
                 await ErrorHandler.init(error);
             }
         }
     }
 
+    static async maxTimeout(timeout: number) {
+        await setTimeout(timeout);
+        return true;
+    }
+
     private async checkSystem() {
         if (this.error.isTimeout()) {
             await setTimeout(this.error.getTimeout());
+            return;
         }
 
         if (this.client.config.core === false) {
@@ -90,13 +106,20 @@ export class Core {
         for (const user of users) {
             if (
                 this.error.isTimeout() ||
-                //@ts-expect-error possibility to not be true?
+                //@ts-expect-error possibility to not be true
                 this.client.config.core === false
             ) {
                 return;
             }
 
-            await this.refresh(user);
+            const reachedMaxTimeout = await Promise.race([
+                this.refresh(user),
+                Core.maxTimeout(15000),
+            ]);
+
+            if (reachedMaxTimeout === true) {
+                Log.error('Hit a max timeout of 15000\n', generateStackTrace());
+            }
         }
     }
 
