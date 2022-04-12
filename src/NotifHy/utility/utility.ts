@@ -12,6 +12,7 @@ import { Constants } from './Constants';
 import { SQLite } from './SQLite';
 import { RegionLocales } from '../locales/RegionLocales';
 import { BetterEmbed } from '../../utility/utility';
+import { Log } from '../../utility/Log';
 
 export async function awaitComponent(
     channel: TextBasedChannel,
@@ -39,16 +40,16 @@ export async function awaitComponent(
 export function deprecationEmbed(
     currentEmbeds: MessageEmbed[],
     locale: string,
-    interaction?: CommandInteraction,
 ) {
     const text = RegionLocales.locale(locale).deprecation;
 
-    const embed = new BetterEmbed(interaction)
+    const embed = new BetterEmbed()
         .setColor(Constants.colors.warning)
         .setTitle(text.title)
         .setDescription(text.description);
 
     if (Math.random() * 10 > 8) {
+        Log.log('Adding deprecation notice to alert');
         currentEmbeds.push(embed);
     }
 

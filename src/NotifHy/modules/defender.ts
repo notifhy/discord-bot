@@ -258,7 +258,10 @@ export const execute: ClientModule['execute'] = async ({
                 address instanceof TextChannel
                     ? Formatters.userMention(userAPIData.discordID)
                     : undefined,
-            embeds: [alertEmbed, deprecationEmbed(userData.locale)],
+            embeds: deprecationEmbed(
+                [alertEmbed],
+                userData.locale,
+            ),
             allowedMentions: {
                 parse: ['users'],
             },

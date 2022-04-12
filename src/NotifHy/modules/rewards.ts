@@ -137,10 +137,10 @@ export const execute: ClientModule['execute'] = async ({
                     );
 
                 await user.send({
-                    embeds: [
-                        milestoneNotification,
-                        deprecationEmbed(userData.locale),
-                    ],
+                    embeds: deprecationEmbed(
+                        [milestoneNotification],
+                        userData.locale,
+                    ),
                 });
 
                 Log.module(properties.name, userData, 'Delivered milestone');
@@ -160,10 +160,10 @@ export const execute: ClientModule['execute'] = async ({
                     ));
 
                 await user.send({
-                    embeds: [
-                        claimedNotification,
-                        deprecationEmbed(userData.locale),
-                    ],
+                    embeds: deprecationEmbed(
+                        [claimedNotification],
+                        userData.locale,
+                    ),
                 });
 
                 Log.module(properties.name, userData, 'Delivered claimed notification');

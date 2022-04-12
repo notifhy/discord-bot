@@ -8,6 +8,7 @@ import { BetterEmbed } from '../../utility/utility';
 import { Constants } from '../utility/Constants';
 import { RegionLocales } from '../locales/RegionLocales';
 import { SQLite } from '../utility/SQLite';
+import { deprecationEmbed } from '../utility/utility';
 
 export class CoreModule {
     client: Client;
@@ -85,7 +86,12 @@ export class CoreModule {
                 userAPIData.discordID,
             );
 
-            await user.send({ embeds: [embed] });
+            await user.send({
+                embeds: deprecationEmbed(
+                    [embed],
+                    userData.locale,
+                ),
+            });
         }
     }
 
