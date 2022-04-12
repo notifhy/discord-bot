@@ -1125,5 +1125,9 @@
                 ]
             }
         }
+    },
+    "deprecation": {
+        "title": "NotifHy End of Life",
+        "description": "NotifHy is being deprecated and will be taken offline <t:1657047600:R>. Until then, you can continue to use this bot unless circumstances change.\n\nYou can also check out my newer WIP project, [Hypixel Announcements](https://hypixelannouncements.attituding.live/ \"Hypixel Announcements\"), which will not be shutting down then."
     }
 }

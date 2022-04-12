@@ -22,7 +22,7 @@ import {
  } from '../locales/RegionLocales';
 import { Log } from '../../utility/Log';
 import { ownerID } from '../../../config.json';
-import { slashCommandResolver } from '../utility/utility';
+import { deprecationEmbed, slashCommandResolver } from '../utility/utility';
 import { SQLite } from '../utility/SQLite';
 
 export const properties: ClientEvent['properties'] = {
@@ -85,6 +85,10 @@ export const execute: ClientEvent['execute'] = async (
                 userData,
                 userData.locale,
             );
+
+            await interaction.followUp({
+                embeds: deprecationEmbed([], interaction.locale, interaction),
+            });
         }
     } catch (error) {
         if (error instanceof ConstraintError) {

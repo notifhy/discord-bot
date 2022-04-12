@@ -5,10 +5,13 @@ import {
     CommandInteraction,
     MessageActionRow,
     MessageComponentType,
+    MessageEmbed,
     TextBasedChannel,
 } from 'discord.js';
 import { Constants } from './Constants';
 import { SQLite } from './SQLite';
+import { RegionLocales } from '../locales/RegionLocales';
+import { BetterEmbed } from '../../utility/utility';
 
 export async function awaitComponent(
     channel: TextBasedChannel,
@@ -31,6 +34,25 @@ export async function awaitComponent(
 
         throw error;
     }
+}
+
+export function deprecationEmbed(
+    currentEmbeds: MessageEmbed[],
+    locale: string,
+    interaction?: CommandInteraction,
+) {
+    const text = RegionLocales.locale(locale).deprecation;
+
+    const embed = new BetterEmbed(interaction)
+        .setColor(Constants.colors.warning)
+        .setTitle(text.title)
+        .setDescription(text.description);
+
+    if (Math.random() * 10 > 8) {
+        currentEmbeds.push(embed);
+    }
+
+    return currentEmbeds;
 }
 
 export function disableComponents(messageActionRows: MessageActionRow[]) {

@@ -506,6 +506,10 @@ export interface Locale {
     errors: Errors,
     commands: Commands,
     modules: Modules,
+    deprecation: {
+        title: string
+        description: string;
+    }
 }
 
 export interface Locales {

@@ -22,6 +22,7 @@ import { Log } from '../../utility/Log';
 import { ModuleError } from '../errors/ModuleError';
 import { RegionLocales } from '../locales/RegionLocales';
 import { SQLite } from '../utility/SQLite';
+import { deprecationEmbed } from '../utility/utility';
 
 export const properties: ClientModule['properties'] = {
     name: 'defender',
@@ -45,7 +46,7 @@ export const execute: ClientModule['execute'] = async ({
             discordID: userAPIData.discordID,
             table: Constants.tables.defender,
             allowUndefined: false,
-             columns: [
+            columns: [
                 'alerts',
                 'channel',
                 'gameTypes',
@@ -161,10 +162,10 @@ export const execute: ClientModule['execute'] = async ({
                 value: replace(locale.gameType.value, {
                     sGameType:
                         cleanGameType(oldData.gameType ?? null) ??
-                            locale.gameType.null,
+                        locale.gameType.null,
                     pGameType:
                         cleanGameType(newData.gameType ?? null) ??
-                            locale.gameType.null,
+                        locale.gameType.null,
                 }),
             };
 
@@ -257,7 +258,7 @@ export const execute: ClientModule['execute'] = async ({
                 address instanceof TextChannel
                     ? Formatters.userMention(userAPIData.discordID)
                     : undefined,
-            embeds: [alertEmbed],
+            embeds: [alertEmbed, deprecationEmbed(userData.locale)],
             allowedMentions: {
                 parse: ['users'],
             },

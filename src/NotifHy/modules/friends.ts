@@ -19,6 +19,7 @@ import { Log } from '../../utility/Log';
 import { ModuleError } from '../errors/ModuleError';
 import { RegionLocales } from '../locales/RegionLocales';
 import { SQLite } from '../utility/SQLite';
+import { deprecationEmbed } from '../utility/utility';
 
 export const properties: ClientModule['properties'] = {
     name: 'friends',
@@ -41,13 +42,12 @@ export const execute: ClientModule['execute'] = async ({
             return; //If the login/logout aren't in differences
         }
 
-        const friendModule =
-            SQLite.getUser<FriendsModule>({
-                discordID: userAPIData.discordID,
-                table: Constants.tables.friends,
-                allowUndefined: false,
-                columns: ['channel'],
-            });
+        const friendModule = SQLite.getUser<FriendsModule>({
+            discordID: userAPIData.discordID,
+            table: Constants.tables.friends,
+            allowUndefined: false,
+            columns: ['channel'],
+        });
 
         const locale = baseLocale.friends;
         const { replace } = RegionLocales;
@@ -156,7 +156,7 @@ export const execute: ClientModule['execute'] = async ({
 
         if (notifications.length > 0) {
             await channel.send({
-                embeds: notifications,
+                embeds: deprecationEmbed(notifications, userData.locale),
                 allowedMentions: {
                     parse: [],
                 },

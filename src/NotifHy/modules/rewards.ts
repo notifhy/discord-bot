@@ -7,6 +7,7 @@ import { Log } from '../../utility/Log';
 import { ModuleError } from '../errors/ModuleError';
 import { RegionLocales } from '../locales/RegionLocales';
 import { SQLite } from '../utility/SQLite';
+import { deprecationEmbed } from '../utility/utility';
 
 export const properties: ClientModule['properties'] = {
     name: 'rewards',
@@ -92,7 +93,10 @@ export const execute: ClientModule['execute'] = async ({
                 .setDescription(description);
 
              await user.send({
-                embeds: [rewardNotification],
+                embeds: deprecationEmbed(
+                    [rewardNotification],
+                    userData.locale,
+                ),
             });
 
             SQLite.updateUser<RewardsModule>({
@@ -133,7 +137,10 @@ export const execute: ClientModule['execute'] = async ({
                     );
 
                 await user.send({
-                    embeds: [milestoneNotification],
+                    embeds: [
+                        milestoneNotification,
+                        deprecationEmbed(userData.locale),
+                    ],
                 });
 
                 Log.module(properties.name, userData, 'Delivered milestone');
@@ -153,7 +160,10 @@ export const execute: ClientModule['execute'] = async ({
                     ));
 
                 await user.send({
-                    embeds: [claimedNotification],
+                    embeds: [
+                        claimedNotification,
+                        deprecationEmbed(userData.locale),
+                    ],
                 });
 
                 Log.module(properties.name, userData, 'Delivered claimed notification');
