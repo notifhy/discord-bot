@@ -59,8 +59,11 @@ export const execute: ClientModule['execute'] = async ({
         const notificationInterval = rewardsModule.notificationInterval!;
 
         //Is the user's last claimed reward between the last midnight and the coming midnight
-        const hasClaimed =
-            nextResetTime - GlobalConstants.ms.day < lastClaimedReward;
+        const hasClaimed = nextResetTime - GlobalConstants.ms.day < (
+            Math.ceil(
+                lastClaimedReward / 1000,
+            ) * 1000
+        );
 
         const surpassedInterval =
             rewardsModule.lastNotified < nextResetTime - GlobalConstants.ms.day
