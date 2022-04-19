@@ -187,8 +187,7 @@ export class ModuleHTTPErrorHandler extends BaseErrorHandler<
 
                     await user.send({ embeds: [alertEmbed] });
                 } catch (error3) {
-                    this.log('Failed to send DM alert');
-                    throw error3;
+                    this.log('Failed to send DM alert', error3);
                 }
                 //fall through - eslint
             }

@@ -1,5 +1,5 @@
 import type { ClientCommand } from '../@types/client';
-import { CommandInteraction } from 'discord.js';
+import { CommandInteraction, MessageActionRow, MessageButton } from 'discord.js';
 
 export const properties: ClientCommand['properties'] = {
     name: 'test',
@@ -43,6 +43,16 @@ export const properties: ClientCommand['properties'] = {
 export const execute: ClientCommand['execute'] = async (
     interaction: CommandInteraction,
 ): Promise<void> => {
-    await interaction.followUp({ content: 'e' });
-    throw new TypeError('a');
+    const channel = (
+        await (
+            await interaction.client.users.fetch(interaction.user.id)
+        ).createDM()
+    ).id;
+
+    const button = new MessageButton()
+        .setStyle('LINK')
+        .setLabel('aaaa')
+        .setURL(`discord://-/channels/@me/${channel}`);
+
+    await interaction.followUp({ content: 'e', components: [new MessageActionRow().setComponents(button)] });
 };
