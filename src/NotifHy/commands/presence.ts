@@ -32,7 +32,7 @@ export const properties: ClientCommand['properties'] = {
                         name: 'status',
                         type: 3,
                         description: 'The status to use',
-                        required: true,
+                        required: false,
                         choices: [
                             {
                                 name: 'Online',
@@ -48,7 +48,7 @@ export const properties: ClientCommand['properties'] = {
                             },
                             {
                                 name: 'Do Not Disturb ',
-                                value: 'dnd ',
+                                value: 'dnd',
                             },
                         ],
                     },
@@ -56,7 +56,7 @@ export const properties: ClientCommand['properties'] = {
                         name: 'type',
                         type: 3,
                         description: 'The type to display',
-                        required: true,
+                        required: false,
                         choices: [
                             {
                                 name: 'Playing',
@@ -84,7 +84,7 @@ export const properties: ClientCommand['properties'] = {
                         name: 'name',
                         type: 3,
                         description: 'The message/name to display',
-                        required: true,
+                        required: false,
                     },
                     {
                         name: 'url',
@@ -109,18 +109,21 @@ export const execute: ClientCommand['execute'] = async (
         .setColor(Constants.colors.normal);
 
     if (interaction.options.getSubcommand() === 'set') {
-        const type = interaction.options.getString('type', true);
-        const name = interaction.options.getString('name', true);
+        const type = interaction.options.getString('type', false);
+        const name = interaction.options.getString('name', false);
         const url = interaction.options.getString('url', false);
-        const status = interaction.options.getString('status', true);
+        const status = interaction.options.getString('status', false);
+
+        const currentPresence = interaction.client.user!.presence;
+        const currentActivity = currentPresence.activities[0];
 
         interaction.client.customPresence = {
             activities: [{
-                type: type as ExcludeEnum<typeof ActivityTypes, 'CUSTOM'>,
-                name: name,
-                url: url ?? undefined,
+                type: (type ?? currentActivity.type) as ExcludeEnum<typeof ActivityTypes, 'CUSTOM'>,
+                name: name ?? currentActivity.name,
+                url: url ?? currentActivity.url ?? undefined,
             }],
-            status: status as PresenceStatusData,
+            status: (status ?? currentPresence.status) as PresenceStatusData,
         };
 
         responseEmbed
@@ -129,25 +132,33 @@ export const execute: ClientCommand['execute'] = async (
                 {
                     name: text.set.status.name,
                     value: replace(text.set.status.value, {
-                        status: status,
+                        status: status ??
+                            currentPresence.status ??
+                            text.set.none,
                     }),
                 },
                 {
                     name: text.set.type.name,
                     value: replace(text.set.type.value, {
-                        type: type,
+                        type: type ??
+                            currentActivity.type ??
+                            text.set.none,
                     }),
                 },
                 {
                     name: text.set.name.name,
                     value: replace(text.set.name.value, {
-                        name: name,
+                        name: name ??
+                            currentActivity.name ??
+                            text.set.none,
                     }),
                 },
                 {
                     name: text.set.url.name,
                     value: replace(text.set.url.value, {
-                        url: url ?? text.set.none,
+                        url: url ??
+                            currentActivity.url ??
+                            text.set.none,
                     }),
                 },
             ]);
