@@ -1,7 +1,7 @@
-import type { ClientEvent } from '../@types/client';
 import type { Guild } from 'discord.js';
-import { ErrorHandler } from '../../utility/errors/ErrorHandler';
-import { Log } from '../../utility/Log';
+import type { ClientEvent } from '../@types/client';
+import { ErrorHandler } from '../errors/ErrorHandler';
+import { Log } from '../utility/Log';
 import { setPresence } from '../utility/utility';
 
 export const properties: ClientEvent['properties'] = {
@@ -11,8 +11,8 @@ export const properties: ClientEvent['properties'] = {
 
 export const execute: ClientEvent['execute'] = async (guild: Guild): Promise<void> => {
     if (
-        guild.available === false ||
-        !guild.client.isReady()
+        guild.available === false
+        || !guild.client.isReady()
     ) {
         return;
     }

@@ -1,63 +1,63 @@
+import Database from 'better-sqlite3-multiple-ciphers';
 import {
     BaseUserData,
     Table,
 } from '../@types/database';
 import { Constants } from './Constants';
 import { databaseKey } from '../../../config.json';
-import Database from 'better-sqlite3-multiple-ciphers';
 
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable consistent-return */
 /* eslint-disable no-unused-vars */
 
-//Probably vulnerable.
+// Probably vulnerable.
 
 let db = new Database(`${__dirname}/../../../database.db`);
 
 type JSONize<Type> = {
     [Property in keyof Type]:
-        Type[Property] extends Record<string, unknown>
-            ? string
-            : Type[Property] extends Array<unknown>
+    Type[Property] extends Record<string, unknown>
+        ? string
+        : Type[Property] extends Array<unknown>
             ? string
             : Type[Property] extends boolean
-            ? string
-            : Type[Property] extends Record<string, unknown>
-            ? string
-            : Property;
-}
+                ? string
+                : Type[Property] extends Record<string, unknown>
+                    ? string
+                    : Property;
+};
 
 type GetType<B> = {
     query: string,
     allowUndefined?: B,
-}
+};
 
 type GetUserType<T, B> = {
     discordID: string,
     table: Table,
     allowUndefined?: B,
     columns: (keyof T)[] | ['*'],
-}
+};
 
 type NewUserType<Type, B> = {
     table: Table,
     returnNew?: B,
     data: Partial<Type>,
-}
+};
 
 type UpdateUserType<Type, B> = {
     discordID: string,
     table: Table,
     returnNew?: B,
     data: Partial<Type>,
-}
+};
 
 export class SQLite {
     static open() {
         db = new Database(`${__dirname}/../../../database.db`);
     }
 
-    //Calling this even after the database is closed doesn't break anything
+    // Calling this even after the database is closed doesn't break anything
     static close() {
         db.close();
     }
@@ -71,7 +71,7 @@ export class SQLite {
     }
 
     static removeKey() {
-        db.pragma(`rekey=''`);
+        db.pragma('rekey=\'\'');
     }
 
     static createTransaction(transaction: () => void) {
@@ -85,8 +85,8 @@ export class SQLite {
     static createTablesIfNotExists(): void {
         this.createTransaction(() => {
             Object.values(Constants.tables.create)
-                .map(value => db.prepare(value))
-                .forEach(table => table.run());
+                .map((value) => db.prepare(value))
+                .forEach((table) => table.run());
 
             const config = db
                 .prepare('SELECT * FROM config')
@@ -98,9 +98,9 @@ export class SQLite {
         });
     }
 
-    static queryGet<Type>(config: GetType<false>): Type
-    static queryGet<Type>(config: GetType<true>): Type | undefined
-    static queryGet<Type>(config: GetType<boolean>): Type | undefined
+    static queryGet<Type>(config: GetType<false>): Type;
+    static queryGet<Type>(config: GetType<true>): Type | undefined;
+    static queryGet<Type>(config: GetType<boolean>): Type | undefined;
     static queryGet<Type>(config: {
         query: string,
         allowUndefined?: boolean,
@@ -116,17 +116,17 @@ export class SQLite {
 
         if (
             (
-                config.allowUndefined === false ||
-                typeof config.allowUndefined === 'undefined'
-            ) &&
-            typeof rawData === 'undefined'
+                config.allowUndefined === false
+                || typeof config.allowUndefined === 'undefined'
+            )
+            && typeof rawData === 'undefined'
         ) {
             throw new RangeError(
                 `The query ${config.query} returned an undefined value`,
             );
         }
 
-        return this.JSONize(rawData) as Type | undefined;
+        return this.jsonize(rawData) as Type | undefined;
     }
 
     static queryGetAll<Type>(query: string): Type[] {
@@ -139,9 +139,7 @@ export class SQLite {
             .prepare(query)
             .all() as Record<string, unknown>[];
 
-        return rawData.map(rawData1 =>
-            this.JSONize(rawData1),
-        ) as Type[];
+        return rawData.map((rawData1) => this.jsonize(rawData1)) as Type[];
     }
 
     static queryRun({
@@ -162,11 +160,11 @@ export class SQLite {
     }
 
     static getUser<Type>(config:
-        GetUserType<Type, false>): Type
+    GetUserType<Type, false>): Type;
     static getUser<Type>(config:
-        GetUserType<Type, true>): Type | undefined
+    GetUserType<Type, true>): Type | undefined;
     static getUser<Type>(config:
-        GetUserType<Type, boolean>): Type | undefined
+    GetUserType<Type, boolean>): Type | undefined;
     static getUser<Type>(config: {
         discordID: string,
         table: Table,
@@ -194,11 +192,11 @@ export class SQLite {
     }
 
     static newUser<Type extends Omit<BaseUserData, never>>(config:
-        NewUserType<Type, false>): undefined;
+    NewUserType<Type, false>): undefined;
     static newUser<Type extends Omit<BaseUserData, never>>(config:
-        NewUserType<Type, true>): Type;
+    NewUserType<Type, true>): Type;
     static newUser<Type extends Omit<BaseUserData, never>>(config:
-        NewUserType<Type, boolean>): Type | undefined;
+    NewUserType<Type, boolean>): Type | undefined;
     static newUser<Type extends Omit<BaseUserData, never>>(config: {
         table: Table,
         returnNew?: boolean,
@@ -211,10 +209,10 @@ export class SQLite {
             values.push('?');
         });
 
-        const dataArray = this.unJSONize(
+        const dataArray = this.unjsonize(
             config.data as Record<
-                string,
-                Array<unknown> | boolean | null | number | string | undefined
+            string,
+            Array<unknown> | boolean | null | number | string | undefined
             >,
         );
 
@@ -226,8 +224,8 @@ export class SQLite {
         });
 
         if (
-            config.returnNew === false ||
-            typeof config.returnNew === 'undefined'
+            config.returnNew === false
+            || typeof config.returnNew === 'undefined'
         ) {
             return;
         }
@@ -242,11 +240,11 @@ export class SQLite {
     }
 
     static updateUser<Type extends Omit<BaseUserData, never>>(config:
-        UpdateUserType<Type, false>): undefined
+    UpdateUserType<Type, false>): undefined;
     static updateUser<Type extends Omit<BaseUserData, never>>(config:
-        UpdateUserType<Type, true>): Type
+    UpdateUserType<Type, true>): Type;
     static updateUser<Type extends Omit<BaseUserData, never>>(config:
-        UpdateUserType<Type, boolean>): Type | undefined
+    UpdateUserType<Type, boolean>): Type | undefined;
     static updateUser<Type extends Omit<BaseUserData, never>>(config: {
         discordID: string,
         table: Table,
@@ -255,17 +253,17 @@ export class SQLite {
     }): Type | undefined {
         const setQuery: string[] = [];
 
+        // eslint-disable-next-line no-restricted-syntax
         for (const key in config.data) {
-            //@ts-expect-error Types not added yet
             if (Object.hasOwn(config.data, key)) {
                 setQuery.push(`${key} = ?`);
             }
         }
 
-        const dataArray = this.unJSONize(
+        const dataArray = this.unjsonize(
             config.data as Record<
-                string,
-                Array<unknown> | boolean | null | number | string | undefined
+            string,
+            Array<unknown> | boolean | null | number | string | undefined
             >,
         );
 
@@ -277,8 +275,8 @@ export class SQLite {
         });
 
         if (
-            config.returnNew === false ||
-            typeof config.returnNew === 'undefined'
+            config.returnNew === false
+            || typeof config.returnNew === 'undefined'
         ) {
             return;
         }
@@ -331,9 +329,11 @@ export class SQLite {
      *
      * Also, if a string is valid JSON, it is probably possible for the whole bot to crash.
      */
-    static JSONize(input: Record<string, unknown>) {
+    static jsonize(input: Record<string, unknown>) {
+        // eslint-disable-next-line no-restricted-syntax
         for (const key in input) {
             if (typeof input[key] !== 'string') {
+                // eslint-disable-next-line no-continue
                 continue;
             }
 
@@ -355,7 +355,7 @@ export class SQLite {
                 if (this.isObject(type, input[key])) {
                     input[key] = JSONized as Record<string, unknown>;
                 }
-            } catch { } //eslint-disable-line no-empty
+            } catch { } // eslint-disable-line no-empty
         }
 
         return input;
@@ -365,34 +365,33 @@ export class SQLite {
      * Taken from https://stackoverflow.com/a/52799327 under CC BY-SA 4.0
      * Takes an input and tests for a JSON structure (excluding primitives)
      */
-    static unJSONize(
+    static unjsonize(
         input: Record<
-            string,
-            Array<unknown>
-            | boolean
-            | null
-            | number
-            | Record<string, unknown>
-            | string
-            | undefined>,
+        string,
+        Array<unknown>
+        | boolean
+        | null
+        | number
+        | Record<string, unknown>
+        | string
+        | undefined>,
     ): JSONize<typeof input> {
+        // eslint-disable-next-line no-restricted-syntax
         for (const key in input) {
-            //@ts-expect-error Types not added yet
             if (Object.hasOwn(input, key)) {
                 try {
-                    const type =
-                        Object.prototype.toString.call(input[key] as string);
+                    const type = Object.prototype.toString.call(input[key] as string);
 
                     if (
-                        type === '[object Array]' ||
-                        type === '[object Boolean]' ||
-                        type === '[object Object]'
+                        type === '[object Array]'
+                        || type === '[object Boolean]'
+                        || type === '[object Object]'
                     ) {
                         (input[key]) = JSON.stringify(
                             input[key],
                         );
                     }
-                } catch { } //eslint-disable-line no-empty
+                } catch { } // eslint-disable-line no-empty
             }
         }
 

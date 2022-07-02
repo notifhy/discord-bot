@@ -99,7 +99,7 @@ export type SlothpixelRecentGames = {
     mode?: string,
     map?: string,
     ended?: number,
-}[]
+}[];
 
 export interface SlothpixelStatus {
     online: boolean,
@@ -109,7 +109,6 @@ export interface SlothpixelStatus {
         map: string | null,
     },
 }
-
 
 /*
 Player DB

@@ -1,12 +1,12 @@
-import type { ClientCommand } from '../@types/client';
 import {
     ColorResolvable,
     Message,
 } from 'discord.js';
-import { BetterEmbed } from '../../utility/utility';
+import type { ClientCommand } from '../@types/client';
 import { Constants } from '../utility/Constants';
-import { Log } from '../../utility/Log';
 import { RegionLocales } from '../locales/RegionLocales';
+import { Log } from '../utility/Log';
+import { BetterEmbed } from '../utility/utility';
 
 export const properties: ClientCommand['properties'] = {
     name: 'ping',
@@ -27,7 +27,7 @@ export const execute: ClientCommand['execute'] = async (
     locale,
 ): Promise<void> => {
     const text = RegionLocales.locale(locale).commands.ping;
-    const replace = RegionLocales.replace;
+    const { replace } = RegionLocales;
 
     const initialPingEmbed = new BetterEmbed(interaction)
         .setColor(Constants.colors.normal)
@@ -37,17 +37,23 @@ export const execute: ClientCommand['execute'] = async (
         embeds: [initialPingEmbed],
     });
 
-    const roundTripDelay =
-        (sentReply instanceof Message
-            ? sentReply.createdTimestamp
-            : Date.parse(sentReply.timestamp)) - interaction.createdTimestamp;
+    const roundTripDelay = (sentReply instanceof Message
+        ? sentReply.createdTimestamp
+        : Date.parse(sentReply.timestamp)) - interaction.createdTimestamp;
 
-    const embedColor: ColorResolvable =
-        interaction.client.ws.ping < 80 && roundTripDelay < 160
-            ? Constants.colors.on
-            : interaction.client.ws.ping < 100 && roundTripDelay < 250
-            ? Constants.colors.ok
-            : Constants.colors.warning;
+    const mixedPing = (
+        interaction.client.ws.ping + roundTripDelay
+    ) / 2;
+
+    let embedColor: ColorResolvable;
+
+    if (mixedPing < 100) {
+        embedColor = Constants.colors.on;
+    } else if (mixedPing < 200) {
+        embedColor = Constants.colors.ok;
+    } else {
+        embedColor = Constants.colors.warning;
+    }
 
     const pingEmbed = new BetterEmbed(interaction)
         .setColor(embedColor)

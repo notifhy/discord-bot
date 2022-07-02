@@ -1,10 +1,10 @@
+import { setTimeout } from 'node:timers/promises';
 import type { ClientCommand } from '../@types/client';
 import { Constants } from '../utility/Constants';
-import { BetterEmbed } from '../../utility/utility';
-import { Log } from '../../utility/Log';
 import { RegionLocales } from '../locales/RegionLocales';
-import { setTimeout } from 'node:timers/promises';
 import { SQLite } from '../utility/SQLite';
+import { Log } from '../utility/Log';
+import { BetterEmbed } from '../utility/utility';
 
 export const properties: ClientCommand['properties'] = {
     name: 'accessdb',
@@ -33,7 +33,7 @@ export const execute: ClientCommand['execute'] = async (
     locale,
 ): Promise<void> => {
     const text = RegionLocales.locale(locale).commands.accessdb;
-    const replace = RegionLocales.replace;
+    const { replace } = RegionLocales;
 
     const timeout = interaction.options.getInteger('timeout', true);
 

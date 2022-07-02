@@ -1,20 +1,23 @@
-import { BaseErrorHandler } from '../../utility/errors/BaseErrorHandler';
-import { Core } from '../core/core';
-import { ErrorHandler } from '../../utility/errors/ErrorHandler';
+import { Snowflake } from 'discord.js';
+import { BaseErrorHandler } from './BaseErrorHandler';
+import { ErrorHandler } from './ErrorHandler';
 import {
     fatalWebhook,
     ownerID,
 } from '../../../config.json';
 import { ModuleError } from './ModuleError';
-import { sendWebHook } from '../../utility/utility';
-import { Snowflake } from 'discord.js';
+import { type Core } from '../core/core';
+import { sendWebHook } from '../utility/utility';
 
 export class ModuleErrorHandler extends BaseErrorHandler<
-    unknown | (ModuleError & { raw: unknown })
+unknown | (ModuleError & { raw: unknown })
 > {
     readonly cleanModule: string;
+
     readonly discordID: string;
+
     readonly module: string | null;
+
     readonly raw: unknown | null;
 
     constructor(

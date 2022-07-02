@@ -1,3 +1,8 @@
+import { ChannelTypes } from 'discord.js/typings/enums';
+import {
+    Formatters,
+    Permissions,
+} from 'discord.js';
 import type {
     BaseEmbed,
     Channel,
@@ -8,16 +13,11 @@ import type {
     FriendsModule,
     Table,
 } from '../@types/database';
-import { BetterEmbed } from '../../utility/utility';
-import { ChannelTypes } from 'discord.js/typings/enums';
 import { Constants } from '../utility/Constants';
-import {
-    Formatters,
-    Permissions,
-} from 'discord.js';
-import { Log } from '../../utility/Log';
 import { RegionLocales } from '../locales/RegionLocales';
 import { SQLite } from '../utility/SQLite';
+import { Log } from '../utility/Log';
+import { BetterEmbed } from '../utility/utility';
 
 export const properties: ClientCommand['properties'] = {
     name: 'channel',
@@ -98,7 +98,7 @@ export const execute: ClientCommand['execute'] = async (
         : 'defender';
 
     const baseLocale = RegionLocales.locale(locale).commands.channel;
-    const alreadySet = baseLocale[type].alreadySet;
+    const { alreadySet } = baseLocale[type];
 
     if (channel?.viewable === false) {
         const missingPermission = new BetterEmbed(interaction)
@@ -146,18 +146,17 @@ export const execute: ClientCommand['execute'] = async (
         case 'friends':
             table = Constants.tables.friends;
             text = baseLocale[type].set;
-        //No default
+        // no default
     }
 
-    const { channel: currentChannel } =
-        SQLite.getUser<DefenderModule | FriendsModule>({
-            discordID: interaction.user.id,
-            table: table,
-            allowUndefined: false,
-            columns: [
-                'channel',
-            ],
-        });
+    const { channel: currentChannel } = SQLite.getUser<DefenderModule | FriendsModule>({
+        discordID: interaction.user.id,
+        table: table,
+        allowUndefined: false,
+        columns: [
+            'channel',
+        ],
+    });
 
     if (currentChannel === (channel?.id ?? null)) {
         const alreadySetEmbed = new BetterEmbed(interaction)

@@ -1,45 +1,47 @@
-import type { UserAPIData } from '../@types/database';
 import {
     Client,
     DiscordAPIError,
     HTTPError,
 } from 'discord.js';
+import { setTimeout } from 'node:timers/promises';
+import type { UserAPIData } from '../@types/database';
 import { Constants } from '../utility/Constants';
 import { CoreData } from './data';
 import { CoreError } from './error';
 import { CoreModule } from './module';
 import { CoreRequest } from './request';
-import { ErrorHandler } from '../../utility/errors/ErrorHandler';
-import { GlobalConstants } from '../../utility/Constants';
+import { ErrorHandler } from '../errors/ErrorHandler';
 import { keyLimit } from '../../../config.json';
-import { Log } from '../../utility/Log';
 import { ModuleHTTPErrorHandler } from '../errors/ModuleHTTPErrorHandler';
 import { ModuleError } from '../errors/ModuleError';
 import { ModuleErrorHandler } from '../errors/ModuleErrorHandler';
 import { RequestErrorHandler } from '../errors/RequestErrorHandler';
-import { setTimeout } from 'node:timers/promises';
 import { SQLite } from '../utility/SQLite';
-import { generateStackTrace } from '../../utility/utility';
+import { Log } from '../utility/Log';
 
 /* eslint-disable no-await-in-loop */
 
 export type Performance = {
     start: number;
     uses: number;
-    total: number; //Sum of the rest below
-    fetch: number; //Hypixel API fetch
-    process: number; //Processing & saving data
-    modules: number; //Executing module(s)
-}
+    total: number; // Sum of the rest below
+    fetch: number; // Hypixel API fetch
+    process: number; // Processing & saving data
+    modules: number; // Executing module(s)
+};
 
 export class Core {
     client: Client;
+
     error: CoreError;
+
     module: CoreModule;
+
     performance: {
         latest: Performance | null;
         history: Performance[];
     };
+
     request: CoreRequest;
 
     constructor(client: Client) {
@@ -54,6 +56,7 @@ export class Core {
     }
 
     async start() {
+        // eslint-disable-next-line no-constant-condition
         while (true) {
             try {
                 const reachedMaxTimeout = await Promise.race([
@@ -62,7 +65,7 @@ export class Core {
                 ]);
 
                 if (reachedMaxTimeout === true) {
-                    Log.error('Hit a max timeout of 900000\n', generateStackTrace());
+                    Log.error('Hit a max timeout of 900000');
                 }
             } catch (error) {
                 this.error.addGeneric();
@@ -96,18 +99,19 @@ export class Core {
                 'lastLogin',
                 'lastLogout',
             ],
-        }).filter(user => user.modules.length > 0);
+        }).filter((user) => user.modules.length > 0);
 
         if (users.length === 0) {
             await setTimeout(2500);
             return;
         }
 
+        // eslint-disable-next-line no-restricted-syntax
         for (const user of users) {
             if (
-                this.error.isTimeout() ||
-                //@ts-expect-error possibility to not be true
-                this.client.config.core === false
+                this.error.isTimeout()
+                // @ts-expect-error possibility to not be true
+                || this.client.config.core === false
             ) {
                 return;
             }
@@ -118,7 +122,7 @@ export class Core {
             ]);
 
             if (reachedMaxTimeout === true) {
-                Log.error('Hit a max timeout of 15000\n', generateStackTrace());
+                Log.error('Hit a max timeout of 15000');
             }
         }
     }
@@ -132,7 +136,8 @@ export class Core {
             uses: this.request.uses,
         };
 
-        let data, payload;
+        let data; let
+            payload;
 
         try {
             data = await this.request.request(user, urls);
@@ -156,17 +161,17 @@ export class Core {
             await this.module.execute(payload);
             performance.modules = Date.now();
         } catch (error) {
-            //beautiful
+            // beautiful
             if (
                 (
-                    error instanceof ModuleError &&
-                    (
-                        error.raw instanceof DiscordAPIError ||
-                        error.raw instanceof HTTPError
+                    error instanceof ModuleError
+                    && (
+                        error.raw instanceof DiscordAPIError
+                        || error.raw instanceof HTTPError
                     )
-                ) ||
-                error instanceof DiscordAPIError ||
-                error instanceof HTTPError
+                )
+                || error instanceof DiscordAPIError
+                || error instanceof HTTPError
             ) {
                 await ModuleHTTPErrorHandler.init(
                     this.client,
@@ -199,7 +204,7 @@ export class Core {
     }
 
     private updatePerformance(performance: Performance) {
-        //Turns the ms since the Jan 1st 1970 into relative
+        // Turns the ms since the Jan 1st 1970 into relative
         performance.total = performance.modules - performance.start;
         performance.modules -= performance.process;
         performance.process -= performance.fetch;
@@ -209,7 +214,10 @@ export class Core {
 
         const { history } = this.performance;
 
-        if (history[0]?.start + GlobalConstants.ms.hour > Date.now()) return;
+        if (
+            typeof history[0] === 'undefined'
+            || history[0].start + Constants.ms.second > Date.now()
+        ) return;
 
         history.unshift(performance);
 

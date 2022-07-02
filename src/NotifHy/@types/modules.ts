@@ -1,5 +1,8 @@
-import type { CleanHypixelPlayer, CleanHypixelStatus } from './hypixel';
 import type { Client } from 'discord.js';
+import type {
+    CleanHypixelPlayer,
+    CleanHypixelStatus,
+} from './hypixel';
 import type { Locale } from './locales';
 import type {
     UserAPIData,

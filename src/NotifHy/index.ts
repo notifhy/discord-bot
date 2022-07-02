@@ -13,8 +13,8 @@ import {
 } from 'discord.js';
 import { Core } from './core/core';
 import { discordAPIkey } from '../../config.json';
-import { ErrorHandler } from '../utility/errors/ErrorHandler';
-import { Log } from '../utility/Log';
+import { ErrorHandler } from './errors/ErrorHandler';
+import { Log } from './utility/Log';
 import { SQLite } from './utility/SQLite';
 import fs from 'node:fs/promises';
 import process from 'node:process';

@@ -1,6 +1,6 @@
+import { Response } from 'node-fetch';
 import { HTTPError } from './HTTPError';
 import { HypixelAPI429 } from '../@types/hypixel';
-import { Response } from 'node-fetch';
 
 export class RateLimitError extends HTTPError<HypixelAPI429> {
     constructor({

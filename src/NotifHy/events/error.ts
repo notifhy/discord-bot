@@ -1,5 +1,5 @@
 import type { ClientEvent } from '../@types/client';
-import { Log } from '../../utility/Log';
+import { Log } from '../utility/Log';
 
 export const properties: ClientEvent['properties'] = {
     name: 'error',
@@ -7,5 +7,5 @@ export const properties: ClientEvent['properties'] = {
 };
 
 export const execute: ClientEvent['execute'] = (error: Error): void => {
-    Log.error(`discord.js Error`, error);
+    Log.error('discord.js Error', error);
 };

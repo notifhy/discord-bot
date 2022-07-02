@@ -1,8 +1,8 @@
-import type { Client } from 'discord.js';
+import { Client } from 'discord.js';
 import type { ClientEvent } from '../@types/client';
-import { ErrorHandler } from '../../utility/errors/ErrorHandler';
-import { GlobalConstants } from '../../utility/Constants';
-import { Log } from '../../utility/Log';
+import { ErrorHandler } from '../errors/ErrorHandler';
+import { Constants } from '../utility/Constants';
+import { Log } from '../utility/Log';
 import { setPresence } from '../utility/utility';
 
 export const properties: ClientEvent['properties'] = {
@@ -15,7 +15,7 @@ export const execute: ClientEvent['execute'] = async (client: Client) => {
 
     set();
 
-    setInterval(set, GlobalConstants.ms.hour);
+    setInterval(set, Constants.ms.hour);
 
     async function set() {
         try {
@@ -25,5 +25,5 @@ export const execute: ClientEvent['execute'] = async (client: Client) => {
         }
     }
 
-    await client.core.start(); //eslint-disable-line no-await-in-loop
+    await client.core.start(); // eslint-disable-line no-await-in-loop
 };

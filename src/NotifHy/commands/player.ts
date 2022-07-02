@@ -5,14 +5,10 @@ import type {
     SlothpixelRecentGames,
     SlothpixelStatus,
 } from '../@types/hypixel';
-import {
-    BetterEmbed,
-    cleanLength,
-    timestamp,
-} from '../../utility/utility';
+
 import { Constants } from '../utility/Constants';
 import { CommandErrorHandler } from '../errors/CommandErrorHandler';
-import { disableComponents } from '../utility/utility';
+import { BetterEmbed, cleanLength, disableComponents, timestamp } from '../utility/utility';
 import {
     Constants as DiscordConstants,
     Formatters,
@@ -21,11 +17,10 @@ import {
     MessageButton,
     MessageComponentInteraction,
 } from 'discord.js';
-import { GlobalConstants } from '../../utility/Constants';
 import { HTTPError } from '../errors/HTTPError';
-import { Log } from '../../utility/Log';
 import { RegionLocales } from '../locales/RegionLocales';
-import { Request } from '../../utility/Request';
+import { Request } from '../utility/Request';
+import { Log } from '../utility/Log';
 
 export const properties: ClientCommand['properties'] = {
     name: 'player',
@@ -327,8 +322,8 @@ export const execute: ClientCommand['execute'] = async (
 
         const collector = interaction.channel!.createMessageComponentCollector({
             filter: filter,
-            idle: GlobalConstants.ms.minute * 5,
-            time: GlobalConstants.ms.minute * 30,
+            idle: Constants.ms.minute * 5,
+            time: Constants.ms.minute * 30,
         });
 
         let currentIndex = 0;

@@ -48,7 +48,6 @@ export interface ButtonData {
     disableCustomID: string,
 }
 
-
 /*
 General Interfaces
 */

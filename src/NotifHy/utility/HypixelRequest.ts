@@ -7,7 +7,7 @@ import type {
 import { HTTPError } from '../errors/HTTPError';
 import { hypixelAPIkey } from '../../../config.json';
 import { RateLimitError } from '../errors/RateLimitError';
-import { Request } from '../../utility/Request';
+import { Request } from './Request';
 
 export class HypixelRequest {
     readonly config: {

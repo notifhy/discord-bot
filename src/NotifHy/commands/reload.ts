@@ -1,13 +1,13 @@
+import { CommandInteraction } from 'discord.js';
 import type {
     ClientEvent,
     ClientCommand,
 } from '../@types/client';
 import type { ClientModule } from '../@types/modules';
-import { BetterEmbed } from '../../utility/utility';
-import { CommandInteraction } from 'discord.js';
 import { Constants } from '../utility/Constants';
-import { Log } from '../../utility/Log';
 import { RegionLocales } from '../locales/RegionLocales';
+import { Log } from '../utility/Log';
+import { BetterEmbed } from '../utility/utility';
 
 export const properties: ClientCommand['properties'] = {
     name: 'reload',
@@ -72,24 +72,27 @@ export const execute: ClientCommand['execute'] = async (
 
     switch (interaction.options.getSubcommand()) {
         case 'all': await reloadAll();
-        break;
+            break;
         case 'single': await reloadSingle();
-        break;
-        //no default
+            break;
+        // no default
     }
 
     async function reloadAll() {
         const now = Date.now();
         const promises: Promise<void>[] = [];
 
+        // eslint-disable-next-line no-restricted-syntax
         for (const [command] of interaction.client.commands) {
             promises.push(commandRefresh(interaction, command));
         }
 
+        // eslint-disable-next-line no-restricted-syntax
         for (const [event] of interaction.client.events) {
             promises.push(eventRefresh(interaction, event));
         }
 
+        // eslint-disable-next-line no-restricted-syntax
         for (const [module] of interaction.client.modules) {
             promises.push(moduleRefresh(interaction, module));
         }
@@ -114,13 +117,12 @@ export const execute: ClientCommand['execute'] = async (
     async function reloadSingle() {
         const now = Date.now();
         const typeName = interaction.options.getString('type', true);
-        const type =
-            interaction.client[
-                typeName as keyof Pick<
+        const type = interaction.client[
+            typeName as keyof Pick<
                     typeof interaction.client,
-                    'commands' | 'events' | 'modules'
-                >
-            ];
+            'commands' | 'events' | 'modules'
+            >
+        ];
         const item = interaction.options.getString('item')!;
         const selected = type.get(item);
 
@@ -162,7 +164,6 @@ export const execute: ClientCommand['execute'] = async (
     }
 };
 
-
 async function commandRefresh(interaction: CommandInteraction, item: string) {
     const refreshed = await reload<ClientCommand>(`${item}.ts`);
     interaction.client.commands.set(refreshed.properties.name, refreshed);
@@ -179,9 +180,10 @@ async function moduleRefresh(interaction: CommandInteraction, item: string) {
 }
 
 function reload<Type>(path: string) {
-    return new Promise<Type>(resolve => {
+    return new Promise<Type>((resolve) => {
         delete require.cache[require.resolve(`${__dirname}/${path}`)];
-        const refreshed: Type = require(`${__dirname}/${path}`); //eslint-disable-line @typescript-eslint/no-var-requires
+        // eslint-disable-next-line global-require, import/no-dynamic-require
+        const refreshed: Type = require(`${__dirname}/${path}`); // eslint-disable-line @typescript-eslint/no-var-requires
         resolve(refreshed);
     });
 }

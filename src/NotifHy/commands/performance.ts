@@ -1,7 +1,7 @@
 import type { ClientCommand } from '../@types/client';
 import { Constants } from '../utility/Constants';
-import { BetterEmbed } from '../../utility/utility';
 import { RegionLocales } from '../locales/RegionLocales';
+import { BetterEmbed } from '../utility/utility';
 
 export const properties: ClientCommand['properties'] = {
     name: 'performance',

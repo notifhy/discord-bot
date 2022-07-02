@@ -1,5 +1,5 @@
 import type { ClientEvent } from '../@types/client';
-import { Log } from '../../utility/Log';
+import { Log } from '../utility/Log';
 
 export const properties: ClientEvent['properties'] = {
     name: 'warn',

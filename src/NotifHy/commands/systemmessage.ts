@@ -1,14 +1,3 @@
-import type { ClientCommand } from '../@types/client';
-import type { UserData } from '../@types/database';
-import {
-    awaitComponent,
-    disableComponents,
-} from '../utility/utility';
-import {
-    BetterEmbed,
-    timestamp,
-} from '../../utility/utility';
-import { Constants } from '../utility/Constants';
 import {
     Constants as DiscordConstants,
     Message,
@@ -17,10 +6,19 @@ import {
     MessageComponentInteraction,
     MessageEmbed,
 } from 'discord.js';
-import { GlobalConstants } from '../../utility/Constants';
-import { Log } from '../../utility/Log';
+import type { ClientCommand } from '../@types/client';
+import type { UserData } from '../@types/database';
+import {
+    awaitComponent,
+    BetterEmbed,
+    disableComponents,
+    timestamp,
+} from '../utility/utility';
+
+import { Constants } from '../utility/Constants';
 import { RegionLocales } from '../locales/RegionLocales';
 import { SQLite } from '../utility/SQLite';
+import { Log } from '../utility/Log';
 
 export const properties: ClientCommand['properties'] = {
     name: 'systemmessage',
@@ -65,13 +63,12 @@ export const execute: ClientCommand['execute'] = async (
 
     const id = interaction.options.getString('id', true);
 
-    const userData =
-        SQLite.getUser<UserData>({
-            discordID: id,
-            table: Constants.tables.users,
-            columns: ['systemMessages'],
-            allowUndefined: true,
-        });
+    const userData = SQLite.getUser<UserData>({
+        discordID: id,
+        table: Constants.tables.users,
+        columns: ['systemMessages'],
+        allowUndefined: true,
+    });
 
     if (typeof userData === 'undefined') {
         const notFoundEmbed = new BetterEmbed(interaction)
@@ -123,20 +120,16 @@ export const execute: ClientCommand['execute'] = async (
 
     await interaction.client.channels.fetch(interaction.channelId);
 
-    const componentFilter = (i: MessageComponentInteraction) =>
-        interaction.user.id === i.user.id &&
-        i.message.id === message.id;
+    const componentFilter = (i: MessageComponentInteraction) => interaction.user.id === i.user.id
+        && i.message.id === message.id;
 
     const disabledRows = disableComponents([buttons]);
 
-    const button = await awaitComponent(
-        interaction.channel!,
-        'BUTTON',
-        {
-            filter: componentFilter,
-            idle: GlobalConstants.ms.second * 30,
-        },
-    );
+    const button = await awaitComponent(interaction.channel!, {
+        componentType: 'BUTTON',
+        filter: componentFilter,
+        idle: Constants.ms.second * 30,
+    });
 
     if (button === null) {
         Log.interaction(interaction, 'Ran out of time');

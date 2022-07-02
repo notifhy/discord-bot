@@ -4,21 +4,16 @@ import {
     Locale,
 } from '../@types/locales';
 import {
-    BetterEmbed,
-    cleanRound,
-    sendWebHook,
-} from '../../utility/utility';
-import {
     ColorResolvable,
     CommandInteraction,
 } from 'discord.js';
 import { Constants } from '../utility/Constants';
 import { ConstraintError } from './ConstraintError';
-import { ErrorHandler } from '../../utility/errors/ErrorHandler';
-import { GlobalConstants } from '../../utility/Constants';
+import { ErrorHandler } from './ErrorHandler';
 import { nonFatalWebhook } from '../../../config.json';
 import { RegionLocales } from '../locales/RegionLocales';
 import { setTimeout } from 'node:timers/promises';
+import { cleanRound, BetterEmbed, sendWebHook } from '../utility/utility';
 
 export class CommandConstraintErrorHandler
     extends BaseCommandErrorHandler<ConstraintError> {
@@ -84,10 +79,10 @@ export class CommandConstraintErrorHandler
                 RegionLocales.replace(embed1.description, {
                     cooldown:
                         (command?.properties.cooldown ?? 0) /
-                        GlobalConstants.ms.second,
+                        Constants.ms.second,
                     timeLeft: cleanRound(
                         this.error.cooldown! /
-                        GlobalConstants.ms.second,
+                        Constants.ms.second,
                         1,
                     ),
                 }),

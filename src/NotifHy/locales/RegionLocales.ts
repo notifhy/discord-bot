@@ -24,8 +24,8 @@ export class RegionLocales {
     static replace(input: string, parameters?: Parameters): string {
         let replaced: string = input;
 
+        // eslint-disable-next-line no-restricted-syntax
         for (const parameter in parameters) {
-            //@ts-expect-error hasOwn not implemented in typings.
             if (Object.hasOwn(parameters, parameter)) {
                 const regex = new RegExp(`{{ ${parameter} }}`, 'g');
                 replaced = replaced.replaceAll(

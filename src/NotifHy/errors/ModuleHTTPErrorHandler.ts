@@ -1,14 +1,3 @@
-import type {
-    UserAPIData,
-    UserData,
-} from '../@types/database';
-import {
-    arrayRemove,
-    BetterEmbed,
-    sendWebHook,
-    timestamp,
-} from '../../utility/utility';
-import { BaseErrorHandler } from '../../utility/errors/BaseErrorHandler';
 import {
     Client,
     DiscordAPIError,
@@ -16,8 +5,13 @@ import {
     Snowflake,
     HTTPError,
 } from 'discord.js';
+import type {
+    UserAPIData,
+    UserData,
+} from '../@types/database';
+import { BaseErrorHandler } from './BaseErrorHandler';
 import { Constants } from '../utility/Constants';
-import { ErrorHandler } from '../../utility/errors/ErrorHandler';
+import { ErrorHandler } from './ErrorHandler';
 import {
     fatalWebhook,
     ownerID,
@@ -26,28 +20,40 @@ import { ModuleError } from './ModuleError';
 import { RegionLocales } from '../locales/RegionLocales';
 import { SQLite } from '../utility/SQLite';
 import { Locale } from '../@types/locales';
+import {
+    sendWebHook,
+    BetterEmbed,
+    timestamp,
+    arrayRemove,
+} from '../utility/utility';
 
 export class ModuleHTTPErrorHandler extends BaseErrorHandler<
-    DiscordAPIError
-        | HTTPError
-        | (Omit<ModuleError, 'raw'> &
-            { raw: DiscordAPIError | HTTPError })
+DiscordAPIError
+| HTTPError
+| (Omit<ModuleError, 'raw'> &
+{ raw: DiscordAPIError | HTTPError })
 > {
     readonly cleanModule: string;
+
     readonly client: Client;
+
     readonly discordID: string;
+
     readonly module: string | null;
+
     readonly raw: unknown | null;
+
     readonly userData: UserData;
+
     readonly locale: Locale['errors']['moduleErrors'];
 
     constructor(
         client: Client,
         discordID: Snowflake,
         error: DiscordAPIError
-            | HTTPError
-            | (Omit<ModuleError, 'raw'> &
-                { raw: DiscordAPIError | HTTPError }),
+        | HTTPError
+        | (Omit<ModuleError, 'raw'> &
+        { raw: DiscordAPIError | HTTPError }),
     ) {
         super(error);
 
@@ -68,7 +74,7 @@ export class ModuleHTTPErrorHandler extends BaseErrorHandler<
             : null;
 
         this.userData = SQLite.getUser<UserData>({
-             discordID: this.discordID,
+            discordID: this.discordID,
             table: Constants.tables.users,
             allowUndefined: false,
             columns: [
@@ -87,9 +93,9 @@ export class ModuleHTTPErrorHandler extends BaseErrorHandler<
         client: Client,
         discordID: Snowflake,
         error: DiscordAPIError
-            | HTTPError
-            | (ModuleError
-                & { raw: DiscordAPIError | HTTPError }),
+        | HTTPError
+        | (ModuleError
+        & { raw: DiscordAPIError | HTTPError }),
     ) {
         const handler = new ModuleHTTPErrorHandler(client, discordID, error);
 
@@ -100,8 +106,8 @@ export class ModuleHTTPErrorHandler extends BaseErrorHandler<
             if (error instanceof DiscordAPIError) {
                 await handler.handleDiscordAPICode(error);
             } else if (
-                error instanceof ModuleError &&
-                error.raw instanceof DiscordAPIError
+                error instanceof ModuleError
+                && error.raw instanceof DiscordAPIError
             ) {
                 await handler.handleDiscordAPICode(error.raw);
             } else {
@@ -160,7 +166,8 @@ export class ModuleHTTPErrorHandler extends BaseErrorHandler<
                 this.locale[
                     error.code as unknown as keyof Omit<typeof this.locale, 'alert'>
                 ].name,
-                cleanModule),
+                cleanModule,
+            ),
             value: replace(
                 this.locale[
                     error.code as unknown as keyof Omit<typeof this.locale, 'alert'>
@@ -170,9 +177,9 @@ export class ModuleHTTPErrorHandler extends BaseErrorHandler<
         };
 
         switch (error.code) {
-            case APIErrors.UNKNOWN_CHANNEL: //Unknown channel
-            case APIErrors.MISSING_ACCESS: //Unable to access channel, server, etc.
-            case APIErrors.MISSING_PERMISSIONS: { //Missing permission(s)
+            case APIErrors.UNKNOWN_CHANNEL: // Unknown channel
+            case APIErrors.MISSING_ACCESS: // Unable to access channel, server, etc.
+            case APIErrors.MISSING_PERMISSIONS: { // Missing permission(s)
                 try {
                     const user = await this.client.users.fetch(this.discordID);
 
@@ -189,11 +196,11 @@ export class ModuleHTTPErrorHandler extends BaseErrorHandler<
                 } catch (error3) {
                     this.log('Failed to send DM alert', error3);
                 }
-                //fall through - eslint
+                // fall through - eslint
             }
-            case APIErrors.UNKNOWN_USER: //Unknown user
-            case APIErrors.CANNOT_MESSAGE_USER: { //Cannot send messages to this user
-                message.name = `${timestamp(Date.now(), 'D')} - ${message.name}`; //Update locale
+            case APIErrors.UNKNOWN_USER: // Unknown user
+            case APIErrors.CANNOT_MESSAGE_USER: { // Cannot send messages to this user
+                message.name = `${timestamp(Date.now(), 'D')} - ${message.name}`; // Update locale
 
                 this.log('Attempting to disable module(s)');
 
@@ -232,7 +239,7 @@ export class ModuleHTTPErrorHandler extends BaseErrorHandler<
 
                 this.log('Handled Discord API error', error.code);
             }
-            break;
+                break;
             default: this.handleHTTPError();
         }
     }
@@ -266,6 +273,7 @@ export class ModuleHTTPErrorHandler extends BaseErrorHandler<
                 }),
             ]);
 
+            // eslint-disable-next-line no-restricted-syntax
             for (const promise of settledPromises) {
                 if (promise.status === 'rejected') {
                     this.log('Failed to handle part of the HTTPError due to', promise.reason);

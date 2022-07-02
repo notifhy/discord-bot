@@ -1,12 +1,15 @@
-import { GlobalConstants } from '../../utility/Constants';
-import { Timeout } from '../../utility/Timeout';
+import { Constants } from '../utility/Constants';
+import { Timeout } from '../utility/Timeout';
 
 export class CoreError {
     isGlobal: boolean;
 
     readonly abort: Timeout;
+
     readonly http: Timeout;
+
     readonly rateLimit: Timeout;
+
     readonly generic: Timeout;
 
     constructor() {
@@ -16,7 +19,6 @@ export class CoreError {
         this.generic = new Timeout({ baseTimeout: 30_000 });
         this.http = new Timeout({ baseTimeout: 30_000 });
         this.rateLimit = new Timeout({ baseTimeout: 30_000 });
-
 
         this.addAbort = this.addAbort.bind(this);
         this.addGeneric = this.addGeneric.bind(this);
@@ -46,8 +48,7 @@ export class CoreError {
         rateLimitReset: string | null;
     }) {
         if (rateLimitReset !== null) {
-            this.rateLimit.timeout =
-                (Number(rateLimitReset) + 1) * GlobalConstants.ms.second;
+            this.rateLimit.timeout = (Number(rateLimitReset) + 1) * Constants.ms.second;
         }
 
         this.isGlobal = rateLimitGlobal ?? this.isGlobal;
@@ -56,10 +57,10 @@ export class CoreError {
 
     isTimeout() {
         return (
-            this.abort.isTimeout() ||
-            this.generic.isTimeout() ||
-            this.http.isTimeout() ||
-            this.rateLimit.isTimeout()
+            this.abort.isTimeout()
+            || this.generic.isTimeout()
+            || this.http.isTimeout()
+            || this.rateLimit.isTimeout()
         );
     }
 

@@ -2,7 +2,7 @@ import {
     BetterEmbed,
     generateStackTrace,
 } from '../utility';
-import { Constants } from '../../NotifHy/utility/Constants';
+import { Constants } from '../utility/Constants';
 import {
     FileOptions,
     SnowflakeUtil,

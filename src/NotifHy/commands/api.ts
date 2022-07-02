@@ -1,13 +1,9 @@
 import type { ClientCommand } from '../@types/client';
-import {
-    BetterEmbed,
-    cleanLength,
-    cleanRound,
-} from '../../utility/utility';
 import { Constants } from '../utility/Constants';
 import { keyLimit } from '../../../config.json';
-import { Log } from '../../utility/Log';
 import { RegionLocales } from '../locales/RegionLocales';
+import { Log } from '../utility/Log';
+import { BetterEmbed, cleanLength, cleanRound } from '../utility/utility';
 
 export const properties: ClientCommand['properties'] = {
     name: 'api',
@@ -125,7 +121,7 @@ export const properties: ClientCommand['properties'] = {
     },
 };
 
-type errorTypes = 'abort' | 'generic' | 'http' | 'rateLimit';
+type ErrorTypes = 'abort' | 'generic' | 'http' | 'rateLimit';
 
 type TimeoutSettables = 'timeout' | 'resumeAfter';
 
@@ -138,21 +134,20 @@ export const execute: ClientCommand['execute'] = async (
 
     switch (interaction.options.getSubcommand()) {
         case 'stats': await stats();
-        break;
+            break;
         case 'set': await set();
-        break;
+            break;
         case 'call': await call();
-        break;
-        //no default
+            break;
+        // no default
     }
 
     async function stats() {
-        const { abort, generic, http, isGlobal, rateLimit, getTimeout } =
-            interaction.client.core.error;
-        const { uses } =
-            interaction.client.core.request;
-        const { keyPercentage } =
-            interaction.client.config;
+        const {
+            abort, generic, http, isGlobal, rateLimit, getTimeout,
+        } = interaction.client.core.error;
+        const { uses } = interaction.client.core.request;
+        const { keyPercentage } = interaction.client.config;
 
         const statsEmbed = new BetterEmbed(interaction)
             .setColor(Constants.colors.normal)
@@ -173,8 +168,8 @@ export const execute: ClientCommand['execute'] = async (
                 {
                     name: text.api.resume.name,
                     value: replace(text.api.resume.value, {
-                        time: cleanLength(getTimeout() - Date.now()) ??
-                        'Not applicable',
+                        time: cleanLength(getTimeout() - Date.now())
+                        ?? 'Not applicable',
                     }),
                 },
                 {
@@ -219,7 +214,7 @@ export const execute: ClientCommand['execute'] = async (
     }
 
     async function set() {
-        const category = interaction.options.getString('category', true) as errorTypes;
+        const category = interaction.options.getString('category', true) as ErrorTypes;
         const type = interaction.options.getString('type', true);
         const value = interaction.options.getNumber('value', true);
 
@@ -249,9 +244,9 @@ export const execute: ClientCommand['execute'] = async (
         const hypixelModuleErrors = interaction.client.core.error;
 
         if (
-            method === 'addAbort' ||
-            method === 'addGeneric' ||
-            method === 'addHTTP'
+            method === 'addAbort'
+            || method === 'addGeneric'
+            || method === 'addHTTP'
         ) {
             hypixelModuleErrors[method]();
         } else if (method === 'addRatelimit') {

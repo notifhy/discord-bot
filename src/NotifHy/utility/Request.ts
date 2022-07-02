@@ -1,23 +1,26 @@
-import { AbortError } from '../NotifHy/errors/AbortError';
 import fetch, {
     RequestInit,
     Response,
 } from 'node-fetch';
-import { GlobalConstants } from './Constants';
-import { Log } from './Log';
+import { AbortSignal } from 'node-fetch/externals';
 import { setTimeout } from 'node:timers';
+import { AbortError } from '../errors/AbortError';
+import { GlobalConstants } from '../../utility/Constants';
+import { Log } from './Log';
 
 export class Request {
     readonly restRequestTimeout: number;
+
     private try: number;
+
     readonly tryLimit: number;
 
     constructor(config?: {
         retryLimit?: number,
         restRequestTimeout?: number,
     }) {
-        this.restRequestTimeout = config?.restRequestTimeout ??
-            GlobalConstants.defaults.request.restRequestTimeout;
+        this.restRequestTimeout = config?.restRequestTimeout
+            ?? GlobalConstants.defaults.request.restRequestTimeout;
 
         this.try = 0;
 
@@ -35,10 +38,9 @@ export class Request {
 
         try {
             const response = await fetch(url, {
-                signal: controller.signal,
+                signal: controller.signal as AbortSignal,
                 ...fetchOptions,
             });
-
 
             if (response.ok === true) {
                 if (this.try > 1) {
@@ -49,19 +51,19 @@ export class Request {
             }
 
             if (
-                this.try < this.tryLimit &&
-                response.status >= 500 &&
-                response.status < 600
+                this.try < this.tryLimit
+                && response.status >= 500
+                && response.status < 600
             ) {
                 Log.request(`Retrying due to a response between 500 and 600: ${response.status}`);
-                return this.request(url, fetchOptions);
+                return await this.request(url, fetchOptions);
             }
 
             return response;
         } catch (error) {
             if (this.try < this.tryLimit) {
                 Log.request('Retrying due to an AbortError');
-                return this.request(url, fetchOptions);
+                return await this.request(url, fetchOptions);
             }
 
             throw new AbortError({

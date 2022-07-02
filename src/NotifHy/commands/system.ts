@@ -1,16 +1,12 @@
+import process from 'node:process';
 import type { ClientCommand } from '../@types/client';
 import type { UserAPIData } from '../@types/database';
-import {
-    BetterEmbed,
-    cleanLength,
-    cleanRound,
-} from '../../utility/utility';
+
 import { Constants } from '../utility/Constants';
-import { GlobalConstants } from '../../utility/Constants';
 import { keyLimit } from '../../../config.json';
 import { RegionLocales } from '../locales/RegionLocales';
 import { SQLite } from '../utility/SQLite';
-import process from 'node:process';
+import { BetterEmbed, cleanLength, cleanRound } from '../utility/utility';
 
 export const properties: ClientCommand['properties'] = {
     name: 'system',
@@ -41,19 +37,18 @@ export const execute: ClientCommand['execute'] = async (
 
     const intervalBetweenRequests = (
         60 / keyQueryLimit
-    ) * GlobalConstants.ms.second;
+    ) * Constants.ms.second;
 
     const registeredUsers = (
         SQLite.getAllUsers<UserAPIData>({
             table: Constants.tables.api,
             columns: ['modules'],
         })
-    ).filter(user => user.modules.length > 0);
+    ).filter((user) => user.modules.length > 0);
 
     const userCount = registeredUsers.length;
 
-    const updateInterval =
-        registeredUsers.length * intervalBetweenRequests;
+    const updateInterval = registeredUsers.length * intervalBetweenRequests;
 
     const responseEmbed = new BetterEmbed(interaction)
         .setColor(Constants.colors.normal)

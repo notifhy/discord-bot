@@ -6,7 +6,6 @@ import type {
     UserAPIData,
     UserData,
 } from '../@types/database';
-import { BetterEmbed } from '../../utility/utility';
 import {
     Collection,
     CommandInteraction,
@@ -15,15 +14,14 @@ import { CommandConstraintErrorHandler } from '../errors/CommandConstraintErrorH
 import { CommandErrorHandler } from '../errors/CommandErrorHandler';
 import { Constants } from '../utility/Constants';
 import { ConstraintError } from '../errors/ConstraintError';
-import { GlobalConstants } from '../../utility/Constants';
 import {
     locales,
     RegionLocales,
  } from '../locales/RegionLocales';
-import { Log } from '../../utility/Log';
 import { ownerID } from '../../../config.json';
-import { slashCommandResolver } from '../utility/utility';
+import { BetterEmbed, slashCommandResolver } from '../utility/utility';
 import { SQLite } from '../utility/SQLite';
+import { Log } from '../utility/Log';
 
 export const properties: ClientEvent['properties'] = {
     name: 'interactionCreate',
@@ -189,7 +187,7 @@ function cooldownConstraint(
 
     const expireTime = Number(timestamps.get(user.id)) + cooldown;
     const isCooldown = expireTime >
-        (GlobalConstants.ms.second * 2.5) + Date.now();
+        (Constants.ms.second * 2.5) + Date.now();
     const timeLeft = expireTime - Date.now();
 
     if (isCooldown === true) {

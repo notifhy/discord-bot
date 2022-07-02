@@ -1,28 +1,26 @@
-import type { ClientModule } from '../@types/modules';
-import type {
-    DefenderModule,
-    UserAPIData,
-    UserData,
-} from '../@types/database';
-import {
-    arrayRemove,
-    BetterEmbed,
-    cleanGameType,
-    timestamp,
-} from '../../utility/utility';
 import {
     ColorResolvable,
     EmbedFieldData,
     Formatters,
     TextChannel,
 } from 'discord.js';
+import type { ClientModule } from '../@types/modules';
+import type {
+    DefenderModule,
+    UserAPIData,
+    UserData,
+} from '../@types/database';
 import { Constants } from '../utility/Constants';
-import { GlobalConstants } from '../../utility/Constants';
-import { Log } from '../../utility/Log';
 import { ModuleError } from '../errors/ModuleError';
 import { RegionLocales } from '../locales/RegionLocales';
 import { SQLite } from '../utility/SQLite';
-import { deprecationEmbed } from '../utility/utility';
+import { Log } from '../utility/Log';
+import {
+    timestamp,
+    cleanGameType,
+    arrayRemove,
+    BetterEmbed,
+} from '../utility/utility';
 
 export const properties: ClientModule['properties'] = {
     name: 'defender',
@@ -38,7 +36,7 @@ export const execute: ClientModule['execute'] = async ({
     userData,
 }): Promise<void> => {
     try {
-        if (Object.keys(newData).length === 0) { //A bit more future proof
+        if (Object.keys(newData).length === 0) { // A bit more future proof
             return;
         }
 
@@ -62,10 +60,10 @@ export const execute: ClientModule['execute'] = async ({
         let color: ColorResolvable = Constants.colors.normal;
 
         if (
-            newData.lastLogin != null && //eslint-disable-line eqeqeq
-            oldData.lastLogin != null && //eslint-disable-line eqeqeq
-            defenderModule.alerts.login === true &&
-            newData.lastLogin + (GlobalConstants.ms.minute * 2.5) > Date.now()
+            newData.lastLogin != null // eslint-disable-line eqeqeq
+            && oldData.lastLogin != null // eslint-disable-line eqeqeq
+            && defenderModule.alerts.login === true
+            && newData.lastLogin + (Constants.ms.minute * 2.5) > Date.now()
         ) {
             const relative = timestamp(newData.lastLogin, 'R');
             const time = timestamp(newData.lastLogin, 'T');
@@ -84,17 +82,17 @@ export const execute: ClientModule['execute'] = async ({
         }
 
         if (
-            newData.lastLogout != null && //eslint-disable-line eqeqeq
-            oldData.lastLogout != null && //eslint-disable-line eqeqeq
-            defenderModule.alerts.logout === true &&
-            newData.lastLogout + (GlobalConstants.ms.minute * 2.5) > Date.now()
+            newData.lastLogout != null // eslint-disable-line eqeqeq
+            && oldData.lastLogout != null // eslint-disable-line eqeqeq
+            && defenderModule.alerts.logout === true
+            && newData.lastLogout + (Constants.ms.minute * 2.5) > Date.now()
         ) {
-            //lastLogout seems to change twice sometimes on a single logout, this is a fix for that
-            const lastEvent = userAPIData.history[1] ?? {}; //First item in array is this event, so it checks the second item
-            //@ts-expect-error hasOwn typing not implemented yet - https://github.com/microsoft/TypeScript/issues/44253
-            const duplicationCheck = Object.hasOwn(lastEvent, 'lastLogout') &&
-                newData.lastLogout - lastEvent.lastLogout! <
-                GlobalConstants.ms.second * 2.5;
+            // lastLogout seems to change twice sometimes on a single logout, this is a fix for that
+            // First item in array is this event, so it checks the second item
+            const lastEvent = userAPIData.history[1] ?? {};
+            const duplicationCheck = Object.hasOwn(lastEvent, 'lastLogout')
+                && newData.lastLogout - lastEvent.lastLogout!
+                < Constants.ms.second * 2.5;
 
             if (duplicationCheck === false) {
                 const relative = timestamp(newData.lastLogout, 'R');
@@ -109,8 +107,8 @@ export const execute: ClientModule['execute'] = async ({
                 };
 
                 if (
-                    newData.lastLogout >
-                    (newData.lastLogin ?? 0)
+                    newData.lastLogout
+                    > (newData.lastLogin ?? 0)
                 ) {
                     fields.unshift(logout);
                     color = Constants.colors.off;
@@ -124,11 +122,11 @@ export const execute: ClientModule['execute'] = async ({
         const cleanVersion = newData.version?.match(/^1.\d+/m)?.[0];
 
         if (
-            newData.version != null && //eslint-disable-line eqeqeq
-            oldData.version != null && //eslint-disable-line eqeqeq
-            defenderModule.alerts.version === true &&
-            cleanVersion &&
-            defenderModule.versions.includes(cleanVersion) === false
+            newData.version != null // eslint-disable-line eqeqeq
+            && oldData.version != null // eslint-disable-line eqeqeq
+            && defenderModule.alerts.version === true
+            && cleanVersion
+            && defenderModule.versions.includes(cleanVersion) === false
         ) {
             const version = {
                 name: locale.version.name,
@@ -143,16 +141,16 @@ export const execute: ClientModule['execute'] = async ({
         }
 
         if (
-            defenderModule.alerts.gameType === true &&
-            (
+            defenderModule.alerts.gameType === true
+            && (
                 (
-                    newData.gameType &&
-                    defenderModule.gameTypes
+                    newData.gameType
+                    && defenderModule.gameTypes
                         .includes(newData.gameType)
-                ) ||
-                (
-                    oldData.gameType &&
-                    defenderModule.gameTypes
+                )
+                || (
+                    oldData.gameType
+                    && defenderModule.gameTypes
                         .includes(oldData.gameType)
                 )
             )
@@ -161,11 +159,11 @@ export const execute: ClientModule['execute'] = async ({
                 name: locale.gameType.name,
                 value: replace(locale.gameType.value, {
                     sGameType:
-                        cleanGameType(oldData.gameType ?? null) ??
-                        locale.gameType.null,
+                        cleanGameType(oldData.gameType ?? null)
+                        ?? locale.gameType.null,
                     pGameType:
-                        cleanGameType(newData.gameType ?? null) ??
-                        locale.gameType.null,
+                        cleanGameType(newData.gameType ?? null)
+                        ?? locale.gameType.null,
                 }),
             };
 
@@ -175,10 +173,10 @@ export const execute: ClientModule['execute'] = async ({
         }
 
         if (
-            newData.language != null && //eslint-disable-line eqeqeq
-            oldData.language != null && //eslint-disable-line eqeqeq
-            defenderModule.alerts.language === true &&
-            defenderModule.languages
+            newData.language != null // eslint-disable-line eqeqeq
+            && oldData.language != null // eslint-disable-line eqeqeq
+            && defenderModule.alerts.language === true
+            && defenderModule.languages
                 .includes(newData.language) === false
         ) {
             const language = {
@@ -258,10 +256,7 @@ export const execute: ClientModule['execute'] = async ({
                 address instanceof TextChannel
                     ? Formatters.userMention(userAPIData.discordID)
                     : undefined,
-            embeds: deprecationEmbed(
-                [alertEmbed],
-                userData.locale,
-            ),
+            embeds: [alertEmbed],
             allowedMentions: {
                 parse: ['users'],
             },

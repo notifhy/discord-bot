@@ -14,7 +14,6 @@ import {
     Structures as baseStructures,
 } from '../utility/Structures';
 import { CommandErrorHandler } from '../errors/CommandErrorHandler';
-import { BetterEmbed } from '../../utility/utility';
 import {
     ButtonInteraction,
     Message,
@@ -24,12 +23,11 @@ import {
     SelectMenuInteraction,
 } from 'discord.js';
 import { Constants } from '../utility/Constants';
-import { disableComponents } from '../utility/utility';
-import { GlobalConstants } from '../../utility/Constants';
-import { Log } from '../../utility/Log';
+import { BetterEmbed, disableComponents } from '../utility/utility';
 import { RegionLocales } from '../locales/RegionLocales';
 import { SQLite } from '../utility/SQLite';
 import { ToggleButtons } from '../utility/ToggleButtons';
+import { Log } from '../utility/Log';
 
 export const properties: ClientCommand['properties'] = {
     name: 'modules',
@@ -75,7 +73,7 @@ export const execute: ClientCommand['execute'] = async (
     const structures =
         baseStructures[subCommand as keyof typeof baseStructures];
 
-    const replace = RegionLocales.replace;
+    const { replace } = RegionLocales;
 
     const mainEmbed = new BetterEmbed(interaction)
         .setColor(Constants.colors.normal)
@@ -93,7 +91,6 @@ export const execute: ClientCommand['execute'] = async (
 
         const menuData = text.menu;
         for (const item in menuData) {
-            //@ts-expect-error hasOwn typing not implemented yet
             if (Object.hasOwn(menuData, item)) {
                 const itemData = {
                     ...menuData[item as keyof typeof menuData],
@@ -177,8 +174,8 @@ export const execute: ClientCommand['execute'] = async (
 
     const collector = interaction.channel!.createMessageComponentCollector({
         filter: filter,
-        idle: GlobalConstants.ms.minute * 5,
-        time: GlobalConstants.ms.minute * 30,
+        idle: Constants.ms.minute * 5,
+        time: Constants.ms.minute * 30,
     });
 
     let selected: string;

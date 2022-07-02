@@ -1,3 +1,4 @@
+import type { Snowflake } from 'discord.js';
 import type {
     CleanHypixelPlayer,
     CleanHypixelStatus,
@@ -6,10 +7,9 @@ import type {
     History,
     UserAPIData,
 } from '../@types/database';
-import type { Snowflake } from 'discord.js';
-import { compare } from '../../utility/utility';
 import { Constants } from '../utility/Constants';
 import { SQLite } from '../utility/SQLite';
+import { compare } from '../utility/utility';
 
 export class CoreData {
     static process(

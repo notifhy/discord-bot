@@ -1,3 +1,4 @@
+import { DiscordAPIError } from 'discord.js';
 import type { ClientCommand } from '../@types/client';
 import type { SlothpixelPlayer } from '../@types/hypixel';
 import type {
@@ -6,15 +7,15 @@ import type {
     RewardsModule,
     UserAPIData,
 } from '../@types/database';
-import { BetterEmbed } from '../../utility/utility';
 import { Constants } from '../utility/Constants';
-import { DiscordAPIError } from 'discord.js';
 import { HTTPError } from '../errors/HTTPError';
-import { Log } from '../../utility/Log';
 import { RegionLocales } from '../locales/RegionLocales';
-import { Request } from '../../utility/Request';
-import { setPresence } from '../utility/utility';
+import { Request } from '../utility/Request';
+import { BetterEmbed, setPresence } from '../utility/utility';
 import { SQLite } from '../utility/SQLite';
+import { Log } from '../utility/Log';
+
+/* eslint-disable @typescript-eslint/naming-convention */
 
 export const properties: ClientCommand['properties'] = {
     name: 'register',
@@ -43,10 +44,10 @@ export const execute: ClientCommand['execute'] = async (
     locale,
 ): Promise<void> => {
     const text = RegionLocales.locale(locale).commands.register;
-    const replace = RegionLocales.replace;
+    const { replace } = RegionLocales;
 
     const userAPIData = SQLite.getUser<UserAPIData>({
-         discordID: interaction.user.id,
+        discordID: interaction.user.id,
         table: Constants.tables.api,
         allowUndefined: true,
         columns: ['discordID'],
@@ -64,15 +65,14 @@ export const execute: ClientCommand['execute'] = async (
         return;
     }
 
-    const inputUUID =
-        /^[0-9a-f]{8}(-?)[0-9a-f]{4}(-?)[1-5][0-9a-f]{3}(-?)[89AB][0-9a-f]{3}(-?)[0-9a-f]{12}$/i;
+    const inputUUID = /^[0-9a-f]{8}(-?)[0-9a-f]{4}(-?)[1-5][0-9a-f]{3}(-?)[89AB][0-9a-f]{3}(-?)[0-9a-f]{12}$/i;
     const inputUsername = /^[a-zA-Z0-9_-]{1,24}$/g;
     const input = interaction.options.getString('player', true);
     const inputType = inputUUID.test(input) === true ? 'UUID' : 'username';
 
     if (
-        inputUUID.test(input) === false &&
-        inputUsername.test(input) === false
+        inputUUID.test(input) === false
+        && inputUsername.test(input) === false
     ) {
         const invalidEmbed = new BetterEmbed(interaction)
             .setColor(Constants.colors.normal)
@@ -117,7 +117,9 @@ export const execute: ClientCommand['execute'] = async (
         last_logout,
         mc_version,
         language,
-        rewards: { streak_current, streak_best, claimed_daily, claimed },
+        rewards: {
+            streak_current, streak_best, claimed_daily, claimed,
+        },
         links: { DISCORD },
     } = (await response.json()) as SlothpixelPlayer;
 
@@ -126,7 +128,7 @@ export const execute: ClientCommand['execute'] = async (
             table: Constants.tables.api,
             columns: ['uuid'],
         })
-    ).map(user => user.uuid);
+    ).map((user) => user.uuid);
 
     if (uuids.includes(uuid)) {
         const alreadyUsedEmbed = new BetterEmbed(interaction)
@@ -231,8 +233,8 @@ export const execute: ClientCommand['execute'] = async (
         await interaction.user.send({ embeds: [testEmbed] });
     } catch (error) {
         if (
-            error instanceof DiscordAPIError &&
-            error.code === 50007
+            error instanceof DiscordAPIError
+            && error.code === 50007
         ) {
             registeredEmbed
                 .setColor(Constants.colors.ok)

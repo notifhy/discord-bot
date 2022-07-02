@@ -1,10 +1,10 @@
 import type { ClientCommand } from '../@types/client';
 import type { UserData } from '../@types/database';
-import { BetterEmbed } from '../../utility/utility';
 import { Constants } from '../utility/Constants';
-import { Log } from '../../utility/Log';
 import { RegionLocales } from '../locales/RegionLocales';
 import { SQLite } from '../utility/SQLite';
+import { Log } from '../utility/Log';
+import { BetterEmbed } from '../utility/utility';
 
 export const properties: ClientCommand['properties'] = {
     name: 'language',
@@ -54,11 +54,11 @@ export const execute: ClientCommand['execute'] = async (
         : newLocale;
 
     const text = RegionLocales.locale(rawNewLocale).commands.language;
-    const replace = RegionLocales.replace;
+    const { replace } = RegionLocales;
 
     if (
-        newLocale === 'Auto' &&
-        userData.localeOverride === false
+        newLocale === 'Auto'
+        && userData.localeOverride === false
     ) {
         const alreadyRemovedEmbed = new BetterEmbed(interaction)
             .setColor(Constants.colors.warning)

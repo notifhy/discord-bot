@@ -3,7 +3,7 @@ import {
     GuildChannel,
     TextChannel,
 } from 'discord.js';
-import { BaseErrorHandler } from '../../utility/errors/BaseErrorHandler';
+import { BaseErrorHandler } from './BaseErrorHandler';
 import { GlobalConstants } from '../../utility/Constants';
 import { slashCommandResolver } from '../utility/utility';
 

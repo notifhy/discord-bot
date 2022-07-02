@@ -1,5 +1,9 @@
+import {
+    CommandInteraction,
+    MessageActionRow,
+    MessageButton,
+} from 'discord.js';
 import type { ClientCommand } from '../@types/client';
-import { CommandInteraction, MessageActionRow, MessageButton } from 'discord.js';
 
 export const properties: ClientCommand['properties'] = {
     name: 'test',

@@ -1,25 +1,20 @@
+import {
+    Formatters,
+    MessageEmbed,
+    TextChannel,
+} from 'discord.js';
 import type { ClientModule } from '../@types/modules';
 import type {
     FriendsModule,
     UserAPIData,
     UserData,
 } from '../@types/database';
-import {
-    arrayRemove,
-    timestamp,
-} from '../../utility/utility';
-import {
-    Formatters,
-    MessageEmbed,
-    TextChannel,
-} from 'discord.js';
 import { Constants } from '../utility/Constants';
-import { GlobalConstants } from '../../utility/Constants';
-import { Log } from '../../utility/Log';
 import { ModuleError } from '../errors/ModuleError';
 import { RegionLocales } from '../locales/RegionLocales';
 import { SQLite } from '../utility/SQLite';
-import { deprecationEmbed } from '../utility/utility';
+import { Log } from '../utility/Log';
+import { arrayRemove, timestamp } from '../utility/utility';
 
 export const properties: ClientModule['properties'] = {
     name: 'friends',
@@ -36,10 +31,10 @@ export const execute: ClientModule['execute'] = async ({
 }): Promise<void> => {
     try {
         if (
-            typeof newData.lastLogin === 'undefined' &&
-            typeof newData.lastLogout === 'undefined'
+            typeof newData.lastLogin === 'undefined'
+            && typeof newData.lastLogout === 'undefined'
         ) {
-            return; //If the login/logout aren't in differences
+            return; // If the login/logout aren't in differences
         }
 
         const friendModule = SQLite.getUser<FriendsModule>({
@@ -104,7 +99,7 @@ export const execute: ClientModule['execute'] = async ({
 
         const notifications: MessageEmbed[] = [];
 
-        //eslint-disable-next-line eqeqeq
+        // eslint-disable-next-line eqeqeq
         if (newData.lastLogin != null) {
             const relative = timestamp(newData.lastLogin, 'R');
             const time = timestamp(newData.lastLogin, 'T');
@@ -112,16 +107,16 @@ export const execute: ClientModule['execute'] = async ({
             const login = new MessageEmbed({
                 color: Constants.colors.on,
             })
-            .setDescription(replace(locale.login.description, {
-                mention: Formatters.userMention(userAPIData.discordID),
-                relative: relative!,
-                time: time!,
-            }));
+                .setDescription(replace(locale.login.description, {
+                    mention: Formatters.userMention(userAPIData.discordID),
+                    relative: relative!,
+                    time: time!,
+                }));
 
             notifications.push(login);
         }
 
-        //eslint-disable-next-line eqeqeq
+        // eslint-disable-next-line eqeqeq
         if (newData.lastLogout != null) {
             const relative = timestamp(newData.lastLogout, 'R');
             const time = timestamp(newData.lastLogout, 'T');
@@ -129,23 +124,23 @@ export const execute: ClientModule['execute'] = async ({
             const logout = new MessageEmbed({
                 color: Constants.colors.off,
             })
-            .setDescription(replace(locale.logout.description, {
-                mention: Formatters.userMention(userAPIData.discordID),
-                relative: relative!,
-                time: time!,
-            }));
+                .setDescription(replace(locale.logout.description, {
+                    mention: Formatters.userMention(userAPIData.discordID),
+                    relative: relative!,
+                    time: time!,
+                }));
 
-            //lastLogout seems to change twice sometimes on a single logout, this is a fix for that
-            const lastEvent = userAPIData.history[1] ?? {}; //First item in array is this event, so it checks the second item
-            //@ts-expect-error hasOwn typing not implemented yet - https://github.com/microsoft/TypeScript/issues/44253
-            const duplicationCheck = Object.hasOwn(lastEvent, 'lastLogout') &&
-                newData.lastLogout - lastEvent.lastLogout! <
-                GlobalConstants.ms.second * 2.5;
+            // lastLogout seems to change twice sometimes on a single logout, this is a fix for that
+            // First item in array is this event, so it checks the second item
+            const lastEvent = userAPIData.history[1] ?? {};
+            const duplicationCheck = Object.hasOwn(lastEvent, 'lastLogout')
+                && newData.lastLogout - lastEvent.lastLogout!
+                < Constants.ms.second * 2.5;
 
             if (duplicationCheck === false) {
                 if (
-                    newData.lastLogout >
-                    (newData.lastLogin ?? 0)
+                    newData.lastLogout
+                    > (newData.lastLogin ?? 0)
                 ) {
                     notifications.push(logout);
                 } else {
@@ -156,7 +151,7 @@ export const execute: ClientModule['execute'] = async ({
 
         if (notifications.length > 0) {
             await channel.send({
-                embeds: deprecationEmbed(notifications, userData.locale),
+                embeds: notifications,
                 allowedMentions: {
                     parse: [],
                 },

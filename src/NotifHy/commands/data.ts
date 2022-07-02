@@ -8,16 +8,14 @@ import type {
 } from '../@types/database';
 import {
     awaitComponent,
-    disableComponents,
-    setPresence,
-} from '../utility/utility';
-import {
     BetterEmbed,
     capitolToNormal,
     cleanGameMode,
     cleanGameType,
+    disableComponents,
+    setPresence,
     timestamp,
-} from '../../utility/utility';
+} from '../utility/utility';
 import { Buffer } from 'node:buffer';
 import { CommandErrorHandler } from '../errors/CommandErrorHandler';
 import { Constants } from '../utility/Constants';
@@ -28,10 +26,9 @@ import {
     MessageButton,
     MessageComponentInteraction,
 } from 'discord.js';
-import { GlobalConstants } from '../../utility/Constants';
-import { Log } from '../../utility/Log';
 import { RegionLocales } from '../locales/RegionLocales';
 import { SQLite } from '../utility/SQLite';
+import { Log } from '../utility/Log';
 
 export const properties: ClientCommand['properties'] = {
     name: 'data',
@@ -125,14 +122,11 @@ export const execute: ClientCommand['execute'] = async (
             interaction.user.id === i.user.id &&
             i.message.id === message.id;
 
-        const button = await awaitComponent(
-            interaction.channel!,
-            'BUTTON',
-            {
-                filter: componentFilter,
-                idle: GlobalConstants.ms.second * 30,
-            },
-        );
+        const button = await awaitComponent(interaction.channel!, {
+            componentType: 'BUTTON',
+            filter: componentFilter,
+            idle: Constants.ms.second * 30,
+        });
 
         if (button === null) {
             Log.interaction(interaction, 'Ran out of time');
@@ -360,8 +354,8 @@ export const execute: ClientCommand['execute'] = async (
 
         const collector = interaction.channel!.createMessageComponentCollector({
             filter: filter,
-            idle: GlobalConstants.ms.minute * 5,
-            time: GlobalConstants.ms.minute * 30,
+            idle: Constants.ms.minute * 5,
+            time: Constants.ms.minute * 30,
         });
 
         let currentIndex = 0;

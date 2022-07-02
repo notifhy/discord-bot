@@ -4,11 +4,10 @@ import type {
     UserAPIData,
     UserData,
 } from '../@types/database';
-import { BetterEmbed } from '../../utility/utility';
 import { Constants } from '../utility/Constants';
 import { RegionLocales } from '../locales/RegionLocales';
 import { SQLite } from '../utility/SQLite';
-import { deprecationEmbed } from '../utility/utility';
+import { BetterEmbed } from '../utility/utility';
 
 export class CoreModule {
     client: Client;
@@ -27,9 +26,8 @@ export class CoreModule {
             userAPIData: UserAPIData,
         },
     ) {
-        const apiEnabled =
-            userAPIData.lastLogin !== null &&
-            userAPIData.lastLogout !== null;
+        const apiEnabled = userAPIData.lastLogin !== null
+            && userAPIData.lastLogout !== null;
 
         const userData = SQLite.getUser<UserData>({
             discordID: userAPIData.discordID,
@@ -42,18 +40,18 @@ export class CoreModule {
             userData.locale,
         ).modules;
 
-        const modules = this.client.modules.filter(module => (
-            userAPIData.modules.includes(module.properties.name) &&
-            (
+        const modules = this.client.modules.filter((module) => (
+            userAPIData.modules.includes(module.properties.name)
+            && (
                 module.properties.onlineStatusAPI === true
                     ? module.properties.onlineStatusAPI && apiEnabled === true
                     : true
             )
         ));
 
-
+        // eslint-disable-next-line no-restricted-syntax
         for (const module of modules.values()) {
-            //eslint-disable-next-line no-await-in-loop
+            // eslint-disable-next-line no-await-in-loop
             await module.execute({
                 client: this.client,
                 differences: differences,
@@ -87,25 +85,22 @@ export class CoreModule {
             );
 
             await user.send({
-                embeds: deprecationEmbed(
-                    [embed],
-                    userData.locale,
-                ),
+                embeds: [embed],
             });
         }
     }
 
     static missedAPIData(differences: ModuleDifferences) {
-        return (differences.oldData.lastLogin === null &&
-            differences.oldData.lastLogin !== null) ||
-        (differences.oldData.lastLogout === null &&
-            differences.oldData.lastLogout !== null);
+        return (differences.oldData.lastLogin === null
+            && differences.oldData.lastLogin !== null)
+        || (differences.oldData.lastLogout === null
+            && differences.oldData.lastLogout !== null);
     }
 
     static receivedAPIData(differences: ModuleDifferences) {
-        return (differences.oldData.lastLogin !== null &&
-            differences.oldData.lastLogin === null) ||
-        (differences.oldData.lastLogout !== null &&
-            differences.oldData.lastLogout === null);
+        return (differences.oldData.lastLogin !== null
+            && differences.oldData.lastLogin === null)
+        || (differences.oldData.lastLogout !== null
+            && differences.oldData.lastLogout === null);
     }
 }

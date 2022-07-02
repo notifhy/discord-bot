@@ -1,9 +1,9 @@
-import type { ClientCommand } from '../@types/client';
-import { BetterEmbed } from '../../utility/utility';
-import { Constants } from '../utility/Constants';
 import { Formatters } from 'discord.js';
-import { Log } from '../../utility/Log';
+import type { ClientCommand } from '../@types/client';
+import { Constants } from '../utility/Constants';
 import { RegionLocales } from '../locales/RegionLocales';
+import { Log } from '../utility/Log';
+import { BetterEmbed } from '../utility/utility';
 
 export const properties: ClientCommand['properties'] = {
     name: 'eval',
@@ -38,11 +38,10 @@ export const execute: ClientCommand['execute'] = async (
 
     try {
         const start = Date.now();
-        const output = await eval(input); //eslint-disable-line no-eval
+        const output = await eval(input); // eslint-disable-line no-eval
         const end = Date.now();
         const timeTaken = end - start;
-        const outputMaxLength =
-            output?.length >= Constants.limits.embedField;
+        const outputMaxLength = output?.length >= Constants.limits.embedField;
 
         const evalEmbed = new BetterEmbed(interaction)
             .setColor(Constants.colors.normal)
@@ -61,7 +60,8 @@ export const execute: ClientCommand['execute'] = async (
                             'javascript',
                             output
                                 ?.toString()
-                                ?.slice(0, Constants.limits.embedField)),
+                                ?.slice(0, Constants.limits.embedField),
+                        ),
                     }),
                 },
                 {
@@ -112,8 +112,8 @@ export const execute: ClientCommand['execute'] = async (
 
         const errorStackAttachment = {
             attachment: Buffer.from(
-                error instanceof Error &&
-                error.stack
+                error instanceof Error
+                && error.stack
                     ? error.stack
                     : JSON.stringify(
                         error,

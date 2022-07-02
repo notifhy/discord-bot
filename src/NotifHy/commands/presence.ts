@@ -1,10 +1,9 @@
 import type { ActivityTypes } from 'discord.js/typings/enums';
-import type { ClientCommand } from '../@types/client';
 import type { ExcludeEnum, PresenceStatusData } from 'discord.js';
-import { BetterEmbed } from '../../utility/utility';
+import type { ClientCommand } from '../@types/client';
 import { Constants } from '../utility/Constants';
 import { RegionLocales } from '../locales/RegionLocales';
-import { setPresence } from '../utility/utility';
+import { BetterEmbed, setPresence } from '../utility/utility';
 
 export const properties: ClientCommand['properties'] = {
     name: 'presence',
@@ -132,33 +131,33 @@ export const execute: ClientCommand['execute'] = async (
                 {
                     name: text.set.status.name,
                     value: replace(text.set.status.value, {
-                        status: status ??
-                            currentPresence.status ??
-                            text.set.none,
+                        status: status
+                            ?? currentPresence.status
+                            ?? text.set.none,
                     }),
                 },
                 {
                     name: text.set.type.name,
                     value: replace(text.set.type.value, {
-                        type: type ??
-                            currentActivity.type ??
-                            text.set.none,
+                        type: type
+                            ?? currentActivity.type
+                            ?? text.set.none,
                     }),
                 },
                 {
                     name: text.set.name.name,
                     value: replace(text.set.name.value, {
-                        name: name ??
-                            currentActivity.name ??
-                            text.set.none,
+                        name: name
+                            ?? currentActivity.name
+                            ?? text.set.none,
                     }),
                 },
                 {
                     name: text.set.url.name,
                     value: replace(text.set.url.value, {
-                        url: url ??
-                            currentActivity.url ??
-                            text.set.none,
+                        url: url
+                            ?? currentActivity.url
+                            ?? text.set.none,
                     }),
                 },
             ]);

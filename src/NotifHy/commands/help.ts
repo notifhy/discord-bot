@@ -1,8 +1,7 @@
 import type { ClientCommand } from '../@types/client';
-import { BetterEmbed } from '../../utility/utility';
 import { Constants } from '../utility/Constants';
-import { GlobalConstants } from '../../utility/Constants';
 import { RegionLocales } from '../locales/RegionLocales';
+import { BetterEmbed } from '../utility/utility';
 
 export const properties: ClientCommand['properties'] = {
     name: 'help',
@@ -72,7 +71,7 @@ export const execute: ClientCommand['execute'] = async (
     interaction,
     locale,
 ): Promise<void> => {
-    const replace = RegionLocales.replace;
+    const { replace } = RegionLocales;
     const text = RegionLocales.locale(locale).commands.help;
 
     if (interaction.options.getSubcommand() === 'information') {
@@ -113,10 +112,8 @@ export const execute: ClientCommand['execute'] = async (
     }
 
     async function specific() {
-        const commandArg =
-            interaction.options.getString('command', true);
-        const command: ClientCommand | undefined =
-            interaction.client.commands.get(commandArg);
+        const commandArg = interaction.options.getString('command', true);
+        const command: ClientCommand | undefined = interaction.client.commands.get(commandArg);
         const commandSearchEmbed = new BetterEmbed(interaction)
             .setColor(Constants.colors.normal);
 
@@ -148,8 +145,8 @@ export const execute: ClientCommand['execute'] = async (
             name: text.specific.cooldown.name,
             value: replace(text.specific.cooldown.value, {
                 commandCooldown:
-                    command.properties.cooldown /
-                    GlobalConstants.ms.second,
+                    command.properties.cooldown
+                    / Constants.ms.second,
             }),
         });
 
@@ -172,12 +169,13 @@ export const execute: ClientCommand['execute'] = async (
 
     async function commands() {
         const commandsCollection = interaction.client.commands.filter(
-            command => command.properties.ownerOnly === false,
+            (command) => command.properties.ownerOnly === false,
         );
         const allCommandsEmbed = new BetterEmbed(interaction)
             .setColor(Constants.colors.normal)
             .setTitle(text.all.title);
 
+        // eslint-disable-next-line no-restricted-syntax
         for (const command of commandsCollection.values()) {
             allCommandsEmbed.addFields({
                 name: replace(text.all.field.name, {

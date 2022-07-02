@@ -1,24 +1,22 @@
+import { FetchError } from 'node-fetch';
 import { AbortError } from './AbortError';
-import { BaseErrorHandler } from '../../utility/errors/BaseErrorHandler';
-import {
-    cleanLength,
-    cleanRound,
-    sendWebHook,
-} from '../../utility/utility';
-import { Core } from '../core/core';
-import { ErrorHandler } from '../../utility/errors/ErrorHandler';
+
 import {
     fatalWebhook,
     hypixelAPIWebhook,
     keyLimit,
     ownerID,
 } from '../../../config.json';
-import { FetchError } from 'node-fetch';
 import { HTTPError } from './HTTPError';
 import { RateLimitError } from './RateLimitError';
+import { BaseErrorHandler } from './BaseErrorHandler';
+import { type Core } from '../core/core';
+import { cleanLength, cleanRound, sendWebHook } from '../utility/utility';
+import { ErrorHandler } from './ErrorHandler';
 
 export class RequestErrorHandler<E> extends BaseErrorHandler<E> {
     readonly core: Core;
+
     readonly timeout: string | null;
 
     constructor(error: E, core: Core) {
@@ -91,16 +89,16 @@ export class RequestErrorHandler<E> extends BaseErrorHandler<E> {
                 {
                     name: 'Resuming In',
                     value:
-                        this.timeout ??
-                        'Not applicable',
+                        this.timeout
+                        ?? 'Not applicable',
                 },
                 {
                     name: 'Global Rate Limit',
                     value:
-                        this.error instanceof RateLimitError &&
-                        isGlobal === true
-                                ? 'Yes'
-                                : 'No',
+                        this.error instanceof RateLimitError
+                        && isGlobal === true
+                            ? 'Yes'
+                            : 'No',
                 },
                 {
                     name: 'Last Minute Statistics',
@@ -112,18 +110,18 @@ export class RequestErrorHandler<E> extends BaseErrorHandler<E> {
                 {
                     name: 'Next Timeouts',
                     value: `May not be accurate
-                     Abort Errors: ${cleanLength(
-                        abort.timeout,
-                    )}
+                    Abort Errors: ${cleanLength(
+        abort.timeout,
+    )}
                     HTTP Errors: ${cleanLength(
-                        http.timeout,
-                    )}
+        http.timeout,
+    )}
                     Rate Limit Errors: ${cleanLength(
-                        rateLimit.timeout,
-                    )}
+        rateLimit.timeout,
+    )}
                     Other Errors: ${cleanLength(
-                        generic.timeout,
-                    )}`,
+        generic.timeout,
+    )}`,
                 },
                 {
                     name: 'API Key',
@@ -176,21 +174,21 @@ export class RequestErrorHandler<E> extends BaseErrorHandler<E> {
 
         await sendWebHook({
             content:
-                this.timeout !== null ||
-                !(this.error instanceof AbortError)
+                this.timeout !== null
+                || !(this.error instanceof AbortError)
                     ? `<@${ownerID.join('><@')}>`
                     : null,
             embeds: [embed],
             files:
-                this.error instanceof AbortError ||
-                this.error instanceof RateLimitError ||
-                this.error instanceof HTTPError ||
-                this.error instanceof FetchError
+                this.error instanceof AbortError
+                || this.error instanceof RateLimitError
+                || this.error instanceof HTTPError
+                || this.error instanceof FetchError
                     ? undefined
                     : [this.stackAttachment],
             webhook:
-                this.error instanceof HTTPError ||
-                this.error instanceof FetchError
+                this.error instanceof HTTPError
+                || this.error instanceof FetchError
                     ? hypixelAPIWebhook
                     : fatalWebhook,
             suppressError: true,

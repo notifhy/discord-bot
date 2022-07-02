@@ -1,13 +1,11 @@
 import type { ClientModule } from '../@types/modules';
 import type { RewardsModule } from '../@types/database';
-import { BetterEmbed } from '../../utility/utility';
+import { BetterEmbed } from '../utility/utility';
 import { Constants } from '../utility/Constants';
-import { GlobalConstants } from '../../utility/Constants';
-import { Log } from '../../utility/Log';
+import { Log } from '../utility/Log';
 import { ModuleError } from '../errors/ModuleError';
 import { RegionLocales } from '../locales/RegionLocales';
 import { SQLite } from '../utility/SQLite';
-import { deprecationEmbed } from '../utility/utility';
 
 export const properties: ClientModule['properties'] = {
     name: 'rewards',
@@ -23,26 +21,25 @@ export const execute: ClientModule['execute'] = async ({
     userData,
 }): Promise<void> => {
     try {
-        const rewardsModule =
-            SQLite.getUser<RewardsModule>({
-                discordID: userAPIData.discordID,
-                table: Constants.tables.rewards,
-                allowUndefined: false,
-                columns: [
-                    'alertTime',
-                    'claimNotification',
-                    'lastNotified',
-                    'milestones',
-                    'notificationInterval',
-                ],
-            });
+        const rewardsModule = SQLite.getUser<RewardsModule>({
+            discordID: userAPIData.discordID,
+            table: Constants.tables.rewards,
+            allowUndefined: false,
+            columns: [
+                'alertTime',
+                'claimNotification',
+                'lastNotified',
+                'milestones',
+                'notificationInterval',
+            ],
+        });
 
         const locale = baseLocale.rewards;
         const { replace } = RegionLocales;
 
         const date = Date.now();
 
-        //Not ideal parsing a string but it should be fine
+        // Not ideal parsing a string but it should be fine
         const hypixelTime = new Date(
             new Date(date).toLocaleString('en-US', {
                 timeZone: Constants.modules.rewards.hypixelTimezone,
@@ -51,40 +48,37 @@ export const execute: ClientModule['execute'] = async ({
 
         const hypixelToClientOffset = hypixelTime - date;
 
-        //Next midnight
-        const nextResetTime =
-            new Date(hypixelTime).setHours(24, 0, 0, 0) - hypixelToClientOffset;
+        // Next midnight
+        const nextResetTime = new Date(hypixelTime).setHours(24, 0, 0, 0) - hypixelToClientOffset;
 
         const alertOffset = rewardsModule.alertTime!;
         const lastClaimedReward = userAPIData.lastClaimedReward!;
         const notificationInterval = rewardsModule.notificationInterval!;
 
-        //Is the user's last claimed reward between the last midnight and the coming midnight
-        const hasClaimed = nextResetTime - GlobalConstants.ms.day < (
+        // Is the user's last claimed reward between the last midnight and the coming midnight
+        const hasClaimed = nextResetTime - Constants.ms.day < (
             Math.ceil(
                 lastClaimedReward / 1000,
             ) * 1000
         );
 
-        const surpassedInterval =
-            rewardsModule.lastNotified < nextResetTime - GlobalConstants.ms.day
-                ? true //Bypass for alerts from the previous daily reward
-                : rewardsModule.lastNotified + notificationInterval <
-                  Date.now();
+        const surpassedInterval = rewardsModule.lastNotified < nextResetTime - Constants.ms.day
+            ? true // Bypass for alerts from the previous daily reward
+            : rewardsModule.lastNotified + notificationInterval
+                  < Date.now();
 
         if (
-            hasClaimed === false && //Claimed status
-            nextResetTime - alertOffset < Date.now() && //Within user's notify time
-            surpassedInterval === true //Has it been x amount of time since the last notif
+            hasClaimed === false // Claimed status
+            && nextResetTime - alertOffset < Date.now() // Within user's notify time
+            && surpassedInterval === true // Has it been x amount of time since the last notif
         ) {
             const user = await client.users.fetch(userAPIData.discordID);
-            const description =
-                locale.rewardReminder.description[
-                    Math.floor(
-                        Math.random() *
-                            locale.rewardReminder.description.length,
-                    )
-                ];
+            const description = locale.rewardReminder.description[
+                Math.floor(
+                    Math.random()
+                            * locale.rewardReminder.description.length,
+                )
+            ];
             const rewardNotification = new BetterEmbed({
                 text: locale.rewardReminder.footer,
             })
@@ -92,11 +86,8 @@ export const execute: ClientModule['execute'] = async ({
                 .setTitle(locale.rewardReminder.title)
                 .setDescription(description);
 
-             await user.send({
-                embeds: deprecationEmbed(
-                    [rewardNotification],
-                    userData.locale,
-                ),
+            await user.send({
+                embeds: [rewardNotification],
             });
 
             SQLite.updateUser<RewardsModule>({
@@ -116,14 +107,14 @@ export const execute: ClientModule['execute'] = async ({
 
         if (rewardsModule.milestones === true) {
             const user = await client.users.fetch(userAPIData.discordID);
-            const milestones = Constants.modules.rewards.milestones;
+            const { milestones } = Constants.modules.rewards;
             const milestone = milestones.find(
-                item => item === newData.rewardScore,
+                (item) => item === newData.rewardScore,
             );
 
             if (
-                rewardsModule.milestones === true &&
-                milestone !== undefined
+                rewardsModule.milestones === true
+                && milestone !== undefined
             ) {
                 const milestoneNotification = new BetterEmbed({
                     text: locale.milestone.footer,
@@ -137,10 +128,7 @@ export const execute: ClientModule['execute'] = async ({
                     );
 
                 await user.send({
-                    embeds: deprecationEmbed(
-                        [milestoneNotification],
-                        userData.locale,
-                    ),
+                    embeds: [milestoneNotification],
                 });
 
                 Log.module(properties.name, userData, 'Delivered milestone');
@@ -160,10 +148,7 @@ export const execute: ClientModule['execute'] = async ({
                     ));
 
                 await user.send({
-                    embeds: deprecationEmbed(
-                        [claimedNotification],
-                        userData.locale,
-                    ),
+                    embeds: [claimedNotification],
                 });
 
                 Log.module(properties.name, userData, 'Delivered claimed notification');

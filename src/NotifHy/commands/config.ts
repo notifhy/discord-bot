@@ -1,13 +1,13 @@
+import { WebhookEditMessageOptions } from 'discord.js';
 import type {
     ClientCommand,
     Config,
 } from '../@types/client';
-import { BetterEmbed } from '../../utility/utility';
 import { Constants } from '../utility/Constants';
-import { Log } from '../../utility/Log';
 import { RegionLocales } from '../locales/RegionLocales';
 import { SQLite } from '../utility/SQLite';
-import { WebhookEditMessageOptions } from 'discord.js';
+import { Log } from '../utility/Log';
+import { BetterEmbed } from '../utility/utility';
 
 export const properties: ClientCommand['properties'] = {
     name: 'config',
@@ -116,7 +116,7 @@ export const execute: ClientCommand['execute'] = async (
     locale,
 ): Promise<void> => {
     const text = RegionLocales.locale(locale).commands.config;
-    const replace = RegionLocales.replace;
+    const { replace } = RegionLocales;
 
     const config = SQLite.queryGet<Config>({
         query: 'SELECT blockedGuilds, blockedUsers, core, devMode, keyPercentage, restRequestTimeout, retryLimit FROM config WHERE rowid = 1',
@@ -124,25 +124,24 @@ export const execute: ClientCommand['execute'] = async (
 
     const payload: WebhookEditMessageOptions = {};
 
-
     switch (interaction.options.getSubcommand()) {
         case 'blockguild': await blockGuildCommand();
-        break;
+            break;
         case 'blockuser': blockUserCommand();
-        break;
+            break;
         case 'core': coreCommand();
-        break;
+            break;
         case 'devmode': devModeCommand();
-        break;
+            break;
         case 'keypercentage': keyPercentageCommand();
-        break;
+            break;
         case 'restrequesttimeout': restRequestTimeoutCommand();
-        break;
+            break;
         case 'retrylimit': retryLimitCommand();
-        break;
+            break;
         case 'view': viewCommand();
-        break;
-        //no default
+            break;
+        // no default
     }
 
     async function blockGuildCommand() {
@@ -150,7 +149,7 @@ export const execute: ClientCommand['execute'] = async (
         const blockedGuildIndex = config.blockedGuilds.indexOf(guildID);
 
         const guildEmbed = new BetterEmbed(interaction)
-                .setColor(Constants.colors.normal);
+            .setColor(Constants.colors.normal);
 
         if (blockedGuildIndex === -1) {
             config.blockedGuilds.push(guildID);
@@ -327,7 +326,7 @@ export const execute: ClientCommand['execute'] = async (
         payload.embeds = [viewEmbed];
     }
 
-    const newRawConfig = SQLite.unJSONize({ ...config });
+    const newRawConfig = SQLite.unjsonize({ ...config });
 
     SQLite.queryRun({
         query: 'UPDATE config set blockedGuilds = ?, blockedUsers = ?, core = ?, devMode = ?, keyPercentage = ?, restRequestTimeout = ?, retryLimit = ? WHERE rowid = 1',

@@ -26,10 +26,7 @@ export interface UserData extends BaseUserData {
     systemMessages: Field[],
 }
 
-export interface UserAPIData
-    extends BaseUserData,
-        CleanHypixelPlayer,
-        CleanHypixelStatus {
+export interface UserAPIData extends BaseUserData, CleanHypixelPlayer, CleanHypixelStatus {
     uuid: string,
     modules: string[],
     lastUpdated: number,

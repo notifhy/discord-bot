@@ -1,9 +1,9 @@
-import { Table } from '../@types/database';
 import {
     ColorResolvable,
     Permissions,
     PresenceData,
 } from 'discord.js';
+import { Table } from '../@types/database';
 import gameTypes from '../../../assets/gameTypes.json';
 import modes from '../../../assets/modes.json';
 
@@ -15,7 +15,7 @@ export const Constants = {
     colors: {
         error: 0xAA0000 as ColorResolvable,
         warning: 0xFF5555 as ColorResolvable,
-        normal: 0x2f3136 as ColorResolvable, //#7289DA
+        normal: 0x2f3136 as ColorResolvable, // #7289DA
         ok: 0xFFAA00 as ColorResolvable,
         on: 0x00AA00 as ColorResolvable,
         off: 0x555555 as ColorResolvable,
@@ -32,8 +32,8 @@ export const Constants = {
         menuIncrements: 5,
         menuFastIncrements: 20,
         performance: {
-            start: 0, //Date.now()
-            uses: 0, //uses
+            start: 0, // Date.now()
+            uses: 0, // uses
             total: 0,
             fetch: 0,
             process: 0,
@@ -46,6 +46,10 @@ export const Constants = {
             }],
             status: 'online',
         } as PresenceData,
+        request: {
+            restRequestTimeout: 5000,
+            retryLimit: 2,
+        },
     },
     emoji: {
         bell: '<:bell:952009463307579492>',
@@ -68,6 +72,12 @@ export const Constants = {
         embedField: 1024,
         performanceHistory: 50,
         userAPIDataHistory: 1000,
+    },
+    ms: {
+        day: 86_400_000,
+        hour: 3_600_000,
+        minute: 60_000,
+        second: 1_000,
     },
     modules: {
         defender: {

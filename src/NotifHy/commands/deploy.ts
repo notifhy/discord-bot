@@ -1,15 +1,15 @@
+import { REST } from '@discordjs/rest';
+import { Routes } from 'discord-api-types/v9';
+import fs from 'node:fs/promises';
 import type { ClientCommand } from '../@types/client';
-import { BetterEmbed } from '../../utility/utility';
 import {
     clientID,
     discordAPIkey as token,
 } from '../../../config.json';
 import { Constants } from '../utility/Constants';
-import { Log } from '../../utility/Log';
 import { RegionLocales } from '../locales/RegionLocales';
-import { REST } from '@discordjs/rest';
-import { Routes } from 'discord-api-types/v9';
-import fs from 'node:fs/promises';
+import { Log } from '../utility/Log';
+import { BetterEmbed } from '../utility/utility';
 
 export const properties: ClientCommand['properties'] = {
     name: 'deploy',
@@ -79,12 +79,11 @@ export const execute: ClientCommand['execute'] = async (
 ): Promise<void> => {
     const text = RegionLocales.locale(locale).commands.deploy;
 
-    const commandFiles = (await fs.readdir(__dirname)).filter(file =>
-        file.endsWith('.ts'),
-    );
+    const commandFiles = (await fs.readdir(__dirname)).filter((file) => file.endsWith('.ts'));
     const userCommands: object[] = [];
     const ownerCommands: object[] = [];
 
+    // eslint-disable-next-line no-restricted-syntax
     for (const file of commandFiles) {
         const {
             properties: { ownerOnly, structure },
@@ -99,17 +98,20 @@ export const execute: ClientCommand['execute'] = async (
 
     const scope = interaction.options.getString('scope', true);
     const type = interaction.options.getString('type', true);
-    const guildID = interaction.options.getString('guild') ??
-        interaction.guildId!;
+    const guildID = interaction.options.getString('guild')
+        ?? interaction.guildId!;
 
-    const commands =
-        type === 'both'
-            ? ownerCommands.concat(userCommands)
-            : type === 'none'
-            ? []
-            : type === 'owner'
-            ? ownerCommands
-            : userCommands;
+    let commands: object[];
+
+    if (type === 'both') {
+        commands = ownerCommands.concat(userCommands);
+    } else if (type === 'none') {
+        commands = [];
+    } else if (type === 'owner') {
+        commands = ownerCommands;
+    } else {
+        commands = userCommands;
+    }
 
     const rest = new REST({ version: '9' }).setToken(token);
 

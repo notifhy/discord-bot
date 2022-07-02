@@ -2,7 +2,7 @@ import {
     clearTimeout,
     setTimeout,
 } from 'node:timers';
-import { GlobalConstants } from './Constants';
+import { GlobalConstants } from '../../utility/Constants';
 
 /* eslint-disable no-unused-vars */
 
@@ -10,45 +10,51 @@ type TimeoutOptions = {
     baseTimeout?: number,
     increment?: (current: number) => number,
     maxTimeout?: number,
-}
+};
 
 export class Timeout {
     private baseTimeout: number;
+
     private clearTimeout: number | undefined;
+
     lastMinute: number;
+
     private maxTimeout: number;
+
     pauseFor: number;
+
     resumeAfter: number;
+
     timeout: number;
 
     private increment: TimeoutOptions['increment'] | undefined;
 
     constructor(options?: TimeoutOptions) {
-        //Timeout set when the timeout is cleared
+        // Timeout set when the timeout is cleared
         this.baseTimeout = options?.baseTimeout ?? GlobalConstants.ms.minute;
 
-        //Holds a setTimeout Id for clearing
+        // Holds a setTimeout Id for clearing
         this.clearTimeout = undefined;
 
-        //Number of addError calls in the last minute
+        // Number of addError calls in the last minute
         this.lastMinute = 0;
 
-        //Upper limit to this.timeout
+        // Upper limit to this.timeout
         this.maxTimeout = options?.maxTimeout ?? GlobalConstants.ms.day / 2;
 
-        //The value that would be used for a setTimeout
+        // The value that would be used for a setTimeout
         this.pauseFor = 0;
 
-        //Unix time for when a timeout should end
+        // Unix time for when a timeout should end
         this.resumeAfter = 0;
 
-        //Holds the next timeout length
+        // Holds the next timeout length
         this.timeout = options?.baseTimeout ?? GlobalConstants.ms.minute;
 
-        //Optional value to manipulate the increase in timeout
+        // Optional value to manipulate the increase in timeout
         this.increment = options?.increment;
 
-        //Bindings
+        // Bindings
         this.addError = this.addError.bind(this);
         this.isTimeout = this.isTimeout.bind(this);
         this.getPauseFor = this.getPauseFor.bind(this);

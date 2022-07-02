@@ -1,5 +1,5 @@
 import { CommandInteraction } from 'discord.js';
-import { UserData } from '../NotifHy/@types/database';
+import { UserData } from '../@types/database';
 import { formattedUnix } from './utility';
 
 export class Log {
