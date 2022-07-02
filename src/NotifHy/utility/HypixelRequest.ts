@@ -33,10 +33,10 @@ export class HypixelRequest {
         });
 
         const JSON = await Request.tryParse<
-            HypixelAPIOk | HypixelAPIError
+        HypixelAPIOk | HypixelAPIError
         >(response);
 
-        const status = response.status;
+        const { status } = response;
 
         if (response.ok) {
             return JSON as HypixelAPIOk;

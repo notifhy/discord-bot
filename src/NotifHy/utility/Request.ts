@@ -5,7 +5,7 @@ import fetch, {
 import { AbortSignal } from 'node-fetch/externals';
 import { setTimeout } from 'node:timers';
 import { AbortError } from '../errors/AbortError';
-import { GlobalConstants } from '../../utility/Constants';
+import { Constants } from './Constants';
 import { Log } from './Log';
 
 export class Request {
@@ -20,7 +20,7 @@ export class Request {
         restRequestTimeout?: number,
     }) {
         this.restRequestTimeout = config?.restRequestTimeout
-            ?? GlobalConstants.defaults.request.restRequestTimeout;
+            ?? Constants.defaults.request.restRequestTimeout;
 
         this.try = 0;
 

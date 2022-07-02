@@ -1,9 +1,3 @@
-import type {
-    ClientCommand,
-    ClientEvent,
-    Config,
-} from './@types/client';
-import type { ClientModule } from './@types/modules';
 import {
     Client,
     Collection,
@@ -11,26 +5,32 @@ import {
     Options,
     Sweepers,
 } from 'discord.js';
+import fs from 'node:fs/promises';
+import process from 'node:process';
+import type {
+    ClientCommand,
+    ClientEvent,
+    Config,
+} from './@types/client';
+import type { ClientModule } from './@types/modules';
 import { Core } from './core/core';
 import { discordAPIkey } from '../../config.json';
 import { ErrorHandler } from './errors/ErrorHandler';
 import { Log } from './utility/Log';
 import { SQLite } from './utility/SQLite';
-import fs from 'node:fs/promises';
-import process from 'node:process';
 
-process.on('exit', code => {
+process.on('exit', (code) => {
     Log.log(`Exiting with code ${code}`);
     SQLite.close();
 });
 
-process.on('unhandledRejection', async error => {
+process.on('unhandledRejection', async (error) => {
     Log.error('unhandledRejection');
     await ErrorHandler.init(error);
     process.exit(1);
 });
 
-process.on('uncaughtException', async error => {
+process.on('uncaughtException', async (error) => {
     Log.error('uncaughtException');
     await ErrorHandler.init(error);
     process.exit(1);
@@ -114,20 +114,23 @@ client.modules = new Collection();
             fs.readdir(`${__dirname}/events`),
             fs.readdir(`${__dirname}/modules`),
         ])
-    ).map(file => file.filter(file1 => file1.endsWith('.ts')));
+    ).map((file) => file.filter((file1) => file1.endsWith('.ts')));
 
     const commandPromises: Promise<ClientCommand>[] = [];
     const eventPromises: Promise<ClientEvent>[] = [];
     const modulePromises: Promise<ClientModule>[] = [];
 
+    // eslint-disable-next-line no-restricted-syntax
     for (const file of folders[0]) {
         commandPromises.push(import(`${__dirname}/commands/${file}`));
     }
 
+    // eslint-disable-next-line no-restricted-syntax
     for (const file of folders[1]) {
         eventPromises.push(import(`${__dirname}/events/${file}`));
     }
 
+    // eslint-disable-next-line no-restricted-syntax
     for (const file of folders[2]) {
         modulePromises.push(import(`${__dirname}/modules/${file}`));
     }
@@ -138,23 +141,28 @@ client.modules = new Collection();
         Promise.all(modulePromises),
     ]);
 
+    // eslint-disable-next-line no-restricted-syntax
     for (const command of resolvedPromises[0]) {
         client.commands.set(command.properties.name, command);
     }
 
+    // eslint-disable-next-line no-restricted-syntax
     for (const event of resolvedPromises[1]) {
         client.events.set(event.properties.name, event);
     }
 
+    // eslint-disable-next-line no-restricted-syntax
     for (const module of resolvedPromises[2]) {
         client.modules.set(module.properties.name, module);
     }
 
+    // eslint-disable-next-line no-restricted-syntax
     for (const {
         properties: { name, once },
     } of client.events.values()) {
-        const execute = (...parameters: unknown[]) =>
+        const execute = (...parameters: unknown[]) => {
             client.events.get(name)!.execute(...parameters);
+        };
 
         if (once === false) {
             client.on(name, execute);

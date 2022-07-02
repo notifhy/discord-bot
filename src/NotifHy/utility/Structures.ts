@@ -11,21 +11,19 @@ export function combiner(
     locale: { select: SelectMenuLocale } & SelectMenuTopLocale,
     structure: { select: SelectMenuStructure } & SelectMenuTopStructure,
 ) {
-    //@ts-expect-error typing not implemented
     const clonedLocale = structuredClone(locale);
-    //@ts-expect-error typing not implemented
     const clonedStructure = structuredClone(structure);
 
     const combined = { ...clonedLocale, ...clonedStructure };
 
     combined.select = { ...clonedLocale.select, ...clonedStructure.select };
 
-
     const options = clonedLocale.select.options.map(
         (option: Record<string, unknown>, index: number) => ({
             ...option,
             ...structure.select.options[index]!,
-        }));
+        }),
+    );
 
     combined.select.options = options;
 

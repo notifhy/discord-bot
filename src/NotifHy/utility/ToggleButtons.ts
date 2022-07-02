@@ -1,12 +1,12 @@
-import type {
-    ButtonData,
-    LocaleButton,
-} from '../@types/locales';
 import {
     Constants,
     MessageActionRow,
     MessageButton,
 } from 'discord.js';
+import type {
+    ButtonData,
+    LocaleButton,
+} from '../@types/locales';
 
 export class ToggleButtons extends MessageActionRow {
     constructor({
@@ -37,7 +37,7 @@ export class ToggleButtons extends MessageActionRow {
                     : Constants.MessageButtonStyles.DANGER,
             )
             .setLabel(buttonLocale.disable)
-            .setDisabled(allDisabled || enabled === false); //Flips boolean
+            .setDisabled(allDisabled || enabled === false); // Flips boolean
 
         super.setComponents([enable, disable]);
     }
