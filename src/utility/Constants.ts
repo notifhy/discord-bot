@@ -4,8 +4,8 @@ import {
     PresenceData,
 } from 'discord.js';
 import { Table } from '../@types/database';
-import gameTypes from '../../../assets/gameTypes.json';
-import modes from '../../../assets/modes.json';
+import gameTypes from '../../assets/gameTypes.json';
+import modes from '../../assets/modes.json';
 
 export const Constants = {
     clean: {

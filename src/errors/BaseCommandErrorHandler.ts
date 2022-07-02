@@ -4,8 +4,8 @@ import {
     TextChannel,
 } from 'discord.js';
 import { BaseErrorHandler } from './BaseErrorHandler';
-import { GlobalConstants } from '../../utility/Constants';
 import { slashCommandResolver } from '../utility/utility';
+import { Constants } from '../utility/Constants';
 
 export class BaseCommandErrorHandler<E> extends BaseErrorHandler<E> {
     readonly interaction: CommandInteraction;
@@ -44,7 +44,7 @@ export class BaseCommandErrorHandler<E> extends BaseErrorHandler<E> {
                     value: `ID: ${id}
                     Command: ${command}
                     Created At: <t:${Math.round(
-                        createdTimestamp / GlobalConstants.ms.second,
+                        createdTimestamp / Constants.ms.second,
                     )}:T>`,
                 },
                 {

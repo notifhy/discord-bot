@@ -1,17 +1,16 @@
 import {
-    BetterEmbed,
-    generateStackTrace,
-} from '../utility';
-import { Constants } from '../utility/Constants';
-import {
     FileOptions,
     SnowflakeUtil,
 } from 'discord.js';
-import { Log } from '../Log';
+import { Constants } from '../utility/Constants';
+import { Log } from '../utility/Log';
+import { generateStackTrace, BetterEmbed } from '../utility/utility';
 
 export class BaseErrorHandler<E> {
     readonly error: E;
+
     readonly incidentID: string;
+
     readonly stackAttachment: FileOptions;
 
     constructor(error: E) {

@@ -3,7 +3,7 @@ import {
     fatalWebhook,
     ownerID,
 } from '../../config.json';
-import { sendWebHook } from '../utility';
+import { sendWebHook } from '../utility/utility';
 
 export class ErrorHandler<E> extends BaseErrorHandler<E> {
     data: string[];
