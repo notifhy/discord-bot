@@ -1,7 +1,7 @@
 import { Constants } from '../utility/Constants';
 import { Timeout } from '../utility/Timeout';
 
-export class CoreError {
+export class Error {
     public isGlobal: boolean;
 
     public readonly abort: Timeout;

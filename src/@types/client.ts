@@ -5,7 +5,7 @@ import type {
     CommandInteraction,
 } from 'discord.js';
 import type { ClientModule } from './modules';
-import type { Core } from '../core/core';
+import type { Core } from '../core/cores';
 
 export interface ClientCommand {
     properties: {

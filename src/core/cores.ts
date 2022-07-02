@@ -6,10 +6,10 @@ import {
 import { setTimeout } from 'node:timers/promises';
 import type { UserAPIData } from '../@types/database';
 import { Constants } from '../utility/Constants';
-import { CoreData } from './data';
-import { CoreError } from './error';
-import { CoreModule } from './module';
-import { CoreRequest } from './request';
+import { Data } from './datas';
+import { Error } from './errors';
+import { Module } from './modules';
+import { Request } from './requests';
 import { ErrorHandler } from '../errors/ErrorHandler';
 import { keyLimit } from '../../config.json';
 import { ModuleHTTPErrorHandler } from '../errors/ModuleHTTPErrorHandler';
@@ -33,26 +33,26 @@ export type Performance = {
 export class Core {
     public readonly client: Client;
 
-    public readonly error: CoreError;
+    public readonly error: Error;
 
-    public readonly module: CoreModule;
+    public readonly module: Module;
 
     public readonly performance: {
         latest: Performance | null;
         history: Performance[];
     };
 
-    public readonly request: CoreRequest;
+    public readonly request: Request;
 
     public constructor(client: Client) {
         this.client = client;
-        this.error = new CoreError();
-        this.module = new CoreModule(this.client);
+        this.error = new Error();
+        this.module = new Module(this.client);
         this.performance = {
             latest: null,
             history: [],
         };
-        this.request = new CoreRequest(this.client);
+        this.request = new Request(this.client);
     }
 
     public async start() {
@@ -149,7 +149,7 @@ export class Core {
         }
 
         try {
-            payload = CoreData.process(user.discordID, data);
+            payload = Data.process(user.discordID, data);
             performance.process = Date.now();
         } catch (error) {
             await ErrorHandler.init(error);

@@ -2,7 +2,7 @@ import { AbortError } from './AbortError';
 import { HTTPError } from './HTTPError';
 import { RateLimitError } from './RateLimitError';
 import { BaseErrorHandler } from './BaseErrorHandler';
-import { type Core } from '../core/core';
+import { type Core } from '../core/cores';
 import { cleanLength } from '../utility/utility';
 import { ErrorHandler } from './ErrorHandler';
 

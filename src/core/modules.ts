@@ -9,7 +9,7 @@ import { RegionLocales } from '../locales/RegionLocales';
 import { SQLite } from '../utility/SQLite';
 import { BetterEmbed } from '../utility/utility';
 
-export class CoreModule {
+export class Module {
     public readonly client: Client;
 
     public constructor(client: Client) {
@@ -63,14 +63,14 @@ export class CoreModule {
 
         let embed;
 
-        if (CoreModule.missedAPIData(differences)) {
+        if (Module.missedAPIData(differences)) {
             embed = new BetterEmbed({
                 text: locale.statusAPIMissing.footer,
             })
                 .setColor(Constants.colors.warning)
                 .setTitle(locale.statusAPIMissing.title)
                 .setDescription(locale.statusAPIMissing.description);
-        } else if (CoreModule.receivedAPIData(differences)) {
+        } else if (Module.receivedAPIData(differences)) {
             embed = new BetterEmbed({
                 text: locale.statusAPIReceived.footer,
             })

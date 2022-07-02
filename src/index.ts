@@ -15,15 +15,19 @@ import type {
     Config,
 } from './@types/client';
 import type { ClientModule } from './@types/modules';
-import { Core } from './core/core';
-import { discordAPIkey } from '../config.json';
+import { Core } from './core/cores';
+import {
+    discordAPIkey,
+    sentryEnvironment,
+    sentryDsn,
+} from '../config.json';
 import { ErrorHandler } from './errors/ErrorHandler';
 import { Log } from './utility/Log';
 import { SQLite } from './utility/SQLite';
 
 Sentry.init({
-    dsn: process.env.DSN,
-    environment: process.env.ENVIRONMENT,
+    dsn: sentryDsn,
+    environment: sentryEnvironment,
     integrations: [new ExtraErrorData()],
     tracesSampleRate: 1.0,
 });

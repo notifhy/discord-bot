@@ -9,7 +9,7 @@ import type { UserAPIData } from '../@types/database';
 import { Constants } from '../utility/Constants';
 import { HypixelRequest } from '../utility/HypixelRequest';
 
-export class CoreRequest {
+export class Request {
     public readonly baseURL: string;
 
     public readonly client: Client;
@@ -31,9 +31,9 @@ export class CoreRequest {
         );
 
         return {
-            player: CoreRequest
+            player: Request
                 .cleanPlayerData(user, player as RawHypixelPlayer),
-            status: CoreRequest
+            status: Request
                 .cleanStatusData(status as RawHypixelStatus),
         };
     }

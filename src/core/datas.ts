@@ -11,7 +11,7 @@ import { Constants } from '../utility/Constants';
 import { SQLite } from '../utility/SQLite';
 import { compare } from '../utility/utility';
 
-export class CoreData {
+export class Data {
     public static process(
         discordID: Snowflake,
         {

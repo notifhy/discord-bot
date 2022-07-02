@@ -5,7 +5,7 @@ import {
     type Interaction,
     TextChannel,
 } from 'discord.js';
-import { type Core } from '../core/Core';
+import { type Core } from '../core/cores';
 import { slashCommandResolver } from '../utility/utility';
 import { HTTPError } from './HTTPError';
 
