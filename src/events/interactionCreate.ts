@@ -1,3 +1,7 @@
+import {
+    Collection,
+    CommandInteraction,
+} from 'discord.js';
 import type {
     ClientCommand,
     ClientEvent,
@@ -6,10 +10,6 @@ import type {
     UserAPIData,
     UserData,
 } from '../@types/database';
-import {
-    Collection,
-    CommandInteraction,
-} from 'discord.js';
 import { InteractionConstraintErrorHandler } from '../errors/InteractionConstraintErrorHandler';
 import { CommandErrorHandler } from '../errors/InteractionErrorHandler';
 import { Constants } from '../utility/Constants';
@@ -17,11 +17,12 @@ import { ConstraintError } from '../errors/ConstraintError';
 import {
     locales,
     RegionLocales,
- } from '../locales/RegionLocales';
-import { ownerID } from '../../config.json';
+} from '../locales/RegionLocales';
 import { BetterEmbed, slashCommandResolver } from '../utility/utility';
 import { SQLite } from '../utility/SQLite';
 import { Log } from '../utility/Log';
+
+const ownerIDs = JSON.parse(process.env.OWNERS!);
 
 export const properties: ClientEvent['properties'] = {
     name: 'interactionCreate',
@@ -40,8 +41,9 @@ export const execute: ClientEvent['execute'] = async (
                 return;
             }
 
-            const command: ClientCommand | undefined =
-                interaction.client.commands.get(interaction.commandName);
+            const command: ClientCommand | undefined = interaction.client.commands.get(
+                interaction.commandName,
+            );
 
             if (typeof command === 'undefined') {
                 return;
@@ -50,8 +52,8 @@ export const execute: ClientEvent['execute'] = async (
             Log.interaction(interaction, slashCommandResolver(interaction));
 
             await interaction.deferReply({
-                ephemeral: command.properties.ephemeral &&
-                    interaction.inGuild(),
+                ephemeral: command.properties.ephemeral
+                    && interaction.inGuild(),
             });
 
             userData = SQLite.getUser<UserData>({
@@ -89,15 +91,15 @@ export const execute: ClientEvent['execute'] = async (
             await InteractionConstraintErrorHandler.init(
                 error,
                 interaction,
-                userData?.locale ??
-                Constants.defaults.language,
+                userData?.locale
+                ?? Constants.defaults.language,
             );
         } else {
             await CommandErrorHandler.init(
                 error,
                 interaction,
-                userData?.locale ??
-                Constants.defaults.language,
+                userData?.locale
+                ?? Constants.defaults.language,
             );
         }
     }
@@ -108,9 +110,9 @@ function updateLocale(
     userData: UserData,
 ) {
     if (
-        interaction.locale !== userData.locale &&
-        userData.localeOverride === false &&
-        Object.keys(locales).includes(interaction.locale)
+        interaction.locale !== userData.locale
+        && userData.localeOverride === false
+        && Object.keys(locales).includes(interaction.locale)
     ) {
         SQLite.updateUser<UserData>({
             discordID: interaction.user.id,
@@ -136,15 +138,15 @@ function generalConstraints(
     }
 
     if (
-        devMode === true &&
-        ownerID.includes(interaction.user.id) === false
+        devMode === true
+        && ownerIDs.includes(interaction.user.id) === false
     ) {
         throw new ConstraintError('devMode');
     }
 
     if (
-        ownerOnly === true &&
-        ownerID.includes(interaction.user.id) === false
+        ownerOnly === true
+        && ownerIDs.includes(interaction.user.id) === false
     ) {
         throw new ConstraintError('owner');
     }
@@ -163,8 +165,8 @@ function generalConstraints(
     }
 
     if (
-        noDM === true &&
-        !interaction.inCachedGuild()
+        noDM === true
+        && !interaction.inCachedGuild()
     ) {
         throw new ConstraintError('dm');
     }
@@ -186,8 +188,8 @@ function cooldownConstraint(
     }
 
     const expireTime = Number(timestamps.get(user.id)) + cooldown;
-    const isCooldown = expireTime >
-        (Constants.ms.second * 2.5) + Date.now();
+    const isCooldown = expireTime
+        > (Constants.ms.second * 2.5) + Date.now();
     const timeLeft = expireTime - Date.now();
 
     if (isCooldown === true) {
@@ -210,6 +212,7 @@ async function checkSystemMessages(
             .setTitle(text.embed.title)
             .setDescription(text.embed.description);
 
+        // eslint-disable-next-line no-restricted-syntax
         for (const message of userData.systemMessages) {
             systemMessages.addFields({
                 name: message.name,
@@ -227,8 +230,8 @@ async function checkSystemMessages(
             }),
         ]);
 
-        promises.filter(promise => promise.status === 'rejected')
-            .forEach(rejected => {
+        promises.filter((promise) => promise.status === 'rejected')
+            .forEach((rejected) => {
                 Log.interaction(
                     interaction,
                     'Error while sending system notifications',

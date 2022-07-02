@@ -5,7 +5,6 @@ import type {
     HypixelAPIOk,
 } from '../@types/hypixel';
 import { HTTPError } from '../errors/HTTPError';
-import { hypixelAPIkey } from '../../config.json';
 import { RateLimitError } from '../errors/RateLimitError';
 import { Request } from './Request';
 
@@ -29,7 +28,7 @@ export class HypixelRequest {
             restRequestTimeout: this.config?.restRequestTimeout,
             retryLimit: this.config?.retryLimit,
         }).request(url, {
-            headers: { 'API-Key': hypixelAPIkey },
+            headers: { 'API-Key': process.env.HYPIXEL_API_KEY! },
         });
 
         const JSON = await Request.tryParse<

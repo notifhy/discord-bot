@@ -1,6 +1,5 @@
 import type { ClientCommand } from '../@types/client';
 import { Constants } from '../utility/Constants';
-import { keyLimit } from '../../config.json';
 import { RegionLocales } from '../locales/RegionLocales';
 import { Log } from '../utility/Log';
 import { BetterEmbed, cleanLength, cleanRound } from '../utility/utility';
@@ -201,7 +200,7 @@ export const execute: ClientCommand['execute'] = async (
                 {
                     name: text.api.apiKey.name,
                     value: replace(text.api.apiKey.value, {
-                        queries: cleanRound(keyPercentage * keyLimit, 1),
+                        queries: cleanRound(keyPercentage * Number(process.env.KEY_LIMIT!), 1),
                         percentage: cleanRound(keyPercentage * 100, 1),
                         uses: uses,
                     }),

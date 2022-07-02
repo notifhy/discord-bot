@@ -1,11 +1,7 @@
 import { REST } from '@discordjs/rest';
-import { Routes } from 'discord-api-types/v9';
+import { Routes } from 'discord-api-types/v10';
 import fs from 'node:fs/promises';
 import type { ClientCommand } from '../@types/client';
-import {
-    clientID,
-    discordAPIkey as token,
-} from '../../config.json';
 import { Constants } from '../utility/Constants';
 import { RegionLocales } from '../locales/RegionLocales';
 import { Log } from '../utility/Log';
@@ -113,16 +109,20 @@ export const execute: ClientCommand['execute'] = async (
         commands = userCommands;
     }
 
-    const rest = new REST({ version: '9' }).setToken(token);
+    const rest = new REST({ version: '9' }).setToken(process.env.DISCORD_TOKEN!);
 
     if (scope === 'global') {
-        await rest.put(Routes.applicationCommands(clientID), {
-            body: commands,
-        });
+        await rest.put(
+            Routes.applicationCommands(process.env.DISCORD_APPLICATION_ID!), {
+                body: commands,
+            },
+        );
     } else {
-        await rest.put(Routes.applicationGuildCommands(clientID, guildID), {
-            body: commands,
-        });
+        await rest.put(
+            Routes.applicationGuildCommands(process.env.DISCORD_APPLICATION_ID!, guildID), {
+                body: commands,
+            },
+        );
     }
 
     const successEmbed = new BetterEmbed(interaction)

@@ -1,10 +1,7 @@
+import 'dotenv/config';
 import { REST } from '@discordjs/rest';
-import { Routes } from 'discord-api-types/v9';
+import { Routes } from 'discord-api-types/v10';
 import type { ClientCommand } from './@types/client';
-import {
-    clientID,
-    discordAPIkey,
-} from '../config.json';
 import { Log } from './utility/Log';
 
 (async () => {
@@ -15,9 +12,9 @@ import { Log } from './utility/Log';
             (await import(`${__dirname}/commands/deploy.ts`)) as ClientCommand
         ).properties.structure;
 
-        await new REST({ version: '9' })
-            .setToken(discordAPIkey)
-            .put(Routes.applicationCommands(clientID), {
+        await new REST({ version: '10' })
+            .setToken(process.env.DISCORD_TOKEN!)
+            .put(Routes.applicationCommands(process.env.DISCORD_APPLICATION_ID!), {
                 body: [deployCommand],
             });
 

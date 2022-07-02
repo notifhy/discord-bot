@@ -1,3 +1,4 @@
+import 'dotenv/config';
 import {
     Client,
     Collection,
@@ -16,18 +17,13 @@ import type {
 } from './@types/client';
 import type { ClientModule } from './@types/modules';
 import { Core } from './core/Core';
-import {
-    discordAPIkey,
-    sentryEnvironment,
-    sentryDsn,
-} from '../config.json';
 import { ErrorHandler } from './errors/ErrorHandler';
 import { Log } from './utility/Log';
 import { SQLite } from './utility/SQLite';
 
 Sentry.init({
-    dsn: sentryDsn,
-    environment: sentryEnvironment,
+    dsn: process.env.DSN,
+    environment: process.env.ENVIRONMENT,
     integrations: [new ExtraErrorData()],
     tracesSampleRate: 1.0,
 });
@@ -184,5 +180,5 @@ client.modules = new Collection();
         }
     }
 
-    await client.login(discordAPIkey);
+    await client.login();
 })();

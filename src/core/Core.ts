@@ -11,7 +11,6 @@ import { Error } from './Error';
 import { Module } from './Module';
 import { Request } from './Request';
 import { ErrorHandler } from '../errors/ErrorHandler';
-import { keyLimit } from '../../config.json';
 import { ModuleHTTPErrorHandler } from '../errors/ModuleHTTPErrorHandler';
 import { ModuleError } from '../errors/ModuleError';
 import { ModuleErrorHandler } from '../errors/ModuleErrorHandler';
@@ -196,7 +195,7 @@ export class Core {
     }
 
     private getTimeout(urls: string[], performance?: Performance) {
-        const keyQueryLimit = keyLimit * this.client.config.keyPercentage;
+        const keyQueryLimit = Number(process.env.KEY_LIMIT) * this.client.config.keyPercentage;
         const intervalBetweenRequests = (60 / keyQueryLimit) * 1000;
         const total = intervalBetweenRequests * urls.length;
 

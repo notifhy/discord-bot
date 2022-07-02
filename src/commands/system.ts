@@ -2,7 +2,6 @@ import process from 'node:process';
 import type { ClientCommand } from '../@types/client';
 import type { UserAPIData } from '../@types/database';
 import { Constants } from '../utility/Constants';
-import { keyLimit } from '../../config.json';
 import { RegionLocales } from '../locales/RegionLocales';
 import { SQLite } from '../utility/SQLite';
 import { BetterEmbed, cleanLength, cleanRound } from '../utility/utility';
@@ -32,7 +31,7 @@ export const execute: ClientCommand['execute'] = async (
 
     const memoryMegaBytes = process.memoryUsage.rss() / (2 ** 20);
 
-    const keyQueryLimit = keyLimit * keyPercentage;
+    const keyQueryLimit = Number(process.env.KEY_LIMIT!) * keyPercentage;
 
     const intervalBetweenRequests = (
         60 / keyQueryLimit
