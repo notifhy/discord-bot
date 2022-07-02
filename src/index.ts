@@ -15,7 +15,7 @@ import type {
     Config,
 } from './@types/client';
 import type { ClientModule } from './@types/modules';
-import { Core } from './core/cores';
+import { Core } from './core/Core';
 import {
     discordAPIkey,
     sentryEnvironment,

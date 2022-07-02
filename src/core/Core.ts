@@ -6,10 +6,10 @@ import {
 import { setTimeout } from 'node:timers/promises';
 import type { UserAPIData } from '../@types/database';
 import { Constants } from '../utility/Constants';
-import { Data } from './datas';
-import { Error } from './errors';
-import { Module } from './modules';
-import { Request } from './requests';
+import { Data } from './Data';
+import { Error } from './Error';
+import { Module } from './Module';
+import { Request } from './Request';
 import { ErrorHandler } from '../errors/ErrorHandler';
 import { keyLimit } from '../../config.json';
 import { ModuleHTTPErrorHandler } from '../errors/ModuleHTTPErrorHandler';
