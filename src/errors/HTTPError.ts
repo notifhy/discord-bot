@@ -1,13 +1,17 @@
 import type { Response } from 'node-fetch';
 
 export class HTTPError<JSON> extends Error {
-    readonly json: JSON | null;
-    readonly response: Response | null;
-    readonly status: number;
-    readonly statusText: string | null;
-    readonly url: string;
+    public readonly json: JSON | null;
 
-    constructor({
+    public readonly response: Response | null;
+
+    public readonly status: number;
+
+    public readonly statusText: string | null;
+
+    public readonly url: string;
+
+    public constructor({
         json,
         message,
         response,
@@ -19,10 +23,9 @@ export class HTTPError<JSON> extends Error {
         url: string;
     }) {
         super(message ?? response?.statusText ?? 'Unknown');
-        this.json =
-            json ??
-            (response?.json().catch(() => null) as JSON | undefined | null) ??
-            null;
+        this.json = json
+            ?? (response?.json().catch(() => null) as JSON | undefined | null)
+            ?? null;
         this.name = 'HTTPError';
         this.response = response ?? null;
         this.status = response?.status ?? 500;

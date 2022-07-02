@@ -1,55 +1,21 @@
-import {
-    FileOptions,
-    SnowflakeUtil,
-} from 'discord.js';
-import { Constants } from '../utility/Constants';
+import { SnowflakeUtil } from 'discord.js';
 import { Log } from '../utility/Log';
-import { generateStackTrace, BetterEmbed } from '../utility/utility';
+import { Sentry } from './Sentry';
 
 export class BaseErrorHandler<E> {
-    readonly error: E;
+    public readonly error: E;
 
-    readonly incidentID: string;
+    public readonly incidentID: string;
 
-    readonly stackAttachment: FileOptions;
+    public readonly sentry: Sentry;
 
-    constructor(error: E) {
+    public constructor(error: E) {
         this.error = error;
         this.incidentID = SnowflakeUtil.generate();
-
-        Object.defineProperty(error, 'fullStack', {
-            value: generateStackTrace(),
-        });
-
-        this.stackAttachment = {
-            attachment: Buffer.from(
-                JSON.stringify(
-                    error,
-                    Object.getOwnPropertyNames(error),
-                    4,
-                ),
-            ),
-            name: error instanceof Error
-                ? `${error.name}.txt`
-                : 'error.txt',
-        };
+        this.sentry = new Sentry().baseErrorContext(this.incidentID);
     }
 
-    baseErrorEmbed() {
-        return new BetterEmbed({ text: this.incidentID })
-            .setColor(Constants.colors.error);
-    }
-
-    errorEmbed() {
-        return this.baseErrorEmbed()
-            .setTitle(
-                this.error instanceof Error
-                    ? this.error.name
-                    : 'Error',
-            );
-    }
-
-    log(...text: unknown[]) {
+    public log(...text: unknown[]) {
         const id = `Incident ${this.incidentID} |`;
 
         Log.error(id, ...text);

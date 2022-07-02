@@ -50,7 +50,7 @@ type Footer =
     | CommandInteraction;
 
 export class BetterEmbed extends MessageEmbed {
-    constructor(footer?: Footer) {
+    public constructor(footer?: Footer) {
         super();
         this.setTimestamp();
 
@@ -63,13 +63,13 @@ export class BetterEmbed extends MessageEmbed {
         }
     }
 
-    setField(name: string, value: string, inline?: boolean | undefined): this {
+    public setField(name: string, value: string, inline?: boolean | undefined): this {
         this.setFields({ name: name, value: value, inline: inline });
 
         return this;
     }
 
-    unshiftField(
+    public unshiftField(
         name: string,
         value: string,
         inline?: boolean | undefined,
@@ -79,7 +79,7 @@ export class BetterEmbed extends MessageEmbed {
         return this;
     }
 
-    unshiftFields(...fields: EmbedFieldData[] | EmbedFieldData[][]): this {
+    public unshiftFields(...fields: EmbedFieldData[] | EmbedFieldData[][]): this {
         this.fields.unshift(...MessageEmbed.normalizeFields(...fields));
 
         return this;

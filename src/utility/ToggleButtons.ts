@@ -9,7 +9,7 @@ import type {
 } from '../@types/locales';
 
 export class ToggleButtons extends MessageActionRow {
-    constructor({
+    public constructor({
         allDisabled,
         enabled,
         buttonLocale,

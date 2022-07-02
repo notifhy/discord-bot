@@ -1,9 +1,11 @@
 export class ModuleError extends Error {
-    readonly cleanModule: string;
-    readonly module: string;
-    readonly raw: unknown;
+    public readonly cleanModule: string;
 
-    constructor({
+    public readonly module: string;
+
+    public readonly raw: unknown;
+
+    public constructor({
         error,
         cleanModule,
         module,

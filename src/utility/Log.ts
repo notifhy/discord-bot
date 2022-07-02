@@ -8,24 +8,24 @@ export class Log {
         return `${time} [${type}]`;
     }
 
-    static error(...text: unknown[]) {
+    public static error(...text: unknown[]) {
         console.error(this.base('ERROR'), ...text);
     }
 
-    static interaction(interaction: CommandInteraction, ...text: unknown[]) {
+    public static interaction(interaction: CommandInteraction, ...text: unknown[]) {
         console.log(this.base('INTERACTION'), interaction.id, interaction.user.id, ...text);
     }
 
-    static log(...text: unknown[]) {
+    public static log(...text: unknown[]) {
         console.log(this.base('LOG'), ...text);
     }
 
-    static module(module: string, user: UserData, ...text: unknown[]) {
+    public static module(module: string, user: UserData, ...text: unknown[]) {
         const moduleName = `[${module.toUpperCase()}]`;
         console.log(this.base('MODULES'), moduleName, user.discordID, ...text);
     }
 
-    static request(...text: unknown[]) {
+    public static request(...text: unknown[]) {
         console.log(this.base('REQUEST'), ...text);
     }
 }

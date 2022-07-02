@@ -12,16 +12,11 @@ import type {
 import { BaseErrorHandler } from './BaseErrorHandler';
 import { Constants } from '../utility/Constants';
 import { ErrorHandler } from './ErrorHandler';
-import {
-    fatalWebhook,
-    ownerID,
-} from '../../config.json';
 import { ModuleError } from './ModuleError';
 import { RegionLocales } from '../locales/RegionLocales';
 import { SQLite } from '../utility/SQLite';
 import { Locale } from '../@types/locales';
 import {
-    sendWebHook,
     BetterEmbed,
     timestamp,
     arrayRemove,
@@ -33,21 +28,21 @@ DiscordAPIError
 | (Omit<ModuleError, 'raw'> &
 { raw: DiscordAPIError | HTTPError })
 > {
-    readonly cleanModule: string;
+    public readonly cleanModule: string;
 
-    readonly client: Client;
+    public readonly client: Client;
 
-    readonly discordID: string;
+    public readonly discordID: string;
 
-    readonly module: string | null;
+    public readonly module: string | null;
 
-    readonly raw: unknown | null;
+    public readonly raw: unknown | null;
 
-    readonly userData: UserData;
+    public readonly userData: UserData;
 
-    readonly locale: Locale['errors']['moduleErrors'];
+    public readonly locale: Locale['errors']['moduleErrors'];
 
-    constructor(
+    public constructor(
         client: Client,
         discordID: Snowflake,
         error: DiscordAPIError
@@ -89,7 +84,7 @@ DiscordAPIError
             .moduleErrors;
     }
 
-    static async init(
+    public static async init(
         client: Client,
         discordID: Snowflake,
         error: DiscordAPIError
@@ -129,26 +124,14 @@ DiscordAPIError
     }
 
     private async systemNotify() {
-        const identifier = this.baseErrorEmbed()
-            .setTitle('Unexpected Error')
-            .addFields(
-                {
-                    name: 'User',
-                    value: this.discordID,
-                },
-                {
-                    name: 'Module',
-                    value: this.cleanModule,
-                },
+        this.sentry
+            .setSeverity('error')
+            .moduleContext(this.discordID, this.cleanModule)
+            .captureException(
+                this.raw instanceof Error
+                    ? this.raw
+                    : this.error,
             );
-
-        await sendWebHook({
-            content: `<@${ownerID.join('><@')}>`,
-            embeds: [identifier],
-            files: [this.stackAttachment],
-            webhook: fatalWebhook,
-            suppressError: true,
-        });
     }
 
     private async handleDiscordAPICode(error: DiscordAPIError) {

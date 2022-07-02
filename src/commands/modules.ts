@@ -13,7 +13,7 @@ import {
     combiner,
     Structures as baseStructures,
 } from '../utility/Structures';
-import { CommandErrorHandler } from '../errors/CommandErrorHandler';
+import { CommandErrorHandler } from '../errors/InteractionErrorHandler';
 import {
     ButtonInteraction,
     Message,

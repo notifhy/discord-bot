@@ -10,13 +10,13 @@ import { SQLite } from '../utility/SQLite';
 import { BetterEmbed } from '../utility/utility';
 
 export class CoreModule {
-    client: Client;
+    public readonly client: Client;
 
-    constructor(client: Client) {
+    public constructor(client: Client) {
         this.client = client;
     }
 
-    async execute(
+    public async execute(
         {
             differences,
             userAPIData,
@@ -90,14 +90,14 @@ export class CoreModule {
         }
     }
 
-    static missedAPIData(differences: ModuleDifferences) {
+    private static missedAPIData(differences: ModuleDifferences) {
         return (differences.oldData.lastLogin === null
             && differences.oldData.lastLogin !== null)
         || (differences.oldData.lastLogout === null
             && differences.oldData.lastLogout !== null);
     }
 
-    static receivedAPIData(differences: ModuleDifferences) {
+    private static receivedAPIData(differences: ModuleDifferences) {
         return (differences.oldData.lastLogin !== null
             && differences.oldData.lastLogin === null)
         || (differences.oldData.lastLogout !== null

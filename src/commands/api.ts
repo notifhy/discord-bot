@@ -181,12 +181,12 @@ export const execute: ClientCommand['execute'] = async (
                     }),
                 },
                 {
-                    name: text.api.lastMinute.name,
-                    value: replace(text.api.lastMinute.value, {
-                        abort: abort.lastMinute,
-                        generic: generic.lastMinute,
-                        http: http.lastMinute,
-                        rateLimit: rateLimit.lastMinute,
+                    name: text.api.lastHour.name,
+                    value: replace(text.api.lastHour.value, {
+                        abort: abort.lastHour,
+                        generic: generic.lastHour,
+                        http: http.lastHour,
+                        rateLimit: rateLimit.lastHour,
                     }),
                 },
                 {

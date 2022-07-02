@@ -1,7 +1,7 @@
 import { HTTPError } from './HTTPError';
 
 export class AbortError extends HTTPError<never> {
-    constructor({
+    public constructor({
         message,
         url,
     }: {

@@ -12,7 +12,7 @@ import { SQLite } from '../utility/SQLite';
 import { compare } from '../utility/utility';
 
 export class CoreData {
-    static process(
+    public static process(
         discordID: Snowflake,
         {
             player,

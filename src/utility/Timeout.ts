@@ -17,17 +17,17 @@ export class Timeout {
 
     private clearTimeout: number | undefined;
 
-    lastMinute: number;
+    public lastHour: number;
 
-    private maxTimeout: number;
+    private readonly maxTimeout: number;
 
-    pauseFor: number;
+    public pauseFor: number;
 
-    resumeAfter: number;
+    public resumeAfter: number;
 
-    timeout: number;
+    public timeout: number;
 
-    private increment: TimeoutOptions['increment'] | undefined;
+    private readonly increment: TimeoutOptions['increment'] | undefined;
 
     constructor(options?: TimeoutOptions) {
         // Timeout set when the timeout is cleared
@@ -37,7 +37,7 @@ export class Timeout {
         this.clearTimeout = undefined;
 
         // Number of addError calls in the last minute
-        this.lastMinute = 0;
+        this.lastHour = 0;
 
         // Upper limit to this.timeout
         this.maxTimeout = options?.maxTimeout ?? Constants.ms.day / 2;
@@ -86,11 +86,11 @@ export class Timeout {
             this.timeout = this.baseTimeout;
         }, this.timeout + 30_000) as unknown as number;
 
-        this.lastMinute += 1;
+        this.lastHour += 1;
 
         setTimeout(() => {
-            this.lastMinute -= 1;
-        }, Constants.ms.minute);
+            this.lastHour -= 1;
+        }, Constants.ms.hour);
     }
 
     getPauseFor() {

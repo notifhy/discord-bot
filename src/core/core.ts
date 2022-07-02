@@ -31,20 +31,20 @@ export type Performance = {
 };
 
 export class Core {
-    client: Client;
+    public readonly client: Client;
 
-    error: CoreError;
+    public readonly error: CoreError;
 
-    module: CoreModule;
+    public readonly module: CoreModule;
 
-    performance: {
+    public readonly performance: {
         latest: Performance | null;
         history: Performance[];
     };
 
-    request: CoreRequest;
+    public readonly request: CoreRequest;
 
-    constructor(client: Client) {
+    public constructor(client: Client) {
         this.client = client;
         this.error = new CoreError();
         this.module = new CoreModule(this.client);
@@ -55,7 +55,7 @@ export class Core {
         this.request = new CoreRequest(this.client);
     }
 
-    async start() {
+    public async start() {
         // eslint-disable-next-line no-constant-condition
         while (true) {
             try {
@@ -74,7 +74,7 @@ export class Core {
         }
     }
 
-    static async maxTimeout(timeout: number) {
+    public static async maxTimeout(timeout: number) {
         await setTimeout(timeout);
         return true;
     }

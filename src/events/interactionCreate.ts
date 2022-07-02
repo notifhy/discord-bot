@@ -10,8 +10,8 @@ import {
     Collection,
     CommandInteraction,
 } from 'discord.js';
-import { CommandConstraintErrorHandler } from '../errors/CommandConstraintErrorHandler';
-import { CommandErrorHandler } from '../errors/CommandErrorHandler';
+import { InteractionConstraintErrorHandler } from '../errors/InteractionConstraintErrorHandler';
+import { CommandErrorHandler } from '../errors/InteractionErrorHandler';
 import { Constants } from '../utility/Constants';
 import { ConstraintError } from '../errors/ConstraintError';
 import {
@@ -86,7 +86,7 @@ export const execute: ClientEvent['execute'] = async (
         }
     } catch (error) {
         if (error instanceof ConstraintError) {
-            await CommandConstraintErrorHandler.init(
+            await InteractionConstraintErrorHandler.init(
                 error,
                 interaction,
                 userData?.locale ??

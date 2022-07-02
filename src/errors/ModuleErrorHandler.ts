@@ -1,26 +1,21 @@
 import { Snowflake } from 'discord.js';
 import { BaseErrorHandler } from './BaseErrorHandler';
 import { ErrorHandler } from './ErrorHandler';
-import {
-    fatalWebhook,
-    ownerID,
-} from '../../config.json';
 import { ModuleError } from './ModuleError';
 import { type Core } from '../core/core';
-import { sendWebHook } from '../utility/utility';
 
 export class ModuleErrorHandler extends BaseErrorHandler<
 unknown | (ModuleError & { raw: unknown })
 > {
-    readonly cleanModule: string;
+    public readonly cleanModule: string;
 
-    readonly discordID: string;
+    public readonly discordID: string;
 
-    readonly module: string | null;
+    public readonly module: string | null;
 
-    readonly raw: unknown | null;
+    public readonly raw: unknown | null;
 
-    constructor(
+    public constructor(
         error: unknown | (ModuleError & { raw: unknown }),
         discordID: Snowflake,
     ) {
@@ -41,7 +36,7 @@ unknown | (ModuleError & { raw: unknown })
             : null;
     }
 
-    static async init<T>(
+    public static async init<T>(
         error: T,
         discordID: Snowflake,
         core: Core,
@@ -50,7 +45,6 @@ unknown | (ModuleError & { raw: unknown })
 
         try {
             core.error.addGeneric();
-
             handler.errorLog();
             await handler.systemNotify();
         } catch (error2) {
@@ -68,26 +62,14 @@ unknown | (ModuleError & { raw: unknown })
         );
     }
 
-    async systemNotify() {
-        const identifier = this.baseErrorEmbed()
-            .setTitle('Unexpected Error')
-            .addFields(
-                {
-                    name: 'User',
-                    value: this.discordID,
-                },
-                {
-                    name: 'Module',
-                    value: this.cleanModule,
-                },
+    private systemNotify() {
+        this.sentry
+            .setSeverity('error')
+            .moduleContext(this.discordID, this.cleanModule)
+            .captureException(
+                this.raw instanceof Error
+                    ? this.raw
+                    : this.error,
             );
-
-        await sendWebHook({
-            content: `<@${ownerID.join('><@')}>`,
-            embeds: [identifier],
-            files: [this.stackAttachment],
-            webhook: fatalWebhook,
-            suppressError: true,
-        });
     }
 }

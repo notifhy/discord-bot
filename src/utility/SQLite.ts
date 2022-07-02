@@ -53,28 +53,28 @@ type UpdateUserType<Type, B> = {
 };
 
 export class SQLite {
-    static open() {
+    public static open() {
         db = new Database(`${__dirname}/../../../database.db`);
     }
 
     // Calling this even after the database is closed doesn't break anything
-    static close() {
+    public static close() {
         db.close();
     }
 
-    static rekey() {
+    public static rekey() {
         db.pragma(`rekey='${databaseKey}'`);
     }
 
-    static key() {
+    public static key() {
         db.pragma(`key='${databaseKey}'`);
     }
 
-    static removeKey() {
+    public static removeKey() {
         db.pragma('rekey=\'\'');
     }
 
-    static createTransaction(transaction: () => void) {
+    public static createTransaction(transaction: () => void) {
         const execute = db.transaction(() => {
             transaction();
         });
@@ -82,7 +82,7 @@ export class SQLite {
         execute();
     }
 
-    static createTablesIfNotExists(): void {
+    public static createTablesIfNotExists(): void {
         this.createTransaction(() => {
             Object.values(Constants.tables.create)
                 .map((value) => db.prepare(value))
@@ -98,10 +98,10 @@ export class SQLite {
         });
     }
 
-    static queryGet<Type>(config: GetType<false>): Type;
-    static queryGet<Type>(config: GetType<true>): Type | undefined;
-    static queryGet<Type>(config: GetType<boolean>): Type | undefined;
-    static queryGet<Type>(config: {
+    public static queryGet<Type>(config: GetType<false>): Type;
+    public static queryGet<Type>(config: GetType<true>): Type | undefined;
+    public static queryGet<Type>(config: GetType<boolean>): Type | undefined;
+    public static queryGet<Type>(config: {
         query: string,
         allowUndefined?: boolean,
     }): Type | undefined {
@@ -129,7 +129,7 @@ export class SQLite {
         return this.jsonize(rawData) as Type | undefined;
     }
 
-    static queryGetAll<Type>(query: string): Type[] {
+    public static queryGetAll<Type>(query: string): Type[] {
         /*
          * const string = '2';
          * const output = queryGetAll(`SELECT tests FROM test WHERE tests = '${string}' `);
@@ -142,7 +142,7 @@ export class SQLite {
         return rawData.map((rawData1) => this.jsonize(rawData1)) as Type[];
     }
 
-    static queryRun({
+    public static queryRun({
         query,
         data,
     }: {
@@ -159,13 +159,13 @@ export class SQLite {
         db.prepare(query).run(data);
     }
 
-    static getUser<Type>(config:
+    public static getUser<Type>(config:
     GetUserType<Type, false>): Type;
-    static getUser<Type>(config:
+    public static getUser<Type>(config:
     GetUserType<Type, true>): Type | undefined;
-    static getUser<Type>(config:
+    public static getUser<Type>(config:
     GetUserType<Type, boolean>): Type | undefined;
-    static getUser<Type>(config: {
+    public static getUser<Type>(config: {
         discordID: string,
         table: Table,
         allowUndefined?: boolean,
@@ -180,7 +180,7 @@ export class SQLite {
         });
     }
 
-    static getAllUsers<Type>({
+    public static getAllUsers<Type>({
         table,
         columns,
     }: {
@@ -191,13 +191,13 @@ export class SQLite {
         return this.queryGetAll<Type>(query) as Type[];
     }
 
-    static newUser<Type extends Omit<BaseUserData, never>>(config:
+    public static newUser<Type extends Omit<BaseUserData, never>>(config:
     NewUserType<Type, false>): undefined;
-    static newUser<Type extends Omit<BaseUserData, never>>(config:
+    public static newUser<Type extends Omit<BaseUserData, never>>(config:
     NewUserType<Type, true>): Type;
-    static newUser<Type extends Omit<BaseUserData, never>>(config:
+    public static newUser<Type extends Omit<BaseUserData, never>>(config:
     NewUserType<Type, boolean>): Type | undefined;
-    static newUser<Type extends Omit<BaseUserData, never>>(config: {
+    public static newUser<Type extends Omit<BaseUserData, never>>(config: {
         table: Table,
         returnNew?: boolean,
         data: Partial<Type>,

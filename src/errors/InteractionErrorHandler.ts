@@ -1,22 +1,18 @@
-import { BaseCommandErrorHandler } from './BaseCommandErrorHandler';
 import {
     CommandInteraction,
     MessageEmbed,
 } from 'discord.js';
+import { BaseInteractionErrorHandler } from './BaseInteractionErrorHandler';
 import { Constants } from '../utility/Constants';
 import { ErrorHandler } from './ErrorHandler';
-import {
-    fatalWebhook,
-    ownerID,
-} from '../../config.json';
 import { RegionLocales } from '../locales/RegionLocales';
-import { sendWebHook } from '../utility/utility';
 
-export class CommandErrorHandler<E> extends BaseCommandErrorHandler<E> {
-    readonly interaction: CommandInteraction;
-    readonly locale: string;
+export class CommandErrorHandler<E> extends BaseInteractionErrorHandler<E> {
+    public readonly interaction: CommandInteraction;
 
-    constructor(
+    public readonly locale: string;
+
+    public constructor(
         error: E,
         interaction: CommandInteraction,
         locale: string,
@@ -26,7 +22,7 @@ export class CommandErrorHandler<E> extends BaseCommandErrorHandler<E> {
         this.locale = locale;
     }
 
-    static async init<T>(
+    public static async init<T>(
         error: T,
         interaction: CommandInteraction,
         locale: string,
@@ -35,7 +31,7 @@ export class CommandErrorHandler<E> extends BaseCommandErrorHandler<E> {
 
         try {
             handler.errorLog();
-            await handler.systemNotify();
+            handler.systemNotify();
             await handler.userNotify();
         } catch (error2) {
             await ErrorHandler.init(error2, handler.incidentID);
@@ -72,43 +68,28 @@ export class CommandErrorHandler<E> extends BaseCommandErrorHandler<E> {
 
         try {
             if (
-                this.interaction.replied === true ||
-                this.interaction.deferred === true
+                this.interaction.replied === true
+                || this.interaction.deferred === true
             ) {
                 await this.interaction.followUp(payLoad);
             } else {
                 await this.interaction.reply(payLoad);
             }
-        } catch (err) {
-            const message = 'An error has occurred and also failed to notify the user';
+        } catch (error) {
+            this.log(
+                'An error has occurred and also failed to notify the user',
+                error,
+            );
 
-            this.log(message, err);
-
-            const failedEmbed = this
-                .errorEmbed()
-                .setDescription(message);
-
-            await sendWebHook({
-                content: `<@${ownerID.join('><@')}>`,
-                embeds: [failedEmbed],
-                files: [this.stackAttachment],
-                webhook: fatalWebhook,
-                suppressError: true,
-            });
+            this.sentry
+                .setSeverity('error')
+                .captureException(error);
         }
     }
 
-    private async systemNotify() {
-        const embeds = [this.getGuildInformation(), this.errorEmbed()];
-
-        embeds[0].setTitle('Unexpected Error');
-
-        await sendWebHook({
-            content: `<@${ownerID.join('><@')}>`,
-            embeds: embeds,
-            files: [this.stackAttachment],
-            webhook: fatalWebhook,
-            suppressError: true,
-        });
+    private systemNotify() {
+        this.sentry
+            .setSeverity('error')
+            .captureException(this.error);
     }
 }

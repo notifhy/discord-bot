@@ -9,13 +9,13 @@ import { Constants } from './Constants';
 import { Log } from './Log';
 
 export class Request {
-    readonly restRequestTimeout: number;
+    public readonly restRequestTimeout: number;
 
     private try: number;
 
-    readonly tryLimit: number;
+    public readonly tryLimit: number;
 
-    constructor(config?: {
+    public constructor(config?: {
         retryLimit?: number,
         restRequestTimeout?: number,
     }) {
@@ -27,7 +27,7 @@ export class Request {
         this.tryLimit = (config?.retryLimit ?? 2) + 1;
     }
 
-    async request(url: string, fetchOptions?: RequestInit): Promise<Response> {
+    public async request(url: string, fetchOptions?: RequestInit): Promise<Response> {
         this.try += 1;
 
         const controller = new AbortController();
@@ -75,7 +75,7 @@ export class Request {
         }
     }
 
-    static tryParse<Type>(
+    public static tryParse<Type>(
         response: Response,
     ): Promise<Type | null> {
         return response

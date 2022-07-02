@@ -11,7 +11,7 @@ export const locales: Locales = {
 };
 
 export class RegionLocales {
-    static locale(locale?: string | null): Locale {
+    public static locale(locale?: string | null): Locale {
         let locale2 = locale ?? Constants.defaults.language;
 
         if (!Object.keys(locales).includes(locale2)) {
@@ -21,7 +21,7 @@ export class RegionLocales {
         return locales[locale2 as keyof Locales];
     }
 
-    static replace(input: string, parameters?: Parameters): string {
+    public static replace(input: string, parameters?: Parameters): string {
         let replaced: string = input;
 
         // eslint-disable-next-line no-restricted-syntax

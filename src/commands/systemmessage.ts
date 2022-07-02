@@ -14,7 +14,6 @@ import {
     disableComponents,
     timestamp,
 } from '../utility/utility';
-
 import { Constants } from '../utility/Constants';
 import { RegionLocales } from '../locales/RegionLocales';
 import { SQLite } from '../utility/SQLite';

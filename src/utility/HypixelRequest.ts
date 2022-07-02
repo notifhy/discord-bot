@@ -10,12 +10,12 @@ import { RateLimitError } from '../errors/RateLimitError';
 import { Request } from './Request';
 
 export class HypixelRequest {
-    readonly config: {
+    public readonly config: {
         restRequestTimeout?: number,
         retryLimit?: number,
     } | undefined;
 
-    constructor(
+    public constructor(
         config?: {
             restRequestTimeout?: number,
             retryLimit?: number,
@@ -24,7 +24,7 @@ export class HypixelRequest {
         this.config = config;
     }
 
-    async call(url: string): Promise<HypixelAPIOk> {
+    public async call(url: string): Promise<HypixelAPIOk> {
         const response = await new Request({
             restRequestTimeout: this.config?.restRequestTimeout,
             retryLimit: this.config?.retryLimit,

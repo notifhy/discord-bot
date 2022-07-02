@@ -26,8 +26,8 @@
                     "name": "Global Rate Limit",
                     "value": "{{ state }}"
                 },
-                "lastMinute": {
-                    "name": "Last Minute Statistic",
+                "lastHour": {
+                    "name": "Last Hour Statistic",
                     "value": "Aborts: {{ abort }}\nGeneric Errors: {{ generic }}\nHTTP: {{ http }}\nRate Limit Hits: {{ rateLimit }}"
                 },
                 "nextTimeouts": {

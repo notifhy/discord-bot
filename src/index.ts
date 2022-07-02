@@ -7,6 +7,8 @@ import {
 } from 'discord.js';
 import fs from 'node:fs/promises';
 import process from 'node:process';
+import * as Sentry from '@sentry/node';
+import { ExtraErrorData } from '@sentry/integrations';
 import type {
     ClientCommand,
     ClientEvent,
@@ -18,6 +20,13 @@ import { discordAPIkey } from '../config.json';
 import { ErrorHandler } from './errors/ErrorHandler';
 import { Log } from './utility/Log';
 import { SQLite } from './utility/SQLite';
+
+Sentry.init({
+    dsn: process.env.DSN,
+    environment: process.env.ENVIRONMENT,
+    integrations: [new ExtraErrorData()],
+    tracesSampleRate: 1.0,
+});
 
 process.on('exit', (code) => {
     Log.log(`Exiting with code ${code}`);

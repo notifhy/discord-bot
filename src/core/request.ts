@@ -1,30 +1,33 @@
+import type { Client } from 'discord.js';
 import type {
     CleanHypixelPlayer,
     CleanHypixelStatus,
     RawHypixelPlayer,
     RawHypixelStatus,
 } from '../@types/hypixel';
-import type { Client } from 'discord.js';
 import type { UserAPIData } from '../@types/database';
 import { Constants } from '../utility/Constants';
 import { HypixelRequest } from '../utility/HypixelRequest';
 
 export class CoreRequest {
-    readonly baseURL: string;
-    readonly client: Client;
-    readonly hypixelRequest: HypixelRequest;
-    uses: number;
+    public readonly baseURL: string;
 
-    constructor(client: Client) {
+    public readonly client: Client;
+
+    public readonly hypixelRequest: HypixelRequest;
+
+    public uses: number;
+
+    public constructor(client: Client) {
         this.baseURL = `${Constants.urls.hypixel}%{type}%?uuid=%{uuid}%`;
         this.client = client;
         this.hypixelRequest = new HypixelRequest(this.client.config);
         this.uses = 0;
     }
 
-    async request(user: UserAPIData, urls: string[]) {
+    public async request(user: UserAPIData, urls: string[]) {
         const [player, status] = await Promise.all(
-            urls.map(url => this.hypixelRequest.call(url)),
+            urls.map((url) => this.hypixelRequest.call(url)),
         );
 
         return {
@@ -35,7 +38,7 @@ export class CoreRequest {
         };
     }
 
-    getURLs(user: UserAPIData) {
+    public getURLs(user: UserAPIData) {
         const { uuid, lastLogin, lastLogout } = user;
 
         const urls = [];
@@ -52,7 +55,7 @@ export class CoreRequest {
             this.uses += 1;
         });
 
-        return urls.map(url => url.replace('%{uuid}%', uuid));
+        return urls.map((url) => url.replace('%{uuid}%', uuid));
     }
 
     private static cleanPlayerData(

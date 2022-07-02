@@ -39,6 +39,7 @@ export const Constants = {
             process: 0,
             modules: 0,
         },
+        postgresqlIdleTimeoutMillis: 60_000 * 5,
         presence: {
             activities: [{
                 name: '{{ accounts }} accounts | /register /help | {{ servers }} servers',

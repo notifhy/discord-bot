@@ -5,9 +5,8 @@ import type {
     SlothpixelRecentGames,
     SlothpixelStatus,
 } from '../@types/hypixel';
-
 import { Constants } from '../utility/Constants';
-import { CommandErrorHandler } from '../errors/CommandErrorHandler';
+import { CommandErrorHandler } from '../errors/InteractionErrorHandler';
 import { BetterEmbed, cleanLength, disableComponents, timestamp } from '../utility/utility';
 import {
     Constants as DiscordConstants,

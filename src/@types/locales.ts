@@ -76,7 +76,7 @@ export interface API {
         enabled: Field,
         resume: Field,
         rateLimit: Field,
-        lastMinute: Field,
+        lastHour: Field,
         nextTimeouts: Field,
         apiKey: Field,
     }

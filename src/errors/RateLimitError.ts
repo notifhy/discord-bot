@@ -3,7 +3,7 @@ import { HTTPError } from './HTTPError';
 import { HypixelAPI429 } from '../@types/hypixel';
 
 export class RateLimitError extends HTTPError<HypixelAPI429> {
-    constructor({
+    public constructor({
         message,
         json,
         response,

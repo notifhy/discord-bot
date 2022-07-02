@@ -17,7 +17,7 @@ import {
     timestamp,
 } from '../utility/utility';
 import { Buffer } from 'node:buffer';
-import { CommandErrorHandler } from '../errors/CommandErrorHandler';
+import { CommandErrorHandler } from '../errors/InteractionErrorHandler';
 import { Constants } from '../utility/Constants';
 import {
     Constants as DiscordConstants,
