@@ -1,6 +1,6 @@
 # Project Status
 
-NotifHy was made before Hypixel clearly defined the rules of their API. Now, this bot violates the rules established at https://api.hypixel.net/. For this reason, this project has been abandoned, and no more work will be done on refactoring, bug fixes, or similar. Contact Attituding at [attituding@outlook.com](mailto:attituding@outlook.com "attituding@outlook.com") if you have any questions.
+NotifHy was made before Hypixel clearly defined the rules of their API. Now, this bot violates the rules established at https://api.hypixel.net/. For this reason, this project has been (somewhat) abandoned, and no more work will (probably) be done on refactoring, bug fixes, or similar. Contact Attituding at [attituding@outlook.com](mailto:attituding@outlook.com "attituding@outlook.com") if you have any questions.
 
 As a side note, if you decide to use some of this code, please note that many parts of this bot are designed terribly. Good luck.
 

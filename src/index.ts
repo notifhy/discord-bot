@@ -127,7 +127,7 @@ client.modules = new Collection();
             fs.readdir(`${__dirname}/events`),
             fs.readdir(`${__dirname}/modules`),
         ])
-    ).map((file) => file.filter((file1) => file1.endsWith('.ts')));
+    ).map((file) => file.filter((file1) => file1.endsWith('.js')));
 
     const commandPromises: Promise<ClientCommand>[] = [];
     const eventPromises: Promise<ClientEvent>[] = [];

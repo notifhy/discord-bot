@@ -2,7 +2,7 @@
     "name": "notifhy",
     "license": "MIT",
     "author": "Attituding <Attituding@outlook.com>",
-    "main": "src/NotifHy/index.ts",
+    "main": "dist/src/index.js",
     "devDependencies": {
         "@types/better-sqlite3-multiple-ciphers": "github:m4heshd/better-sqlite3-multiple-ciphers-types",
         "@types/node": "^18.0.0",
@@ -30,8 +30,8 @@
     "scripts": {
         "build": "tsc -p .",
         "prerun": "npm run build",
-        "run": "node dist/index.js",
-        "docker": "node dist/index.js"
+        "run": "node dist/src/index.js",
+        "docker": "node dist/src/index.js"
     },
     "engines": {
         "node": ">=17.3.0"

@@ -79,7 +79,7 @@ export const execute: ClientCommand['execute'] = async (
 ): Promise<void> => {
     const text = RegionLocales.locale(locale).commands.deploy;
 
-    const commandFiles = (await fs.readdir(__dirname)).filter((file) => file.endsWith('.ts'));
+    const commandFiles = (await fs.readdir(__dirname)).filter((file) => file.endsWith('.js'));
     const userCommands: object[] = [];
     const ownerCommands: object[] = [];
 

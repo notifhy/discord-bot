@@ -165,17 +165,17 @@ export const execute: ClientCommand['execute'] = async (
 };
 
 async function commandRefresh(interaction: CommandInteraction, item: string) {
-    const refreshed = await reload<ClientCommand>(`${item}.ts`);
+    const refreshed = await reload<ClientCommand>(`${item}.js`);
     interaction.client.commands.set(refreshed.properties.name, refreshed);
 }
 
 async function eventRefresh(interaction: CommandInteraction, item: string) {
-    const refreshed = await reload<ClientEvent>(`../events/${item}.ts`);
+    const refreshed = await reload<ClientEvent>(`../events/${item}.js`);
     interaction.client.events.set(refreshed.properties.name, refreshed);
 }
 
 async function moduleRefresh(interaction: CommandInteraction, item: string) {
-    const refreshed = await reload<ClientModule>(`../modules/${item}.ts`);
+    const refreshed = await reload<ClientModule>(`../modules/${item}.js`);
     interaction.client.modules.set(refreshed.properties.name, refreshed);
 }
 
