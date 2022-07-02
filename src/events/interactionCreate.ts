@@ -18,7 +18,7 @@ import {
     locales,
     RegionLocales,
  } from '../locales/RegionLocales';
-import { ownerID } from '../../../config.json';
+import { ownerID } from '../../config.json';
 import { BetterEmbed, slashCommandResolver } from '../utility/utility';
 import { SQLite } from '../utility/SQLite';
 import { Log } from '../utility/Log';

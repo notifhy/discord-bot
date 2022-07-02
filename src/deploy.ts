@@ -4,7 +4,7 @@ import type { ClientCommand } from './@types/client';
 import {
     clientID,
     discordAPIkey,
-} from '../../config.json';
+} from '../config.json';
 import { Log } from './utility/Log';
 
 (async () => {

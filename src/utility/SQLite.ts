@@ -4,7 +4,7 @@ import {
     Table,
 } from '../@types/database';
 import { Constants } from './Constants';
-import { databaseKey } from '../../../config.json';
+import { databaseKey } from '../../config.json';
 
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable consistent-return */

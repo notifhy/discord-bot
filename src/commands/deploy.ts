@@ -5,7 +5,7 @@ import type { ClientCommand } from '../@types/client';
 import {
     clientID,
     discordAPIkey as token,
-} from '../../../config.json';
+} from '../../config.json';
 import { Constants } from '../utility/Constants';
 import { RegionLocales } from '../locales/RegionLocales';
 import { Log } from '../utility/Log';

@@ -8,7 +8,7 @@ import { ErrorHandler } from './ErrorHandler';
 import {
     fatalWebhook,
     ownerID,
-} from '../../../config.json';
+} from '../../config.json';
 import { RegionLocales } from '../locales/RegionLocales';
 import { sendWebHook } from '../utility/utility';
 

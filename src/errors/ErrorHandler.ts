@@ -2,7 +2,7 @@ import { BaseErrorHandler } from './BaseErrorHandler';
 import {
     fatalWebhook,
     ownerID,
-} from '../../../config.json';
+} from '../../config.json';
 import { sendWebHook } from '../utility';
 
 export class ErrorHandler<E> extends BaseErrorHandler<E> {

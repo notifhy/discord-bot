@@ -14,7 +14,7 @@ import type {
 } from './@types/client';
 import type { ClientModule } from './@types/modules';
 import { Core } from './core/core';
-import { discordAPIkey } from '../../config.json';
+import { discordAPIkey } from '../config.json';
 import { ErrorHandler } from './errors/ErrorHandler';
 import { Log } from './utility/Log';
 import { SQLite } from './utility/SQLite';

@@ -10,7 +10,7 @@ import {
 import { Constants } from '../utility/Constants';
 import { ConstraintError } from './ConstraintError';
 import { ErrorHandler } from './ErrorHandler';
-import { nonFatalWebhook } from '../../../config.json';
+import { nonFatalWebhook } from '../../config.json';
 import { RegionLocales } from '../locales/RegionLocales';
 import { setTimeout } from 'node:timers/promises';
 import { cleanRound, BetterEmbed, sendWebHook } from '../utility/utility';

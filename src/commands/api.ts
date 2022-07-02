@@ -1,6 +1,6 @@
 import type { ClientCommand } from '../@types/client';
 import { Constants } from '../utility/Constants';
-import { keyLimit } from '../../../config.json';
+import { keyLimit } from '../../config.json';
 import { RegionLocales } from '../locales/RegionLocales';
 import { Log } from '../utility/Log';
 import { BetterEmbed, cleanLength, cleanRound } from '../utility/utility';

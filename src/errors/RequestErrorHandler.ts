@@ -6,7 +6,7 @@ import {
     hypixelAPIWebhook,
     keyLimit,
     ownerID,
-} from '../../../config.json';
+} from '../../config.json';
 import { HTTPError } from './HTTPError';
 import { RateLimitError } from './RateLimitError';
 import { BaseErrorHandler } from './BaseErrorHandler';

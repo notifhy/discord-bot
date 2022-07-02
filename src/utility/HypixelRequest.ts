@@ -5,7 +5,7 @@ import type {
     HypixelAPIOk,
 } from '../@types/hypixel';
 import { HTTPError } from '../errors/HTTPError';
-import { hypixelAPIkey } from '../../../config.json';
+import { hypixelAPIkey } from '../../config.json';
 import { RateLimitError } from '../errors/RateLimitError';
 import { Request } from './Request';
 

@@ -3,7 +3,7 @@ import type { ClientCommand } from '../@types/client';
 import type { UserAPIData } from '../@types/database';
 
 import { Constants } from '../utility/Constants';
-import { keyLimit } from '../../../config.json';
+import { keyLimit } from '../../config.json';
 import { RegionLocales } from '../locales/RegionLocales';
 import { SQLite } from '../utility/SQLite';
 import { BetterEmbed, cleanLength, cleanRound } from '../utility/utility';

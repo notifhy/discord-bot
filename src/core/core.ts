@@ -11,7 +11,7 @@ import { CoreError } from './error';
 import { CoreModule } from './module';
 import { CoreRequest } from './request';
 import { ErrorHandler } from '../errors/ErrorHandler';
-import { keyLimit } from '../../../config.json';
+import { keyLimit } from '../../config.json';
 import { ModuleHTTPErrorHandler } from '../errors/ModuleHTTPErrorHandler';
 import { ModuleError } from '../errors/ModuleError';
 import { ModuleErrorHandler } from '../errors/ModuleErrorHandler';

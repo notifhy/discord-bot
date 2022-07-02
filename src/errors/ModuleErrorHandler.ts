@@ -4,7 +4,7 @@ import { ErrorHandler } from './ErrorHandler';
 import {
     fatalWebhook,
     ownerID,
-} from '../../../config.json';
+} from '../../config.json';
 import { ModuleError } from './ModuleError';
 import { type Core } from '../core/core';
 import { sendWebHook } from '../utility/utility';
