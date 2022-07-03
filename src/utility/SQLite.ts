@@ -1,3 +1,4 @@
+import 'dotenv/config';
 import Database from 'better-sqlite3-multiple-ciphers';
 import {
     type BaseUserData,
@@ -11,7 +12,7 @@ import { Constants } from './Constants';
 
 // Probably vulnerable.
 
-let db = new Database(`${__dirname}/../../../database.db`);
+let db = new Database(`${__dirname}/../../database.db`);
 
 type JSONize<Type> = {
     [Property in keyof Type]:
@@ -53,7 +54,7 @@ type UpdateUserType<Type, B> = {
 
 export class SQLite {
     public static open() {
-        db = new Database(`${__dirname}/../../../database.db`);
+        db = new Database(`${__dirname}/../../database.db`);
     }
 
     // Calling this even after the database is closed doesn't break anything
