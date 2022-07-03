@@ -1,9 +1,9 @@
+import { setTimeout } from 'node:timers';
 import fetch, {
     RequestInit,
     Response,
 } from 'node-fetch';
 import { AbortSignal } from 'node-fetch/externals';
-import { setTimeout } from 'node:timers';
 import { AbortError } from '../errors/AbortError';
 import { Constants } from './Constants';
 import { Log } from './Log';

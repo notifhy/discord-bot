@@ -1,4 +1,4 @@
-import type { Locale } from '../@types/locales';
+import { type Locale } from '../@types/locales';
 
 export class ConstraintError extends Error {
     public readonly cooldown?: number;

@@ -11,7 +11,7 @@ import {
     WebhookClient,
     WebhookMessageOptions,
 } from 'discord.js';
-import type { WebhookConfig } from '../@types/client';
+import { type WebhookConfig } from '../@types/client';
 import { UserAPIData } from '../@types/database';
 import { Constants } from './Constants';
 import { SQLite } from './SQLite';

@@ -1,19 +1,22 @@
 import { DiscordAPIError } from 'discord.js';
-import type { ClientCommand } from '../@types/client';
-import type { SlothpixelPlayer } from '../@types/hypixel';
-import type {
-    DefenderModule,
-    FriendsModule,
-    RewardsModule,
-    UserAPIData,
+import { type ClientCommand } from '../@types/client';
+import { type SlothpixelPlayer } from '../@types/hypixel';
+import {
+    type DefenderModule,
+    type FriendsModule,
+    type RewardsModule,
+    type UserAPIData,
 } from '../@types/database';
-import { Constants } from '../utility/Constants';
 import { HTTPError } from '../errors/HTTPError';
 import { RegionLocales } from '../locales/RegionLocales';
-import { Request } from '../utility/Request';
-import { BetterEmbed, setPresence } from '../utility/utility';
-import { SQLite } from '../utility/SQLite';
+import { Constants } from '../utility/Constants';
 import { Log } from '../utility/Log';
+import { Request } from '../utility/Request';
+import { SQLite } from '../utility/SQLite';
+import {
+    BetterEmbed,
+    setPresence,
+} from '../utility/utility';
 
 /* eslint-disable @typescript-eslint/naming-convention */
 

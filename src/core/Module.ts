@@ -1,11 +1,11 @@
-import type { Client } from 'discord.js';
-import type { ModuleDifferences } from '../@types/modules';
-import type {
-    UserAPIData,
-    UserData,
+import { type Client } from 'discord.js';
+import { type ModuleDifferences } from '../@types/modules';
+import {
+    type UserAPIData,
+    type UserData,
 } from '../@types/database';
-import { Constants } from '../utility/Constants';
 import { RegionLocales } from '../locales/RegionLocales';
+import { Constants } from '../utility/Constants';
 import { SQLite } from '../utility/SQLite';
 import { BetterEmbed } from '../utility/utility';
 

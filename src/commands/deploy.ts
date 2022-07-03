@@ -1,9 +1,9 @@
+import fs from 'node:fs/promises';
 import { REST } from '@discordjs/rest';
 import { Routes } from 'discord-api-types/v10';
-import fs from 'node:fs/promises';
-import type { ClientCommand } from '../@types/client';
-import { Constants } from '../utility/Constants';
+import { type ClientCommand } from '../@types/client';
 import { RegionLocales } from '../locales/RegionLocales';
+import { Constants } from '../utility/Constants';
 import { Log } from '../utility/Log';
 import { BetterEmbed } from '../utility/utility';
 

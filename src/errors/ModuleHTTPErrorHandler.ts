@@ -1,26 +1,26 @@
 import {
     Client,
-    DiscordAPIError,
     Constants as DiscordConstants,
-    Snowflake,
+    DiscordAPIError,
     HTTPError,
+    Snowflake,
 } from 'discord.js';
-import type {
-    UserAPIData,
-    UserData,
-} from '../@types/database';
-import { BaseErrorHandler } from './BaseErrorHandler';
-import { Constants } from '../utility/Constants';
-import { ErrorHandler } from './ErrorHandler';
-import { ModuleError } from './ModuleError';
-import { RegionLocales } from '../locales/RegionLocales';
-import { SQLite } from '../utility/SQLite';
-import { Locale } from '../@types/locales';
 import {
+    type UserAPIData,
+    type UserData,
+} from '../@types/database';
+import { type Locale } from '../@types/locales';
+import { RegionLocales } from '../locales/RegionLocales';
+import { Constants } from '../utility/Constants';
+import { SQLite } from '../utility/SQLite';
+import {
+    arrayRemove,
     BetterEmbed,
     timestamp,
-    arrayRemove,
 } from '../utility/utility';
+import { BaseErrorHandler } from './BaseErrorHandler';
+import { ErrorHandler } from './ErrorHandler';
+import { ModuleError } from './ModuleError';
 
 export class ModuleHTTPErrorHandler extends BaseErrorHandler<
 DiscordAPIError

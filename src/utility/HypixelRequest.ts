@@ -1,8 +1,8 @@
-import type {
-    HypixelAPI429,
-    HypixelAPIError,
-    HypixelAPINotOK,
-    HypixelAPIOk,
+import {
+    type HypixelAPI429,
+    type HypixelAPIError,
+    type HypixelAPINotOK,
+    type HypixelAPIOk,
 } from '../@types/hypixel';
 import { HTTPError } from '../errors/HTTPError';
 import { RateLimitError } from '../errors/RateLimitError';

@@ -2,9 +2,9 @@ import {
     ColorResolvable,
     Message,
 } from 'discord.js';
-import type { ClientCommand } from '../@types/client';
-import { Constants } from '../utility/Constants';
+import { type ClientCommand } from '../@types/client';
 import { RegionLocales } from '../locales/RegionLocales';
+import { Constants } from '../utility/Constants';
 import { Log } from '../utility/Log';
 import { BetterEmbed } from '../utility/utility';
 

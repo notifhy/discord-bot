@@ -2,10 +2,10 @@ import {
     CommandInteraction,
     MessageEmbed,
 } from 'discord.js';
-import { BaseInteractionErrorHandler } from './BaseInteractionErrorHandler';
-import { Constants } from '../utility/Constants';
-import { ErrorHandler } from './ErrorHandler';
 import { RegionLocales } from '../locales/RegionLocales';
+import { Constants } from '../utility/Constants';
+import { BaseInteractionErrorHandler } from './BaseInteractionErrorHandler';
+import { ErrorHandler } from './ErrorHandler';
 
 export class CommandErrorHandler<E> extends BaseInteractionErrorHandler<E> {
     public readonly interaction: CommandInteraction;

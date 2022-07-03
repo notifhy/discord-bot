@@ -1,6 +1,6 @@
-import type { ClientCommand } from '../@types/client';
-import { Constants } from '../utility/Constants';
+import { type ClientCommand } from '../@types/client';
 import { RegionLocales } from '../locales/RegionLocales';
+import { Constants } from '../utility/Constants';
 import { BetterEmbed } from '../utility/utility';
 
 export const properties: ClientCommand['properties'] = {

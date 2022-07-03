@@ -1,11 +1,11 @@
 import { CommandInteraction } from 'discord.js';
-import type {
-    ClientEvent,
-    ClientCommand,
+import {
+    type ClientEvent,
+    type ClientCommand,
 } from '../@types/client';
-import type { ClientModule } from '../@types/modules';
-import { Constants } from '../utility/Constants';
+import { type ClientModule } from '../@types/modules';
 import { RegionLocales } from '../locales/RegionLocales';
+import { Constants } from '../utility/Constants';
 import { Log } from '../utility/Log';
 import { BetterEmbed } from '../utility/utility';
 

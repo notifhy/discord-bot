@@ -1,11 +1,11 @@
-import type { Snowflake } from 'discord.js';
-import type {
-    CleanHypixelPlayer,
-    CleanHypixelStatus,
+import { type Snowflake } from 'discord.js';
+import {
+    type CleanHypixelPlayer,
+    type CleanHypixelStatus,
 } from '../@types/hypixel';
-import type {
-    History,
-    UserAPIData,
+import {
+    type History,
+    type UserAPIData,
 } from '../@types/database';
 import { Constants } from '../utility/Constants';
 import { SQLite } from '../utility/SQLite';

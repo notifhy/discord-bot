@@ -1,4 +1,4 @@
-import type { Response } from 'node-fetch';
+import { type Response } from 'node-fetch';
 
 export class HTTPError<JSON> extends Error {
     public readonly json: JSON | null;

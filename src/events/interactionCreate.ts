@@ -2,25 +2,28 @@ import {
     Collection,
     CommandInteraction,
 } from 'discord.js';
-import type {
-    ClientCommand,
-    ClientEvent,
+import {
+    type ClientCommand,
+    type ClientEvent,
 } from '../@types/client';
-import type {
-    UserAPIData,
-    UserData,
+import {
+    type UserAPIData,
+    type UserData,
 } from '../@types/database';
+import { ConstraintError } from '../errors/ConstraintError';
 import { InteractionConstraintErrorHandler } from '../errors/InteractionConstraintErrorHandler';
 import { CommandErrorHandler } from '../errors/InteractionErrorHandler';
-import { Constants } from '../utility/Constants';
-import { ConstraintError } from '../errors/ConstraintError';
 import {
     locales,
     RegionLocales,
 } from '../locales/RegionLocales';
-import { BetterEmbed, slashCommandResolver } from '../utility/utility';
-import { SQLite } from '../utility/SQLite';
+import { Constants } from '../utility/Constants';
 import { Log } from '../utility/Log';
+import { SQLite } from '../utility/SQLite';
+import {
+    BetterEmbed,
+    slashCommandResolver,
+} from '../utility/utility';
 
 const ownerIDs = JSON.parse(process.env.OWNERS!);
 

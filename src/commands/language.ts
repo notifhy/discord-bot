@@ -1,9 +1,9 @@
-import type { ClientCommand } from '../@types/client';
-import type { UserData } from '../@types/database';
-import { Constants } from '../utility/Constants';
+import { type ClientCommand } from '../@types/client';
+import { type UserData } from '../@types/database';
 import { RegionLocales } from '../locales/RegionLocales';
-import { SQLite } from '../utility/SQLite';
+import { Constants } from '../utility/Constants';
 import { Log } from '../utility/Log';
+import { SQLite } from '../utility/SQLite';
 import { BetterEmbed } from '../utility/utility';
 
 export const properties: ClientCommand['properties'] = {

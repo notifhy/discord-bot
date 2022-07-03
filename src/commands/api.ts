@@ -1,8 +1,12 @@
-import type { ClientCommand } from '../@types/client';
-import { Constants } from '../utility/Constants';
+import { type ClientCommand } from '../@types/client';
 import { RegionLocales } from '../locales/RegionLocales';
+import { Constants } from '../utility/Constants';
 import { Log } from '../utility/Log';
-import { BetterEmbed, cleanLength, cleanRound } from '../utility/utility';
+import {
+    BetterEmbed,
+    cleanLength,
+    cleanRound,
+} from '../utility/utility';
 
 export const properties: ClientCommand['properties'] = {
     name: 'api',

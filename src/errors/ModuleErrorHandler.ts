@@ -1,8 +1,8 @@
 import { Snowflake } from 'discord.js';
 import { BaseErrorHandler } from './BaseErrorHandler';
+import { type Core } from '../core/Core';
 import { ErrorHandler } from './ErrorHandler';
 import { ModuleError } from './ModuleError';
-import { type Core } from '../core/Core';
 
 export class ModuleErrorHandler extends BaseErrorHandler<
 unknown | (ModuleError & { raw: unknown })

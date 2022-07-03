@@ -3,7 +3,7 @@ import {
     Permissions,
     PresenceData,
 } from 'discord.js';
-import { Table } from '../@types/database';
+import { type Table } from '../@types/database';
 import gameTypes from '../assets/gameTypes.json';
 import modes from '../assets/modes.json';
 

@@ -1,4 +1,6 @@
 import 'dotenv/config';
+import fs from 'node:fs/promises';
+import process from 'node:process';
 import {
     Client,
     Collection,
@@ -6,14 +8,12 @@ import {
     Options,
     Sweepers,
 } from 'discord.js';
-import fs from 'node:fs/promises';
-import process from 'node:process';
-import * as Sentry from '@sentry/node';
 import { ExtraErrorData } from '@sentry/integrations';
-import type {
-    ClientCommand,
-    ClientEvent,
-    Config,
+import * as Sentry from '@sentry/node';
+import {
+    type ClientCommand,
+    type ClientEvent,
+    type Config,
 } from './@types/client';
 import type { ClientModule } from './@types/modules';
 import { Core } from './core/Core';

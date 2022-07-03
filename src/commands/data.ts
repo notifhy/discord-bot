@@ -1,11 +1,20 @@
-import type { ClientCommand } from '../@types/client';
-import type {
-    DefenderModule,
-    FriendsModule,
-    RewardsModule,
-    UserAPIData,
-    UserData,
+import { Buffer } from 'node:buffer';
+import {
+    Constants as DiscordConstants,
+    Message,
+    MessageActionRow,
+    MessageButton,
+    MessageComponentInteraction,
+} from 'discord.js';
+import { type ClientCommand } from '../@types/client';
+import {
+    type DefenderModule,
+    type FriendsModule,
+    type RewardsModule,
+    type UserAPIData,
+    type UserData,
 } from '../@types/database';
+import { CommandErrorHandler } from '../errors/InteractionErrorHandler';
 import {
     awaitComponent,
     BetterEmbed,
@@ -16,16 +25,7 @@ import {
     setPresence,
     timestamp,
 } from '../utility/utility';
-import { Buffer } from 'node:buffer';
-import { CommandErrorHandler } from '../errors/InteractionErrorHandler';
 import { Constants } from '../utility/Constants';
-import {
-    Constants as DiscordConstants,
-    Message,
-    MessageActionRow,
-    MessageButton,
-    MessageComponentInteraction,
-} from 'discord.js';
 import { RegionLocales } from '../locales/RegionLocales';
 import { SQLite } from '../utility/SQLite';
 import { Log } from '../utility/Log';
@@ -85,7 +85,7 @@ export const execute: ClientCommand['execute'] = async (
             break;
         case 'history':
             await viewHistory();
-        //No default
+        // no default
     }
 
     async function dataDelete() {
@@ -118,9 +118,10 @@ export const execute: ClientCommand['execute'] = async (
 
         await interaction.client.channels.fetch(interaction.channelId);
 
-        const componentFilter = (i: MessageComponentInteraction) =>
-            interaction.user.id === i.user.id &&
-            i.message.id === message.id;
+        // eslint-disable-next-line arrow-body-style
+        const componentFilter = (i: MessageComponentInteraction) => {
+            return interaction.user.id === i.user.id && i.message.id === message.id;
+        };
 
         const button = await awaitComponent(interaction.channel!, {
             componentType: 'BUTTON',
@@ -284,13 +285,13 @@ export const execute: ClientCommand['execute'] = async (
             .setCustomId('fastForward')
             .setEmoji(Constants.emoji.fastForward);
 
-        rightButton.disabled = userAPIData.history.length <=
-            Constants.defaults.menuFastIncrements;
+        rightButton.disabled = userAPIData.history.length
+            <= Constants.defaults.menuFastIncrements;
 
-        fastRightButton.disabled = userAPIData.history.length <=
-            Constants.defaults.menuIncrements;
+        fastRightButton.disabled = userAPIData.history.length
+            <= Constants.defaults.menuIncrements;
 
-        const keys = text.history.keys;
+        const { keys } = text.history;
         const epoch = /^\d{13,}$/gm;
 
         const paginator = (position: number): BetterEmbed => {
@@ -300,23 +301,22 @@ export const execute: ClientCommand['execute'] = async (
                 position + Constants.defaults.menuIncrements,
             );
 
-            //this is great
+            // this is great
             const fields = shownData.map(({ date, ...event }) => ({
                 name: `${timestamp(date, 'D')} ${timestamp(date, 'T')}`,
                 value: Object.entries(event)
-                    .map(([key, value]) =>
-                        `${keys[key as keyof typeof keys]} ${
-                            String(value).match(epoch)
-                                ? timestamp(value, 'T')
-                                : (
-                                    key === 'gameType'
-                                        ? cleanGameType(value)
-                                        : key === 'gameMode'
+                    .map(([key, value]) => `${keys[key as keyof typeof keys]} ${
+                        String(value).match(epoch)
+                            ? timestamp(value, 'T')
+                            : (
+                                // eslint-disable-next-line no-nested-ternary
+                                key === 'gameType'
+                                    ? cleanGameType(value)
+                                    : key === 'gameMode'
                                         ? cleanGameMode(value)
                                         : capitolToNormal(value)
-                                ) ?? text.history.null
-                        }`,
-                    )
+                            ) ?? text.history.null
+                    }`)
                     .join('\n'),
             }));
 
@@ -349,8 +349,10 @@ export const execute: ClientCommand['execute'] = async (
 
         await interaction.client.channels.fetch(interaction.channelId);
 
-        const filter = (i: MessageComponentInteraction) =>
-            interaction.user.id === i.user.id && i.message.id === reply.id;
+        // eslint-disable-next-line arrow-body-style
+        const filter = (i: MessageComponentInteraction) => {
+            return interaction.user.id === i.user.id && i.message.id === reply.id;
+        };
 
         const collector = interaction.channel!.createMessageComponentCollector({
             filter: filter,
@@ -360,7 +362,7 @@ export const execute: ClientCommand['execute'] = async (
 
         let currentIndex = 0;
 
-        collector.on('collect', async i => {
+        collector.on('collect', async (i) => {
             try {
                 switch (i.customId) {
                     case 'fastBackward':
@@ -374,22 +376,22 @@ export const execute: ClientCommand['execute'] = async (
                         break;
                     case 'fastForward':
                         currentIndex += Constants.defaults.menuFastIncrements;
-                    //No default
+                    // no default
                 }
 
-                fastLeftButton.disabled = currentIndex -
-                    Constants.defaults.menuFastIncrements < 0;
+                fastLeftButton.disabled = currentIndex
+                    - Constants.defaults.menuFastIncrements < 0;
 
-                leftButton.disabled = currentIndex -
-                    Constants.defaults.menuIncrements < 0;
+                leftButton.disabled = currentIndex
+                    - Constants.defaults.menuIncrements < 0;
 
-                rightButton.disabled = currentIndex +
-                    Constants.defaults.menuIncrements >=
-                        userAPIData.history.length;
+                rightButton.disabled = currentIndex
+                    + Constants.defaults.menuIncrements
+                        >= userAPIData.history.length;
 
-                fastRightButton.disabled = currentIndex +
-                    Constants.defaults.menuFastIncrements >=
-                        userAPIData.history.length;
+                fastRightButton.disabled = currentIndex
+                    + Constants.defaults.menuFastIncrements
+                        >= userAPIData.history.length;
 
                 buttons.setComponents(
                     fastLeftButton,

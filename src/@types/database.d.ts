@@ -1,8 +1,8 @@
-import type {
-    CleanHypixelPlayer,
-    CleanHypixelStatus,
+import {
+    type CleanHypixelPlayer,
+    type CleanHypixelStatus,
 } from './hypixel';
-import type { Field } from './locales';
+import { type Field } from './locales';
 
 export type Table =
     | 'users'

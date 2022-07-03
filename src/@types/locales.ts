@@ -1,6 +1,6 @@
-import type {
-    MessageSelectMenuOptions,
-    MessageSelectOptionData,
+import {
+    type MessageSelectMenuOptions,
+    type MessageSelectOptionData,
 } from 'discord.js';
 
 /*

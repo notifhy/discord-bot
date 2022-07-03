@@ -1,11 +1,11 @@
-import type { Client } from 'discord.js';
-import type {
-    CleanHypixelPlayer,
-    CleanHypixelStatus,
-    RawHypixelPlayer,
-    RawHypixelStatus,
+import { type Client } from 'discord.js';
+import {
+    type CleanHypixelPlayer,
+    type CleanHypixelStatus,
+    type RawHypixelPlayer,
+    type RawHypixelStatus,
 } from '../@types/hypixel';
-import type { UserAPIData } from '../@types/database';
+import { type UserAPIData } from '../@types/database';
 import { Constants } from '../utility/Constants';
 import { HypixelRequest } from '../utility/HypixelRequest';
 

@@ -1,8 +1,11 @@
-import type { Guild } from 'discord.js';
-import type { ClientEvent } from '../@types/client';
+import { type Guild } from 'discord.js';
+import { type ClientEvent } from '../@types/client';
 import { ErrorHandler } from '../errors/ErrorHandler';
 import { Log } from '../utility/Log';
-import { formattedUnix, setPresence } from '../utility/utility';
+import {
+    formattedUnix,
+    setPresence,
+} from '../utility/utility';
 
 export const properties: ClientEvent['properties'] = {
     name: 'guildDelete',

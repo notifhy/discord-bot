@@ -3,7 +3,7 @@ import {
     MessageActionRow,
     MessageButton,
 } from 'discord.js';
-import type { ClientCommand } from '../@types/client';
+import { type ClientCommand } from '../@types/client';
 
 export const properties: ClientCommand['properties'] = {
     name: 'test',

@@ -1,5 +1,5 @@
 import { Client } from 'discord.js';
-import type { ClientEvent } from '../@types/client';
+import { type ClientEvent } from '../@types/client';
 import { ErrorHandler } from '../errors/ErrorHandler';
 import { Constants } from '../utility/Constants';
 import { Log } from '../utility/Log';

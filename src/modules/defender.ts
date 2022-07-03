@@ -4,22 +4,22 @@ import {
     Formatters,
     TextChannel,
 } from 'discord.js';
-import type { ClientModule } from '../@types/modules';
-import type {
-    DefenderModule,
-    UserAPIData,
-    UserData,
+import { type ClientModule } from '../@types/modules';
+import {
+    type DefenderModule,
+    type UserAPIData,
+    type UserData,
 } from '../@types/database';
-import { Constants } from '../utility/Constants';
 import { ModuleError } from '../errors/ModuleError';
 import { RegionLocales } from '../locales/RegionLocales';
-import { SQLite } from '../utility/SQLite';
+import { Constants } from '../utility/Constants';
 import { Log } from '../utility/Log';
+import { SQLite } from '../utility/SQLite';
 import {
-    timestamp,
-    cleanGameType,
     arrayRemove,
     BetterEmbed,
+    cleanGameType,
+    timestamp,
 } from '../utility/utility';
 
 export const properties: ClientModule['properties'] = {

@@ -1,9 +1,9 @@
-import type { MessageSelectMenuOptions } from 'discord.js';
-import type {
-    SelectMenuLocale,
-    SelectMenuStructure,
-    SelectMenuTopLocale,
-    SelectMenuTopStructure,
+import { type MessageSelectMenuOptions } from 'discord.js';
+import {
+    type SelectMenuLocale,
+    type SelectMenuStructure,
+    type SelectMenuTopLocale,
+    type SelectMenuTopStructure,
 } from '../@types/locales';
 import { Constants } from './Constants';
 

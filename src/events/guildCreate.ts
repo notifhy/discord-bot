@@ -1,5 +1,5 @@
-import type { Guild } from 'discord.js';
-import type { ClientEvent } from '../@types/client';
+import { type Guild } from 'discord.js';
+import { type ClientEvent } from '../@types/client';
 import { ErrorHandler } from '../errors/ErrorHandler';
 import { Log } from '../utility/Log';
 import { setPresence } from '../utility/utility';

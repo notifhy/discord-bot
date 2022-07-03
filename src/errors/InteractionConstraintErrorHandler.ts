@@ -3,16 +3,19 @@ import {
     CommandInteraction,
 } from 'discord.js';
 import { setTimeout } from 'node:timers/promises';
-import { BaseInteractionErrorHandler } from './BaseInteractionErrorHandler';
 import {
-    BaseEmbed,
-    Locale,
+     BaseEmbed,
+     type Locale,
 } from '../@types/locales';
+import { RegionLocales } from '../locales/RegionLocales';
 import { Constants } from '../utility/Constants';
+import {
+    BetterEmbed,
+    cleanRound,
+} from '../utility/utility';
+import { BaseInteractionErrorHandler } from './BaseInteractionErrorHandler';
 import { ConstraintError } from './ConstraintError';
 import { ErrorHandler } from './ErrorHandler';
-import { RegionLocales } from '../locales/RegionLocales';
-import { cleanRound, BetterEmbed } from '../utility/utility';
 
 export class InteractionConstraintErrorHandler extends BaseInteractionErrorHandler<ConstraintError> {
     public readonly interaction: CommandInteraction;

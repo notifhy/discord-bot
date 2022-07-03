@@ -1,10 +1,14 @@
 import process from 'node:process';
-import type { ClientCommand } from '../@types/client';
-import type { UserAPIData } from '../@types/database';
-import { Constants } from '../utility/Constants';
+import { type ClientCommand } from '../@types/client';
+import { type UserAPIData } from '../@types/database';
 import { RegionLocales } from '../locales/RegionLocales';
+import { Constants } from '../utility/Constants';
 import { SQLite } from '../utility/SQLite';
-import { BetterEmbed, cleanLength, cleanRound } from '../utility/utility';
+import {
+    BetterEmbed,
+    cleanLength,
+    cleanRound,
+} from '../utility/utility';
 
 export const properties: ClientCommand['properties'] = {
     name: 'system',

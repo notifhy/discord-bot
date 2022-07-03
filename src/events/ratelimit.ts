@@ -1,5 +1,5 @@
 import { RateLimitData } from 'discord.js';
-import type { ClientEvent } from '../@types/client';
+import { type ClientEvent } from '../@types/client';
 import { Log } from '../utility/Log';
 
 export const properties: ClientEvent['properties'] = {

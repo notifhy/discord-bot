@@ -1,12 +1,12 @@
 import { WebhookEditMessageOptions } from 'discord.js';
-import type {
-    ClientCommand,
-    Config,
+import {
+    type ClientCommand,
+    type Config,
 } from '../@types/client';
-import { Constants } from '../utility/Constants';
 import { RegionLocales } from '../locales/RegionLocales';
-import { SQLite } from '../utility/SQLite';
+import { Constants } from '../utility/Constants';
 import { Log } from '../utility/Log';
+import { SQLite } from '../utility/SQLite';
 import { BetterEmbed } from '../utility/utility';
 
 export const properties: ClientCommand['properties'] = {

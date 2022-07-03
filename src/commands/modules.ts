@@ -1,19 +1,3 @@
-import type { ClientCommand } from '../@types/client';
-import type {
-    DefenderModule,
-    FriendsModule,
-    RewardsModule,
-    UserAPIData,
-} from '../@types/database';
-import type {
-    Locale,
-    ModulesCommand,
-} from '../@types/locales';
-import {
-    combiner,
-    Structures as baseStructures,
-} from '../utility/Structures';
-import { CommandErrorHandler } from '../errors/InteractionErrorHandler';
 import {
     ButtonInteraction,
     Message,
@@ -22,12 +6,31 @@ import {
     MessageSelectMenu,
     SelectMenuInteraction,
 } from 'discord.js';
-import { Constants } from '../utility/Constants';
-import { BetterEmbed, disableComponents } from '../utility/utility';
+import { type ClientCommand } from '../@types/client';
+import {
+    type DefenderModule,
+    type FriendsModule,
+    type RewardsModule,
+    type UserAPIData,
+} from '../@types/database';
+import {
+    type Locale,
+    type ModulesCommand,
+} from '../@types/locales';
+import { CommandErrorHandler } from '../errors/InteractionErrorHandler';
 import { RegionLocales } from '../locales/RegionLocales';
-import { SQLite } from '../utility/SQLite';
-import { ToggleButtons } from '../utility/ToggleButtons';
+import { Constants } from '../utility/Constants';
 import { Log } from '../utility/Log';
+import { SQLite } from '../utility/SQLite';
+import {
+    combiner,
+    Structures as baseStructures,
+} from '../utility/Structures';
+import { ToggleButtons } from '../utility/ToggleButtons';
+import {
+    BetterEmbed,
+    disableComponents,
+} from '../utility/utility';
 
 export const properties: ClientCommand['properties'] = {
     name: 'modules',
@@ -70,8 +73,7 @@ export const execute: ClientCommand['execute'] = async (
         subCommand as keyof Locale['commands']['modules']
     ];
 
-    const structures =
-        baseStructures[subCommand as keyof typeof baseStructures];
+    const structures = baseStructures[subCommand as keyof typeof baseStructures];
 
     const { replace } = RegionLocales;
 
@@ -90,6 +92,8 @@ export const execute: ClientCommand['execute'] = async (
             .setDisabled(data?.disabled ?? false);
 
         const menuData = text.menu;
+
+        // eslint-disable-next-line no-restricted-syntax
         for (const item in menuData) {
             if (Object.hasOwn(menuData, item)) {
                 const itemData = {
@@ -121,7 +125,7 @@ export const execute: ClientCommand['execute'] = async (
     );
 
     const getDefenderData = () => (
-       SQLite.getUser<DefenderModule>({
+        SQLite.getUser<DefenderModule>({
             discordID: interaction.user.id,
             table: Constants.tables.defender,
             allowUndefined: false,
@@ -169,8 +173,10 @@ export const execute: ClientCommand['execute'] = async (
 
     await interaction.client.channels.fetch(interaction.channelId);
 
-    const filter = (i: MessageComponentInteraction) =>
-        interaction.user.id === i.user.id && i.message.id === reply.id;
+    // eslint-disable-next-line arrow-body-style
+    const filter = (i: MessageComponentInteraction) => {
+        return interaction.user.id === i.user.id && i.message.id === reply.id;
+    };
 
     const collector = interaction.channel!.createMessageComponentCollector({
         filter: filter,
@@ -187,8 +193,8 @@ export const execute: ClientCommand['execute'] = async (
                 await i.deferUpdate();
 
                 if (
-                    i.customId === 'main' &&
-                    i.isSelectMenu()
+                    i.customId === 'main'
+                    && i.isSelectMenu()
                 ) {
                     Log.interaction(interaction, `Menu update value: ${i.values[0]}`);
                     await menuUpdate(i);
@@ -216,7 +222,7 @@ export const execute: ClientCommand['execute'] = async (
     });
 
     async function menuUpdate(selectMenuInteraction: SelectMenuInteraction) {
-        selected = selectMenuInteraction.values[0];
+        [selected] = selectMenuInteraction.values;
 
         mainEmbed.setField(
             text.menu[selected as keyof typeof text['menu']].label,
@@ -234,14 +240,15 @@ export const execute: ClientCommand['execute'] = async (
             case 'toggle': {
                 const { modules } = getUserAPIData();
 
-                const moduleData =
-                    subCommand === 'defender'
-                        ? getDefenderData()
-                        : subCommand === 'friends'
-                        ? getFriendsData()
-                        : subCommand === 'rewards'
-                        ? getRewardsData()
-                        : null!; //:)
+                let moduleData: DefenderModule | FriendsModule | RewardsModule;
+
+                if (subCommand === 'defender') {
+                    moduleData = getDefenderData();
+                } else if (subCommand === 'friends') {
+                    moduleData = getFriendsData();
+                } else {
+                    moduleData = getRewardsData();
+                }
 
                 const exceptions = {
                     defender: ['channel'] as string[],
@@ -250,13 +257,11 @@ export const execute: ClientCommand['execute'] = async (
                 };
 
                 const missingRequirements = Object.entries(moduleData)
-                    .filter(([key, value]) =>
-                        value === null &&
-                        exceptions[subCommand as keyof typeof exceptions]
+                    .filter(([key, value]) => value === null
+                        && exceptions[subCommand as keyof typeof exceptions]
                             .includes(key) === false)
                     .map(
-                        ([name]) =>
-                            text.menu[name as keyof typeof text.menu].label,
+                        ([name]) => text.menu[name as keyof typeof text.menu].label,
                     );
 
                 if (missingRequirements.length > 0) {
@@ -298,6 +303,7 @@ export const execute: ClientCommand['execute'] = async (
                     (structures as typeof baseStructures['defender']).alerts,
                 ).select;
 
+                // eslint-disable-next-line no-restricted-syntax
                 for (const value of menu.options!) {
                     value.default = alerts[value.value as keyof typeof alerts];
                 }
@@ -329,6 +335,7 @@ export const execute: ClientCommand['execute'] = async (
                     (structures as typeof baseStructures['defender']).gameTypes,
                 ).select;
 
+                // eslint-disable-next-line no-restricted-syntax
                 for (const value of menu.options!) {
                     value.default = gameTypes.includes(value.value);
                 }
@@ -348,6 +355,7 @@ export const execute: ClientCommand['execute'] = async (
                     (structures as typeof baseStructures['defender']).languages,
                 ).select;
 
+                // eslint-disable-next-line no-restricted-syntax
                 for (const value of menu.options!) {
                     value.default = languages.includes(value.value);
                 }
@@ -367,6 +375,7 @@ export const execute: ClientCommand['execute'] = async (
                     (structures as typeof baseStructures['defender']).versions,
                 ).select;
 
+                // eslint-disable-next-line no-restricted-syntax
                 for (const value of menu.options!) {
                     value.default = versions.includes(value.value);
                 }
@@ -388,9 +397,9 @@ export const execute: ClientCommand['execute'] = async (
 
                 const component = new MessageSelectMenu(menu);
 
+                // eslint-disable-next-line no-restricted-syntax
                 for (const value of component.options!) {
-                    value.default =
-                        Number(value.value) === alertTime;
+                    value.default = Number(value.value) === alertTime;
                 }
 
                 const row = new MessageActionRow().addComponents(component);
@@ -438,9 +447,9 @@ export const execute: ClientCommand['execute'] = async (
 
                 const component = new MessageSelectMenu(menu);
 
+                // eslint-disable-next-line no-restricted-syntax
                 for (const value of component.options!) {
-                    value.default =
-                        Number(value.value) === notificationInterval;
+                    value.default = Number(value.value) === notificationInterval;
                 }
 
                 const row = new MessageActionRow().addComponents(component);
@@ -448,7 +457,7 @@ export const execute: ClientCommand['execute'] = async (
                 components.push(row);
                 break;
             }
-            //No default
+            // no default
         }
 
         await selectMenuInteraction.editReply({
@@ -515,6 +524,7 @@ export const execute: ClientCommand['execute'] = async (
 
                 const alerts = { ...Constants.defaults.defenderAlerts };
 
+                // eslint-disable-next-line no-restricted-syntax
                 for (const value of selectedValues) {
                     alerts[value as keyof typeof alerts] = true;
                 }
@@ -524,6 +534,7 @@ export const execute: ClientCommand['execute'] = async (
                     (structures as typeof baseStructures['defender']).alerts,
                 ).select;
 
+                // eslint-disable-next-line no-restricted-syntax
                 for (const option of updatedMenu.options!) {
                     option.default = alerts[
                         option.value as keyof typeof alerts
@@ -554,6 +565,7 @@ export const execute: ClientCommand['execute'] = async (
                     (structures as typeof baseStructures['defender']).gameTypes,
                 ).select;
 
+                // eslint-disable-next-line no-restricted-syntax
                 for (const value of updatedMenu.options!) {
                     value.default = selectedValues.includes(value.value);
                 }
@@ -582,6 +594,7 @@ export const execute: ClientCommand['execute'] = async (
                     (structures as typeof baseStructures['defender']).languages,
                 ).select;
 
+                // eslint-disable-next-line no-restricted-syntax
                 for (const value of updatedMenu.options!) {
                     value.default = selectedValues.includes(value.value);
                 }
@@ -610,6 +623,7 @@ export const execute: ClientCommand['execute'] = async (
                     (structures as typeof baseStructures['defender']).versions,
                 ).select;
 
+                // eslint-disable-next-line no-restricted-syntax
                 for (const value of updatedMenu.options!) {
                     value.default = selectedValues.includes(value.value);
                 }
@@ -638,6 +652,7 @@ export const execute: ClientCommand['execute'] = async (
                     (structures as typeof baseStructures['rewards']).alertTime,
                 ).select;
 
+                // eslint-disable-next-line no-restricted-syntax
                 for (const value of updatedMenu.options!) {
                     value.default = value.value === time;
                 }
@@ -714,6 +729,7 @@ export const execute: ClientCommand['execute'] = async (
                     (structures as typeof baseStructures['rewards']).notificationInterval,
                 ).select;
 
+                // eslint-disable-next-line no-restricted-syntax
                 for (const value of updatedMenu.options!) {
                     value.default = value.value === time;
                 }
@@ -731,7 +747,7 @@ export const execute: ClientCommand['execute'] = async (
                 });
                 break;
             }
-            //No default
+            // no default
         }
 
         await messageComponentInteraction.editReply({

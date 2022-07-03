@@ -3,18 +3,21 @@ import {
     MessageEmbed,
     TextChannel,
 } from 'discord.js';
-import type { ClientModule } from '../@types/modules';
-import type {
-    FriendsModule,
-    UserAPIData,
-    UserData,
+import { type ClientModule } from '../@types/modules';
+import {
+    type FriendsModule,
+    type UserAPIData,
+    type UserData,
 } from '../@types/database';
-import { Constants } from '../utility/Constants';
 import { ModuleError } from '../errors/ModuleError';
 import { RegionLocales } from '../locales/RegionLocales';
-import { SQLite } from '../utility/SQLite';
+import { Constants } from '../utility/Constants';
 import { Log } from '../utility/Log';
-import { arrayRemove, timestamp } from '../utility/utility';
+import { SQLite } from '../utility/SQLite';
+import {
+    arrayRemove,
+    timestamp,
+} from '../utility/utility';
 
 export const properties: ClientModule['properties'] = {
     name: 'friends',

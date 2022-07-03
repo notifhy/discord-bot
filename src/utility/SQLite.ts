@@ -1,7 +1,7 @@
 import Database from 'better-sqlite3-multiple-ciphers';
 import {
-    BaseUserData,
-    Table,
+    type BaseUserData,
+    type Table,
 } from '../@types/database';
 import { Constants } from './Constants';
 

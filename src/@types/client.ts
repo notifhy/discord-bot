@@ -1,11 +1,11 @@
 /* eslint-disable no-unused-vars */
-import type {
-    ChatInputApplicationCommandData,
-    Collection,
-    CommandInteraction,
+import {
+    type ChatInputApplicationCommandData,
+    type Collection,
+    type CommandInteraction,
 } from 'discord.js';
-import type { ClientModule } from './modules';
-import type { Core } from '../core/Core';
+import { type ClientModule } from './modules';
+import { type Core } from '../core/Core';
 
 export interface ClientCommand {
     properties: {

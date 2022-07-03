@@ -1,13 +1,4 @@
-import type { ClientCommand } from '../@types/client';
-import type {
-    PlayerDB,
-    SlothpixelPlayer,
-    SlothpixelRecentGames,
-    SlothpixelStatus,
-} from '../@types/hypixel';
-import { Constants } from '../utility/Constants';
-import { CommandErrorHandler } from '../errors/InteractionErrorHandler';
-import { BetterEmbed, cleanLength, disableComponents, timestamp } from '../utility/utility';
+/* eslint-disable @typescript-eslint/naming-convention */
 import {
     Constants as DiscordConstants,
     Formatters,
@@ -16,10 +7,25 @@ import {
     MessageButton,
     MessageComponentInteraction,
 } from 'discord.js';
+import { type ClientCommand } from '../@types/client';
+import {
+    type PlayerDB,
+    type SlothpixelPlayer,
+    type SlothpixelRecentGames,
+    type SlothpixelStatus,
+} from '../@types/hypixel';
 import { HTTPError } from '../errors/HTTPError';
+import { CommandErrorHandler } from '../errors/InteractionErrorHandler';
 import { RegionLocales } from '../locales/RegionLocales';
-import { Request } from '../utility/Request';
+import { Constants } from '../utility/Constants';
 import { Log } from '../utility/Log';
+import { Request } from '../utility/Request';
+import {
+    BetterEmbed,
+    cleanLength,
+    disableComponents,
+    timestamp,
+} from '../utility/utility';
 
 export const properties: ClientCommand['properties'] = {
     name: 'player',
@@ -68,18 +74,17 @@ export const execute: ClientCommand['execute'] = async (
     locale,
 ): Promise<void> => {
     const text = RegionLocales.locale(locale).commands.player;
-    const replace = RegionLocales.replace;
-    const unknown = text.unknown;
+    const { replace } = RegionLocales;
+    const { unknown } = text;
 
-    const inputUUID =
-        /^[0-9a-f]{8}(-?)[0-9a-f]{4}(-?)[1-5][0-9a-f]{3}(-?)[89AB][0-9a-f]{3}(-?)[0-9a-f]{12}$/i;
+    const inputUUID = /^[0-9a-f]{8}(-?)[0-9a-f]{4}(-?)[1-5][0-9a-f]{3}(-?)[89AB][0-9a-f]{3}(-?)[0-9a-f]{12}$/i;
     const inputUsername = /^[a-zA-Z0-9_-]{1,24}$/g;
     const input = interaction.options.getString('player', true);
     const inputType = inputUUID.test(input) === true ? 'UUID' : 'username';
 
     if (
-        inputUUID.test(input) === false &&
-        inputUsername.test(input) === false
+        inputUUID.test(input) === false
+        && inputUsername.test(input) === false
     ) {
         const invalidEmbed = new BetterEmbed(interaction)
             .setColor(Constants.colors.normal)
@@ -97,7 +102,7 @@ export const execute: ClientCommand['execute'] = async (
             break;
         case 'recentgames': await recentgames();
             break;
-        //No default
+        // no default
     }
 
     async function status() {
@@ -107,8 +112,8 @@ export const execute: ClientCommand['execute'] = async (
         ]);
 
         if (
-            responses[0].status === 404 ||
-            responses[1].status === 404
+            responses[0].status === 404
+            || responses[1].status === 404
         ) {
             await notFound();
             return;
@@ -217,18 +222,16 @@ export const execute: ClientCommand['execute'] = async (
         ]);
 
         if (
-            responses[0].status === 404 ||
-            responses[1].status === 500
+            responses[0].status === 404
+            || responses[1].status === 500
         ) {
             await notFound();
             return;
         }
 
-        const recentGames =
-            (await responses[0].json()) as SlothpixelRecentGames;
+        const recentGames = (await responses[0].json()) as SlothpixelRecentGames;
 
-        const { username } =
-            ((await responses[1].json()) as PlayerDB).data.player;
+        const { username } = ((await responses[1].json()) as PlayerDB).data.player;
 
         const base = new MessageButton()
             .setStyle(
@@ -241,26 +244,27 @@ export const execute: ClientCommand['execute'] = async (
                 position + Constants.defaults.menuIncrements,
             );
 
-            const fields =
-                shownData.map(({ date, ended, gameType, mode, map }) => ({
-                    name: replace(text.recentGames.embed.field.name, {
-                        gameType: gameType,
-                        date: timestamp(date, 'D') ?? unknown,
-                    }),
-                    value: replace(text.recentGames.embed.field.value, {
-                        start: timestamp(date, 'T') ?? unknown,
-                        end: timestamp(ended, 'T') ?? text.recentGames.inProgress,
-                        playTime: ended
-                            ? `${text.recentGames.playTime}${cleanLength(ended - date)}`
-                            : `${text.recentGames.elapsed}${cleanLength(Date.now() - date)}`,
-                        mode: mode
-                            ? `\n${text.recentGames.gameMode}${mode}`
-                            : '',
-                        map: map
-                            ? `\n${text.recentGames.gameMap}${map}`
-                            : '',
-                    }),
-                }));
+            const fields = shownData.map(({
+                date, ended, gameType, mode, map,
+            }) => ({
+                name: replace(text.recentGames.embed.field.name, {
+                    gameType: gameType,
+                    date: timestamp(date, 'D') ?? unknown,
+                }),
+                value: replace(text.recentGames.embed.field.value, {
+                    start: timestamp(date, 'T') ?? unknown,
+                    end: timestamp(ended, 'T') ?? text.recentGames.inProgress,
+                    playTime: ended
+                        ? `${text.recentGames.playTime}${cleanLength(ended - date)}`
+                        : `${text.recentGames.elapsed}${cleanLength(Date.now() - date)}`,
+                    mode: mode
+                        ? `\n${text.recentGames.gameMode}${mode}`
+                        : '',
+                    map: map
+                        ? `\n${text.recentGames.gameMap}${map}`
+                        : '',
+                }),
+            }));
 
             return new BetterEmbed(interaction)
                 .setColor(Constants.colors.normal)
@@ -295,11 +299,9 @@ export const execute: ClientCommand['execute'] = async (
             .setCustomId('fastForward')
             .setEmoji(Constants.emoji.fastForward);
 
-        rightButton.disabled =
-            recentGames.length <= Constants.defaults.menuIncrements;
+        rightButton.disabled = recentGames.length <= Constants.defaults.menuIncrements;
 
-        fastRightButton.disabled =
-            recentGames.length <= Constants.defaults.menuFastIncrements;
+        fastRightButton.disabled = recentGames.length <= Constants.defaults.menuFastIncrements;
 
         const buttons = new MessageActionRow()
             .setComponents(
@@ -316,8 +318,10 @@ export const execute: ClientCommand['execute'] = async (
 
         await interaction.client.channels.fetch(interaction.channelId);
 
-        const filter = (i: MessageComponentInteraction) =>
-            interaction.user.id === i.user.id && i.message.id === reply.id;
+        // eslint-disable-next-line arrow-body-style
+        const filter = (i: MessageComponentInteraction) => {
+            return interaction.user.id === i.user.id && i.message.id === reply.id;
+        };
 
         const collector = interaction.channel!.createMessageComponentCollector({
             filter: filter,
@@ -327,7 +331,7 @@ export const execute: ClientCommand['execute'] = async (
 
         let currentIndex = 0;
 
-        collector.on('collect', async i => {
+        collector.on('collect', async (i) => {
             try {
                 switch (i.customId) {
                     case 'fastBackward':
@@ -341,22 +345,18 @@ export const execute: ClientCommand['execute'] = async (
                         break;
                     case 'fastForward':
                         currentIndex += Constants.defaults.menuFastIncrements;
-                    //No default
+                    // no default
                 }
 
-                fastLeftButton.disabled =
-                    currentIndex - Constants.defaults.menuFastIncrements < 0;
+                fastLeftButton.disabled = currentIndex - Constants.defaults.menuFastIncrements < 0;
 
-                leftButton.disabled =
-                    currentIndex - Constants.defaults.menuIncrements < 0;
+                leftButton.disabled = currentIndex - Constants.defaults.menuIncrements < 0;
 
-                rightButton.disabled =
-                    currentIndex + Constants.defaults.menuIncrements >=
-                    recentGames.length;
+                rightButton.disabled = currentIndex + Constants.defaults.menuIncrements
+                    >= recentGames.length;
 
-                fastRightButton.disabled =
-                    currentIndex + Constants.defaults.menuFastIncrements >=
-                    recentGames.length;
+                fastRightButton.disabled = currentIndex + Constants.defaults.menuFastIncrements
+                    >= recentGames.length;
 
                 buttons.setComponents(
                     fastLeftButton,

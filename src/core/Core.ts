@@ -4,19 +4,19 @@ import {
     HTTPError,
 } from 'discord.js';
 import { setTimeout } from 'node:timers/promises';
-import type { UserAPIData } from '../@types/database';
+import { type UserAPIData } from '../@types/database';
+import { ErrorHandler } from '../errors/ErrorHandler';
+import { ModuleError } from '../errors/ModuleError';
+import { ModuleErrorHandler } from '../errors/ModuleErrorHandler';
+import { ModuleHTTPErrorHandler } from '../errors/ModuleHTTPErrorHandler';
+import { RequestErrorHandler } from '../errors/RequestErrorHandler';
 import { Constants } from '../utility/Constants';
+import { Log } from '../utility/Log';
+import { SQLite } from '../utility/SQLite';
 import { Data } from './Data';
 import { Error } from './Error';
 import { Module } from './Module';
 import { Request } from './Request';
-import { ErrorHandler } from '../errors/ErrorHandler';
-import { ModuleHTTPErrorHandler } from '../errors/ModuleHTTPErrorHandler';
-import { ModuleError } from '../errors/ModuleError';
-import { ModuleErrorHandler } from '../errors/ModuleErrorHandler';
-import { RequestErrorHandler } from '../errors/RequestErrorHandler';
-import { SQLite } from '../utility/SQLite';
-import { Log } from '../utility/Log';
 
 /* eslint-disable no-await-in-loop */
 
