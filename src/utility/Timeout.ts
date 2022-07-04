@@ -61,7 +61,7 @@ export class Timeout {
         this.getTimeout = this.getTimeout.bind(this);
     }
 
-    addError() {
+    public addError() {
         this.pauseFor = this.timeout;
         this.resumeAfter = this.timeout + Date.now();
 
@@ -93,19 +93,19 @@ export class Timeout {
         }, Constants.ms.hour);
     }
 
-    getPauseFor() {
+    public getPauseFor() {
         return this.pauseFor;
     }
 
-    getTimeout() {
+    public getTimeout() {
         return this;
     }
 
-    isTimeout() {
+    public isTimeout() {
         return this.resumeAfter > Date.now();
     }
 
-    resetTimeout() {
+    public resetTimeout() {
         clearTimeout(this.clearTimeout);
         this.timeout = this.baseTimeout;
     }
