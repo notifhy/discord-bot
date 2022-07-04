@@ -1,4 +1,4 @@
-[![](https://i.imgur.com/EpnBH0u.png)](https://youtu.be/_yAVuZBMcdk, "Trailer")
+[![](./assets/NotifHy%20Banner.png)](https://youtu.be/_yAVuZBMcdk, "Trailer")
 
 # Project Status
 NotifHy was made before Hypixel clearly defined the rules of their API. Now, this bot violates the rules established at https://api.hypixel.net/. For this reason, this project has been (somewhat) abandoned, and no more features will be added. The public bot that once hosted an instance of NotifHy has been deleted. Contact Attituding at [attituding@outlook.com](mailto:attituding@outlook.com "attituding@outlook.com") if you have any questions.
