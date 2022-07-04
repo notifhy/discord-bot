@@ -1,3 +1,4 @@
+import * as fs from 'node:fs/promises';
 import { setTimeout } from 'node:timers/promises';
 import { type ClientCommand } from '../@types/client';
 import { RegionLocales } from '../locales/RegionLocales';
@@ -47,6 +48,8 @@ export const execute: ClientCommand['execute'] = async (
 
     await setTimeout(5_000);
 
+    const fileBefore = await fs.readFile(`${__dirname}/../../database.db`);
+
     SQLite.removeKey();
     SQLite.close();
 
@@ -57,7 +60,15 @@ export const execute: ClientCommand['execute'] = async (
             timeout: timeout,
         }));
 
-    await interaction.editReply({ embeds: [decrypted] });
+    await interaction.editReply({
+        embeds: [decrypted],
+        files: [
+            {
+                attachment: fileBefore,
+                name: 'database.db',
+            },
+        ],
+    });
 
     await setTimeout(timeout);
 
@@ -74,8 +85,16 @@ export const execute: ClientCommand['execute'] = async (
         .setTitle(text.encrypted.title)
         .setDescription(text.encrypted.description);
 
+    const fileAfter = await fs.readFile(`${__dirname}/../../database.db`);
+
     await interaction.followUp({
         embeds: [encrypted],
         ephemeral: true,
+        files: [
+            {
+                attachment: fileAfter,
+                name: 'database.db',
+            },
+        ],
     });
 };
