@@ -4,4 +4,10 @@ WORKDIR /usr/src/app
 
 ADD . /usr/src/app
 
-CMD ["npm","run","notifhy"]
+RUN npm install
+
+RUN npm run build
+
+RUN npm install --omit=dev
+
+CMD ["npm","run","docker"]
