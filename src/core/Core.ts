@@ -115,7 +115,7 @@ export class Core {
                 return;
             }
 
-            this.refresh(user);
+            await this.refresh(user);
         }
     }
 
