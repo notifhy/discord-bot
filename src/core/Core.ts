@@ -128,8 +128,8 @@ export class Core {
             uses: this.request.uses,
         };
 
-        let data; let
-            payload;
+        let data;
+        let payload;
 
         try {
             data = await this.request.request(user, urls);
