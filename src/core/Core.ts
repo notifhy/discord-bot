@@ -60,11 +60,11 @@ export class Core {
             try {
                 const reachedMaxTimeout = await Promise.race([
                     this.checkSystem(),
-                    Core.maxTimeout(900000),
+                    Core.maxTimeout(3600000),
                 ]);
 
                 if (reachedMaxTimeout === true) {
-                    Log.error('Hit a max timeout of 900000');
+                    Log.error('Hit a max timeout of 3600000');
                 }
             } catch (error) {
                 this.error.addGeneric();
@@ -115,14 +115,7 @@ export class Core {
                 return;
             }
 
-            const reachedMaxTimeout = await Promise.race([
-                this.refresh(user),
-                Core.maxTimeout(15000),
-            ]);
-
-            if (reachedMaxTimeout === true) {
-                Log.error('Hit a max timeout of 15000');
-            }
+            this.refresh(user);
         }
     }
 
