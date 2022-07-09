@@ -72,7 +72,7 @@ export const Constants = {
         embedDescription: 4096,
         embedField: 1024,
         performanceHistory: 50,
-        userAPIDataHistory: 1000,
+        userAPIDataHistory: 2500,
     },
     ms: {
         day: 86_400_000,
