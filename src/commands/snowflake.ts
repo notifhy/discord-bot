@@ -1,7 +1,7 @@
 import { SnowflakeUtil } from 'discord.js';
 import { type ClientCommand } from '../@types/client';
-import { Constants } from '../utility/Constants';
 import { RegionLocales } from '../locales/RegionLocales';
+import { Constants } from '../utility/Constants';
 import {
     BetterEmbed,
     timestamp,

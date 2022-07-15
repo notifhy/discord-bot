@@ -1,12 +1,12 @@
 import { type Snowflake } from 'discord.js';
 import {
-    type CleanHypixelPlayer,
-    type CleanHypixelStatus,
-} from '../@types/hypixel';
-import {
     type History,
     type UserAPIData,
 } from '../@types/database';
+import {
+    type CleanHypixelPlayer,
+    type CleanHypixelStatus,
+} from '../@types/hypixel';
 import { Constants } from '../utility/Constants';
 import { SQLite } from '../utility/SQLite';
 import { compare } from '../utility/utility';

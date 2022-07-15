@@ -1,4 +1,4 @@
-import { WebhookEditMessageOptions } from 'discord.js';
+import { type WebhookEditMessageOptions } from 'discord.js';
 import {
     type ClientCommand,
     type Config,

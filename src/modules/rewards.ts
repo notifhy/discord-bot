@@ -1,5 +1,5 @@
-import type { ClientModule } from '../@types/modules';
-import type { RewardsModule } from '../@types/database';
+import { type RewardsModule } from '../@types/database';
+import { type ClientModule } from '../@types/modules';
 import { ModuleError } from '../errors/ModuleError';
 import { RegionLocales } from '../locales/RegionLocales';
 import { Constants } from '../utility/Constants';

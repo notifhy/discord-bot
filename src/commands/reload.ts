@@ -1,4 +1,4 @@
-import { CommandInteraction } from 'discord.js';
+import { type CommandInteraction } from 'discord.js';
 import {
     type ClientEvent,
     type ClientCommand,

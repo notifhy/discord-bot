@@ -1,10 +1,10 @@
 import {
-    ButtonInteraction,
-    Message,
+    type ButtonInteraction,
+    type Message,
     MessageActionRow,
-    MessageComponentInteraction,
+    type MessageComponentInteraction,
     MessageSelectMenu,
-    SelectMenuInteraction,
+    type SelectMenuInteraction,
 } from 'discord.js';
 import { type ClientCommand } from '../@types/client';
 import {

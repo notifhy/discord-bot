@@ -1,13 +1,13 @@
 import { type Client } from 'discord.js';
 import {
+    type UserAPIData,
+    type UserData,
+} from './database';
+import {
     type CleanHypixelPlayer,
     type CleanHypixelStatus,
 } from './hypixel';
 import { type Locale } from './locales';
-import {
-    type UserAPIData,
-    type UserData,
-} from './database';
 
 /* eslint-disable no-unused-vars */
 

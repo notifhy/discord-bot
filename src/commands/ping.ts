@@ -1,5 +1,5 @@
 import {
-    ColorResolvable,
+    type ColorResolvable,
     Message,
 } from 'discord.js';
 import { type ClientCommand } from '../@types/client';

@@ -1,11 +1,12 @@
-/* eslint-disable no-unused-vars */
 import {
     type ChatInputApplicationCommandData,
     type Collection,
     type CommandInteraction,
 } from 'discord.js';
-import { type ClientModule } from './modules';
 import { type Core } from '../core/Core';
+import { type ClientModule } from './modules';
+
+/* eslint-disable no-unused-vars */
 
 export interface ClientCommand {
     properties: {

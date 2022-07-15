@@ -1,11 +1,10 @@
-/* eslint-disable @typescript-eslint/naming-convention */
 import {
     Constants as DiscordConstants,
     Formatters,
-    Message,
+    type Message,
     MessageActionRow,
     MessageButton,
-    MessageComponentInteraction,
+    type MessageComponentInteraction,
 } from 'discord.js';
 import { type ClientCommand } from '../@types/client';
 import {
@@ -26,6 +25,8 @@ import {
     disableComponents,
     timestamp,
 } from '../utility/utility';
+
+/* eslint-disable @typescript-eslint/naming-convention */
 
 export const properties: ClientCommand['properties'] = {
     name: 'player',

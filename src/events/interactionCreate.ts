@@ -1,6 +1,6 @@
 import {
     Collection,
-    CommandInteraction,
+    type CommandInteraction,
 } from 'discord.js';
 import {
     type ClientCommand,

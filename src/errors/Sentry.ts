@@ -6,8 +6,8 @@ import {
     TextChannel,
 } from 'discord.js';
 import { type Core } from '../core/Core';
-import { slashCommandResolver } from '../utility/utility';
 import { HTTPError } from './HTTPError';
+import { slashCommandResolver } from '../utility/utility';
 
 export class Sentry {
     public readonly scope: SentryClient.Scope;

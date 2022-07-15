@@ -1,4 +1,4 @@
-import { CommandInteraction } from 'discord.js';
+import { type CommandInteraction } from 'discord.js';
 import { BaseErrorHandler } from './BaseErrorHandler';
 
 export class BaseInteractionErrorHandler<E> extends BaseErrorHandler<E> {

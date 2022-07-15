@@ -1,9 +1,9 @@
 import {
     Constants as DiscordConstants,
-    Message,
+    type Message,
     MessageActionRow,
     MessageButton,
-    MessageComponentInteraction,
+    type MessageComponentInteraction,
     MessageEmbed,
 } from 'discord.js';
 import { type ClientCommand } from '../@types/client';

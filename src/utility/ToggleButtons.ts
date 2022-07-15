@@ -3,9 +3,9 @@ import {
     MessageActionRow,
     MessageButton,
 } from 'discord.js';
-import type {
-    ButtonData,
-    LocaleButton,
+import {
+    type ButtonData,
+    type LocaleButton,
 } from '../@types/locales';
 
 export class ToggleButtons extends MessageActionRow {

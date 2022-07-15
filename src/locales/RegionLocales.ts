@@ -1,7 +1,7 @@
-import type {
-    Locale,
-    Locales,
-    Parameters,
+import {
+    type Locale,
+    type Locales,
+    type Parameters,
 } from '../@types/locales';
 import { Constants } from '../utility/Constants';
 import en from './en-US.json';

@@ -3,16 +3,16 @@ import {
     Permissions,
 } from 'discord.js';
 import { ChannelTypes } from 'discord.js/typings/enums';
-import {
-    type BaseEmbed,
-    type Channel,
-} from '../@types/locales';
 import { type ClientCommand } from '../@types/client';
 import {
     type DefenderModule,
     type FriendsModule,
     type Table,
 } from '../@types/database';
+import {
+    type BaseEmbed,
+    type Channel,
+} from '../@types/locales';
 import { RegionLocales } from '../locales/RegionLocales';
 import { Constants } from '../utility/Constants';
 import { Log } from '../utility/Log';

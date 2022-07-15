@@ -1,4 +1,4 @@
-import * as fs from 'node:fs/promises';
+import fs from 'node:fs/promises';
 import { setTimeout } from 'node:timers/promises';
 import { type ClientCommand } from '../@types/client';
 import { RegionLocales } from '../locales/RegionLocales';

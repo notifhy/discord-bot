@@ -15,7 +15,7 @@ import {
     type ClientEvent,
     type Config,
 } from './@types/client';
-import type { ClientModule } from './@types/modules';
+import { type ClientModule } from './@types/modules';
 import { Core } from './core/Core';
 import { ErrorHandler } from './errors/ErrorHandler';
 import { Log } from './utility/Log';

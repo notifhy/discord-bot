@@ -1,5 +1,5 @@
 import {
-    CommandInteraction,
+    type CommandInteraction,
     MessageActionRow,
     MessageButton,
 } from 'discord.js';

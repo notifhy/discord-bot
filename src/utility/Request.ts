@@ -4,8 +4,8 @@ import fetch, {
     Response,
 } from 'node-fetch';
 import { AbortSignal } from 'node-fetch/externals';
-import { AbortError } from '../errors/AbortError';
 import { Constants } from './Constants';
+import { AbortError } from '../errors/AbortError';
 import { Log } from './Log';
 
 export class Request {

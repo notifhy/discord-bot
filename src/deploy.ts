@@ -1,7 +1,7 @@
 import 'dotenv/config';
 import { Routes } from 'discord-api-types/v10';
 import { REST } from '@discordjs/rest';
-import type { ClientCommand } from './@types/client';
+import { type ClientCommand } from './@types/client';
 import { Log } from './utility/Log';
 
 (async () => {

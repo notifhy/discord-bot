@@ -1,21 +1,21 @@
-import {
-    ColorResolvable,
-    CommandInteraction,
-} from 'discord.js';
 import { setTimeout } from 'node:timers/promises';
 import {
-     BaseEmbed,
-     type Locale,
+    type ColorResolvable,
+    type CommandInteraction,
+} from 'discord.js';
+import {
+    BaseEmbed,
+    type Locale,
 } from '../@types/locales';
+import { BaseInteractionErrorHandler } from './BaseInteractionErrorHandler';
+import { type ConstraintError } from './ConstraintError';
+import { ErrorHandler } from './ErrorHandler';
 import { RegionLocales } from '../locales/RegionLocales';
 import { Constants } from '../utility/Constants';
 import {
     BetterEmbed,
     cleanRound,
 } from '../utility/utility';
-import { BaseInteractionErrorHandler } from './BaseInteractionErrorHandler';
-import { ConstraintError } from './ConstraintError';
-import { ErrorHandler } from './ErrorHandler';
 
 export class InteractionConstraintErrorHandler extends BaseInteractionErrorHandler<ConstraintError> {
     public readonly interaction: CommandInteraction;

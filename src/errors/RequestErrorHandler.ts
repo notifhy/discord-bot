@@ -1,10 +1,10 @@
 import { AbortError } from './AbortError';
-import { HTTPError } from './HTTPError';
-import { RateLimitError } from './RateLimitError';
 import { BaseErrorHandler } from './BaseErrorHandler';
 import { type Core } from '../core/Core';
-import { cleanLength } from '../utility/utility';
 import { ErrorHandler } from './ErrorHandler';
+import { HTTPError } from './HTTPError';
+import { RateLimitError } from './RateLimitError';
+import { cleanLength } from '../utility/utility';
 
 export class RequestErrorHandler<E> extends BaseErrorHandler<E> {
     public readonly core: Core;

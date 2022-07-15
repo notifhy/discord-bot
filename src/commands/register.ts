@@ -1,12 +1,12 @@
 import { DiscordAPIError } from 'discord.js';
 import { type ClientCommand } from '../@types/client';
-import { type SlothpixelPlayer } from '../@types/hypixel';
 import {
     type DefenderModule,
     type FriendsModule,
     type RewardsModule,
     type UserAPIData,
 } from '../@types/database';
+import { type SlothpixelPlayer } from '../@types/hypixel';
 import { HTTPError } from '../errors/HTTPError';
 import { RegionLocales } from '../locales/RegionLocales';
 import { Constants } from '../utility/Constants';
