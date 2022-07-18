@@ -4,7 +4,7 @@ import process from 'node:process';
 import {
     Client,
     Collection,
-    Intents,
+    GatewayIntentBits,
     Options,
     Sweepers,
 } from 'discord.js';
@@ -51,7 +51,7 @@ const client = new Client({
         repliedUser: true,
     },
     failIfNotExists: false,
-    intents: [Intents.FLAGS.GUILDS],
+    intents: [GatewayIntentBits.Guilds],
     makeCache: Options.cacheWithLimits({
         GuildBanManager: 0,
         GuildInviteManager: 0,
@@ -68,9 +68,11 @@ const client = new Client({
         ThreadMemberManager: 0,
         VoiceStateManager: 0,
     }),
-    retryLimit: 5,
     presence: {
         status: 'online',
+    },
+    rest: {
+        retries: 5,
     },
     sweepers: {
         guildMembers: {
@@ -167,13 +169,19 @@ client.modules = new Collection();
 
     // eslint-disable-next-line no-restricted-syntax
     for (const {
-        properties: { name, once },
+        properties: { name, once, rest },
     } of client.events.values()) {
         const execute = (...parameters: unknown[]) => {
             client.events.get(name)!.execute(...parameters);
         };
 
-        if (once === false) {
+        if (rest === true) {
+            if (once === false) {
+                client.rest.on(name, execute);
+            } else {
+                client.rest.once(name, execute);
+            }
+        } else if (once === false) {
             client.on(name, execute);
         } else {
             client.once(name, execute);

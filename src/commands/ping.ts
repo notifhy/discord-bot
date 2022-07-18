@@ -1,7 +1,4 @@
-import {
-    type ColorResolvable,
-    Message,
-} from 'discord.js';
+import { type ColorResolvable } from 'discord.js';
 import { type ClientCommand } from '../@types/client';
 import { RegionLocales } from '../locales/RegionLocales';
 import { Constants } from '../utility/Constants';
@@ -37,9 +34,7 @@ export const execute: ClientCommand['execute'] = async (
         embeds: [initialPingEmbed],
     });
 
-    const roundTripDelay = (sentReply instanceof Message
-        ? sentReply.createdTimestamp
-        : Date.parse(sentReply.timestamp)) - interaction.createdTimestamp;
+    const roundTripDelay = sentReply.createdTimestamp - interaction.createdTimestamp;
 
     const mixedPing = (
         interaction.client.ws.ping + roundTripDelay

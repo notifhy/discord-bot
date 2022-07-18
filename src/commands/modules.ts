@@ -1,9 +1,9 @@
 import {
+    ActionRowBuilder,
+    SelectMenuBuilder,
     type ButtonInteraction,
     type Message,
-    MessageActionRow,
     type MessageComponentInteraction,
-    MessageSelectMenu,
     type SelectMenuInteraction,
 } from 'discord.js';
 import { type ClientCommand } from '../@types/client';
@@ -86,7 +86,7 @@ export const execute: ClientCommand['execute'] = async (
         default?: string;
         disabled?: boolean;
     }) => {
-        const menu = new MessageSelectMenu()
+        const menu = new SelectMenuBuilder()
             .setCustomId('main')
             .setPlaceholder(text.menuPlaceholder)
             .setDisabled(data?.disabled ?? false);
@@ -112,7 +112,7 @@ export const execute: ClientCommand['execute'] = async (
                 ]);
             }
         }
-        return new MessageActionRow().addComponents(menu);
+        return new ActionRowBuilder<SelectMenuBuilder>().addComponents(menu);
     };
 
     const getUserAPIData = () => (
@@ -211,7 +211,11 @@ export const execute: ClientCommand['execute'] = async (
     collector.on('end', async () => {
         try {
             const message = (await interaction.fetchReply()) as Message;
-            const disabledComponents = disableComponents(message.components);
+            const disabledComponents = disableComponents(
+                message.components.map(
+                    (row) => new ActionRowBuilder(row),
+                ),
+            );
 
             await interaction.editReply({
                 components: disabledComponents,
@@ -292,7 +296,7 @@ export const execute: ClientCommand['execute'] = async (
                     },
                 });
 
-                components.push(component);
+                components.push(component as ActionRowBuilder<SelectMenuBuilder>);
                 break;
             }
             case 'alerts': {
@@ -308,9 +312,9 @@ export const execute: ClientCommand['execute'] = async (
                     value.default = alerts[value.value as keyof typeof alerts];
                 }
 
-                const component = new MessageSelectMenu(menu);
+                const component = new SelectMenuBuilder(menu);
 
-                const row = new MessageActionRow().addComponents(component);
+                const row = new ActionRowBuilder<SelectMenuBuilder>().addComponents(component);
 
                 components.push(row);
                 break;
@@ -321,8 +325,8 @@ export const execute: ClientCommand['execute'] = async (
                     (structures as typeof baseStructures['friends']).channel,
                 ).select;
 
-                const component = new MessageSelectMenu(menu);
-                const row = new MessageActionRow().addComponents(component);
+                const component = new SelectMenuBuilder(menu);
+                const row = new ActionRowBuilder<SelectMenuBuilder>().addComponents(component);
 
                 components.push(row);
                 break;
@@ -340,9 +344,9 @@ export const execute: ClientCommand['execute'] = async (
                     value.default = gameTypes.includes(value.value);
                 }
 
-                const component = new MessageSelectMenu(menu);
+                const component = new SelectMenuBuilder(menu);
 
-                const row = new MessageActionRow().addComponents(component);
+                const row = new ActionRowBuilder<SelectMenuBuilder>().addComponents(component);
 
                 components.push(row);
                 break;
@@ -360,9 +364,9 @@ export const execute: ClientCommand['execute'] = async (
                     value.default = languages.includes(value.value);
                 }
 
-                const component = new MessageSelectMenu(menu);
+                const component = new SelectMenuBuilder(menu);
 
-                const row = new MessageActionRow().addComponents(component);
+                const row = new ActionRowBuilder<SelectMenuBuilder>().addComponents(component);
 
                 components.push(row);
                 break;
@@ -380,9 +384,9 @@ export const execute: ClientCommand['execute'] = async (
                     value.default = versions.includes(value.value);
                 }
 
-                const component = new MessageSelectMenu(menu);
+                const component = new SelectMenuBuilder(menu);
 
-                const row = new MessageActionRow().addComponents(component);
+                const row = new ActionRowBuilder<SelectMenuBuilder>().addComponents(component);
 
                 components.push(row);
                 break;
@@ -395,14 +399,14 @@ export const execute: ClientCommand['execute'] = async (
                     (structures as typeof baseStructures['rewards']).alertTime,
                 ).select;
 
-                const component = new MessageSelectMenu(menu);
+                const component = new SelectMenuBuilder(menu);
 
                 // eslint-disable-next-line no-restricted-syntax
                 for (const value of component.options!) {
-                    value.default = Number(value.value) === alertTime;
+                    value.data.default = Number(value.data.value) === alertTime;
                 }
 
-                const row = new MessageActionRow().addComponents(component);
+                const row = new ActionRowBuilder<SelectMenuBuilder>().addComponents(component);
 
                 components.push(row);
                 break;
@@ -419,7 +423,7 @@ export const execute: ClientCommand['execute'] = async (
                     },
                 });
 
-                components.push(component);
+                components.push(component as ActionRowBuilder<SelectMenuBuilder>);
                 break;
             }
             case 'milestones': {
@@ -434,7 +438,7 @@ export const execute: ClientCommand['execute'] = async (
                     },
                 });
 
-                components.push(component);
+                components.push(component as ActionRowBuilder<SelectMenuBuilder>);
                 break;
             }
             case 'notificationInterval': {
@@ -445,14 +449,14 @@ export const execute: ClientCommand['execute'] = async (
                     (structures as typeof baseStructures['rewards']).notificationInterval,
                 ).select;
 
-                const component = new MessageSelectMenu(menu);
+                const component = new SelectMenuBuilder(menu);
 
                 // eslint-disable-next-line no-restricted-syntax
                 for (const value of component.options!) {
-                    value.default = Number(value.value) === notificationInterval;
+                    value.data.default = Number(value.data.value) === notificationInterval;
                 }
 
-                const row = new MessageActionRow().addComponents(component);
+                const row = new ActionRowBuilder<SelectMenuBuilder>().addComponents(component);
 
                 components.push(row);
                 break;
@@ -507,7 +511,7 @@ export const execute: ClientCommand['execute'] = async (
                     },
                 });
 
-                components.push(component);
+                components.push(component as ActionRowBuilder<SelectMenuBuilder>);
 
                 SQLite.updateUser<UserAPIData>({
                     discordID: userAPIData.discordID,
@@ -541,10 +545,10 @@ export const execute: ClientCommand['execute'] = async (
                     ] === true;
                 }
 
-                const component = new MessageSelectMenu(updatedMenu);
+                const component = new SelectMenuBuilder(updatedMenu);
 
                 components.push(
-                    new MessageActionRow()
+                    new ActionRowBuilder<SelectMenuBuilder>()
                         .addComponents(component),
                 );
 
@@ -570,10 +574,10 @@ export const execute: ClientCommand['execute'] = async (
                     value.default = selectedValues.includes(value.value);
                 }
 
-                const component = new MessageSelectMenu(updatedMenu);
+                const component = new SelectMenuBuilder(updatedMenu);
 
                 components.push(
-                    new MessageActionRow()
+                    new ActionRowBuilder<SelectMenuBuilder>()
                         .addComponents(component),
                 );
 
@@ -599,10 +603,10 @@ export const execute: ClientCommand['execute'] = async (
                     value.default = selectedValues.includes(value.value);
                 }
 
-                const component = new MessageSelectMenu(updatedMenu);
+                const component = new SelectMenuBuilder(updatedMenu);
 
                 components.push(
-                    new MessageActionRow()
+                    new ActionRowBuilder<SelectMenuBuilder>()
                         .addComponents(component),
                 );
 
@@ -628,10 +632,10 @@ export const execute: ClientCommand['execute'] = async (
                     value.default = selectedValues.includes(value.value);
                 }
 
-                const component = new MessageSelectMenu(updatedMenu);
+                const component = new SelectMenuBuilder(updatedMenu);
 
                 components.push(
-                    new MessageActionRow()
+                    new ActionRowBuilder<SelectMenuBuilder>()
                         .addComponents(component),
                 );
 
@@ -657,10 +661,10 @@ export const execute: ClientCommand['execute'] = async (
                     value.default = value.value === time;
                 }
 
-                const component = new MessageSelectMenu(updatedMenu);
+                const component = new SelectMenuBuilder(updatedMenu);
 
                 components.push(
-                    new MessageActionRow()
+                    new ActionRowBuilder<SelectMenuBuilder>()
                         .addComponents(component),
                 );
 
@@ -686,7 +690,7 @@ export const execute: ClientCommand['execute'] = async (
                     },
                 });
 
-                components.push(component);
+                components.push(component as ActionRowBuilder<SelectMenuBuilder>);
 
                 SQLite.updateUser<RewardsModule>({
                     discordID: interaction.user.id,
@@ -710,7 +714,7 @@ export const execute: ClientCommand['execute'] = async (
                     },
                 });
 
-                components.push(component);
+                components.push(component as ActionRowBuilder<SelectMenuBuilder>);
 
                 SQLite.updateUser<RewardsModule>({
                     discordID: interaction.user.id,
@@ -734,10 +738,11 @@ export const execute: ClientCommand['execute'] = async (
                     value.default = value.value === time;
                 }
 
-                const component = new MessageSelectMenu(updatedMenu);
+                const component = new SelectMenuBuilder(updatedMenu);
 
                 components.push(
-                    new MessageActionRow().addComponents(component),
+                    new ActionRowBuilder<SelectMenuBuilder>()
+                        .addComponents(component),
                 );
 
                 SQLite.updateUser<RewardsModule>({

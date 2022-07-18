@@ -1,6 +1,6 @@
 import {
+    EmbedBuilder,
     type CommandInteraction,
-    MessageEmbed,
 } from 'discord.js';
 import { BaseInteractionErrorHandler } from './BaseInteractionErrorHandler';
 import { ErrorHandler } from './ErrorHandler';
@@ -51,7 +51,7 @@ export class CommandErrorHandler<E> extends BaseInteractionErrorHandler<E> {
 
         const { replace } = RegionLocales;
 
-        const embed = new MessageEmbed()
+        const embed = new EmbedBuilder()
             .setColor(Constants.colors.error)
             .setTitle(text.commandErrors.embed.title)
             .setDescription(replace(text.commandErrors.embed.description, {

@@ -1125,9 +1125,5 @@
                 ]
             }
         }
-    },
-    "deprecation": {
-        "title": "NotifHy End of Life",
-        "description": "NotifHy is being discontinued and will be taken offline <t:1657047600:R>. Until then, you can continue to use this bot unless circumstances change earlier. Once NotifHy is taken offline, all user data will be destroyed as per our privacy policy."
     }
 }

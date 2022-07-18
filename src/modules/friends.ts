@@ -1,6 +1,6 @@
 import {
+    EmbedBuilder,
     Formatters,
-    MessageEmbed,
     TextChannel,
 } from 'discord.js';
 import {
@@ -100,14 +100,14 @@ export const execute: ClientModule['execute'] = async ({
             return;
         }
 
-        const notifications: MessageEmbed[] = [];
+        const notifications: EmbedBuilder[] = [];
 
         // eslint-disable-next-line eqeqeq
         if (newData.lastLogin != null) {
             const relative = timestamp(newData.lastLogin, 'R');
             const time = timestamp(newData.lastLogin, 'T');
 
-            const login = new MessageEmbed({
+            const login = new EmbedBuilder({
                 color: Constants.colors.on,
             })
                 .setDescription(replace(locale.login.description, {
@@ -124,7 +124,7 @@ export const execute: ClientModule['execute'] = async ({
             const relative = timestamp(newData.lastLogout, 'R');
             const time = timestamp(newData.lastLogout, 'T');
 
-            const logout = new MessageEmbed({
+            const logout = new EmbedBuilder({
                 color: Constants.colors.off,
             })
                 .setDescription(replace(locale.logout.description, {

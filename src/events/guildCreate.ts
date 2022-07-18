@@ -7,6 +7,7 @@ import { setPresence } from '../utility/utility';
 export const properties: ClientEvent['properties'] = {
     name: 'guildCreate',
     once: false,
+    rest: false,
 };
 
 export const execute: ClientEvent['execute'] = async (guild: Guild): Promise<void> => {

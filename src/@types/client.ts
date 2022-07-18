@@ -1,4 +1,5 @@
 import {
+    ChatInputCommandInteraction,
     type ChatInputApplicationCommandData,
     type Collection,
     type CommandInteraction,
@@ -21,7 +22,7 @@ export interface ClientCommand {
     },
     execute: {
         (
-            interaction: CommandInteraction,
+            interaction: ChatInputCommandInteraction,
             locale: string,
         ): Promise<void>,
     },
@@ -30,7 +31,8 @@ export interface ClientCommand {
 export interface ClientEvent {
     properties: {
         name: string,
-        once: boolean
+        once: boolean,
+        rest: boolean,
     },
     execute(...parameters: unknown[]): Promise<void> | void,
 }

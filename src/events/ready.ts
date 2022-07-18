@@ -8,6 +8,7 @@ import { setPresence } from '../utility/utility';
 export const properties: ClientEvent['properties'] = {
     name: 'ready',
     once: true,
+    rest: false,
 };
 
 export const execute: ClientEvent['execute'] = async (client: Client) => {

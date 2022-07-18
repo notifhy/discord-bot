@@ -30,6 +30,7 @@ const ownerIDs = JSON.parse(process.env.OWNERS!);
 export const properties: ClientEvent['properties'] = {
     name: 'interactionCreate',
     once: false,
+    rest: false,
 };
 
 export const execute: ClientEvent['execute'] = async (
@@ -38,12 +39,7 @@ export const execute: ClientEvent['execute'] = async (
     let userData: UserData | void;
 
     try {
-        if (interaction.isCommand()) {
-            if (interaction.channel?.isVoice()) {
-                await interaction.reply('Channel type (text in voice) is currently unsupported');
-                return;
-            }
-
+        if (interaction.isChatInputCommand()) {
             const command: ClientCommand | undefined = interaction.client.commands.get(
                 interaction.commandName,
             );
@@ -223,7 +219,7 @@ async function checkSystemMessages(
             });
         }
 
-        systemMessages.fields.splice(25);
+        systemMessages.data.fields?.splice(25);
 
         const promises = await Promise.allSettled([
             interaction.user.send({ embeds: [systemMessages] }),

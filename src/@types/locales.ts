@@ -1,6 +1,7 @@
 import {
-    type MessageSelectMenuOptions,
-    type MessageSelectOptionData,
+    SelectMenuComponentData,
+    type APISelectMenuComponent,
+    type APISelectMenuOption,
 } from 'discord.js';
 
 /*
@@ -17,20 +18,20 @@ export interface SelectMenuTopStructure {
 }
 
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
-export interface SelectMenuOptionLocale extends Omit<MessageSelectOptionData, 'value'> {
+export interface SelectMenuOptionLocale extends Omit<APISelectMenuOption, 'value'> {
 
 }
 
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
-export interface SelectMenuOptionStructure extends Omit<MessageSelectOptionData, 'label'> {
+export interface SelectMenuOptionStructure extends Omit<APISelectMenuOption, 'label'> {
 
 }
 
-export interface SelectMenuLocale extends Omit<MessageSelectMenuOptions, 'customId' | 'options'> {
+export interface SelectMenuLocale extends Omit<APISelectMenuComponent, 'custom_id' | 'options' | 'type'> {
     options: SelectMenuOptionLocale[],
 }
 
-export interface SelectMenuStructure extends Omit<MessageSelectMenuOptions, 'options'> {
+export interface SelectMenuStructure extends Omit<SelectMenuComponentData, 'options' | 'type'> {
     options: SelectMenuOptionStructure[],
 }
 

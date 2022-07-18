@@ -1,9 +1,9 @@
 import {
     type Client,
-    Constants as DiscordConstants,
     DiscordAPIError,
     type HTTPError,
     type Snowflake,
+    RESTJSONErrorCodes,
 } from 'discord.js';
 import {
     type UserAPIData,
@@ -136,7 +136,6 @@ DiscordAPIError
 
     private async handleDiscordAPICode(error: DiscordAPIError) {
         const { replace } = RegionLocales;
-        const { APIErrors } = DiscordConstants;
 
         const cleanModule = {
             cleanModule: this.error instanceof ModuleError
@@ -160,9 +159,9 @@ DiscordAPIError
         };
 
         switch (error.code) {
-            case APIErrors.UNKNOWN_CHANNEL: // Unknown channel
-            case APIErrors.MISSING_ACCESS: // Unable to access channel, server, etc.
-            case APIErrors.MISSING_PERMISSIONS: { // Missing permission(s)
+            case RESTJSONErrorCodes.UnknownChannel:
+            case RESTJSONErrorCodes.MissingAccess:
+            case RESTJSONErrorCodes.MissingPermissions: {
                 try {
                     const user = await this.client.users.fetch(this.discordID);
 
@@ -181,8 +180,8 @@ DiscordAPIError
                 }
                 // fall through - eslint
             }
-            case APIErrors.UNKNOWN_USER: // Unknown user
-            case APIErrors.CANNOT_MESSAGE_USER: { // Cannot send messages to this user
+            case RESTJSONErrorCodes.UnknownUser:
+            case RESTJSONErrorCodes.CannotSendMessagesToThisUser: {
                 message.name = `${timestamp(Date.now(), 'D')} - ${message.name}`; // Update locale
 
                 this.log('Attempting to disable module(s)');

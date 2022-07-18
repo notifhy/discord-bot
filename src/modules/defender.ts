@@ -1,6 +1,6 @@
 import {
+    APIEmbedField,
     ColorResolvable,
-    EmbedFieldData,
     Formatters,
     TextChannel,
 } from 'discord.js';
@@ -56,7 +56,7 @@ export const execute: ClientModule['execute'] = async ({
         const locale = baseLocale.defender;
         const { replace } = RegionLocales;
 
-        const fields: EmbedFieldData[] = [];
+        const fields: APIEmbedField[] = [];
         let color: ColorResolvable = Constants.colors.normal;
 
         if (

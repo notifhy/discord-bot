@@ -233,7 +233,7 @@ export const execute: ClientCommand['execute'] = async (
                 value: value,
             }));
 
-        Log.interaction(interaction, setEmbed.description);
+        Log.interaction(interaction, setEmbed.data.description);
 
         await interaction.editReply({
             embeds: [setEmbed],
@@ -266,7 +266,7 @@ export const execute: ClientCommand['execute'] = async (
                 method: method,
             }));
 
-        Log.interaction(interaction, callEmbed.description);
+        Log.interaction(interaction, callEmbed.data.description);
 
         await stats();
         await interaction.followUp({

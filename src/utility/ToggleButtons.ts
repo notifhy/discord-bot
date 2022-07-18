@@ -1,14 +1,14 @@
 import {
-    Constants,
-    MessageActionRow,
-    MessageButton,
+    ActionRowBuilder,
+    ButtonBuilder,
+    ButtonStyle,
 } from 'discord.js';
 import {
     type ButtonData,
     type LocaleButton,
 } from '../@types/locales';
 
-export class ToggleButtons extends MessageActionRow {
+export class ToggleButtons extends ActionRowBuilder {
     public constructor({
         allDisabled,
         enabled,
@@ -19,22 +19,22 @@ export class ToggleButtons extends MessageActionRow {
         buttonLocale: LocaleButton & ButtonData,
     }) {
         super();
-        const enable = new MessageButton()
+        const enable = new ButtonBuilder()
             .setCustomId(buttonLocale.enableCustomID)
             .setStyle(
                 allDisabled
-                    ? Constants.MessageButtonStyles.SECONDARY
-                    : Constants.MessageButtonStyles.SUCCESS,
+                    ? ButtonStyle.Secondary
+                    : ButtonStyle.Success,
             )
             .setLabel(buttonLocale.enable)
             .setDisabled(allDisabled || enabled);
 
-        const disable = new MessageButton()
+        const disable = new ButtonBuilder()
             .setCustomId(buttonLocale.disableCustomID)
             .setStyle(
                 allDisabled
-                    ? Constants.MessageButtonStyles.SECONDARY
-                    : Constants.MessageButtonStyles.DANGER,
+                    ? ButtonStyle.Secondary
+                    : ButtonStyle.Danger,
             )
             .setLabel(buttonLocale.disable)
             .setDisabled(allDisabled || enabled === false); // Flips boolean

@@ -1,8 +1,4 @@
-import {
-    type ExcludeEnum,
-    type PresenceStatusData,
-} from 'discord.js';
-import { type ActivityTypes } from 'discord.js/typings/enums';
+import { ActivityType, type PresenceStatusData } from 'discord.js';
 import { type ClientCommand } from '../@types/client';
 import { RegionLocales } from '../locales/RegionLocales';
 import { Constants } from '../utility/Constants';
@@ -124,7 +120,12 @@ export const execute: ClientCommand['execute'] = async (
 
         interaction.client.customPresence = {
             activities: [{
-                type: (type ?? currentActivity.type) as ExcludeEnum<typeof ActivityTypes, 'CUSTOM'>,
+                type: (type ?? currentActivity.type) as
+                    | ActivityType.Playing
+                    | ActivityType.Streaming
+                    | ActivityType.Listening
+                    | ActivityType.Watching
+                    | ActivityType.Competing,
                 name: name ?? currentActivity.name,
                 url: url ?? currentActivity.url ?? undefined,
             }],

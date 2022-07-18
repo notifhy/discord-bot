@@ -10,6 +10,7 @@ import {
 export const properties: ClientEvent['properties'] = {
     name: 'guildDelete',
     once: false,
+    rest: false,
 };
 
 export const execute: ClientEvent['execute'] = async (guild: Guild): Promise<void> => {

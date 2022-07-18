@@ -1,6 +1,6 @@
 import {
-    ColorResolvable,
-    Permissions,
+    ActivityType,
+    PermissionFlagsBits,
     PresenceData,
 } from 'discord.js';
 import { type Table } from '../@types/database';
@@ -13,12 +13,12 @@ export const Constants = {
         modes: modes,
     },
     colors: {
-        error: 0xAA0000 as ColorResolvable,
-        warning: 0xFF5555 as ColorResolvable,
-        normal: 0x2f3136 as ColorResolvable, // #7289DA
-        ok: 0xFFAA00 as ColorResolvable,
-        on: 0x00AA00 as ColorResolvable,
-        off: 0x555555 as ColorResolvable,
+        error: 0xAA0000,
+        warning: 0xFF5555,
+        normal: 0x2f3136, // #7289DA
+        ok: 0xFFAA00,
+        on: 0x00AA00,
+        off: 0x555555,
     },
     defaults: {
         defenderAlerts: {
@@ -43,7 +43,7 @@ export const Constants = {
         presence: {
             activities: [{
                 name: '{{ accounts }} accounts | /register /help | {{ servers }} servers',
-                type: 'WATCHING',
+                type: ActivityType.Watching,
             }],
             status: 'online',
         } as PresenceData,
@@ -83,16 +83,16 @@ export const Constants = {
     modules: {
         defender: {
             permissions: [
-                Permissions.FLAGS.EMBED_LINKS,
-                Permissions.FLAGS.SEND_MESSAGES,
-                Permissions.FLAGS.VIEW_CHANNEL,
+                PermissionFlagsBits.EmbedLinks,
+                PermissionFlagsBits.SendMessages,
+                PermissionFlagsBits.ViewChannel,
             ],
         },
         friends: {
             permissions: [
-                Permissions.FLAGS.EMBED_LINKS,
-                Permissions.FLAGS.SEND_MESSAGES,
-                Permissions.FLAGS.VIEW_CHANNEL,
+                PermissionFlagsBits.EmbedLinks,
+                PermissionFlagsBits.SendMessages,
+                PermissionFlagsBits.ViewChannel,
             ],
         },
         rewards: {

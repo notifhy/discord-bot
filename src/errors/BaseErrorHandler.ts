@@ -11,7 +11,7 @@ export class BaseErrorHandler<E> {
 
     public constructor(error: E) {
         this.error = error;
-        this.incidentID = SnowflakeUtil.generate();
+        this.incidentID = SnowflakeUtil.generate().toString();
         this.sentry = new Sentry().baseErrorContext(this.incidentID);
     }
 

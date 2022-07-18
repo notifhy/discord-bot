@@ -170,7 +170,7 @@ export const execute: ClientCommand['execute'] = async (
                 },
             ];
 
-            Log.interaction(interaction, guildEmbed.description);
+            Log.interaction(interaction, guildEmbed.data.description);
         } else {
             config.blockedGuilds.splice(blockedGuildIndex, 1);
 
@@ -187,7 +187,7 @@ export const execute: ClientCommand['execute'] = async (
 
         interaction.client.config.blockedGuilds = config.blockedGuilds;
 
-        Log.interaction(interaction, guildEmbed.description);
+        Log.interaction(interaction, guildEmbed.data.description);
     }
 
     function blockUserCommand() {
@@ -219,7 +219,7 @@ export const execute: ClientCommand['execute'] = async (
 
         interaction.client.config.blockedUsers = config.blockedUsers;
 
-        Log.interaction(interaction, userEmbed.description);
+        Log.interaction(interaction, userEmbed.data.description);
     }
 
     function coreCommand() {
@@ -237,7 +237,7 @@ export const execute: ClientCommand['execute'] = async (
 
         payload.embeds = [coreEmbed];
 
-        Log.interaction(interaction, coreEmbed.description);
+        Log.interaction(interaction, coreEmbed.data.description);
     }
 
     function devModeCommand() {
@@ -255,7 +255,7 @@ export const execute: ClientCommand['execute'] = async (
 
         payload.embeds = [devModeEmbed];
 
-        Log.interaction(interaction, devModeEmbed.description);
+        Log.interaction(interaction, devModeEmbed.data.description);
     }
 
     function keyPercentageCommand() {
@@ -272,7 +272,7 @@ export const execute: ClientCommand['execute'] = async (
 
         payload.embeds = [keyPercentageEmbed];
 
-        Log.interaction(interaction, keyPercentageEmbed.description);
+        Log.interaction(interaction, keyPercentageEmbed.data.description);
     }
 
     function restRequestTimeoutCommand() {
@@ -289,7 +289,7 @@ export const execute: ClientCommand['execute'] = async (
 
         payload.embeds = [keyPercentageEmbed];
 
-        Log.interaction(interaction, keyPercentageEmbed.description);
+        Log.interaction(interaction, keyPercentageEmbed.data.description);
     }
 
     function retryLimitCommand() {
@@ -306,7 +306,7 @@ export const execute: ClientCommand['execute'] = async (
 
         payload.embeds = [keyPercentageEmbed];
 
-        Log.interaction(interaction, keyPercentageEmbed.description);
+        Log.interaction(interaction, keyPercentageEmbed.data.description);
     }
 
     function viewCommand() {

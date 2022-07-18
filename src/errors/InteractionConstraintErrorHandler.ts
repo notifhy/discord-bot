@@ -17,6 +17,7 @@ import {
     cleanRound,
 } from '../utility/utility';
 
+// eslint-disable-next-line max-len
 export class InteractionConstraintErrorHandler extends BaseInteractionErrorHandler<ConstraintError> {
     public readonly interaction: CommandInteraction;
 

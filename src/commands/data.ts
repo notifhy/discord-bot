@@ -1,9 +1,10 @@
 import { Buffer } from 'node:buffer';
 import {
-    Constants as DiscordConstants,
+    ActionRowBuilder,
+    ButtonBuilder,
+    ButtonStyle,
+    ComponentType,
     type Message,
-    MessageActionRow,
-    MessageButton,
     type MessageComponentInteraction,
 } from 'discord.js';
 import { type ClientCommand } from '../@types/client';
@@ -94,17 +95,17 @@ export const execute: ClientCommand['execute'] = async (
             .setTitle(text.delete.confirm.title)
             .setDescription(text.delete.confirm.description);
 
-        const yesButton = new MessageButton()
+        const yesButton = new ButtonBuilder()
             .setCustomId('true')
             .setLabel(text.delete.yesButton)
-            .setStyle(DiscordConstants.MessageButtonStyles.SUCCESS);
+            .setStyle(ButtonStyle.Success);
 
-        const noButton = new MessageButton()
+        const noButton = new ButtonBuilder()
             .setCustomId('false')
             .setLabel(text.delete.noButton)
-            .setStyle(DiscordConstants.MessageButtonStyles.DANGER);
+            .setStyle(ButtonStyle.Danger);
 
-        const buttonRow = new MessageActionRow().addComponents(
+        const buttonRow = new ActionRowBuilder<ButtonBuilder>().addComponents(
             yesButton,
             noButton,
         );
@@ -114,7 +115,11 @@ export const execute: ClientCommand['execute'] = async (
             components: [buttonRow],
         }) as Message;
 
-        const disabledRows = disableComponents(message.components);
+        const disabledRows = disableComponents(
+            message.components.map(
+                (row) => new ActionRowBuilder(row),
+            ),
+        );
 
         await interaction.client.channels.fetch(interaction.channelId);
 
@@ -124,7 +129,7 @@ export const execute: ClientCommand['execute'] = async (
         };
 
         const button = await awaitComponent(interaction.channel!, {
-            componentType: 'BUTTON',
+            componentType: ComponentType.Button,
             filter: componentFilter,
             idle: Constants.ms.second * 30,
         });
@@ -262,34 +267,36 @@ export const execute: ClientCommand['execute'] = async (
             history: [],
         };
 
-        const base = new MessageButton()
+        const base = new ButtonBuilder()
             .setStyle(
-                DiscordConstants.MessageButtonStyles.PRIMARY,
-            );
+                ButtonStyle.Primary,
+            ).data;
 
-        const fastLeftButton = new MessageButton(base)
+        const fastLeftButton = new ButtonBuilder(base)
             .setCustomId('fastBackward')
             .setEmoji(Constants.emoji.fastBackward)
             .setDisabled(true);
 
-        const leftButton = new MessageButton(base)
+        const leftButton = new ButtonBuilder(base)
             .setCustomId('backward')
             .setEmoji(Constants.emoji.backward)
             .setDisabled(true);
 
-        const rightButton = new MessageButton(base)
+        const rightButton = new ButtonBuilder(base)
             .setCustomId('forward')
             .setEmoji(Constants.emoji.forward);
 
-        const fastRightButton = new MessageButton(base)
+        const fastRightButton = new ButtonBuilder(base)
             .setCustomId('fastForward')
             .setEmoji(Constants.emoji.fastForward);
 
-        rightButton.disabled = userAPIData.history.length
-            <= Constants.defaults.menuFastIncrements;
+        rightButton.setDisabled(
+            userAPIData.history.length <= Constants.defaults.menuFastIncrements,
+        );
 
-        fastRightButton.disabled = userAPIData.history.length
-            <= Constants.defaults.menuIncrements;
+        fastRightButton.setDisabled(
+            userAPIData.history.length <= Constants.defaults.menuIncrements,
+        );
 
         const { keys } = text.history;
         const epoch = /^\d{13,}$/gm;
@@ -334,7 +341,7 @@ export const execute: ClientCommand['execute'] = async (
                 .setFields(fields);
         };
 
-        const buttons = new MessageActionRow()
+        const buttons = new ActionRowBuilder<ButtonBuilder>()
             .setComponents(
                 fastLeftButton,
                 leftButton,
@@ -379,19 +386,21 @@ export const execute: ClientCommand['execute'] = async (
                     // no default
                 }
 
-                fastLeftButton.disabled = currentIndex
-                    - Constants.defaults.menuFastIncrements < 0;
+                fastLeftButton.setDisabled(
+                    currentIndex - Constants.defaults.menuFastIncrements < 0,
+                );
 
-                leftButton.disabled = currentIndex
-                    - Constants.defaults.menuIncrements < 0;
+                leftButton.setDisabled(
+                    currentIndex - Constants.defaults.menuIncrements < 0,
+                );
 
-                rightButton.disabled = currentIndex
-                    + Constants.defaults.menuIncrements
-                        >= userAPIData.history.length;
+                rightButton.setDisabled(
+                    currentIndex + Constants.defaults.menuIncrements >= userAPIData.history.length,
+                );
 
-                fastRightButton.disabled = currentIndex
-                    + Constants.defaults.menuFastIncrements
-                        >= userAPIData.history.length;
+                fastRightButton.setDisabled(
+                    currentIndex + Constants.defaults.menuFastIncrements >= userAPIData.history.length,
+                );
 
                 buttons.setComponents(
                     fastLeftButton,
@@ -412,7 +421,9 @@ export const execute: ClientCommand['execute'] = async (
         collector.on('end', async () => {
             try {
                 const message = (await interaction.fetchReply()) as Message;
-                const actionRows = message.components;
+                const actionRows = message.components.map(
+                    (row) => new ActionRowBuilder(row),
+                );
                 const disabledRows = disableComponents(actionRows);
 
                 await interaction.editReply({

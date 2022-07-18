@@ -1,12 +1,17 @@
 import {
+    ActionRowBuilder,
+    APIEmbedField,
+    ApplicationCommandOptionType,
     AwaitMessageCollectorOptionsParams,
+    ButtonBuilder,
     Client,
     CommandInteraction,
-    EmbedFieldData,
+    EmbedBuilder,
     Formatters,
-    MessageActionRow,
-    MessageComponentTypeResolvable,
-    MessageEmbed,
+    MessageComponentType,
+    normalizeArray,
+    RestOrArray,
+    SelectMenuBuilder,
     TextBasedChannel,
     WebhookClient,
     WebhookMessageOptions,
@@ -23,7 +28,7 @@ export function arrayRemove<Type extends unknown[]>(
     return array.filter((item) => !(items.includes(item))) as Type;
 }
 
-export async function awaitComponent<T extends MessageComponentTypeResolvable>(
+export async function awaitComponent<T extends MessageComponentType>(
     channel: TextBasedChannel,
     options: AwaitMessageCollectorOptionsParams<T, true>,
 ) {
@@ -49,14 +54,14 @@ type Footer =
     }
     | CommandInteraction;
 
-export class BetterEmbed extends MessageEmbed {
+export class BetterEmbed extends EmbedBuilder {
     public constructor(footer?: Footer) {
         super();
         this.setTimestamp();
 
         if (footer instanceof CommandInteraction) {
             const interaction = footer;
-            const avatar = interaction.user.displayAvatarURL({ dynamic: true });
+            const avatar = interaction.user.displayAvatarURL();
             this.setFooter({ text: `/${interaction.commandName}`, iconURL: avatar });
         } else if (footer !== undefined) {
             this.setFooter({ text: footer.text, iconURL: footer.iconURL });
@@ -69,18 +74,9 @@ export class BetterEmbed extends MessageEmbed {
         return this;
     }
 
-    public unshiftField(
-        name: string,
-        value: string,
-        inline?: boolean | undefined,
-    ): this {
-        this.unshiftFields({ name: name, value: value, inline: inline });
-
-        return this;
-    }
-
-    public unshiftFields(...fields: EmbedFieldData[] | EmbedFieldData[][]): this {
-        this.fields.unshift(...MessageEmbed.normalizeFields(...fields));
+    public unshiftFields(...fields: RestOrArray<APIEmbedField>): this {
+        this.data.fields ??= [];
+        this.data.fields.unshift(...normalizeArray(fields));
 
         return this;
     }
@@ -241,9 +237,9 @@ export function createOffset(date = new Date()): string {
     return `${sign + hours}:${minutes}`;
 }
 
-export function disableComponents(messageActionRows: MessageActionRow[]) {
+export function disableComponents(messageActionRows: ActionRowBuilder[]) {
     const actionRows = messageActionRows
-        .map((row) => new MessageActionRow(row));
+        .map((row) => new ActionRowBuilder<SelectMenuBuilder | ButtonBuilder>(row));
 
     // eslint-disable-next-line no-restricted-syntax
     for (const actionRow of actionRows) {
@@ -251,7 +247,7 @@ export function disableComponents(messageActionRows: MessageActionRow[]) {
 
         // eslint-disable-next-line no-restricted-syntax
         for (const component of components) {
-            component.disabled = true;
+            component.setDisabled();
         }
     }
 
@@ -388,12 +384,12 @@ export const slashCommandResolver = (interaction: CommandInteraction) => {
             );
         }
 
-        if (option.type === 'SUB_COMMAND_GROUP') {
+        if (option.type === ApplicationCommandOptionType.SubcommandGroup) {
             commandOptions.push(option.name);
             [option] = option.options!;
         }
 
-        if (option.type === 'SUB_COMMAND') {
+        if (option.type === ApplicationCommandOptionType.Subcommand) {
             commandOptions.push(value.name);
         }
 

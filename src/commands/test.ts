@@ -1,7 +1,8 @@
 import {
+    ActionRowBuilder,
+    ButtonBuilder,
+    ButtonStyle,
     type CommandInteraction,
-    MessageActionRow,
-    MessageButton,
 } from 'discord.js';
 import { type ClientCommand } from '../@types/client';
 
@@ -53,10 +54,13 @@ export const execute: ClientCommand['execute'] = async (
         ).createDM()
     ).id;
 
-    const button = new MessageButton()
-        .setStyle('LINK')
+    const button = new ButtonBuilder()
+        .setStyle(ButtonStyle.Link)
         .setLabel('aaaa')
         .setURL(`discord://-/channels/@me/${channel}`);
 
-    await interaction.followUp({ content: 'e', components: [new MessageActionRow().setComponents(button)] });
+    await interaction.followUp({
+        content: 'e',
+        components: [new ActionRowBuilder<ButtonBuilder>().addComponents(button)],
+    });
 };

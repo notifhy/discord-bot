@@ -4,6 +4,7 @@ import { Log } from '../utility/Log';
 export const properties: ClientEvent['properties'] = {
     name: 'warn',
     once: false,
+    rest: false,
 };
 
 export const execute: ClientEvent['execute'] = (info: string): void => {

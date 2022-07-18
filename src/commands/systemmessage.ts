@@ -1,10 +1,11 @@
 import {
-    Constants as DiscordConstants,
+    ActionRowBuilder,
+    ButtonBuilder,
+    ButtonStyle,
+    ComponentType,
+    EmbedBuilder,
     type Message,
-    MessageActionRow,
-    MessageButton,
     type MessageComponentInteraction,
-    MessageEmbed,
 } from 'discord.js';
 import { type ClientCommand } from '../@types/client';
 import { type UserData } from '../@types/database';
@@ -89,12 +90,12 @@ export const execute: ClientCommand['execute'] = async (
 
     name = `${timestamp(Date.now(), 'D')} - ${name}`;
 
-    const buttons = new MessageActionRow()
+    const buttons = new ActionRowBuilder<ButtonBuilder>()
         .setComponents(
-            new MessageButton()
+            new ButtonBuilder()
                 .setCustomId('true')
                 .setLabel(text.preview.buttonLabel)
-                .setStyle(DiscordConstants.MessageButtonStyles.PRIMARY),
+                .setStyle(ButtonStyle.Primary),
         );
 
     const validateEmbed = new BetterEmbed(interaction)
@@ -125,7 +126,7 @@ export const execute: ClientCommand['execute'] = async (
     const disabledRows = disableComponents([buttons]);
 
     const button = await awaitComponent(interaction.channel!, {
-        componentType: 'BUTTON',
+        componentType: ComponentType.Button,
         filter: componentFilter,
         idle: Constants.ms.second * 30,
     });
@@ -154,7 +155,7 @@ export const execute: ClientCommand['execute'] = async (
         },
     });
 
-    const successEmbed = new MessageEmbed(validateEmbed)
+    const successEmbed = new EmbedBuilder(validateEmbed.data)
         .setTitle(text.success.title)
         .setDescription(text.success.description);
 

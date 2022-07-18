@@ -1,9 +1,9 @@
 import {
-    Constants as DiscordConstants,
+    ActionRowBuilder,
+    ButtonBuilder,
+    ButtonStyle,
     Formatters,
     type Message,
-    MessageActionRow,
-    MessageButton,
     type MessageComponentInteraction,
 } from 'discord.js';
 import { type ClientCommand } from '../@types/client';
@@ -234,10 +234,10 @@ export const execute: ClientCommand['execute'] = async (
 
         const { username } = ((await responses[1].json()) as PlayerDB).data.player;
 
-        const base = new MessageButton()
+        const base = new ButtonBuilder()
             .setStyle(
-                DiscordConstants.MessageButtonStyles.PRIMARY,
-            );
+                ButtonStyle.Primary,
+            ).data;
 
         const paginator = (position: number): BetterEmbed => {
             const shownData = recentGames.slice(
@@ -282,29 +282,29 @@ export const execute: ClientCommand['execute'] = async (
                 .setFields(fields);
         };
 
-        const fastLeftButton = new MessageButton(base)
+        const fastLeftButton = new ButtonBuilder(base)
             .setCustomId('fastBackward')
             .setEmoji(Constants.emoji.fastBackward)
             .setDisabled(true);
 
-        const leftButton = new MessageButton(base)
+        const leftButton = new ButtonBuilder(base)
             .setCustomId('backward')
             .setEmoji(Constants.emoji.backward)
             .setDisabled(true);
 
-        const rightButton = new MessageButton(base)
+        const rightButton = new ButtonBuilder(base)
             .setCustomId('forward')
             .setEmoji(Constants.emoji.forward);
 
-        const fastRightButton = new MessageButton(base)
+        const fastRightButton = new ButtonBuilder(base)
             .setCustomId('fastForward')
             .setEmoji(Constants.emoji.fastForward);
 
-        rightButton.disabled = recentGames.length <= Constants.defaults.menuIncrements;
+        rightButton.setDisabled(recentGames.length <= Constants.defaults.menuIncrements);
 
-        fastRightButton.disabled = recentGames.length <= Constants.defaults.menuFastIncrements;
+        fastRightButton.setDisabled(recentGames.length <= Constants.defaults.menuFastIncrements);
 
-        const buttons = new MessageActionRow()
+        const buttons = new ActionRowBuilder<ButtonBuilder>()
             .setComponents(
                 fastLeftButton,
                 leftButton,
@@ -349,15 +349,21 @@ export const execute: ClientCommand['execute'] = async (
                     // no default
                 }
 
-                fastLeftButton.disabled = currentIndex - Constants.defaults.menuFastIncrements < 0;
+                fastLeftButton.setDisabled(
+                    currentIndex - Constants.defaults.menuFastIncrements < 0,
+                );
 
-                leftButton.disabled = currentIndex - Constants.defaults.menuIncrements < 0;
+                leftButton.setDisabled(
+                    currentIndex - Constants.defaults.menuIncrements < 0,
+                );
 
-                rightButton.disabled = currentIndex + Constants.defaults.menuIncrements
-                    >= recentGames.length;
+                rightButton.setDisabled(
+                    currentIndex + Constants.defaults.menuIncrements >= recentGames.length,
+                );
 
-                fastRightButton.disabled = currentIndex + Constants.defaults.menuFastIncrements
-                    >= recentGames.length;
+                fastRightButton.setDisabled(
+                    currentIndex + Constants.defaults.menuFastIncrements >= recentGames.length,
+                );
 
                 buttons.setComponents(
                     fastLeftButton,
@@ -378,7 +384,9 @@ export const execute: ClientCommand['execute'] = async (
         collector.on('end', async () => {
             try {
                 const message = (await interaction.fetchReply()) as Message;
-                const actionRows = message.components;
+                const actionRows = message.components.map(
+                    (row) => new ActionRowBuilder(row),
+                );
                 const disabledRows = disableComponents(actionRows);
 
                 await interaction.editReply({

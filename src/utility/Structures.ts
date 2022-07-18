@@ -1,4 +1,4 @@
-import { type MessageSelectMenuOptions } from 'discord.js';
+import { type SelectMenuComponentData } from 'discord.js';
 import {
     type SelectMenuLocale,
     type SelectMenuStructure,
@@ -28,7 +28,7 @@ export function combiner(
     combined.select.options = options;
 
     return combined as unknown as {
-        select: MessageSelectMenuOptions
+        select: SelectMenuComponentData
     } & SelectMenuLocale & SelectMenuStructure;
 }
 

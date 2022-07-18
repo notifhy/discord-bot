@@ -2,8 +2,8 @@ import * as SentryClient from '@sentry/node';
 import {
     CommandInteraction,
     GuildChannel,
-    type Interaction,
     TextChannel,
+    BaseInteraction,
 } from 'discord.js';
 import { type Core } from '../core/Core';
 import { HTTPError } from './HTTPError';
@@ -24,7 +24,7 @@ export class Sentry {
         return this;
     }
 
-    public baseInteractionContext(interaction: Interaction) {
+    public baseInteractionContext(interaction: BaseInteraction) {
         const {
             user,
             guild,
@@ -45,14 +45,14 @@ export class Sentry {
             guildName: guild?.name,
             guildOwnerID: guild?.ownerId,
             guildMemberCount: guild?.memberCount,
-            guildPermissions: guild?.me?.permissions.bitfield.toString(),
+            guildPermissions: guild?.members?.me?.permissions.bitfield.toString(),
             channelID: channel?.id,
             channelType: channel?.type,
             channelName: channel instanceof TextChannel
                 ? channel.name
                 : null,
             channelPermissions: channel instanceof GuildChannel
-                ? guild?.me?.permissionsIn(channel).bitfield.toString()
+                ? guild?.members?.me?.permissionsIn(channel).bitfield.toString()
                 : null,
             ping: client.ws.ping,
         });

@@ -1,8 +1,8 @@
 import {
+    ChannelType,
     Formatters,
-    Permissions,
+    PermissionFlagsBits,
 } from 'discord.js';
-import { ChannelTypes } from 'discord.js/typings/enums';
 import { type ClientCommand } from '../@types/client';
 import {
     type DefenderModule,
@@ -45,7 +45,7 @@ export const properties: ClientCommand['properties'] = {
                                 name: 'channel',
                                 description: 'A channel to send alerts to',
                                 type: 7,
-                                channel_types: [ChannelTypes.GUILD_TEXT],
+                                channel_types: [ChannelType.GuildText],
                                 required: true,
                             },
                         ],
@@ -71,7 +71,7 @@ export const properties: ClientCommand['properties'] = {
                                 name: 'channel',
                                 description: 'A channel to send logins and logouts to',
                                 type: 7,
-                                channel_types: [ChannelTypes.GUILD_TEXT],
+                                channel_types: [ChannelType.GuildText],
                                 required: true,
                             },
                         ],
@@ -116,8 +116,8 @@ export const execute: ClientCommand['execute'] = async (
     const userHasPermission = interaction.channel!
         .permissionsFor(interaction.member)
         .any([
-            Permissions.FLAGS.MANAGE_CHANNELS,
-            Permissions.FLAGS.MANAGE_WEBHOOKS,
+            PermissionFlagsBits.ManageChannels,
+            PermissionFlagsBits.ManageWebhooks,
         ]);
 
     if (userHasPermission === false) {
