@@ -4,7 +4,6 @@ import {
     ButtonStyle,
     ComponentType,
     EmbedBuilder,
-    type Message,
     type MessageComponentInteraction,
 } from 'discord.js';
 import { type ClientCommand } from '../@types/client';
@@ -116,14 +115,14 @@ export const execute: ClientCommand['execute'] = async (
     const message = await interaction.editReply({
         embeds: [validateEmbed],
         components: [buttons],
-    }) as Message;
+    });
 
     await interaction.client.channels.fetch(interaction.channelId);
 
     const componentFilter = (i: MessageComponentInteraction) => interaction.user.id === i.user.id
         && i.message.id === message.id;
 
-    const disabledRows = disableComponents([buttons]);
+    const disabledRows = disableComponents(message.components);
 
     const button = await awaitComponent(interaction.channel!, {
         componentType: ComponentType.Button,

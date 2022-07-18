@@ -116,9 +116,7 @@ export const execute: ClientCommand['execute'] = async (
         }) as Message;
 
         const disabledRows = disableComponents(
-            message.components.map(
-                (row) => new ActionRowBuilder(row),
-            ),
+            message.components,
         );
 
         await interaction.client.channels.fetch(interaction.channelId);
@@ -363,7 +361,7 @@ export const execute: ClientCommand['execute'] = async (
 
         const collector = interaction.channel!.createMessageComponentCollector({
             filter: filter,
-            idle: Constants.ms.minute * 5,
+            idle: Constants.ms.minute * 0.1,
             time: Constants.ms.minute * 30,
         });
 
@@ -421,10 +419,9 @@ export const execute: ClientCommand['execute'] = async (
         collector.on('end', async () => {
             try {
                 const message = (await interaction.fetchReply()) as Message;
-                const actionRows = message.components.map(
-                    (row) => new ActionRowBuilder(row),
-                );
-                const disabledRows = disableComponents(actionRows);
+                const disabledRows = disableComponents(message.components);
+
+                console.log(JSON.stringify(disabledRows, undefined, 2));
 
                 await interaction.editReply({
                     components: disabledRows,

@@ -384,10 +384,7 @@ export const execute: ClientCommand['execute'] = async (
         collector.on('end', async () => {
             try {
                 const message = (await interaction.fetchReply()) as Message;
-                const actionRows = message.components.map(
-                    (row) => new ActionRowBuilder(row),
-                );
-                const disabledRows = disableComponents(actionRows);
+                const disabledRows = disableComponents(message.components);
 
                 await interaction.editReply({
                     components: disabledRows,

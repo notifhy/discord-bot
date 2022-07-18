@@ -1,17 +1,19 @@
 import {
+    ActionRow,
     ActionRowBuilder,
+    APIActionRowComponent,
     APIEmbedField,
+    APIMessageActionRowComponent,
     ApplicationCommandOptionType,
     AwaitMessageCollectorOptionsParams,
-    ButtonBuilder,
     Client,
     CommandInteraction,
     EmbedBuilder,
     Formatters,
+    MessageActionRowComponent,
     MessageComponentType,
     normalizeArray,
     RestOrArray,
-    SelectMenuBuilder,
     TextBasedChannel,
     WebhookClient,
     WebhookMessageOptions,
@@ -237,9 +239,10 @@ export function createOffset(date = new Date()): string {
     return `${sign + hours}:${minutes}`;
 }
 
-export function disableComponents(messageActionRows: ActionRowBuilder[]) {
-    const actionRows = messageActionRows
-        .map((row) => new ActionRowBuilder<SelectMenuBuilder | ButtonBuilder>(row));
+export function disableComponents(rawRow: ActionRow<MessageActionRowComponent>[]) {
+    const actionRows = rawRow.map(
+        (actionRow) => ActionRowBuilder.from(actionRow),
+    );
 
     // eslint-disable-next-line no-restricted-syntax
     for (const actionRow of actionRows) {
@@ -247,11 +250,15 @@ export function disableComponents(messageActionRows: ActionRowBuilder[]) {
 
         // eslint-disable-next-line no-restricted-syntax
         for (const component of components) {
-            component.setDisabled();
+            if ('setDisabled' in component) {
+                component.setDisabled();
+            }
         }
     }
 
-    return actionRows;
+    return actionRows.map(
+        (actionRow) => actionRow.toJSON(),
+    ) as APIActionRowComponent<APIMessageActionRowComponent>[];
 }
 
 export function formattedUnix({

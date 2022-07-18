@@ -212,9 +212,7 @@ export const execute: ClientCommand['execute'] = async (
         try {
             const message = (await interaction.fetchReply()) as Message;
             const disabledComponents = disableComponents(
-                message.components.map(
-                    (row) => new ActionRowBuilder(row),
-                ),
+                message.components,
             );
 
             await interaction.editReply({
