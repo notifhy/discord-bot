@@ -361,7 +361,7 @@ export const execute: ClientCommand['execute'] = async (
 
         const collector = interaction.channel!.createMessageComponentCollector({
             filter: filter,
-            idle: Constants.ms.minute * 0.1,
+            idle: Constants.ms.minute * 5,
             time: Constants.ms.minute * 30,
         });
 
