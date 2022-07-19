@@ -421,8 +421,6 @@ export const execute: ClientCommand['execute'] = async (
                 const message = (await interaction.fetchReply()) as Message;
                 const disabledRows = disableComponents(message.components);
 
-                console.log(JSON.stringify(disabledRows, undefined, 2));
-
                 await interaction.editReply({
                     components: disabledRows,
                 });
