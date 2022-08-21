@@ -9,12 +9,13 @@ import {
     Client,
     CommandInteraction,
     EmbedBuilder,
-    Formatters,
     MessageActionRowComponent,
     MessageComponentType,
     normalizeArray,
     RestOrArray,
     TextBasedChannel,
+    time,
+    TimestampStylesString,
     WebhookClient,
     WebhookMessageOptions,
 } from 'discord.js';
@@ -425,7 +426,7 @@ export function timeAgo(ms: unknown): number | null {
 
 export function timestamp(
     ms: unknown,
-    style?: typeof Formatters.TimestampStylesString,
+    style?: TimestampStylesString,
 ) {
     if (
         !isNumber(ms)
@@ -434,7 +435,7 @@ export function timestamp(
         return null;
     }
 
-    return Formatters.time(Math.round(ms / 1000), style ?? 'f');
+    return time(Math.round(ms / 1000), style ?? 'f');
 }
 
 function isDate(value: unknown): value is Date {
