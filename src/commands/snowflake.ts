@@ -64,9 +64,9 @@ export const execute: ClientCommand['execute'] = async (
             {
                 name: text.date.name,
                 value: replace(text.date.value, {
-                    date: String(timestamp(time, 'D')),
-                    time: String(timestamp(time, 'T')),
-                    relative: String(timestamp(time, 'R')),
+                    date: String(timestamp(Number(time), 'D')),
+                    time: String(timestamp(Number(time), 'T')),
+                    relative: String(timestamp(Number(time), 'R')),
                 }),
             },
             {
