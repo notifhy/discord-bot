@@ -1,1 +1,5 @@
+.db
+.db-journal
+.env
 dist
+node_modules
