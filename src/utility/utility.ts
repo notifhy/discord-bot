@@ -17,7 +17,7 @@ import {
     time,
     TimestampStylesString,
     WebhookClient,
-    WebhookMessageOptions,
+    WebhookCreateMessageOptions,
 } from 'discord.js';
 import { type WebhookConfig } from '../@types/client';
 import { UserAPIData } from '../@types/database';
@@ -345,7 +345,7 @@ export async function sendWebHook(
     }: {
         webhook: WebhookConfig,
         suppressError?: boolean,
-    } & WebhookMessageOptions,
+    } & WebhookCreateMessageOptions,
 ): Promise<void> {
     try {
         await new WebhookClient({ id: webhook.id, token: webhook.token })

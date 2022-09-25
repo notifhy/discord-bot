@@ -16,17 +16,16 @@
         "ts-node": "^10.9.1"
     },
     "dependencies": {
-        "@discordjs/rest": "1.0.1",
-        "@googleapis/drive": "^3.0.1",
-        "@sentry/integrations": "^7.11.1",
-        "@sentry/node": "^7.11.1",
-        "@sentry/tracing": "^7.11.1",
+        "@discordjs/rest": "1.2.0",
+        "@sentry/integrations": "^7.13.0",
+        "@sentry/node": "^7.13.0",
+        "@sentry/tracing": "^7.13.0",
         "better-sqlite3-multiple-ciphers": "^7.6.2",
-        "discord-api-types": "^0.37.3",
-        "discord.js": "^14.2.0",
-        "dotenv": "^16.0.1",
+        "discord-api-types": "^0.37.10",
+        "discord.js": "^14.5.0",
+        "dotenv": "^16.0.2",
         "node-fetch": "^2.6.7",
-        "typescript": "^4.7.4"
+        "typescript": "^4.8.3"
     },
     "scripts": {
         "build": "tsc -p .",

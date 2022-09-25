@@ -316,10 +316,10 @@ export const execute: ClientCommand['execute'] = async (
                             : (
                                 // eslint-disable-next-line no-nested-ternary
                                 key === 'gameType'
-                                    ? cleanGameType(value)
+                                    ? cleanGameType(String(value))
                                     : key === 'gameMode'
-                                        ? cleanGameMode(value)
-                                        : capitolToNormal(value)
+                                        ? cleanGameMode(String(value))
+                                        : capitolToNormal(String(value))
                             ) ?? text.history.null
                     }`)
                     .join('\n'),
