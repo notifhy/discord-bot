@@ -63,7 +63,7 @@ export const execute: ClientModule['execute'] = async ({
             newData.lastLogin != null // eslint-disable-line eqeqeq
             && oldData.lastLogin != null // eslint-disable-line eqeqeq
             && defenderModule.alerts.login === true
-            && newData.lastLogin + (Constants.ms.minute * 2.5) > Date.now()
+            && newData.lastLogin + (Constants.ms.minute * 10) > Date.now()
         ) {
             const relative = timestamp(newData.lastLogin, 'R');
             const time = timestamp(newData.lastLogin, 'T');
@@ -85,7 +85,7 @@ export const execute: ClientModule['execute'] = async ({
             newData.lastLogout != null // eslint-disable-line eqeqeq
             && oldData.lastLogout != null // eslint-disable-line eqeqeq
             && defenderModule.alerts.logout === true
-            && newData.lastLogout + (Constants.ms.minute * 2.5) > Date.now()
+            && newData.lastLogout + (Constants.ms.minute * 10) > Date.now()
         ) {
             // lastLogout seems to change twice sometimes on a single logout, this is a fix for that
             // First item in array is this event, so it checks the second item

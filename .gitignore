@@ -1,4 +1,4 @@
-.db
+database.db
 .db-journal
 .env
 dist
