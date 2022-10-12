@@ -1,66 +1,70 @@
 import {
-    ActionRowBuilder,
-    ButtonBuilder,
-    ButtonStyle,
-    type CommandInteraction,
-} from 'discord.js';
-import { type ClientCommand } from '../@types/client';
+    type ApplicationCommandRegistry,
+    BucketScope,
+    Command,
+} from '@sapphire/framework';
+import { type CommandInteraction } from 'discord.js';
+import { ApplicationCommandOptionTypes } from 'discord.js/typings/enums';
+import { Options } from '../utility/Options';
 
-export const properties: ClientCommand['properties'] = {
-    name: 'test',
-    description: 'Does stuff.',
-    cooldown: 0,
-    ephemeral: true,
-    noDM: false,
-    ownerOnly: true,
-    requireRegistration: false,
-    structure: {
-        name: 'test',
-        description: 'Does stuff',
-        options: [
-            {
-                name: 'delete',
-                type: 2,
-                description: 'Delete all of your data',
-                options: [
-                    {
-                        name: 'view',
-                        description: 'Returns a file with all of your data',
-                        type: 1,
-                        options: [
-                            {
-                                name: 'command',
-                                type: 3,
-                                description:
-                                    'A command to get info about. This parameter is completely optional',
-                                required: false,
-                            },
-                        ],
-                    },
-                ],
-            },
-        ],
-    },
-};
+export class TestCommand extends Command {
+    public constructor(context: Command.Context, options: Command.Options) {
+        super(context, {
+            ...options,
+            name: 'test',
+            description: 'Does stuff',
+            cooldownLimit: 0,
+            cooldownDelay: 0,
+            cooldownScope: BucketScope.User,
+            preconditions: [
+                'Base',
+                'DevMode',
+                'OwnerOnly',
+            ],
+            requiredUserPermissions: [],
+            requiredClientPermissions: [],
+        });
 
-/* eslint-disable no-await-in-loop */
+        this.chatInputStructure = {
+            name: this.name,
+            description: this.description,
+            options: [
+                {
+                    name: 'delete',
+                    type: ApplicationCommandOptionTypes.SUB_COMMAND_GROUP,
+                    description: 'Delete all of your data',
+                    options: [
+                        {
+                            name: 'view',
+                            description: 'Returns a file with all of your data',
+                            type: ApplicationCommandOptionTypes.SUB_COMMAND,
+                            options: [
+                                {
+                                    name: 'command',
+                                    type: ApplicationCommandOptionTypes.STRING,
+                                    description: 'A command to get info about. This parameter is completely optional',
+                                    required: false,
+                                },
+                            ],
+                        },
+                    ],
+                },
+            ],
+        };
+    }
 
-export const execute: ClientCommand['execute'] = async (
-    interaction: CommandInteraction,
-): Promise<void> => {
-    const channel = (
-        await (
-            await interaction.client.users.fetch(interaction.user.id)
-        ).createDM()
-    ).id;
+    public override registerApplicationCommands(registry: ApplicationCommandRegistry) {
+        registry.registerChatInputCommand(
+            this.chatInputStructure,
+            Options.commandRegistry(this),
+        );
+    }
 
-    const button = new ButtonBuilder()
-        .setStyle(ButtonStyle.Link)
-        .setLabel('aaaa')
-        .setURL(`discord://-/channels/@me/${channel}`);
+    public async chatInputRun(interaction: CommandInteraction) {
+        await interaction.followUp({
+            content: 'e',
+        });
 
-    await interaction.followUp({
-        content: 'e',
-        components: [new ActionRowBuilder<ButtonBuilder>().addComponents(button)],
-    });
-};
+        throw new TypeError();
+    }
+}

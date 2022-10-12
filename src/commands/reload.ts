@@ -1,189 +1,206 @@
-import { type CommandInteraction } from 'discord.js';
 import {
-    type ClientEvent,
-    type ClientCommand,
-} from '../@types/client';
-import { type ClientModule } from '../@types/modules';
-import { RegionLocales } from '../locales/RegionLocales';
-import { Constants } from '../utility/Constants';
-import { Log } from '../utility/Log';
-import { BetterEmbed } from '../utility/utility';
+    type ApplicationCommandRegistry,
+    BucketScope,
+    Command,
+    type Listener,
+    Command as SapphireCommand,
+} from '@sapphire/framework';
+import { type CommandInteraction } from 'discord.js';
+import { ApplicationCommandOptionTypes } from 'discord.js/typings/enums';
+import { BetterEmbed } from '../structures/BetterEmbed';
+import { Options } from '../utility/Options';
+import { interactionLogContext } from '../utility/utility';
 
-export const properties: ClientCommand['properties'] = {
-    name: 'reload',
-    description: 'Reloads all imports or a single import.',
-    cooldown: 0,
-    ephemeral: true,
-    noDM: false,
-    ownerOnly: true,
-    requireRegistration: false,
-    structure: {
-        name: 'reload',
-        description: 'Reload',
-        options: [
-            {
-                name: 'all',
-                type: 1,
-                description: 'Refreshes all imports',
-            },
-            {
-                name: 'single',
-                type: 1,
-                description: 'Refresh a single command',
-                options: [
-                    {
-                        name: 'type',
-                        type: 3,
-                        description: 'The category to refresh',
-                        required: true,
-                        choices: [
-                            {
-                                name: 'commands',
-                                value: 'commands',
-                            },
-                            {
-                                name: 'events',
-                                value: 'events',
-                            },
-                            {
-                                name: 'modules',
-                                value: 'modules',
-                            },
-                        ],
-                    },
-                    {
-                        name: 'item',
-                        type: 3,
-                        description: 'The item to refresh',
-                        required: true,
-                    },
-                ],
-            },
-        ],
-    },
-};
+export class ReloadCommand extends Command {
+    public constructor(context: Command.Context, options: Command.Options) {
+        super(context, {
+            ...options,
+            name: 'reload',
+            description: 'Reloads all imports or a single import',
+            cooldownLimit: 0,
+            cooldownDelay: 0,
+            cooldownScope: BucketScope.User,
+            preconditions: [
+                'Base',
+                'DevMode',
+                'OwnerOnly',
+            ],
+            requiredUserPermissions: [],
+            requiredClientPermissions: [],
+        });
 
-export const execute: ClientCommand['execute'] = async (
-    interaction,
-    locale,
-): Promise<void> => {
-    const text = RegionLocales.locale(locale).commands.reload;
-    const { replace } = RegionLocales;
-
-    switch (interaction.options.getSubcommand()) {
-        case 'all': await reloadAll();
-            break;
-        case 'single': await reloadSingle();
-            break;
-        // no default
+        this.chatInputStructure = {
+            name: this.name,
+            description: this.description,
+            options: [
+                {
+                    name: 'all',
+                    type: ApplicationCommandOptionTypes.SUB_COMMAND,
+                    description: 'Refreshes all imports',
+                },
+                {
+                    name: 'single',
+                    type: ApplicationCommandOptionTypes.SUB_COMMAND,
+                    description: 'Refresh a single item',
+                    options: [
+                        {
+                            name: 'type',
+                            type: ApplicationCommandOptionTypes.STRING,
+                            description: 'The category to refresh',
+                            required: true,
+                            choices: [
+                                {
+                                    name: 'commands',
+                                    value: 'commands',
+                                },
+                                {
+                                    name: 'listeners',
+                                    value: 'listeners',
+                                },
+                            ],
+                        },
+                        {
+                            name: 'item',
+                            type: ApplicationCommandOptionTypes.STRING,
+                            description: 'The item to refresh',
+                            required: true,
+                        },
+                    ],
+                },
+            ],
+        };
     }
 
-    async function reloadAll() {
+    public override registerApplicationCommands(registry: ApplicationCommandRegistry) {
+        registry.registerChatInputCommand(
+            this.chatInputStructure,
+            Options.commandRegistry(this),
+        );
+    }
+
+    public async chatInputRun(interaction: CommandInteraction) {
+        switch (interaction.options.getSubcommand()) {
+            case 'all': await this.all(interaction);
+                break;
+            case 'single': await this.single(interaction);
+                break;
+            // no default
+        }
+    }
+
+    private async all(interaction: CommandInteraction) {
+        const { i18n } = interaction;
+
         const now = Date.now();
         const promises: Promise<void>[] = [];
 
         // eslint-disable-next-line no-restricted-syntax
-        for (const [command] of interaction.client.commands) {
-            promises.push(commandRefresh(interaction, command));
+        for (const [, command] of this.container.stores.get('commands')) {
+            promises.push(this.reloadItem(command));
         }
 
         // eslint-disable-next-line no-restricted-syntax
-        for (const [event] of interaction.client.events) {
-            promises.push(eventRefresh(interaction, event));
-        }
-
-        // eslint-disable-next-line no-restricted-syntax
-        for (const [module] of interaction.client.modules) {
-            promises.push(moduleRefresh(interaction, module));
+        for (const [, listener] of this.container.stores.get('listeners')) {
+            promises.push(this.reloadItem(listener));
         }
 
         await Promise.all(promises);
 
         const reloadedEmbed = new BetterEmbed(interaction)
-            .setColor(Constants.colors.normal)
-            .setTitle(text.all.title)
-            .setDescription(replace(text.all.description, {
-                imports: promises.length,
-                timeTaken: Date.now() - now,
-            }));
+            .setColor(Options.colorsNormal)
+            .setTitle(
+                i18n.getMessage(
+                    'commandsReloadAllTitle',
+                ),
+            )
+            .setDescription(
+                i18n.getMessage(
+                    'commandsReloadAllDescription', [
+                        promises.length,
+                        Date.now() - now,
+                    ],
+                ),
+            );
 
-        Log.interaction(interaction, `All imports have been reloaded after ${
-            Date.now() - now
-        } milliseconds.`);
+        const timeTaken = Date.now() - now;
+
+        this.container.logger.info(
+            interactionLogContext(interaction),
+            `${this.constructor.name}:`,
+            `All imports have been reloaded after ${timeTaken} milliseconds.`,
+        );
 
         await interaction.editReply({ embeds: [reloadedEmbed] });
     }
 
-    async function reloadSingle() {
+    private async single(interaction: CommandInteraction) {
+        const { i18n } = interaction;
+
         const now = Date.now();
         const typeName = interaction.options.getString('type', true);
-        const type = interaction.client[
-            typeName as keyof Pick<
-                    typeof interaction.client,
-            'commands' | 'events' | 'modules'
-            >
-        ];
+        const type = this.container.stores.get(
+            typeName as
+                | 'commands'
+                | 'listeners',
+        );
+
         const item = interaction.options.getString('item')!;
         const selected = type.get(item);
 
         if (typeof selected === 'undefined') {
             const undefinedSelected = new BetterEmbed(interaction)
-                .setColor(Constants.colors.warning)
-                .setTitle(text.single.unknown.title)
-                .setDescription(replace(text.single.unknown.description, {
-                    typeName: typeName,
-                    item: item,
-                }));
+                .setColor(Options.colorsWarning)
+                .setTitle(
+                    i18n.getMessage(
+                        'commandsReloadSingleUnknownTitle',
+                    ),
+                )
+                .setDescription(
+                    i18n.getMessage(
+                        'commandsReloadSingleUnknownDescription', [
+                            typeName,
+                            item,
+                        ],
+                    ),
+                );
 
             await interaction.editReply({ embeds: [undefinedSelected] });
             return;
         }
 
-        if (typeName === 'commands') {
-            commandRefresh(interaction, selected.properties.name);
-        } else if (typeName === 'events') {
-            eventRefresh(interaction, selected.properties.name);
-        } else if (typeName === 'modules') {
-            moduleRefresh(interaction, selected.properties.name);
-        }
+        this.reloadItem(selected);
 
         const reloadedEmbed = new BetterEmbed(interaction)
-            .setColor(Constants.colors.normal)
-            .setTitle(text.single.success.title)
-            .setDescription(replace(text.single.success.description, {
-                typeName: typeName,
-                item: item,
-                timeTaken: Date.now() - now,
-            }));
+            .setColor(Options.colorsNormal)
+            .setTitle(
+                i18n.getMessage(
+                    'commandsReloadSingleSuccessTitle',
+                ),
+            )
+            .setDescription(
+                i18n.getMessage(
+                    'commandsReloadSingleSuccessDescription', [
+                        typeName,
+                        item,
+                        Date.now() - now,
+                    ],
+                ),
+            );
 
-        Log.interaction(interaction, `${typeName}.${item} was successfully reloaded after ${
-            Date.now() - now
-        } milliseconds.`);
+        const timeTaken = Date.now() - now;
 
-        await interaction.editReply({ embeds: [reloadedEmbed] });
+        this.container.logger.info(
+            interactionLogContext(interaction),
+            `${this.constructor.name}:`,
+            `${typeName}.${item} was successfully reloaded after ${timeTaken} milliseconds.`,
+        );
+
+        await interaction.editReply({
+            embeds: [reloadedEmbed],
+        });
     }
-};
 
-async function commandRefresh(interaction: CommandInteraction, item: string) {
-    const refreshed = await reload<ClientCommand>(`${item}.js`);
-    interaction.client.commands.set(refreshed.properties.name, refreshed);
-}
-
-async function eventRefresh(interaction: CommandInteraction, item: string) {
-    const refreshed = await reload<ClientEvent>(`../events/${item}.js`);
-    interaction.client.events.set(refreshed.properties.name, refreshed);
-}
-
-async function moduleRefresh(interaction: CommandInteraction, item: string) {
-    const refreshed = await reload<ClientModule>(`../modules/${item}.js`);
-    interaction.client.modules.set(refreshed.properties.name, refreshed);
-}
-
-function reload<Type>(path: string) {
-    return new Promise<Type>((resolve) => {
-        delete require.cache[require.resolve(`${__dirname}/${path}`)];
-        // eslint-disable-next-line global-require, import/no-dynamic-require
-        const refreshed: Type = require(`${__dirname}/${path}`); // eslint-disable-line @typescript-eslint/no-var-requires
-        resolve(refreshed);
-    });
+    private async reloadItem(item: SapphireCommand | Listener) {
+        await item.reload();
+    }
 }

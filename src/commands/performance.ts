@@ -1,50 +1,78 @@
-import { type ClientCommand } from '../@types/client';
-import { Constants } from '../utility/Constants';
-import { RegionLocales } from '../locales/RegionLocales';
-import { BetterEmbed } from '../utility/utility';
+import {
+    type ApplicationCommandRegistry,
+    BucketScope,
+    Command,
+} from '@sapphire/framework';
+import { type CommandInteraction } from 'discord.js';
+import { BetterEmbed } from '../structures/BetterEmbed';
+import { Options } from '../utility/Options';
 
-export const properties: ClientCommand['properties'] = {
-    name: 'performance',
-    description: 'View system performance.',
-    cooldown: 0,
-    ephemeral: true,
-    noDM: false,
-    ownerOnly: true,
-    requireRegistration: false,
-    structure: {
-        name: 'performance',
-        description: 'View system performance',
-    },
-};
-
-export const execute: ClientCommand['execute'] = async (
-    interaction,
-    locale,
-): Promise<void> => {
-    const text = RegionLocales.locale(locale).commands.performance;
-    const { replace } = RegionLocales;
-
-    const {
-        fetch: fetchPerformance,
-        process: processPerformance,
-        modules: modulePerformance,
-        total,
-    } = interaction.client.core.performance.latest!;
-
-    const responseEmbed = new BetterEmbed(interaction)
-        .setColor(Constants.colors.normal)
-        .setTitle(text.title)
-        .addFields({
-            name: text.latest.name,
-            value: replace(text.latest.value, {
-                fetchPerformance: fetchPerformance,
-                processPerformance: processPerformance,
-                modulePerformance: modulePerformance,
-                total: total,
-            }),
+export class PerformanceCommand extends Command {
+    public constructor(context: Command.Context, options: Command.Options) {
+        super(context, {
+            ...options,
+            name: 'performance',
+            description: 'View system performance',
+            cooldownLimit: 0,
+            cooldownDelay: 0,
+            cooldownScope: BucketScope.User,
+            preconditions: [
+                'Base',
+                'DevMode',
+                'OwnerOnly',
+            ],
+            requiredUserPermissions: [],
+            requiredClientPermissions: [],
         });
 
-    await interaction.editReply({
-        embeds: [responseEmbed],
-    });
-};
+        this.chatInputStructure = {
+            name: this.name,
+            description: this.description,
+        };
+    }
+
+    public override registerApplicationCommands(registry: ApplicationCommandRegistry) {
+        registry.registerChatInputCommand(
+            this.chatInputStructure,
+            Options.commandRegistry(this),
+        );
+    }
+
+    public async chatInputRun(interaction: CommandInteraction) {
+        const { i18n } = interaction;
+
+        const { latest } = this.container.core.performance;
+
+        const fetch = latest?.get('fetch');
+        const parse = latest?.get('parse');
+        const check = latest?.get('check');
+        const send = latest?.get('send');
+        const total = latest?.get('total');
+
+        const responseEmbed = new BetterEmbed(interaction)
+            .setColor(Options.colorsNormal)
+            .setTitle(
+                i18n.getMessage(
+                    'commandsPerformanceTitle',
+                ),
+            )
+            .addFields({
+                name: i18n.getMessage('commandsPerformanceLatestName'),
+                value: i18n.getMessage(
+                    'commandsPerformanceLatestValue', [
+                        fetch,
+                        parse,
+                        check,
+                        send,
+                        total,
+                    ].map(
+                        (value) => value ?? i18n.getMessage('null'),
+                    ),
+                ),
+            });
+
+        await interaction.editReply({
+            embeds: [responseEmbed],
+        });
+    }
+}

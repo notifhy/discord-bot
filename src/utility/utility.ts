@@ -1,37 +1,17 @@
+import { container } from '@sapphire/framework';
 import {
-    ActionRow,
-    ActionRowBuilder,
-    APIActionRowComponent,
-    APIEmbedField,
-    APIMessageActionRowComponent,
-    ApplicationCommandOptionType,
-    AwaitMessageCollectorOptionsParams,
-    Client,
-    CommandInteraction,
-    EmbedBuilder,
-    MessageActionRowComponent,
-    MessageComponentType,
-    normalizeArray,
-    RestOrArray,
-    TextBasedChannel,
-    time,
-    TimestampStylesString,
-    WebhookClient,
-    WebhookCreateMessageOptions,
+    type AwaitMessageCollectorOptionsParams,
+    type CommandInteraction,
+    Formatters,
+    type Interaction,
+    MessageActionRow,
+    type MessageComponentTypeResolvable,
+    type TextBasedChannel,
 } from 'discord.js';
-import { type WebhookConfig } from '../@types/client';
-import { UserAPIData } from '../@types/database';
-import { Constants } from './Constants';
-import { SQLite } from './SQLite';
+import { Time } from '../enums/Time';
+import { Options } from './Options';
 
-export function arrayRemove<Type extends unknown[]>(
-    array: Type,
-    ...items: unknown[]
-): Type {
-    return array.filter((item) => !(items.includes(item))) as Type;
-}
-
-export async function awaitComponent<T extends MessageComponentType>(
+export async function awaitComponent<T extends MessageComponentTypeResolvable>(
     channel: TextBasedChannel,
     options: AwaitMessageCollectorOptionsParams<T, true>,
 ) {
@@ -50,72 +30,6 @@ export async function awaitComponent<T extends MessageComponentType>(
     }
 }
 
-type Footer =
-    | {
-        text: string,
-        iconURL?: string,
-    }
-    | CommandInteraction;
-
-export class BetterEmbed extends EmbedBuilder {
-    public constructor(footer?: Footer) {
-        super();
-        this.setTimestamp();
-
-        if (footer instanceof CommandInteraction) {
-            const interaction = footer;
-            const avatar = interaction.user.displayAvatarURL();
-            this.setFooter({ text: `/${interaction.commandName}`, iconURL: avatar });
-        } else if (footer !== undefined) {
-            this.setFooter({ text: footer.text, iconURL: footer.iconURL });
-        }
-    }
-
-    public setField(name: string, value: string, inline?: boolean | undefined): this {
-        this.setFields({ name: name, value: value, inline: inline });
-
-        return this;
-    }
-
-    public unshiftFields(...fields: RestOrArray<APIEmbedField>): this {
-        this.data.fields ??= [];
-        this.data.fields.unshift(...normalizeArray(fields));
-
-        return this;
-    }
-}
-
-export function capitolToNormal(item: string | null) {
-    function containsLowerCase(string: string): boolean {
-        let lowerCase = false;
-
-        for (let i = 0; i < string.length; i += 1) {
-            const character = string.charAt(i);
-            if (character === character.toLowerCase()) {
-                lowerCase = true;
-                break;
-            }
-        }
-
-        return lowerCase;
-    }
-
-    return typeof item === 'string'
-        ? item
-            .replaceAll('_', ' ')
-            .toLowerCase()
-            .split(' ')
-            .map((value) => {
-                if (containsLowerCase(value)) {
-                    return value.charAt(0).toUpperCase() + value.slice(1);
-                }
-
-                return value;
-            })
-            .join(' ')
-        : item;
-}
-
 export function cleanDate(ms: number | Date): string | null {
     const newDate = new Date(ms);
     if (
@@ -126,65 +40,34 @@ export function cleanDate(ms: number | Date): string | null {
     }
 
     const day = newDate.getDate();
-    const month = new Intl.DateTimeFormat('en-US', { month: 'short' }).format(
+
+    const month = new Intl.DateTimeFormat(
+        'en-US',
+        { month: 'short' },
+    ).format(
         newDate,
     );
+
     const year = newDate.getFullYear();
+
     return `${month} ${day}, ${year}`;
 }
 
-export function cleanGameMode(mode: string | null) {
-    if (mode === null) {
-        return null;
-    }
-
-    if (mode === 'LOBBY') {
-        return 'Lobby';
-    }
-
-    const gameMode = Constants.clean.modes.find(
-        ({ key }) => (Array.isArray(key) ? key.includes(mode) : key === mode),
-    );
-
-    return gameMode?.name ?? mode;
-}
-
-export function cleanGameType(type: string | null) {
-    if (type === null) {
-        return null;
-    }
-
-    const { gameTypes } = Constants.clean;
-
-    const gameType = gameTypes[
-        type as keyof typeof Constants.clean.gameTypes
-    ];
-
-    return gameType ?? type;
-}
-
-export function cleanLength(
-    ms: number | null,
-    rejectZero?: boolean,
-): string | null {
+export function cleanLength(ms: number | null): string | null {
     if (!isNumber(ms)) {
         return null;
     }
 
-    let newMS = Math.floor(ms / Constants.ms.second)
-        * Constants.ms.second;
+    let newMS = Math.floor(ms / Time.Second)
+        * Time.Second;
 
-    if (rejectZero ? newMS <= 0 : newMS < 0) {
-        return null;
-    }
-
-    const days = Math.floor(newMS / Constants.ms.day);
-    newMS -= days * Constants.ms.day;
-    const hours = Math.floor(newMS / Constants.ms.hour);
-    newMS -= hours * Constants.ms.hour;
-    const minutes = Math.floor(newMS / Constants.ms.minute);
-    newMS -= minutes * Constants.ms.minute;
-    const seconds = Math.floor(newMS / Constants.ms.second);
+    const days = Math.floor(newMS / Time.Day);
+    newMS -= days * Time.Day;
+    const hours = Math.floor(newMS / Time.Hour);
+    newMS -= hours * Time.Hour;
+    const minutes = Math.floor(newMS / Time.Minute);
+    newMS -= minutes * Time.Minute;
+    const seconds = Math.floor(newMS / Time.Second);
 
     if (days !== 0) {
         return `${days}d ${hours}h ${minutes}m ${seconds}s`;
@@ -206,27 +89,6 @@ export function cleanRound(number: number, decimals?: number) {
     return Math.round(number * decimalsFactor) / decimalsFactor;
 }
 
-export function compare<Primary, Secondary extends Primary>(
-    primary: Primary,
-    secondary: Secondary,
-) {
-    const primaryDifferences = {} as Partial<Primary>;
-    const secondaryDifferences = {} as Partial<Secondary>;
-
-    // eslint-disable-next-line no-restricted-syntax
-    for (const key in primary) {
-        // @ts-expect-error hasOwn typing not implemented yet
-        if (Object.hasOwn(primary, key) === true) {
-            if (primary[key] !== secondary[key]) {
-                primaryDifferences[key] = primary[key];
-                secondaryDifferences[key] = secondary[key];
-            }
-        }
-    }
-
-    return { primary: primaryDifferences, secondary: secondaryDifferences };
-}
-
 // Taken from https://stackoverflow.com/a/13016136 under CC BY-SA 3.0 matching ISO 8601
 export function createOffset(date = new Date()): string {
     function pad(value: number) {
@@ -237,29 +99,21 @@ export function createOffset(date = new Date()): string {
     const offset = Math.abs(date.getTimezoneOffset());
     const hours = pad(Math.floor(offset / 60));
     const minutes = pad(offset % 60);
+
     return `${sign + hours}:${minutes}`;
 }
 
-export function disableComponents(rawRow: ActionRow<MessageActionRowComponent>[]) {
-    const actionRows = rawRow.map(
-        (actionRow) => ActionRowBuilder.from(actionRow),
-    );
+export function disableComponents(messageActionRows: MessageActionRow[]) {
+    const actionRows = messageActionRows
+        .map((row) => new MessageActionRow(row));
 
-    // eslint-disable-next-line no-restricted-syntax
-    for (const actionRow of actionRows) {
-        const { components } = actionRow;
+    actionRows.forEach((actionRow) => {
+        actionRow.components.forEach((component) => {
+            component.setDisabled();
+        });
+    });
 
-        // eslint-disable-next-line no-restricted-syntax
-        for (const component of components) {
-            if ('setDisabled' in component) {
-                component.setDisabled();
-            }
-        }
-    }
-
-    return actionRows.map(
-        (actionRow) => actionRow.toJSON(),
-    ) as APIActionRowComponent<APIMessageActionRowComponent>[];
+    return actionRows;
 }
 
 export function formattedUnix({
@@ -279,103 +133,34 @@ export function formattedUnix({
         return null;
     }
 
-    return `${utc === true ? `UTC${createOffset()} ` : ''
-    }${newDate.toLocaleTimeString('en-IN', { hour12: true })}${date === true ? `, ${cleanDate(ms)}` : ''
-    }`;
+    const utcString = utc === true
+        ? `UTC${createOffset()} `
+        : '';
+
+    const timeString = newDate.toLocaleTimeString(
+        'en-IN',
+        { hour12: true },
+    );
+
+    const dateString = date === true
+        ? `, ${cleanDate(ms)}`
+        : '';
+
+    return `${utcString}${timeString}${dateString}`;
 }
 
-export function generateStackTrace() {
-    const stack = new Error().stack ?? '';
-    const cleanStack = stack
-        .split('\n')
-        .splice(2)
-        .join('\n');
-
-    return cleanStack;
+export function interactionLogContext(interaction: Interaction) {
+    return `Interaction ${interaction.id} Type ${interaction.type} User ${interaction.user.id}`;
 }
 
-type AcceptedValues = string | boolean | number;
-
-type GenericObject = {
-    [index: string]: GenericObject | AcceptedValues[] | AcceptedValues;
-};
-
-type Modifier = (value: AcceptedValues) => unknown; // eslint-disable-line no-unused-vars
-
-export function nestedIterate(
-    inParam: GenericObject,
-    modify: Modifier,
-): unknown {
-    const modified = structuredClone(inParam);
-    recursive(modified);
-
-    function recursive(input: GenericObject) {
-        // eslint-disable-next-line no-restricted-syntax
-        for (const index in input) {
-            if (Object.hasOwn(input, index)) {
-                if (
-                    typeof input[index] === 'object'
-                    || Array.isArray(input[index])
-                ) {
-                    recursive(input[index] as GenericObject);
-                } else if (
-                    typeof input[index] === 'string'
-                    || typeof input[index] === 'boolean'
-                    || typeof input[index] === 'number'
-                    || typeof input[index] === 'bigint'
-                ) {
-                    input[index] = (
-                        modify(
-                            input[index] as AcceptedValues,
-                        ) as typeof input[typeof index]
-                    ) ?? input[index];
-                }
-            }
-        }
-    }
-
-    return modified;
-}
-
-export async function sendWebHook(
-    {
-        webhook,
-        suppressError,
-        ...payload
-    }: {
-        webhook: WebhookConfig,
-        suppressError?: boolean,
-    } & WebhookCreateMessageOptions,
-): Promise<void> {
-    try {
-        await new WebhookClient({ id: webhook.id, token: webhook.token })
-            .send(payload);
-    } catch (err) {
-        if (suppressError === false) {
-            throw err;
-        }
-    }
-}
-
-export function setPresence(client: Client) {
-    const users = SQLite.getAllUsers<UserAPIData>({
-        table: Constants.tables.api,
-        columns: ['discordID'],
-    });
-
-    let presence = client.customPresence;
+export function setPresence() {
+    let presence = container.customPresence;
 
     if (presence === null) {
-        presence = structuredClone(Constants.defaults.presence);
-
-        presence!.activities?.forEach((activity) => {
-            activity.name = activity.name
-                ?.replace('{{ accounts }}', String(users.length))
-                ?.replace('{{ servers }}', String(client.guilds.cache.size));
-        });
+        presence = structuredClone(Options.presence);
     }
 
-    client.user?.setPresence(presence!);
+    container.client.user?.setPresence(presence!);
 }
 
 export const slashCommandResolver = (interaction: CommandInteraction) => {
@@ -392,12 +177,12 @@ export const slashCommandResolver = (interaction: CommandInteraction) => {
             );
         }
 
-        if (option.type === ApplicationCommandOptionType.SubcommandGroup) {
+        if (option.type === 'SUB_COMMAND_GROUP') {
             commandOptions.push(option.name);
             [option] = option.options!;
         }
 
-        if (option.type === ApplicationCommandOptionType.Subcommand) {
+        if (option.type === 'SUB_COMMAND') {
             commandOptions.push(value.name);
         }
 
@@ -413,20 +198,9 @@ export const slashCommandResolver = (interaction: CommandInteraction) => {
     return commandOptions.join(' ');
 };
 
-export function timeAgo(ms: unknown): number | null {
-    if (
-        !isNumber(ms)
-        || ms < 0
-    ) {
-        return null;
-    }
-
-    return Date.now() - ms;
-}
-
 export function timestamp(
     ms: unknown,
-    style?: TimestampStylesString,
+    style?: typeof Formatters.TimestampStylesString,
 ) {
     if (
         !isNumber(ms)
@@ -435,7 +209,7 @@ export function timestamp(
         return null;
     }
 
-    return time(Math.round(ms / 1000), style ?? 'f');
+    return Formatters.time(Math.round(ms / 1000), style ?? 'f');
 }
 
 function isDate(value: unknown): value is Date {

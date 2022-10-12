@@ -31,7 +31,10 @@
             }
         ],
         "no-console": ["off"],
-        "no-param-reassign": ["off"],
-        "object-shorthand": ["error", "never"]
+        "object-shorthand": ["error", "never"],
+        "sort-imports": ["error", {
+            "ignoreCase": true,
+            "ignoreDeclarationSort": true
+        }]
     }
 }

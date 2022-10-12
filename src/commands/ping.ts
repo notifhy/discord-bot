@@ -1,64 +1,108 @@
-import { type ColorResolvable } from 'discord.js';
-import { type ClientCommand } from '../@types/client';
-import { RegionLocales } from '../locales/RegionLocales';
-import { Constants } from '../utility/Constants';
-import { Log } from '../utility/Log';
-import { BetterEmbed } from '../utility/utility';
+import {
+    type ApplicationCommandRegistry,
+    BucketScope,
+    Command,
+} from '@sapphire/framework';
+import {
+    type ColorResolvable,
+    type CommandInteraction,
+    Message,
+} from 'discord.js';
+import { BetterEmbed } from '../structures/BetterEmbed';
+import { Options } from '../utility/Options';
+import { interactionLogContext } from '../utility/utility';
 
-export const properties: ClientCommand['properties'] = {
-    name: 'ping',
-    description: 'Returns the ping of the bot.',
-    cooldown: 0,
-    ephemeral: true,
-    noDM: false,
-    ownerOnly: true,
-    requireRegistration: false,
-    structure: {
-        name: 'ping',
-        description: 'Ping!',
-    },
-};
+export class PingCommand extends Command {
+    public constructor(context: Command.Context, options: Command.Options) {
+        super(context, {
+            ...options,
+            name: 'ping',
+            description: 'Ping!',
+            cooldownLimit: 0,
+            cooldownDelay: 0,
+            cooldownScope: BucketScope.User,
+            preconditions: [
+                'Base',
+                'DevMode',
+                'OwnerOnly',
+            ],
+            requiredUserPermissions: [],
+            requiredClientPermissions: [],
+        });
 
-export const execute: ClientCommand['execute'] = async (
-    interaction,
-    locale,
-): Promise<void> => {
-    const text = RegionLocales.locale(locale).commands.ping;
-    const { replace } = RegionLocales;
-
-    const initialPingEmbed = new BetterEmbed(interaction)
-        .setColor(Constants.colors.normal)
-        .setTitle(text.embed1.title);
-
-    const sentReply = await interaction.editReply({
-        embeds: [initialPingEmbed],
-    });
-
-    const roundTripDelay = sentReply.createdTimestamp - interaction.createdTimestamp;
-
-    const mixedPing = (
-        interaction.client.ws.ping + roundTripDelay
-    ) / 2;
-
-    let embedColor: ColorResolvable;
-
-    if (mixedPing < 100) {
-        embedColor = Constants.colors.on;
-    } else if (mixedPing < 200) {
-        embedColor = Constants.colors.ok;
-    } else {
-        embedColor = Constants.colors.warning;
+        this.chatInputStructure = {
+            name: this.name,
+            description: this.description,
+        };
     }
 
-    const pingEmbed = new BetterEmbed(interaction)
-        .setColor(embedColor)
-        .setTitle(text.embed2.title)
-        .setDescription(replace(text.embed2.description, {
-            wsPing: interaction.client.ws.ping,
-            rtPing: roundTripDelay,
-        }));
+    public override registerApplicationCommands(registry: ApplicationCommandRegistry) {
+        registry.registerChatInputCommand(
+            this.chatInputStructure,
+            Options.commandRegistry(this),
+        );
+    }
 
-    Log.interaction(interaction, `WS: ${interaction.client.ws.ping}ms | RT: ${roundTripDelay}ms`);
+    public async chatInputRun(interaction: CommandInteraction) {
+        const { i18n } = interaction;
 
-    await interaction.editReply({ embeds: [pingEmbed] });
-};
+        const initialPingEmbed = new BetterEmbed(interaction)
+            .setColor(Options.colorsNormal)
+            .setTitle(
+                i18n.getMessage(
+                    'commandsPingLoadingTitle',
+                ),
+            );
+
+        const sentReply = await interaction.editReply({
+            embeds: [initialPingEmbed],
+        });
+
+        const roundTripDelay = (
+            sentReply instanceof Message
+                ? sentReply.createdTimestamp
+                : Date.parse(sentReply.timestamp)
+        ) - interaction.createdTimestamp;
+
+        const mixedPing = (
+            interaction.client.ws.ping + roundTripDelay
+        ) / 2;
+
+        let embedColor: ColorResolvable;
+
+        if (mixedPing < Options.pingOnMinimum) {
+            embedColor = Options.colorsOn;
+        } else if (mixedPing < Options.pingOkMinimum) {
+            embedColor = Options.colorsOk;
+        } else {
+            embedColor = Options.colorsWarning;
+        }
+
+        const pingEmbed = new BetterEmbed(interaction)
+            .setColor(embedColor)
+            .setTitle(
+                i18n.getMessage(
+                    'commandsPingTitle',
+                ),
+            )
+            .setDescription(
+                i18n.getMessage(
+                    'commandsPingDescription', [
+                        interaction.client.ws.ping,
+                        roundTripDelay,
+                    ],
+                ),
+            );
+
+        this.container.logger.info(
+            interactionLogContext(interaction),
+            `${this.constructor.name}:`,
+            `WS ${interaction.client.ws.ping}.`,
+            `RS ${roundTripDelay}ms.`,
+        );
+
+        await interaction.editReply({
+            embeds: [pingEmbed],
+        });
+    }
+}

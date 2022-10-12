@@ -1,104 +1,88 @@
 import process from 'node:process';
-import { type ClientCommand } from '../@types/client';
-import { type UserAPIData } from '../@types/database';
-import { RegionLocales } from '../locales/RegionLocales';
-import { Constants } from '../utility/Constants';
-import { SQLite } from '../utility/SQLite';
 import {
-    BetterEmbed,
+    ApplicationCommandRegistry,
+    BucketScope,
+    Command,
+} from '@sapphire/framework';
+import { type CommandInteraction } from 'discord.js';
+import { Byte } from '../enums/Byte';
+import { Time } from '../enums/Time';
+import { Options } from '../utility/Options';
+import {
     cleanLength,
     cleanRound,
 } from '../utility/utility';
+import { BetterEmbed } from '../structures/BetterEmbed';
 
-export const properties: ClientCommand['properties'] = {
-    name: 'system',
-    description: 'View system information.',
-    cooldown: 0,
-    ephemeral: true,
-    noDM: false,
-    ownerOnly: true,
-    requireRegistration: false,
-    structure: {
-        name: 'system',
-        description: 'View system information',
-    },
-};
+export class SystemCommand extends Command {
+    public constructor(context: Command.Context, options: Command.Options) {
+        super(context, {
+            ...options,
+            name: 'system',
+            description: 'View system information',
+            cooldownLimit: 0,
+            cooldownDelay: 0,
+            cooldownScope: BucketScope.User,
+            preconditions: [
+                'Base',
+                'DevMode',
+                'OwnerOnly',
+            ],
+            requiredUserPermissions: [],
+            requiredClientPermissions: [],
+        });
 
-export const execute: ClientCommand['execute'] = async (
-    interaction,
-    locale,
-): Promise<void> => {
-    const text = RegionLocales.locale(locale).commands.system;
-    const { replace } = RegionLocales;
+        this.chatInputStructure = {
+            name: this.name,
+            description: this.description,
+        };
+    }
 
-    const { keyPercentage } = interaction.client.config;
-
-    const memoryMegaBytes = process.memoryUsage.rss() / (2 ** 20);
-
-    const keyQueryLimit = Number(process.env.KEY_LIMIT!) * keyPercentage;
-
-    const intervalBetweenRequests = (
-        60 / keyQueryLimit
-    ) * Constants.ms.second;
-
-    const registeredUsers = (
-        SQLite.getAllUsers<UserAPIData>({
-            table: Constants.tables.api,
-            columns: ['modules'],
-        })
-    ).filter((user) => user.modules.length > 0);
-
-    const userCount = registeredUsers.length;
-
-    const updateInterval = registeredUsers.length * intervalBetweenRequests;
-
-    const responseEmbed = new BetterEmbed(interaction)
-        .setColor(Constants.colors.normal)
-        .setTitle(text.embed.title)
-        .addFields(
-            {
-                name: text.embed.field1.name,
-                value: replace(text.embed.field1.value, {
-                    uptime: cleanLength(process.uptime() * 1000)!,
-                }),
-            },
-            {
-                name: text.embed.field2.name,
-                value: replace(text.embed.field2.value, {
-                    memoryMegaBytes: cleanRound(memoryMegaBytes, 1),
-                }),
-            },
-            {
-                name: text.embed.field3.name,
-                value: replace(text.embed.field3.value, {
-                    servers: interaction.client.guilds.cache.size,
-                }),
-            },
-            {
-                name: text.embed.field4.name,
-                value: replace(text.embed.field4.value, {
-                    users: interaction.client.guilds.cache.reduce(
-                        (acc, guild) => acc + guild.memberCount,
-                        0,
-                    ),
-                }),
-            },
-            {
-                name: text.embed.field5.name,
-                value: replace(text.embed.field5.value, {
-                    registeredUsers: userCount,
-                }),
-            },
-            {
-                name: text.embed.field6.name,
-                value: replace(text.embed.field6.value, {
-                    uses: interaction.client.core.request.uses,
-                    updateInterval: cleanLength(updateInterval)!,
-                }),
-            },
+    public override registerApplicationCommands(registry: ApplicationCommandRegistry) {
+        registry.registerChatInputCommand(
+            this.chatInputStructure,
+            Options.commandRegistry(this),
         );
+    }
 
-    await interaction.editReply({
-        embeds: [responseEmbed],
-    });
-};
+    public async chatInputRun(interaction: CommandInteraction) {
+        const { i18n } = interaction;
+
+        const memoryMegaBytes = process.memoryUsage.rss() / Byte.MegaByte;
+
+        const responseEmbed = new BetterEmbed(interaction)
+            .setColor(Options.colorsNormal)
+            .setTitle(i18n.getMessage('commandsSystemTitle'))
+            .addFields(
+                {
+                    name: i18n.getMessage('commandsSystemUptimeName'),
+                    value: cleanLength(process.uptime() * Time.Second)!,
+                },
+                {
+                    name: i18n.getMessage('commandsSystemMemoryName'),
+                    value: i18n.getMessage(
+                        'commandsSystemMemberValue', [
+                            cleanRound(memoryMegaBytes, 1),
+                        ],
+                    ),
+                },
+                {
+                    name: i18n.getMessage('commandsSystemServersName'),
+                    value: String(interaction.client.guilds.cache.size),
+                },
+                {
+                    name: i18n.getMessage('commandsSystemUsersName'),
+                    value: String(
+                        interaction.client.guilds.cache.reduce(
+                            (acc, guild) => acc + guild.memberCount,
+                            0,
+                        ),
+                    ),
+                },
+            );
+
+        await interaction.editReply({
+            embeds: [responseEmbed],
+        });
+    }
+}

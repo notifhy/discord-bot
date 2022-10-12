@@ -1,192 +1,275 @@
-import { type ClientCommand } from '../@types/client';
-import { RegionLocales } from '../locales/RegionLocales';
-import { Constants } from '../utility/Constants';
-import { BetterEmbed } from '../utility/utility';
+import {
+    type ApplicationCommandRegistry,
+    BucketScope,
+    Command,
+} from '@sapphire/framework';
+import {
+    type ButtonInteraction,
+    type CommandInteraction,
+    MessageActionRow,
+    MessageButton,
+    type MessageComponentInteraction,
+    MessageSelectMenu,
+    SnowflakeUtil,
+} from 'discord.js';
+import { Time } from '../enums/Time';
+import { BetterEmbed } from '../structures/BetterEmbed';
+import { Options } from '../utility/Options';
+import { awaitComponent, disableComponents } from '../utility/utility';
 
-export const properties: ClientCommand['properties'] = {
-    name: 'help',
-    description: 'Displays helpful information and available commands.',
-    cooldown: 5_000,
-    ephemeral: true,
-    noDM: false,
-    ownerOnly: false,
-    requireRegistration: false,
-    structure: {
-        name: 'help',
-        description: 'Displays helpful information and available commands',
-        options: [
-            {
-                name: 'commands',
-                type: 1,
-                description: 'Displays information about commands',
-                options: [
-                    {
-                        name: 'command',
-                        type: 3,
-                        description: 'A command to get info about. This parameter is completely optional',
-                        required: false,
-                        choices: [
-                            {
-                                name: '/channel',
-                                value: 'channel',
-                            },
-                            {
-                                name: '/data',
-                                value: 'data',
-                            },
-                            {
-                                name: '/help',
-                                value: 'help',
-                            },
-                            {
-                                name: '/language',
-                                value: 'language',
-                            },
-                            {
-                                name: '/modules',
-                                value: 'modules',
-                            },
-                            {
-                                name: '/player',
-                                value: 'player',
-                            },
-                            {
-                                name: '/register',
-                                value: 'register',
-                            },
-                        ],
-                    },
-                ],
-            },
-            {
-                name: 'information',
-                description: 'Returns information about this bot',
-                type: 1,
-            },
-        ],
-    },
-};
+export class HelpCommand extends Command {
+    public constructor(context: Command.Context, options: Command.Options) {
+        super(context, {
+            ...options,
+            name: 'help',
+            description: 'Displays helpful information and available commands',
+            cooldownLimit: 1,
+            cooldownDelay: Time.Second * 10,
+            cooldownScope: BucketScope.User,
+            preconditions: [
+                'Base',
+                'DevMode',
+            ],
+            requiredUserPermissions: [],
+            requiredClientPermissions: [],
+        });
 
-export const execute: ClientCommand['execute'] = async (
-    interaction,
-    locale,
-): Promise<void> => {
-    const { replace } = RegionLocales;
-    const text = RegionLocales.locale(locale).commands.help;
-
-    if (interaction.options.getSubcommand() === 'information') {
-        await information();
-    } else if (interaction.options.getString('command')) {
-        await specific();
-    } else {
-        await commands();
+        this.chatInputStructure = {
+            name: this.name,
+            description: this.description,
+        };
     }
 
-    async function information() {
-        const informationEmbed = new BetterEmbed(interaction)
-            .setColor(Constants.colors.normal)
+    public override registerApplicationCommands(registry: ApplicationCommandRegistry) {
+        registry.registerChatInputCommand(
+            this.chatInputStructure,
+            Options.commandRegistry(this),
+        );
+    }
+
+    public async chatInputRun(interaction: CommandInteraction) {
+        const { i18n } = interaction;
+
+        const helpEmbed = new BetterEmbed(interaction)
+            .setColor(Options.colorsNormal)
+            .setTitle(i18n.getMessage('commandsHelpTitle'))
             .addFields(
                 {
-                    name: text.information.introduction.name,
-                    value: text.information.introduction.value,
+                    name: i18n.getMessage('commandsHelpInformationName'),
+                    value: i18n.getMessage('commandsHelpInformationValue'),
                 },
                 {
-                    name: text.information.modules.name,
-                    value: text.information.modules.value,
-                },
-                {
-                    name: text.information.setup.name,
-                    value: text.information.setup.value,
-                },
-                {
-                    name: text.information.other.name,
-                    value: text.information.other.value,
-                },
-                {
-                    name: text.information.legal.name,
-                    value: text.information.legal.value,
+                    name: i18n.getMessage('commandsHelpCommandsName'),
+                    value: i18n.getMessage('commandsHelpCommandsValue'),
                 },
             );
 
-        await interaction.editReply({ embeds: [informationEmbed] });
-    }
+        const informationSnowflake = SnowflakeUtil.generate();
+        const commandsSnowflake = SnowflakeUtil.generate();
 
-    async function specific() {
-        const commandArg = interaction.options.getString('command', true);
-        const command: ClientCommand | undefined = interaction.client.commands.get(commandArg);
-        const commandSearchEmbed = new BetterEmbed(interaction)
-            .setColor(Constants.colors.normal);
+        const informationButton = new MessageButton()
+            .setCustomId(informationSnowflake)
+            .setStyle('PRIMARY')
+            .setLabel(i18n.getMessage('commandsHelpInformationLabel'));
 
-        if (typeof command === 'undefined') {
-            commandSearchEmbed
-                .setColor(Constants.colors.warning)
-                .setTitle(text.specific.invalid.title)
-                .setDescription(replace(text.specific.invalid.description, {
-                    command: commandArg,
-                }));
+        const commandsButton = new MessageButton()
+            .setCustomId(commandsSnowflake)
+            .setStyle('PRIMARY')
+            .setLabel(i18n.getMessage('commandsHelpCommandsLabel'));
 
-            await interaction.editReply({ embeds: [commandSearchEmbed] });
+        const row = new MessageActionRow()
+            .setComponents(
+                informationButton,
+                commandsButton,
+            );
+
+        const reply = await interaction.editReply({
+            embeds: [helpEmbed],
+            components: [row],
+        });
+
+        await interaction.client.channels.fetch(interaction.channelId);
+
+        // eslint-disable-next-line arrow-body-style
+        const componentFilter = (i: MessageComponentInteraction) => {
+            return interaction.user.id === i.user.id
+            && i.message.id === reply.id;
+        };
+
+        const selectMenuInteraction = await awaitComponent(interaction.channel!, {
+            componentType: 'BUTTON',
+            filter: componentFilter,
+            idle: Time.Minute,
+        });
+
+        if (selectMenuInteraction === null) {
+            const disabledRows = disableComponents([row]);
+
+            await interaction.editReply({
+                components: disabledRows,
+            });
+
             return;
         }
 
-        commandSearchEmbed.setTitle(
-            replace(text.specific.title, {
-                command: commandArg,
-            }),
-        );
+        switch (selectMenuInteraction.customId) {
+            case informationSnowflake:
+                await this.informationMenu(interaction, selectMenuInteraction);
+                break;
+            case commandsSnowflake:
+                await this.commandsMenu(interaction, selectMenuInteraction);
+                break;
+            // no default
+        }
+    }
 
-        commandSearchEmbed.setDescription(
-            replace(text.specific.description, {
-                commandDescription: command.properties.description,
-            }),
-        );
+    public async informationMenu(interaction: CommandInteraction, component: ButtonInteraction) {
+        const { i18n } = interaction;
 
-        commandSearchEmbed.addFields({
-            name: text.specific.cooldown.name,
-            value: replace(text.specific.cooldown.value, {
-                commandCooldown:
-                    command.properties.cooldown
-                    / Constants.ms.second,
-            }),
+        const informationMenuEmbed = new BetterEmbed(interaction)
+            .setColor(Options.colorsNormal)
+            .setTitle(i18n.getMessage('commandsHelpInformationMenuTitle'))
+            .addFields(
+                {
+                    name: i18n.getMessage('commandsHelpInformationMenuAboutName'),
+                    value: i18n.getMessage('commandsHelpInformationMenuAboutValue'),
+                },
+                {
+                    name: i18n.getMessage('commandsHelpInformationMenuLegalName'),
+                    value: i18n.getMessage('commandsHelpInformationMenuLegalValue'),
+                },
+            );
+
+        await component.update({
+            embeds: [informationMenuEmbed],
+            components: [],
+        });
+    }
+
+    public async commandsMenu(interaction: CommandInteraction, component: ButtonInteraction) {
+        const { i18n } = interaction;
+
+        const commands = this.container.stores
+            .get('commands')
+            .filter((command) => typeof command.options.preconditions?.find(
+                (condition) => condition === 'OwnerOnly',
+            ) === 'undefined');
+
+        const snowflake = SnowflakeUtil.generate();
+
+        let selectedCommand = commands.first()!;
+
+        const commandsSelectMenu = () => new MessageSelectMenu()
+            .setCustomId(snowflake)
+            .setOptions(
+                ...commands.map(
+                    (command) => ({
+                        label: i18n.getMessage(
+                            'commandsHelpCommandsMenuLabel', [
+                                i18n.getChatInputName(command),
+                            ],
+                        ),
+                        description: i18n.getChatInputDescription(command),
+                        value: i18n.getChatInputName(command),
+                        default: command.name === selectedCommand.name,
+                    }),
+                ),
+            );
+
+        const row = () => new MessageActionRow()
+            .setComponents(commandsSelectMenu());
+
+        const reply = await component.update({
+            embeds: [this.generateCommandResponse(interaction, selectedCommand)],
+            components: [row()],
+            fetchReply: true,
         });
 
-        if (command.properties.noDM === true) {
-            commandSearchEmbed.addFields({
-                name: text.specific.dm.name,
-                value: replace(text.specific.dm.value),
-            });
-        }
+        // eslint-disable-next-line arrow-body-style
+        const componentFilter = (i: MessageComponentInteraction) => {
+            return interaction.user.id === i.user.id
+            && i.message.id === reply.id
+            && i.customId === snowflake;
+        };
 
-        if (command.properties.ownerOnly === true) {
-            commandSearchEmbed.addFields({
-                name: text.specific.owner.name,
-                value: replace(text.specific.owner.value),
-            });
-        }
+        const collector = interaction.channel!.createMessageComponentCollector({
+            componentType: 'SELECT_MENU',
+            filter: componentFilter,
+            idle: Time.Minute,
+            time: Time.Minute * 30,
+        });
 
-        await interaction.editReply({ embeds: [commandSearchEmbed] });
+        collector.on('collect', async (componentInteraction) => {
+            selectedCommand = commands.get(componentInteraction.values[0])!;
+
+            await componentInteraction.update({
+                embeds: [this.generateCommandResponse(interaction, selectedCommand)],
+                components: [row()],
+            });
+        });
+
+        collector.on('end', async () => {
+            const disabledRows = disableComponents([row()]);
+
+            await interaction.editReply({
+                components: disabledRows,
+            });
+        });
     }
 
-    async function commands() {
-        const commandsCollection = interaction.client.commands.filter(
-            (command) => command.properties.ownerOnly === false,
+    public generateCommandResponse(interaction: CommandInteraction, command: Command) {
+        const { i18n } = interaction;
+
+        const commandEmbed = new BetterEmbed(interaction)
+            .setColor(Options.colorsNormal);
+
+        commandEmbed.setTitle(
+            i18n.getMessage(
+                'commandsHelpCommandsMenuTitle', [
+                    i18n.getChatInputName(command),
+                ],
+            ),
         );
-        const allCommandsEmbed = new BetterEmbed(interaction)
-            .setColor(Constants.colors.normal)
-            .setTitle(text.all.title);
 
-        // eslint-disable-next-line no-restricted-syntax
-        for (const command of commandsCollection.values()) {
-            allCommandsEmbed.addFields({
-                name: replace(text.all.field.name, {
-                    commandName: command.properties.name,
-                }),
-                value: replace(text.all.field.value, {
-                    commandDescription: command.properties.description,
-                }),
+        commandEmbed.setDescription(
+            i18n.getMessage(
+                'commandsHelpCommandsMenuDescription', [
+                    command.description,
+                ],
+            ),
+        );
+
+        commandEmbed.addFields({
+            name: i18n.getMessage('commandsHelpCommandsMenuCooldownName'),
+            value: i18n.getMessage(
+                'commandsHelpCommandsMenuCooldownValue', [
+                    command.options.cooldownDelay! / Time.Second,
+                ],
+            ),
+        });
+
+        const guildOnly = command.options.preconditions?.find(
+            (condition) => condition === 'GuildOnly',
+        );
+
+        const ownerOnly = command.options.preconditions?.find(
+            (condition) => condition === 'OwnerOnly',
+        );
+
+        if (typeof guildOnly !== 'undefined') {
+            commandEmbed.addFields({
+                name: i18n.getMessage('commandsHelpCommandsMenuDMName'),
+                value: i18n.getMessage('commandsHelpCommandsMenuDMValue'),
             });
         }
 
-        await interaction.editReply({ embeds: [allCommandsEmbed] });
+        if (typeof ownerOnly !== 'undefined') {
+            commandEmbed.addFields({
+                name: i18n.getMessage('commandsHelpCommandsMenuOwnerName'),
+                value: i18n.getMessage('commandsHelpCommandsMenuOwnerValue'),
+            });
+        }
+
+        return commandEmbed;
     }
-};
+}

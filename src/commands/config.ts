@@ -1,337 +1,495 @@
-import { type WebhookEditMessageOptions } from 'discord.js';
 import {
-    type ClientCommand,
-    type Config,
-} from '../@types/client';
-import { RegionLocales } from '../locales/RegionLocales';
-import { Constants } from '../utility/Constants';
-import { Log } from '../utility/Log';
-import { SQLite } from '../utility/SQLite';
-import { BetterEmbed } from '../utility/utility';
+    type ApplicationCommandRegistry,
+    BucketScope,
+    Command,
+} from '@sapphire/framework';
+import { type CommandInteraction } from 'discord.js';
+import { ApplicationCommandOptionTypes } from 'discord.js/typings/enums';
+import { BetterEmbed } from '../structures/BetterEmbed';
+import { Options } from '../utility/Options';
+import { interactionLogContext } from '../utility/utility';
 
-export const properties: ClientCommand['properties'] = {
-    name: 'config',
-    description: 'Configure the bot.',
-    cooldown: 0,
-    ephemeral: true,
-    noDM: false,
-    ownerOnly: true,
-    requireRegistration: false,
-    structure: {
-        name: 'config',
-        description: 'Toggles dynamic settings',
-        options: [
-            {
-                name: 'blockguild',
-                description: 'Blacklists the bot from joining specific guilds',
-                type: 1,
-                options: [
-                    {
-                        name: 'guild',
-                        type: 3,
-                        description: "The guild's ID",
-                        required: true,
-                    },
-                ],
-            },
-            {
-                name: 'blockuser',
-                description: 'Blacklists users from using this bot',
-                type: 1,
-                options: [
-                    {
-                        name: 'user',
-                        type: 3,
-                        description: "The user's ID",
-                        required: true,
-                    },
-                ],
-            },
-            {
-                name: 'core',
-                type: 1,
-                description: 'Toggle the core',
-            },
-            {
-                name: 'devmode',
-                type: 1,
-                description: 'Toggle Developer Mode',
-            },
-            {
-                name: 'keypercentage',
-                description: 'Set how much of the Hypixel API key should be used',
-                type: 1,
-                options: [
-                    {
-                        name: 'percentage',
-                        type: 10,
-                        description: 'The percentage as a decimal',
-                        required: true,
-                        minValue: 0.01,
-                        maxValue: 1,
-                    },
-                ],
-            },
-            {
-                name: 'restrequesttimeout',
-                description: 'Set the request timeout before an abort error is thrown',
-                type: 1,
-                options: [
-                    {
-                        name: 'milliseconds',
-                        type: 4,
-                        description: 'The timeout in milliseconds',
-                        required: true,
-                        minValue: 0,
-                        maxValue: 100000,
-                    },
-                ],
-            },
-            {
-                name: 'retrylimit',
-                description: 'Set the number of request retries before throwing',
-                type: 1,
-                options: [
-                    {
-                        name: 'limit',
-                        type: 4,
-                        description: 'The number of retries',
-                        required: true,
-                        minValue: 0,
-                        maxValue: 100,
-                    },
-                ],
-            },
-            {
-                name: 'view',
-                description: 'View the current configuration',
-                type: 1,
-            },
-        ],
-    },
-};
+export class ConfigCommand extends Command {
+    public constructor(context: Command.Context, options: Command.Options) {
+        super(context, {
+            ...options,
+            name: 'config',
+            description: 'Configure and change settings',
+            cooldownLimit: 0,
+            cooldownDelay: 0,
+            cooldownScope: BucketScope.User,
+            preconditions: [
+                'Base',
+                'DevMode',
+                'OwnerOnly',
+            ],
+            requiredUserPermissions: [],
+            requiredClientPermissions: [],
+        });
 
-export const execute: ClientCommand['execute'] = async (
-    interaction,
-    locale,
-): Promise<void> => {
-    const text = RegionLocales.locale(locale).commands.config;
-    const { replace } = RegionLocales;
-
-    const config = SQLite.queryGet<Config>({
-        query: 'SELECT blockedGuilds, blockedUsers, core, devMode, keyPercentage, restRequestTimeout, retryLimit FROM config WHERE rowid = 1',
-    });
-
-    const payload: WebhookEditMessageOptions = {};
-
-    switch (interaction.options.getSubcommand()) {
-        case 'blockguild': await blockGuildCommand();
-            break;
-        case 'blockuser': blockUserCommand();
-            break;
-        case 'core': coreCommand();
-            break;
-        case 'devmode': devModeCommand();
-            break;
-        case 'keypercentage': keyPercentageCommand();
-            break;
-        case 'restrequesttimeout': restRequestTimeoutCommand();
-            break;
-        case 'retrylimit': retryLimitCommand();
-            break;
-        case 'view': viewCommand();
-            break;
-        // no default
-    }
-
-    async function blockGuildCommand() {
-        const guildID = interaction.options.getString('guild', true);
-        const blockedGuildIndex = config.blockedGuilds.indexOf(guildID);
-
-        const guildEmbed = new BetterEmbed(interaction)
-            .setColor(Constants.colors.normal);
-
-        if (blockedGuildIndex === -1) {
-            config.blockedGuilds.push(guildID);
-
-            const guild = await interaction.client.guilds.fetch(guildID);
-            await guild.leave();
-
-            guildEmbed
-                .setTitle(text.blockGuild.add.title)
-                .setDescription(replace(text.blockGuild.add.description, {
-                    guildID: guildID,
-                }));
-
-            payload.files = [
+        this.chatInputStructure = {
+            name: this.name,
+            description: this.description,
+            options: [
                 {
-                    attachment: Buffer.from(JSON.stringify(guild, null, 2)),
-                    name: 'guild.json',
+                    name: 'core',
+                    type: ApplicationCommandOptionTypes.SUB_COMMAND,
+                    description: 'Toggle the core',
                 },
-            ];
-
-            Log.interaction(interaction, guildEmbed.data.description);
-        } else {
-            config.blockedGuilds.splice(blockedGuildIndex, 1);
-
-            guildEmbed
-                .setTitle(text.blockGuild.remove.title)
-                .setDescription(replace(text.blockGuild.remove.description, {
-                    guildID: guildID,
-                }));
-
-            payload.embeds = [guildEmbed];
-        }
-
-        payload.embeds = [guildEmbed];
-
-        interaction.client.config.blockedGuilds = config.blockedGuilds;
-
-        Log.interaction(interaction, guildEmbed.data.description);
+                {
+                    name: 'devmode',
+                    type: ApplicationCommandOptionTypes.SUB_COMMAND,
+                    description: 'Toggle Developer Mode',
+                },
+                {
+                    name: 'interval',
+                    description: 'Set the RSS fetch interval',
+                    type: ApplicationCommandOptionTypes.SUB_COMMAND,
+                    options: [
+                        {
+                            name: 'milliseconds',
+                            type: ApplicationCommandOptionTypes.INTEGER,
+                            description: 'The interval in milliseconds',
+                            required: true,
+                            minValue: 60,
+                            maxValue: 3600000,
+                        },
+                    ],
+                },
+                {
+                    name: 'restrequesttimeout',
+                    description: 'Set the request timeout before an abort error is thrown',
+                    type: ApplicationCommandOptionTypes.SUB_COMMAND,
+                    options: [
+                        {
+                            name: 'milliseconds',
+                            type: ApplicationCommandOptionTypes.INTEGER,
+                            description: 'The timeout in milliseconds',
+                            required: true,
+                            minValue: 0,
+                            maxValue: 100000,
+                        },
+                    ],
+                },
+                {
+                    name: 'retrylimit',
+                    description: 'Set the number of request retries before throwing',
+                    type: ApplicationCommandOptionTypes.SUB_COMMAND,
+                    options: [
+                        {
+                            name: 'limit',
+                            type: ApplicationCommandOptionTypes.INTEGER,
+                            description: 'The number of retries',
+                            required: true,
+                            minValue: 0,
+                            maxValue: 100,
+                        },
+                    ],
+                },
+                {
+                    name: 'ownerguilds',
+                    description: 'Set the guild(s) where owner commands should be set',
+                    type: ApplicationCommandOptionTypes.SUB_COMMAND,
+                    options: [
+                        {
+                            name: 'guilds',
+                            type: ApplicationCommandOptionTypes.STRING,
+                            description: 'The Ids of the guilds separated by a comma (no spaces)',
+                            required: true,
+                        },
+                    ],
+                },
+                {
+                    name: 'owners',
+                    description: 'Set the application owner(s)',
+                    type: ApplicationCommandOptionTypes.SUB_COMMAND,
+                    options: [
+                        {
+                            name: 'owners',
+                            type: ApplicationCommandOptionTypes.STRING,
+                            description: 'The Ids of the owners separated by a comma (no spaces)',
+                            required: true,
+                        },
+                    ],
+                },
+                {
+                    name: 'view',
+                    description: 'View the current configuration',
+                    type: ApplicationCommandOptionTypes.SUB_COMMAND,
+                },
+            ],
+        };
     }
 
-    function blockUserCommand() {
-        const userID = interaction.options.getString('user', true);
-        const blockedUserIndex = config.blockedUsers.indexOf(userID);
-
-        const userEmbed = new BetterEmbed(interaction)
-            .setColor(Constants.colors.normal);
-
-        if (blockedUserIndex === -1) {
-            config.blockedUsers.push(userID);
-
-            userEmbed
-                .setTitle(text.blockUser.remove.title)
-                .setDescription(replace(text.blockUser.remove.description, {
-                    userID: userID,
-                }));
-        } else {
-            config.blockedUsers.splice(blockedUserIndex, 1);
-
-            userEmbed
-                .setTitle(text.blockUser.remove.title)
-                .setDescription(replace(text.blockUser.remove.description, {
-                    userID: userID,
-                }));
-        }
-
-        payload.embeds = [userEmbed];
-
-        interaction.client.config.blockedUsers = config.blockedUsers;
-
-        Log.interaction(interaction, userEmbed.data.description);
+    public override registerApplicationCommands(registry: ApplicationCommandRegistry) {
+        registry.registerChatInputCommand(
+            this.chatInputStructure,
+            Options.commandRegistry(this),
+        );
     }
 
-    function coreCommand() {
-        config.core = !config.core;
-        interaction.client.config.core = config.core;
+    public async chatInputRun(interaction: CommandInteraction) {
+        switch (interaction.options.getSubcommand()) {
+            case 'core':
+                await this.core(interaction);
+                break;
+            case 'devmode':
+                await this.devModeCommand(interaction);
+                break;
+            case 'interval':
+                await this.interval(interaction);
+                break;
+            case 'restrequesttimeout':
+                await this.restRequestTimeout(interaction);
+                break;
+            case 'retrylimit':
+                await this.retryLimit(interaction);
+                break;
+            case 'ownerguilds':
+                await this.ownerGuilds(interaction);
+                break;
+            case 'owners':
+                await this.owners(interaction);
+                break;
+            case 'view':
+                await this.view(interaction);
+                break;
+            // no default
+        }
+    }
+
+    public async core(interaction: CommandInteraction) {
+        const { i18n } = interaction;
+
+        this.container.config.core = !this.container.config.core;
+
+        await this.container.database.config.update({
+            data: {
+                core: this.container.config.core,
+            },
+            where: {
+                index: 0,
+            },
+        });
 
         const coreEmbed = new BetterEmbed(interaction)
-            .setColor(Constants.colors.normal)
-            .setTitle(text.core.title)
-            .setDescription(replace(text.core.description, {
-                state: config.core === true
-                    ? text.on
-                    : text.off,
-            }));
+            .setColor(Options.colorsNormal)
+            .setTitle(i18n.getMessage('commandsConfigCoreTitle'))
+            .setDescription(
+                i18n.getMessage(
+                    'commandsConfigCoreDescription', [
+                        this.container.config.core === true
+                            ? i18n.getMessage('on')
+                            : i18n.getMessage('off'),
+                    ],
+                ),
+            );
 
-        payload.embeds = [coreEmbed];
+        await interaction.editReply({
+            embeds: [coreEmbed],
+        });
 
-        Log.interaction(interaction, coreEmbed.data.description);
+        const state = this.container.config.core === true
+            ? 'on'
+            : 'off';
+
+        this.container.logger.info(
+            interactionLogContext(interaction),
+            `${this.constructor.name}:`,
+            `Developer Mode is now ${state}.`,
+        );
     }
 
-    function devModeCommand() {
-        config.devMode = !config.devMode;
-        interaction.client.config.devMode = config.devMode;
+    public async devModeCommand(interaction: CommandInteraction) {
+        const { i18n } = interaction;
+
+        this.container.config.devMode = !this.container.config.devMode;
+
+        await this.container.database.config.update({
+            data: {
+                devMode: this.container.config.devMode,
+            },
+            where: {
+                index: 0,
+            },
+        });
 
         const devModeEmbed = new BetterEmbed(interaction)
-            .setColor(Constants.colors.normal)
-            .setTitle(text.devMode.title)
-            .setDescription(replace(text.devMode.description, {
-                state: config.devMode === true
-                    ? text.on
-                    : text.off,
-            }));
+            .setColor(Options.colorsNormal)
+            .setTitle(
+                i18n.getMessage(
+                    'commandsConfigDevModeTitle',
+                ),
+            )
+            .setDescription(
+                i18n.getMessage(
+                    'commandsConfigDevModeDescription', [
+                        this.container.config.devMode === true
+                            ? i18n.getMessage('on')
+                            : i18n.getMessage('off'),
+                    ],
+                ),
+            );
 
-        payload.embeds = [devModeEmbed];
+        await interaction.editReply({ embeds: [devModeEmbed] });
 
-        Log.interaction(interaction, devModeEmbed.data.description);
+        const state = this.container.config.devMode === true
+            ? 'on'
+            : 'off';
+
+        this.container.logger.info(
+            interactionLogContext(interaction),
+            `${this.constructor.name}:`,
+            `Developer Mode is now ${state}.`,
+        );
     }
 
-    function keyPercentageCommand() {
-        const percentage = interaction.options.getNumber('percentage', true);
-        config.keyPercentage = percentage;
-        interaction.client.config.keyPercentage = percentage;
+    public async interval(interaction: CommandInteraction) {
+        const { i18n } = interaction;
 
-        const keyPercentageEmbed = new BetterEmbed(interaction)
-            .setColor(Constants.colors.normal)
-            .setTitle(text.keyPercentage.title)
-            .setDescription(replace(text.keyPercentage.description, {
-                percentage: percentage,
-            }));
+        const milliseconds = interaction.options.getInteger(
+            'milliseconds',
+            true,
+        );
 
-        payload.embeds = [keyPercentageEmbed];
+        this.container.config.interval = milliseconds;
 
-        Log.interaction(interaction, keyPercentageEmbed.data.description);
+        await this.container.database.config.update({
+            data: {
+                interval: this.container.config.interval,
+            },
+            where: {
+                index: 0,
+            },
+        });
+
+        const intervalEmbed = new BetterEmbed(interaction)
+            .setColor(Options.colorsNormal)
+            .setTitle(
+                i18n.getMessage(
+                    'commandsConfigIntervalTitle',
+                ),
+            )
+            .setDescription(
+                i18n.getMessage(
+                    'commandsConfigIntervalDescription', [
+                        milliseconds,
+                    ],
+                ),
+            );
+
+        await interaction.editReply({ embeds: [intervalEmbed] });
+
+        this.container.logger.info(
+            interactionLogContext(interaction),
+            `${this.constructor.name}:`,
+            `The interval is now ${milliseconds}ms.`,
+        );
     }
 
-    function restRequestTimeoutCommand() {
-        const milliseconds = interaction.options.getInteger('milliseconds', true);
-        config.restRequestTimeout = milliseconds;
-        interaction.client.config.restRequestTimeout = milliseconds;
+    public async restRequestTimeout(interaction: CommandInteraction) {
+        const { i18n } = interaction;
 
-        const keyPercentageEmbed = new BetterEmbed(interaction)
-            .setColor(Constants.colors.normal)
-            .setTitle(text.restRequestTimeout.title)
-            .setDescription(replace(text.restRequestTimeout.description, {
-                milliseconds: milliseconds,
-            }));
+        const milliseconds = interaction.options.getInteger(
+            'milliseconds',
+            true,
+        );
 
-        payload.embeds = [keyPercentageEmbed];
+        this.container.config.restRequestTimeout = milliseconds;
 
-        Log.interaction(interaction, keyPercentageEmbed.data.description);
+        await this.container.database.config.update({
+            data: {
+                restRequestTimeout: this.container.config.restRequestTimeout,
+            },
+            where: {
+                index: 0,
+            },
+        });
+
+        const restRequestTimeoutEmbed = new BetterEmbed(interaction)
+            .setColor(Options.colorsNormal)
+            .setTitle(
+                i18n.getMessage(
+                    'commandsConfigRestRequestTimeoutTitle',
+                ),
+            )
+            .setDescription(
+                i18n.getMessage(
+                    'commandsConfigRestRequestTimeoutDescription', [
+                        milliseconds,
+                    ],
+                ),
+            );
+
+        await interaction.editReply({
+            embeds: [restRequestTimeoutEmbed],
+        });
+
+        this.container.logger.info(
+            interactionLogContext(interaction),
+            `${this.constructor.name}:`,
+            `The rest request timeout is now ${milliseconds}ms.`,
+        );
     }
 
-    function retryLimitCommand() {
-        const limit = interaction.options.getInteger('limit', true);
-        config.retryLimit = limit;
-        interaction.client.config.retryLimit = limit;
+    public async retryLimit(interaction: CommandInteraction) {
+        const { i18n } = interaction;
 
-        const keyPercentageEmbed = new BetterEmbed(interaction)
-            .setColor(Constants.colors.normal)
-            .setTitle(text.retryLimit.title)
-            .setDescription(replace(text.retryLimit.description, {
-                limit: limit,
-            }));
+        const limit = interaction.options.getInteger(
+            'limit',
+            true,
+        );
 
-        payload.embeds = [keyPercentageEmbed];
+        this.container.config.retryLimit = limit;
 
-        Log.interaction(interaction, keyPercentageEmbed.data.description);
+        await this.container.database.config.update({
+            data: {
+                retryLimit: this.container.config.retryLimit,
+            },
+            where: {
+                index: 0,
+            },
+        });
+
+        const retryLimitEmbed = new BetterEmbed(interaction)
+            .setColor(Options.colorsNormal)
+            .setTitle(
+                i18n.getMessage(
+                    'commandsConfigRetryLimitTitle',
+                ),
+            )
+            .setDescription(
+                i18n.getMessage(
+                    'commandsConfigRetryLimitDescription', [
+                        limit,
+                    ],
+                ),
+            );
+
+        await interaction.editReply({ embeds: [retryLimitEmbed] });
+
+        this.container.logger.info(
+            interactionLogContext(interaction),
+            `${this.constructor.name}:`,
+            `The retry limit is now ${limit}.`,
+        );
     }
 
-    function viewCommand() {
+    public async ownerGuilds(interaction: CommandInteraction) {
+        const { i18n } = interaction;
+
+        const guilds = interaction.options.getString(
+            'guilds',
+            true,
+        ).split(',');
+
+        this.container.config.ownerGuilds = guilds;
+
+        await this.container.database.config.update({
+            data: {
+                ownerGuilds: this.container.config.ownerGuilds,
+            },
+            where: {
+                index: 0,
+            },
+        });
+
+        const ownerGuildsEmbed = new BetterEmbed(interaction)
+            .setColor(Options.colorsNormal)
+            .setTitle(
+                i18n.getMessage(
+                    'commandsConfigOwnerGuildsTitle',
+                ),
+            )
+            .setDescription(
+                i18n.getMessage(
+                    'commandsConfigOwnerGuildsDescription', [
+                        guilds.join(', '),
+                    ],
+                ),
+            );
+
+        await interaction.editReply({ embeds: [ownerGuildsEmbed] });
+
+        this.container.logger.info(
+            interactionLogContext(interaction),
+            `${this.constructor.name}:`,
+            `The owner guilds are now ${guilds.join(', ')}.`,
+        );
+    }
+
+    public async owners(interaction: CommandInteraction) {
+        const { i18n } = interaction;
+
+        const owners = interaction.options.getString(
+            'owners',
+            true,
+        ).split(',');
+
+        this.container.config.owners = owners;
+
+        await this.container.database.config.update({
+            data: {
+                owners: this.container.config.owners,
+            },
+            where: {
+                index: 0,
+            },
+        });
+
+        const ownersEmbed = new BetterEmbed(interaction)
+            .setColor(Options.colorsNormal)
+            .setTitle(
+                i18n.getMessage(
+                    'commandsConfigOwnersTitle',
+                ),
+            )
+            .setDescription(
+                i18n.getMessage(
+                    'commandsConfigOwnersDescription', [
+                        owners.join(', '),
+                    ],
+                ),
+            );
+
+        await interaction.editReply({ embeds: [ownersEmbed] });
+
+        this.container.logger.info(
+            interactionLogContext(interaction),
+            `${this.constructor.name}:`,
+            `The owners are now ${owners.join(', ')}.`,
+        );
+    }
+
+    public async view(interaction: CommandInteraction) {
+        const { i18n } = interaction;
+
         const viewEmbed = new BetterEmbed(interaction)
-            .setColor(Constants.colors.normal)
-            .setTitle(text.view.title)
-            .setDescription(replace(text.view.description, {
-                blockedGuilds: config.blockedGuilds.join(', '),
-                blockedUsers: config.blockedUsers.join(', '),
-                core: config.core === true ? text.on : text.off,
-                devMode: config.devMode === true ? text.on : text.off,
-                keyPercentage: config.keyPercentage * 100,
-                restRequestTimeout: config.restRequestTimeout,
-                retryLimit: config.retryLimit,
-            }));
+            .setColor(Options.colorsNormal)
+            .setTitle(
+                i18n.getMessage(
+                    'commandsConfigViewTitle',
+                ),
+            )
+            .setDescription(
+                i18n.getMessage(
+                    'commandsConfigViewDescription', [
+                        this.container.config.core === true
+                            ? i18n.getMessage('on')
+                            : i18n.getMessage('off'),
+                        this.container.config.devMode === true
+                            ? i18n.getMessage('on')
+                            : i18n.getMessage('off'),
+                        this.container.config.interval,
+                        this.container.config.restRequestTimeout,
+                        this.container.config.retryLimit,
+                        this.container.config.ownerGuilds.join(', '),
+                        this.container.config.owners.join(', '),
 
-        payload.embeds = [viewEmbed];
+                    ],
+                ),
+            );
+
+        await interaction.editReply({ embeds: [viewEmbed] });
     }
-
-    const newRawConfig = SQLite.unjsonize({ ...config });
-
-    SQLite.queryRun({
-        query: 'UPDATE config set blockedGuilds = ?, blockedUsers = ?, core = ?, devMode = ?, keyPercentage = ?, restRequestTimeout = ?, retryLimit = ? WHERE rowid = 1',
-        data: Object.values(newRawConfig),
-    });
-
-    await interaction.editReply(payload);
-};
+}

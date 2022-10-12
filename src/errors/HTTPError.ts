@@ -1,8 +1,4 @@
-import { type Response } from 'node-fetch';
-
-export class HTTPError<JSON> extends Error {
-    public readonly json: JSON | null;
-
+export class HTTPError extends Error {
     public readonly response: Response | null;
 
     public readonly status: number;
@@ -12,20 +8,20 @@ export class HTTPError<JSON> extends Error {
     public readonly url: string;
 
     public constructor({
-        json,
         message,
         response,
         url,
     }: {
-        json?: JSON | null,
         message?: string,
         response?: Response,
         url: string;
     }) {
-        super(message ?? response?.statusText ?? 'Unknown');
-        this.json = json
-            ?? (response?.json().catch(() => null) as JSON | undefined | null)
-            ?? null;
+        super(
+            message
+            ?? response?.statusText
+            ?? String(response?.status),
+        );
+
         this.name = 'HTTPError';
         this.response = response ?? null;
         this.status = response?.status ?? 500;

@@ -1,70 +1,74 @@
 import {
-    EmbedBuilder,
     type CommandInteraction,
+    type ContextMenuInteraction,
+    type MessageComponentInteraction,
+    MessageEmbed,
 } from 'discord.js';
 import { BaseInteractionErrorHandler } from './BaseInteractionErrorHandler';
 import { ErrorHandler } from './ErrorHandler';
-import { RegionLocales } from '../locales/RegionLocales';
-import { Constants } from '../utility/Constants';
+import { Options } from '../utility/Options';
 
-export class CommandErrorHandler<E> extends BaseInteractionErrorHandler<E> {
-    public readonly interaction: CommandInteraction;
-
-    public readonly locale: string;
+export class InteractionErrorHandler<E> extends BaseInteractionErrorHandler<E> {
+    public readonly interaction:
+    | CommandInteraction
+    | ContextMenuInteraction
+    | MessageComponentInteraction;
 
     public constructor(
         error: E,
-        interaction: CommandInteraction,
-        locale: string,
+        interaction: CommandInteraction | ContextMenuInteraction | MessageComponentInteraction,
     ) {
         super(error, interaction);
+
         this.interaction = interaction;
-        this.locale = locale;
     }
 
     public static async init<T>(
         error: T,
-        interaction: CommandInteraction,
-        locale: string,
+        interaction: CommandInteraction | ContextMenuInteraction | MessageComponentInteraction,
     ) {
-        const handler = new CommandErrorHandler(error, interaction, locale);
+        const handler = new InteractionErrorHandler(error, interaction);
 
         try {
             handler.errorLog();
-            handler.systemNotify();
             await handler.userNotify();
         } catch (error2) {
-            await ErrorHandler.init(error2, handler.incidentID);
+            new ErrorHandler(error2, handler.incidentId).init();
         }
     }
 
     private errorLog() {
         this.log(this.error);
+
+        this.sentry
+            .setSeverity('error')
+            .captureException(this.error);
     }
 
     private async userNotify() {
-        const { commandName } = this.interaction;
-
-        const text = RegionLocales
-            .locale(this.locale)
-            .errors;
-
-        const { replace } = RegionLocales;
-
-        const embed = new EmbedBuilder()
-            .setColor(Constants.colors.error)
-            .setTitle(text.commandErrors.embed.title)
-            .setDescription(replace(text.commandErrors.embed.description, {
-                commandName: commandName,
-            }))
+        const embed = new MessageEmbed()
+            .setColor(Options.colorsError)
+            .setTitle(
+                this.i18n.getMessage(
+                    'errorsInteractionReplyTitle',
+                ),
+            )
+            .setDescription(
+                this.i18n.getMessage(
+                    'errorsInteractionReplyDescription',
+                ),
+            )
             .addFields({
-                name: text.commandErrors.embed.field.name,
-                value: replace(text.commandErrors.embed.field.value, {
-                    id: this.incidentID,
-                }),
+                name: this.i18n.getMessage(
+                    'errorsInteractionReplyIncidentName',
+                ),
+                value: this.incidentId,
             });
 
-        const payLoad = { embeds: [embed], ephemeral: true };
+        const payLoad = {
+            embeds: [embed],
+            ephemeral: true,
+        };
 
         try {
             if (
@@ -77,7 +81,8 @@ export class CommandErrorHandler<E> extends BaseInteractionErrorHandler<E> {
             }
         } catch (error) {
             this.log(
-                'An error has occurred and also failed to notify the user',
+                `${this.constructor.name}:`,
+                'An error has occurred and also failed to notify the user.',
                 error,
             );
 
@@ -85,11 +90,5 @@ export class CommandErrorHandler<E> extends BaseInteractionErrorHandler<E> {
                 .setSeverity('error')
                 .captureException(error);
         }
-    }
-
-    private systemNotify() {
-        this.sentry
-            .setSeverity('error')
-            .captureException(this.error);
     }
 }

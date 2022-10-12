@@ -1,0 +1,350 @@
+{
+    "null": {
+        "message": "Unknown"
+    },
+    "yes": {
+        "message": "Yes"
+    },
+    "no": {
+        "message": "No"
+    },
+    "on": {
+        "message": "On"
+    },
+    "off": {
+        "message": "Off"
+    },
+    "none": {
+        "message": "None"
+    },
+    "commandsAPICallDescription": {
+        "message": "Executed <Core>.errors.$1."
+    },
+    "commandsAPICallTitle": {
+        "message": "Executed"
+    },
+    "commandsAPISetDescription": {
+        "message": "<Core>.errors.$1.$2 is now $3."
+    },
+    "commandsAPISetTitle": {
+        "message": "Updated Value"
+    },
+    "commandsAPIStatsEnabledName": {
+        "message": "Enabled"
+    },
+    "commandsAPIStatsLastHourName": {
+        "message": "Last Hour Statistic"
+    },
+    "commandsAPIStatsLastHourValue": {
+        "message": "Aborts: $1\nGeneric Errors: $2\nHTTP: $3"
+    },
+    "commandsAPIStatsNextTimeoutsName": {
+        "message": "Next Timeout Lengths"
+    },
+    "commandsAPIStatsNextTimeoutsValue": {
+        "message": "May not be accurate\nAbort Errors: $1\nGeneric Errors: $2\nHTTP Errors: $3"
+    },
+    "commandsAPIStatsResumeName": {
+        "message": "Resuming In"
+    },
+    "commandsAPIStatsUsesName": {
+        "message": "Uses"
+    },
+    "commandsAnnouncementsAddDescription": {
+        "message": "$1 will be sent to $2!"
+    },
+    "commandsAnnouncementsAddTitle": {
+        "message": "Added $1"
+    },
+    "commandsConfigCoreDescription": {
+        "message": "The core is now **$1**."
+    },
+    "commandsConfigCoreTitle": {
+        "message": "Core State Updated"
+    },
+    "commandsConfigDevModeDescription": {
+        "message": "Developer Mode is now **$1**."
+    },
+    "commandsConfigDevModeTitle": {
+        "message": "Developer Mode Updated"
+    },
+    "commandsConfigIntervalDescription": {
+        "message": "The interval is now **$1**ms."
+    },
+    "commandsConfigIntervalTitle": {
+        "message": "Interval Updated"
+    },
+    "commandsConfigOwnerGuildsDescription": {
+        "message": "The owner guilds are now **$1**."
+    },
+    "commandsConfigOwnerGuildsTitle": {
+        "message": "Owner Guilds Updated"
+    },
+    "commandsConfigOwnersDescription": {
+        "message": "The owners are now **$1**."
+    },
+    "commandsConfigOwnersTitle": {
+        "message": "Owners Updated"
+    },
+    "commandsConfigRestRequestTimeoutDescription": {
+        "message": "The rest request timeout is now **$1**."
+    },
+    "commandsConfigRestRequestTimeoutTitle": {
+        "message": "Rest Request Timeout Updated"
+    },
+    "commandsConfigRetryLimitDescription": {
+        "message": "The retry limit is now **$1**."
+    },
+    "commandsConfigRetryLimitTitle": {
+        "message": "Retry Limit Updated"
+    },
+    "commandsConfigViewDescription": {
+        "message": "Core: **$1**\nDeveloper Mode: **$2**\nInterval: **$3**ms\nRest Request Timeout: **$4**ms\nRetry Limit: **$5**\nOwner Guilds: **$6**\nOwners: **$7**"
+    },
+    "commandsConfigViewTitle": {
+        "message": "Current Configuration"
+    },
+    "commandsEvalFailTitle": {
+        "message": "Failed Eval"
+    },
+    "commandsEvalInputName": {
+        "message": "Input"
+    },
+    "commandsEvalMaxLengthName": {
+        "message": "Over Max Length"
+    },
+    "commandsEvalMaxLengthValue": {
+        "message": "The error is over 1024 characters long."
+    },
+    "commandsEvalOutputName": {
+        "message": "Output"
+    },
+    "commandsEvalStringifiedJSONOutputName": {
+        "message": "Stringified JSON Output"
+    },
+    "commandsEvalSuccessTitle": {
+        "message": "Executed Eval"
+    },
+    "commandsEvalTimeTakenName": {
+        "message": "Time Taken"
+    },
+    "commandsEvalTimeTakenValue": {
+        "message": "$1ms"
+    },
+    "commandsEvalTypeName": {
+        "message": "Type"
+    },
+    "commandsHelpCommandsLabel": {
+        "message": "Commands"
+    },
+    "commandsHelpCommandsMenuCooldownName": {
+        "message": "Command Cooldown"
+    },
+    "commandsHelpCommandsMenuCooldownValue": {
+        "message": "$1 second(s)."
+    },
+    "commandsHelpCommandsMenuDMName": {
+        "message": "Direct Messages"
+    },
+    "commandsHelpCommandsMenuDMValue": {
+        "message": "This command cannot be used in a DM channel."
+    },
+    "commandsHelpCommandsMenuDescription": {
+        "message": "$1."
+    },
+    "commandsHelpCommandsMenuLabel": {
+        "message": "/$1"
+    },
+    "commandsHelpCommandsMenuOwnerName": {
+        "message": "Bot Owner"
+    },
+    "commandsHelpCommandsMenuOwnerValue": {
+        "message": "Being an owner is required to execute this command."
+    },
+    "commandsHelpCommandsMenuPlaceholder": {
+        "message": "/$1"
+    },
+    "commandsHelpCommandsMenuTitle": {
+        "message": "/$1"
+    },
+    "commandsHelpCommandsName": {
+        "message": "Commands"
+    },
+    "commandsHelpCommandsValue": {
+        "message": "Click \"Commands\" to view available commands."
+    },
+    "commandsHelpInformationLabel": {
+        "message": "Information"
+    },
+    "commandsHelpInformationMenuAboutName": {
+        "message": "About"
+    },
+    "commandsHelpInformationMenuAboutValue": {
+        "message": "Hypixel News is a project that sends you the latest news from the Hypixel Network. When new posts are made by the admins on the forums, you can choose which ones you want to receive as a neat message in a selected Discord channel.\n\nLearn more at https://attituding.github.io/hypixel-news/."
+    },
+    "commandsHelpInformationMenuLegalName": {
+        "message": "Legal Stuff"
+    },
+    "commandsHelpInformationMenuLegalValue": {
+        "message": "By using this service, you agree to our [Privacy Policy](https://attituding.github.io/Hypixel-News/legal/privacy-policy/ \"Privacy Policy\") and our [Terms of Service](https://attituding.github.io/Hypixel-News/legal/terms-of-service/ \"Terms of Service\")."
+    },
+    "commandsHelpInformationMenuTitle": {
+        "message": "Information"
+    },
+    "commandsHelpInformationName": {
+        "message": "Information"
+    },
+    "commandsHelpInformationValue": {
+        "message": "Click \"Information\" to learn more about this bot."
+    },
+    "commandsHelpTitle": {
+        "message": "Help"
+    },
+    "commandsPerformanceLatestName": {
+        "message": "Latest Performance"
+    },
+    "commandsPerformanceLatestValue": {
+        "message": "Hypixel RSS Fetch: $1ms\nParse Data: $2ms\nCheck Data: $3ms\nSend: $4ms\nTotal: $5ms"
+    },
+    "commandsPerformanceTitle": {
+        "message": "Performance"
+    },
+    "commandsPingDescription": {
+        "message": "Websocket heartbeat is $1ms. Roundtrip latency is $2ms."
+    },
+    "commandsPingLoadingTitle": {
+        "message": "Pinging..."
+    },
+    "commandsPingTitle": {
+        "message": "🏓 Ping"
+    },
+    "commandsPresenceClearDescription": {
+        "message": "The presence has been reset to the default!"
+    },
+    "commandsPresenceClearTitle": {
+        "message": "Presence Cleared"
+    },
+    "commandsPresenceSetNameName": {
+        "message": "Name"
+    },
+    "commandsPresenceSetStatusName": {
+        "message": "Status"
+    },
+    "commandsPresenceSetTitle": {
+        "message": "Presence Set"
+    },
+    "commandsPresenceSetTypeName": {
+        "message": "Type"
+    },
+    "commandsPresenceSetURLName": {
+        "message": "URL"
+    },
+    "commandsReloadAllDescription": {
+        "message": "$1 imports have been reloaded! This action took $2ms."
+    },
+    "commandsReloadAllTitle": {
+        "message": "Reloaded Everything"
+    },
+    "commandsReloadSingleSuccessDescription": {
+        "message": "$1.$2 was successfully reloaded! This action took $3 milliseconds."
+    },
+    "commandsReloadSingleSuccessTitle": {
+        "message": "Reloaded"
+    },
+    "commandsReloadSingleUnknownDescription": {
+        "message": "There is no item with the structure $1.$2!"
+    },
+    "commandsReloadSingleUnknownTitle": {
+        "message": "Unknown Item"
+    },
+    "commandsSystemMemberValue": {
+        "message": "$1MB"
+    },
+    "commandsSystemMemoryName": {
+        "message": "Memory Usage"
+    },
+    "commandsSystemServersName": {
+        "message": "Servers"
+    },
+    "commandsSystemTitle": {
+        "message": "System"
+    },
+    "commandsSystemUptimeName": {
+        "message": "Uptime"
+    },
+    "commandsSystemUsersName": {
+        "message": "Users"
+    },
+    "coreComponentsButtonsReadMoreLabel": {
+        "message": "Read More"
+    },
+    "errorsGeneralError": {
+        "message": "Error"
+    },
+    "errorsGeneralUnexpected": {
+        "message": "Unexpected Error"
+    },
+    "errorsInteractionReplyDescription": {
+        "message": "An error occurred while executing the interaction! This error has been automatically forwarded for review. Sorry."
+    },
+    "errorsInteractionReplyIncidentName": {
+        "message": "Incident Id"
+    },
+    "errorsInteractionReplyTitle": {
+        "message": "Oops"
+    },
+    "errorsPreconditionBotGlobalPermissionsDescription": {
+        "message": "This bot doesn't have the required server permission(s) to use this command! Please ensure that you have given the bot the following through its role: $1"
+    },
+    "errorsPreconditionBotGlobalPermissionsTitle": {
+        "message": "Missing Permission(s)"
+    },
+    "errorsPreconditionBotLocalPermissionsDescription": {
+        "message": "This bot doesn't have the required permission(s) to use this command! Please ensure that you have given the bot the following through its role or through the channel's advanced permissions: $1"
+    },
+    "errorsPreconditionBotLocalPermissionsTitle": {
+        "message": "Missing Permission(s)"
+    },
+    "errorsPreconditionCooldownCooldownOverDescription": {
+        "message": "The cooldown has expired! You can now execute the command **/$1**!"
+    },
+    "errorsPreconditionCooldownCooldownOverTitle": {
+        "message": "Cooldown Over"
+    },
+    "errorsPreconditionCooldownWaitingDescription": {
+        "message": "You are executing commands too quickly! The cooldown of this command allows $1 execution(s) in $2 second(s). This message will turn green in $3 seconds once the cooldown expires."
+    },
+    "errorsPreconditionCooldownWaitingTitle": {
+        "message": "Cooldown"
+    },
+    "errorsPreconditionDMDescription": {
+        "message": "You cannot execute this command in the DM channel! Please switch to a server channel!"
+    },
+    "errorsPreconditionDMTitle": {
+        "message": "DM Channel"
+    },
+    "errorsPreconditionDevModeDescription": {
+        "message": "This bot is in developer only mode, likely due to a major issue or an upgrade that is taking place. Please check back later!"
+    },
+    "errorsPreconditionDevModeTitle": {
+        "message": "Developer Mode"
+    },
+    "errorsPreconditionOwnerDescription": {
+        "message": "You cannot execute this command without being an owner!"
+    },
+    "errorsPreconditionOwnerTitle": {
+        "message": "Insufficient Permissions"
+    },
+    "errorsPreconditionUserGlobalPermissionsDescription": {
+        "message": "You don't have the required server permission(s) to use this command! Please ensure that you have the following given through your role: $1"
+    },
+    "errorsPreconditionUserGlobalPermissionsTitle": {
+        "message": "Missing Permission(s)"
+    },
+    "errorsPreconditionUserLocalPermissionsDescription": {
+        "message": "You don't have the required permission(s) to use this command! Please ensure that you have the following given through your role or through the channel's advanced permissions: $1"
+    },
+    "errorsPreconditionUserLocalPermissionsTitle": {
+        "message": "Missing Permission(s)"
+    }
+}

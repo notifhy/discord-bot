@@ -1,0 +1,37 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model config {
+  index              Int      @id @default(0)
+  core               Boolean  @default(true)
+  devMode            Boolean  @default(false)
+  interval           Int      @default(210000)
+  restRequestTimeout Int      @default(5000)
+  retryLimit         Int      @default(3)
+  ownerGuilds        String[] @default([])
+  owners             String[] @default([])
+}
+
+model categories {
+  category    String @id(map: "announcements_pkey")
+  channelId   String
+  maxComments Int
+  roleId      String
+  url         String
+}
+
+model announcements {
+  category String
+  id       String
+  title    String
+  content  String
+  message  String?
+
+  @@id([category, id], map: "unique")
+}
