@@ -11,27 +11,66 @@ model config {
   index              Int      @id @default(0)
   core               Boolean  @default(true)
   devMode            Boolean  @default(false)
-  interval           Int      @default(210000)
+  requestBucket      Int      @default(10)
   restRequestTimeout Int      @default(5000)
   retryLimit         Int      @default(3)
-  ownerGuilds        String[] @default([])
-  owners             String[] @default([])
+  ownerGuilds        String[] @default([]) @db.VarChar(20)
+  owners             String[] @default([]) @db.VarChar(20)
 }
 
-model categories {
-  category    String @id(map: "announcements_pkey")
-  channelId   String
-  maxComments Int
-  roleId      String
-  url         String
+model activities {
+  index             Int     @id @default(autoincrement())
+  uuid              String  @db.Uuid
+  timestamp         Int
+  firstLogin        Int?
+  lastLogin         Int?
+  lastLogout        Int?
+  version           String? @db.VarChar(10)
+  language          String? @db.VarChar(15)
+  gameType          String? @db.VarChar(25)
+  gameMode          String? @db.VarChar(25)
+  gameMap           String? @db.VarChar(25)
+  lastClaimedReward Int?
+  rewardScore       Int?
+  rewardHighScore   Int?
+  totalDailyRewards Int?
+  totalRewards      Int?
 }
 
-model announcements {
-  category String
-  id       String
-  title    String
-  content  String
-  message  String?
+model defender {
+  id             String   @id @db.VarChar(20)
+  channel        String?  @db.VarChar(20)
+  loginAlerts    Boolean? @default(true)
+  logoutAlerts   Boolean? @default(true)
+  versionAlerts  Boolean? @default(true)
+  gameTypeAlerts Boolean? @default(true)
+  languageAlerts Boolean? @default(true)
+  gameTypes      String[] @default([]) @db.VarChar(25)
+  languages      String[] @default([]) @db.VarChar(15)
+  version        String[] @default([]) @db.VarChar(10)
+}
 
-  @@id([category, id], map: "unique")
+model friends {
+  id      String  @id @db.VarChar(20)
+  channel String? @db.VarChar(20)
+}
+
+model rewards {
+  id                 String  @id @db.VarChar(20)
+  claimNotifications Boolean @default(true)
+  delay              Int     @default(0)
+  interval           Int     @default(1800000)
+  lastNotified       Int     @default(0)
+  milestones         Boolean @default(true)
+}
+
+model system_messages {
+  id    String @id @db.VarChar(20)
+  name  String @db.VarChar(256)
+  value String @db.VarChar(1024)
+}
+
+model users {
+  id   String @id @db.VarChar(20)
+  uuid String @unique(map: "uuid_ukey") @db.Uuid
 }
