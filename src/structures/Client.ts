@@ -1,4 +1,7 @@
-import { PrismaClient } from '@prisma/client';
+import {
+    config as Config,
+    PrismaClient,
+} from '@prisma/client';
 import {
     container,
     SapphireClient,
@@ -9,7 +12,6 @@ import {
     type PresenceData,
     Sweepers,
 } from 'discord.js';
-import { Config } from '../@types/Config';
 import { Core } from '../core/Core';
 import { i18n } from '../locales/i18n';
 
@@ -88,11 +90,6 @@ export class Client extends SapphireClient {
         container.logger.info(
             `${this.constructor.name}:`,
             'Fetched config from the database.',
-        );
-
-        container.logger.info(
-            `${this.constructor.name}:`,
-            'Fetched announcements from the database.',
         );
 
         const endTime = Date.now();

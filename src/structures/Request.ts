@@ -2,6 +2,8 @@ import { setTimeout } from 'node:timers';
 import { Base } from './Base';
 import { AbortError } from '../errors/AbortError';
 import { Options } from '../utility/Options';
+import { RateLimitError } from '../errors/RateLimitError';
+import { HTTPError } from '../errors/HTTPError';
 
 export class Request extends Base {
     public readonly restRequestTimeout: number;
@@ -64,7 +66,16 @@ export class Request extends Base {
                 return await this.request(url, fetchOptions);
             }
 
-            return response;
+            const baseErrorData = {
+                response: response,
+                url: url,
+            };
+
+            if (response.status === 429) {
+                throw new RateLimitError(baseErrorData);
+            }
+
+            throw new HTTPError(baseErrorData);
         } catch (error) {
             if (this.retry < this.retryLimit) {
                 this.container.logger.warn(

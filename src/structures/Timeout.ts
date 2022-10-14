@@ -19,17 +19,17 @@ export class Timeout {
 
     private clearTimeout: number | undefined;
 
-    public lastHour: number;
+    private lastHour: number;
 
     private readonly maxTimeout: number;
 
-    public pauseFor: number;
+    private pauseFor: number;
 
-    public resumeAfter: number;
+    private resetAfter: number;
 
-    public resetAfter: number;
+    private resumeAfter: number;
 
-    public timeout: number;
+    private timeout: number;
 
     private readonly increment: TimeoutOptions['increment'] | undefined;
 
@@ -100,12 +100,24 @@ export class Timeout {
         }, Time.Hour);
     }
 
+    public getLastHour() {
+        return this.lastHour;
+    }
+
     public getPauseFor() {
         return this.pauseFor;
     }
 
+    public getResetAfter() {
+        return this.resetAfter;
+    }
+
+    public getResumeAfter() {
+        return this.resumeAfter;
+    }
+
     public getTimeout() {
-        return this;
+        return this.timeout;
     }
 
     public isTimeout() {

@@ -163,7 +163,7 @@ export class APICommand extends Command {
             getTimeout,
         } = this.container.core.errors;
 
-        const { uses } = this.container.core;
+        const { uses } = this.container.core.requests;
 
         const statsEmbed = new BetterEmbed(interaction)
             .setColor(Options.colorsNormal)
@@ -191,9 +191,9 @@ export class APICommand extends Command {
                     name: i18n.getMessage('commandsAPIStatsLastHourName'),
                     value: i18n.getMessage(
                         'commandsAPIStatsLastHourValue', [
-                            abort.lastHour,
-                            generic.lastHour,
-                            http.lastHour,
+                            abort.getLastHour(),
+                            generic.getLastHour(),
+                            http.getLastHour(),
                         ],
                     ),
                 },
@@ -201,9 +201,9 @@ export class APICommand extends Command {
                     name: i18n.getMessage('commandsAPIStatsNextTimeoutsName'),
                     value: i18n.getMessage(
                         'commandsAPIStatsNextTimeoutsValue', [
-                            cleanLength(abort.timeout) ?? i18n.getMessage('null'),
-                            cleanLength(generic.timeout) ?? i18n.getMessage('null'),
-                            cleanLength(http.timeout) ?? i18n.getMessage('null'),
+                            cleanLength(abort.getTimeout()) ?? i18n.getMessage('null'),
+                            cleanLength(generic.getTimeout()) ?? i18n.getMessage('null'),
+                            cleanLength(http.getTimeout()) ?? i18n.getMessage('null'),
                         ],
                     ),
                 },

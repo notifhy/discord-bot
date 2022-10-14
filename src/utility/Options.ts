@@ -33,7 +33,13 @@ export class Options {
         behaviorWhenNotIdentical: RegisterBehavior.Overwrite,
     });
 
+    static readonly coreDisabledTimeout = Time.Second * 10;
+
     static readonly defaultLocale: keyof typeof locales = 'en-US';
+
+    static readonly hypixelPlayerURL = 'https://api.hypixel.net/player';
+
+    static readonly hypixelStatusURL = 'https://api.hypixel.net/status';
 
     static readonly performanceInterval = Time.Hour / 2;
 
