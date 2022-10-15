@@ -16,7 +16,8 @@ import {
 type ErrorTypes =
     | 'abort'
     | 'generic'
-    | 'http';
+    | 'http'
+    | 'rateLimit';
 
 type TimeoutSettables =
     | 'timeout'

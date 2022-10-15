@@ -42,17 +42,17 @@ export class ConfigCommand extends Command {
                     description: 'Toggle Developer Mode',
                 },
                 {
-                    name: 'interval',
-                    description: 'Set the RSS fetch interval',
+                    name: 'requestBucket',
+                    description: 'Set how many requests should be made per minute',
                     type: ApplicationCommandOptionTypes.SUB_COMMAND,
                     options: [
                         {
-                            name: 'milliseconds',
+                            name: 'amount',
                             type: ApplicationCommandOptionTypes.INTEGER,
-                            description: 'The interval in milliseconds',
+                            description: 'The amount of requests to make per minute',
                             required: true,
-                            minValue: 60,
-                            maxValue: 3600000,
+                            minValue: 1,
+                            maxValue: 240,
                         },
                     ],
                 },
@@ -136,8 +136,8 @@ export class ConfigCommand extends Command {
             case 'devmode':
                 await this.devModeCommand(interaction);
                 break;
-            case 'interval':
-                await this.interval(interaction);
+            case 'requestBucket':
+                await this.requestBucket(interaction);
                 break;
             case 'restrequesttimeout':
                 await this.restRequestTimeout(interaction);
@@ -244,46 +244,46 @@ export class ConfigCommand extends Command {
         );
     }
 
-    public async interval(interaction: CommandInteraction) {
+    public async requestBucket(interaction: CommandInteraction) {
         const { i18n } = interaction;
 
-        const milliseconds = interaction.options.getInteger(
-            'milliseconds',
+        const amount = interaction.options.getInteger(
+            'amount',
             true,
         );
 
-        this.container.config.interval = milliseconds;
+        this.container.config.requestBucket = amount;
 
         await this.container.database.config.update({
             data: {
-                interval: this.container.config.interval,
+                requestBucket: this.container.config.requestBucket,
             },
             where: {
                 index: 0,
             },
         });
 
-        const intervalEmbed = new BetterEmbed(interaction)
+        const requestBucketEmbed = new BetterEmbed(interaction)
             .setColor(Options.colorsNormal)
             .setTitle(
                 i18n.getMessage(
-                    'commandsConfigIntervalTitle',
+                    'commandsConfigRequestBucketTitle',
                 ),
             )
             .setDescription(
                 i18n.getMessage(
-                    'commandsConfigIntervalDescription', [
-                        milliseconds,
+                    'commandsConfigRequestBucketDescription', [
+                        amount,
                     ],
                 ),
             );
 
-        await interaction.editReply({ embeds: [intervalEmbed] });
+        await interaction.editReply({ embeds: [requestBucketEmbed] });
 
         this.container.logger.info(
             interactionLogContext(interaction),
             `${this.constructor.name}:`,
-            `The interval is now ${milliseconds}ms.`,
+            `The request bucket is now ${amount}ms.`,
         );
     }
 
@@ -480,7 +480,7 @@ export class ConfigCommand extends Command {
                         this.container.config.devMode === true
                             ? i18n.getMessage('on')
                             : i18n.getMessage('off'),
-                        this.container.config.interval,
+                        this.container.config.requestBucket,
                         this.container.config.restRequestTimeout,
                         this.container.config.retryLimit,
                         this.container.config.ownerGuilds.join(', '),

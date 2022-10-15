@@ -3,6 +3,7 @@ import { BaseErrorHandler } from './BaseErrorHandler';
 import { type Core } from '../core/Core';
 import { ErrorHandler } from './ErrorHandler';
 import { HTTPError } from './HTTPError';
+import { RateLimitError } from './RateLimitError';
 
 export class RequestErrorHandler<E> extends BaseErrorHandler<E> {
     public readonly core: Core;
@@ -17,6 +18,8 @@ export class RequestErrorHandler<E> extends BaseErrorHandler<E> {
             coreErrors.addAbort();
         } else if (this.error instanceof HTTPError) {
             coreErrors.addHTTP();
+        } else if (this.error instanceof RateLimitError) {
+            coreErrors.addRateLimit();
         } else {
             coreErrors.addGeneric();
         }

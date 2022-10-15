@@ -71,6 +71,9 @@ model system_messages {
 }
 
 model users {
-  id   String @id @db.VarChar(20)
-  uuid String @unique(map: "uuid_ukey") @db.Uuid
+  id             String  @id @db.VarChar(20)
+  uuid           String  @unique(map: "uuid_ukey") @db.Uuid
+  defenderModule Boolean @default(false)
+  friendsModule  Boolean @default(false)
+  rewardsModule  Boolean @default(false)
 }

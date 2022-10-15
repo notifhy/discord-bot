@@ -1,11 +1,12 @@
-import { users as User } from '@prisma/client';
+import { type users as User } from '@prisma/client';
 import { URL } from 'node:url';
 import {
-    CleanHypixelPlayer,
-    CleanHypixelStatus,
-    HypixelAPIOk,
-    RawHypixelPlayer,
-    RawHypixelStatus,
+    type CleanHypixelData,
+    type CleanHypixelPlayer,
+    type CleanHypixelStatus,
+    type HypixelAPIOk,
+    type RawHypixelPlayer,
+    type RawHypixelStatus,
 } from '../@types/Hypixel';
 import { Base } from '../structures/Base';
 import { Request } from '../structures/Request';
@@ -19,20 +20,18 @@ export class Requests extends Base {
         this.uses = 0;
     }
 
-    public async request(user: User) {
+    public async request(urls: URL[]) {
         const [player, status] = await Promise.all(
-            (await this.getURLs(user)).map(
-                (url) => this.handle(url.toString()),
-            ),
+            urls.map((url) => this.fetch(url.toString())),
         );
 
         return {
-            player: this.cleanPlayerData(player as RawHypixelPlayer),
-            status: this.cleanStatusData(status as RawHypixelStatus),
-        };
+            ...this.cleanPlayerData(player as RawHypixelPlayer),
+            ...this.cleanStatusData(status as RawHypixelStatus),
+        } as CleanHypixelData;
     }
 
-    public async handle(url: string) {
+    public async fetch(url: string) {
         const response = await new Request({
             restRequestTimeout: this.container.config.restRequestTimeout,
             retryLimit: this.container.config.retryLimit,
@@ -43,13 +42,17 @@ export class Requests extends Base {
         return response.json() as Promise<HypixelAPIOk>;
     }
 
-    private async getURLs(user: User) {
+    public async getURLs(user: User) {
         const { uuid } = user;
 
         const {
             lastLogin,
             lastLogout,
         } = await this.container.database.activities.findFirst({
+            select: {
+                lastLogin: true,
+                lastLogout: true,
+            },
             where: {
                 uuid: {
                     equals: uuid,

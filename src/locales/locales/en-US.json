@@ -68,11 +68,11 @@
     "commandsConfigDevModeTitle": {
         "message": "Developer Mode Updated"
     },
-    "commandsConfigIntervalDescription": {
-        "message": "The interval is now **$1**ms."
+    "commandsConfigRequestBucketDescription": {
+        "message": "The request bucket is now **$1** per minute."
     },
-    "commandsConfigIntervalTitle": {
-        "message": "Interval Updated"
+    "commandsConfigRequestBucketTitle": {
+        "message": "Request Bucket Updated"
     },
     "commandsConfigOwnerGuildsDescription": {
         "message": "The owner guilds are now **$1**."
@@ -99,7 +99,7 @@
         "message": "Retry Limit Updated"
     },
     "commandsConfigViewDescription": {
-        "message": "Core: **$1**\nDeveloper Mode: **$2**\nInterval: **$3**ms\nRest Request Timeout: **$4**ms\nRetry Limit: **$5**\nOwner Guilds: **$6**\nOwners: **$7**"
+        "message": "Core: **$1**\nDeveloper Mode: **$2**\nRequest Bucket: **$3** per minute\nRest Request Timeout: **$4**ms\nRetry Limit: **$5**\nOwner Guilds: **$6**\nOwners: **$7**"
     },
     "commandsConfigViewTitle": {
         "message": "Current Configuration"
@@ -204,7 +204,7 @@
         "message": "Latest Performance"
     },
     "commandsPerformanceLatestValue": {
-        "message": "Hypixel RSS Fetch: $1ms\nParse Data: $2ms\nCheck Data: $3ms\nSend: $4ms\nTotal: $5ms"
+        "message": "URL Generation: $1ms\nFetch Data: $2ms\nProcess Data: $3ms\nCall Modules: $4ms\nTotal: $5ms"
     },
     "commandsPerformanceTitle": {
         "message": "Performance"

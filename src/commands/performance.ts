@@ -43,10 +43,10 @@ export class PerformanceCommand extends Command {
 
         const { latest } = this.container.core.performance;
 
+        const urls = latest?.get('urls');
         const fetch = latest?.get('fetch');
-        const parse = latest?.get('parse');
-        const check = latest?.get('check');
-        const send = latest?.get('send');
+        const data = latest?.get('data');
+        const modules = latest?.get('modules');
         const total = latest?.get('total');
 
         const responseEmbed = new BetterEmbed(interaction)
@@ -60,10 +60,10 @@ export class PerformanceCommand extends Command {
                 name: i18n.getMessage('commandsPerformanceLatestName'),
                 value: i18n.getMessage(
                     'commandsPerformanceLatestValue', [
+                        urls,
                         fetch,
-                        parse,
-                        check,
-                        send,
+                        data,
+                        modules,
                         total,
                     ].map(
                         (value) => value ?? i18n.getMessage('null'),
