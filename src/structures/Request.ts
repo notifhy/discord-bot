@@ -1,9 +1,9 @@
 import { setTimeout } from 'node:timers';
 import { Base } from './Base';
 import { AbortError } from '../errors/AbortError';
-import { Options } from '../utility/Options';
-import { RateLimitError } from '../errors/RateLimitError';
 import { HTTPError } from '../errors/HTTPError';
+import { RateLimitError } from '../errors/RateLimitError';
+import { Options } from '../utility/Options';
 
 export class Request extends Base {
     public readonly restRequestTimeout: number;

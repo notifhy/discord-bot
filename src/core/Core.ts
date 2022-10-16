@@ -1,15 +1,15 @@
-import { type users as User } from '@prisma/client';
 import { setTimeout } from 'node:timers/promises';
+import { type users as User } from '@prisma/client';
+import { Data } from './Data';
 import { Time } from '../enums/Time';
 import { Errors } from './Errors';
 import { ErrorHandler } from '../errors/ErrorHandler';
+import { HTTPError } from '../errors/HTTPError';
+import { RequestErrorHandler } from '../errors/RequestErrorHandler';
 import { Requests } from './Requests';
 import { Base } from '../structures/Base';
-import { Options } from '../utility/Options';
 import { Performance } from '../structures/Performance';
-import { Data } from './Data';
-import { RequestErrorHandler } from '../errors/RequestErrorHandler';
-import { HTTPError } from '../errors/HTTPError';
+import { Options } from '../utility/Options';
 
 /* eslint-disable no-await-in-loop */
 

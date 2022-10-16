@@ -1,5 +1,5 @@
-import { type users as User } from '@prisma/client';
 import { URL } from 'node:url';
+import { type users as User } from '@prisma/client';
 import {
     type CleanHypixelData,
     type CleanHypixelPlayer,

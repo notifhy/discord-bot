@@ -73,6 +73,7 @@ model system_messages {
 model users {
   id             String  @id @db.VarChar(20)
   uuid           String  @unique(map: "uuid_ukey") @db.Uuid
+  locale         String  @default("en-US") @db.VarChar(5)
   defenderModule Boolean @default(false)
   friendsModule  Boolean @default(false)
   rewardsModule  Boolean @default(false)

@@ -2,16 +2,23 @@ import { type users as User } from '@prisma/client';
 import { type CleanHypixelData } from '../@types/Hypixel';
 import { Base } from '../structures/Base';
 
+type DataChanges = { [key: string]: string | number | null };
+
+export type Changes = {
+    new: DataChanges;
+    old: DataChanges;
+};
+
 export class Data extends Base {
     public async update(user: User, newData: CleanHypixelData) {
         // https://github.com/prisma/prisma/issues/5042
-        const oldData = await this.container.database.activities.findFirst({
+        const oldData = (await this.container.database.activities.findFirst({
             where: {
                 uuid: {
                     equals: user.uuid,
                 },
             },
-        }) as CleanHypixelData;
+        })) as CleanHypixelData;
 
         const changes = this.changes(newData, oldData);
 
@@ -27,7 +34,6 @@ export class Data extends Base {
     }
 
     private changes(newData: CleanHypixelData, oldData: CleanHypixelData) {
-        type DataChanges = { [key: string]: string | number | null };
         const newDataChanges: DataChanges = {} as Partial<CleanHypixelData>;
         const oldDataChanges: DataChanges = {} as Partial<CleanHypixelData>;
 
