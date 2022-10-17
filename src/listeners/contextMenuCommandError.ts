@@ -15,9 +15,6 @@ export class ContextMenuCommandErrorListener extends Listener {
     }
 
     public async run(error: Error, payload: ContextMenuCommandErrorPayload) {
-        await InteractionErrorHandler.init(
-            error,
-            payload.interaction,
-        );
+        await new InteractionErrorHandler(error, payload.interaction).init();
     }
 }

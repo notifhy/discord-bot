@@ -34,6 +34,6 @@ export class ReadyListener extends Listener {
             }
         }
 
-        await this.container.core.init();
+        // await this.container.core.init();
     }
 }

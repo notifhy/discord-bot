@@ -65,9 +65,10 @@ model rewards {
 }
 
 model system_messages {
-  id    String @id @db.VarChar(20)
-  name  String @db.VarChar(256)
-  value String @db.VarChar(1024)
+  id        String @id @db.VarChar(20)
+  timestamp Int
+  name      String @db.VarChar(256)
+  value     String @db.VarChar(1024)
 }
 
 model users {

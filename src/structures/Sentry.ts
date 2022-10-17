@@ -1,3 +1,5 @@
+import { DiscordAPIError } from '@discordjs/rest';
+import { type users as User } from '@prisma/client';
 import * as SentryClient from '@sentry/node';
 import {
     CommandInteraction,
@@ -7,6 +9,7 @@ import {
 } from 'discord.js';
 import { type Core } from '../core/Core';
 import { HTTPError } from '../errors/HTTPError';
+import { type Module } from './Module';
 import { slashCommandResolver } from '../utility/utility';
 
 export class Sentry {
@@ -83,6 +86,23 @@ export class Sentry {
     public baseInteractionPreconditionContext(precondition: string) {
         this.scope.setTags({
             precondition: precondition,
+        });
+
+        return this;
+    }
+
+    public moduleContext(error: unknown, module: Module, user: User) {
+        this.scope.setTags({
+            cause: error instanceof DiscordAPIError
+                ? String(error.cause)
+                : null,
+            isDiscordAPIError: error instanceof DiscordAPIError,
+            message: error instanceof DiscordAPIError
+                ? error.message
+                : null,
+            module: module.name,
+            userId: user.id,
+            userUUID: user.uuid,
         });
 
         return this;

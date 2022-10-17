@@ -10,15 +10,15 @@ export type Changes = {
 };
 
 export class Data extends Base {
-    public async update(user: User, newData: CleanHypixelData) {
+    public async parse(user: User, newData: CleanHypixelData) {
         // https://github.com/prisma/prisma/issues/5042
-        const oldData = (await this.container.database.activities.findFirst({
+        const oldData = await this.container.database.activities.findFirst({
             where: {
                 uuid: {
                     equals: user.uuid,
                 },
             },
-        })) as CleanHypixelData;
+        }) as CleanHypixelData;
 
         const changes = this.changes(newData, oldData);
 
@@ -31,6 +31,8 @@ export class Data extends Base {
                 },
             });
         }
+
+        return changes;
     }
 
     private changes(newData: CleanHypixelData, oldData: CleanHypixelData) {

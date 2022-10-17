@@ -23,26 +23,18 @@ export class InteractionErrorHandler<E> extends BaseInteractionErrorHandler<E> {
         this.interaction = interaction;
     }
 
-    public static async init<T>(
-        error: T,
-        interaction: CommandInteraction | ContextMenuInteraction | MessageComponentInteraction,
-    ) {
-        const handler = new InteractionErrorHandler(error, interaction);
-
+    public async init() {
         try {
-            handler.errorLog();
-            await handler.userNotify();
+            this.log(this.error);
+
+            this.sentry
+                .setSeverity('error')
+                .captureException(this.error);
+
+            await this.userNotify();
         } catch (error2) {
-            new ErrorHandler(error2, handler.incidentId).init();
+            new ErrorHandler(error2, this.incidentId).init();
         }
-    }
-
-    private errorLog() {
-        this.log(this.error);
-
-        this.sentry
-            .setSeverity('error')
-            .captureException(this.error);
     }
 
     private async userNotify() {

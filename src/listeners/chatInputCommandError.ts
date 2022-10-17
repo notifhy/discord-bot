@@ -15,9 +15,6 @@ export class ChatInputCommandErrorListener extends Listener {
     }
 
     public async run(error: Error, payload: ChatInputCommandErrorPayload) {
-        await InteractionErrorHandler.init(
-            error,
-            payload.interaction,
-        );
+        await new InteractionErrorHandler(error, payload.interaction).init();
     }
 }

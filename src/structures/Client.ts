@@ -12,8 +12,10 @@ import {
     type PresenceData,
     Sweepers,
 } from 'discord.js';
+import { join } from 'node:path';
 import { Core } from '../core/Core';
 import { i18n } from '../locales/i18n';
+import { ModuleStore } from './ModuleStore';
 
 export class Client extends SapphireClient {
     public constructor() {
@@ -78,6 +80,10 @@ export class Client extends SapphireClient {
     public async init() {
         const startTime = Date.now();
 
+        container.stores.register(
+            new ModuleStore().registerPath(join(__dirname, '..', 'arguments')),
+        );
+
         container.database = new PrismaClient();
         container.core = new Core();
         container.customPresence = null;
@@ -112,5 +118,9 @@ declare module '@sapphire/pieces' {
         customPresence: PresenceData | null,
         database: PrismaClient;
         i18n: i18n,
+    }
+
+    interface StoreRegistryEntries {
+        modules: ModuleStore;
     }
 }

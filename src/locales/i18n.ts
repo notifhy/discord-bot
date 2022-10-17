@@ -5,9 +5,9 @@ import { Options } from '../utility/Options';
 // Simple implementation of Chrome's/Firefox's i18n
 // eslint-disable-next-line @typescript-eslint/naming-convention
 export class i18n {
-    public readonly locale: typeof locales[keyof typeof locales];
+    private locale: typeof locales[keyof typeof locales];
 
-    public readonly localeName: string;
+    private localeName: string;
 
     public constructor(locale?: string) {
         this.localeName = locale && locales[locale as keyof typeof locales]
@@ -18,6 +18,26 @@ export class i18n {
 
         // Bindings
         this.getMessage = this.getMessage.bind(this);
+    }
+
+    public getLocale() {
+        return this.localeName;
+    }
+
+    public getChatInputName(command: Command) {
+        const structure = command.chatInputStructure;
+
+        return structure.nameLocalizations?.[
+            this.localeName as keyof typeof structure.nameLocalizations
+        ] ?? structure.name;
+    }
+
+    public getChatInputDescription(command: Command) {
+        const structure = command.chatInputStructure;
+
+        return structure.descriptionLocalizations?.[
+            this.localeName as keyof typeof structure.descriptionLocalizations
+        ] ?? structure.description;
     }
 
     public getMessage(
@@ -38,19 +58,11 @@ export class i18n {
         return message || 'null';
     }
 
-    public getChatInputName(command: Command) {
-        const structure = command.chatInputStructure;
+    public setLocale(locale: string) {
+        this.localeName = locale && locales[locale as keyof typeof locales]
+            ? locale
+            : Options.defaultLocale;
 
-        return structure.nameLocalizations?.[
-            this.localeName as keyof typeof structure.nameLocalizations
-        ] ?? structure.name;
-    }
-
-    public getChatInputDescription(command: Command) {
-        const structure = command.chatInputStructure;
-
-        return structure.descriptionLocalizations?.[
-            this.localeName as keyof typeof structure.descriptionLocalizations
-        ] ?? structure.description;
+        this.locale = locales[this.localeName as keyof typeof locales];
     }
 }
