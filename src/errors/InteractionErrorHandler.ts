@@ -8,28 +8,19 @@ import { BaseInteractionErrorHandler } from './BaseInteractionErrorHandler';
 import { ErrorHandler } from './ErrorHandler';
 import { Options } from '../utility/Options';
 
-export class InteractionErrorHandler<E> extends BaseInteractionErrorHandler<E> {
-    public readonly interaction:
-    | CommandInteraction
-    | ContextMenuInteraction
-    | MessageComponentInteraction;
-
-    public constructor(
-        error: E,
-        interaction: CommandInteraction | ContextMenuInteraction | MessageComponentInteraction,
-    ) {
+export class InteractionErrorHandler<
+    E,
+    I extends CommandInteraction | ContextMenuInteraction | MessageComponentInteraction,
+> extends BaseInteractionErrorHandler<E, I> {
+    public constructor(error: E, interaction: I) {
         super(error, interaction);
-
-        this.interaction = interaction;
     }
 
     public async init() {
         try {
             this.log(this.error);
 
-            this.sentry
-                .setSeverity('error')
-                .captureException(this.error);
+            this.sentry.setSeverity('error').captureException(this.error);
 
             await this.userNotify();
         } catch (error2) {
@@ -40,20 +31,10 @@ export class InteractionErrorHandler<E> extends BaseInteractionErrorHandler<E> {
     private async userNotify() {
         const embed = new MessageEmbed()
             .setColor(Options.colorsError)
-            .setTitle(
-                this.i18n.getMessage(
-                    'errorsInteractionReplyTitle',
-                ),
-            )
-            .setDescription(
-                this.i18n.getMessage(
-                    'errorsInteractionReplyDescription',
-                ),
-            )
+            .setTitle(this.i18n.getMessage('errorsInteractionReplyTitle'))
+            .setDescription(this.i18n.getMessage('errorsInteractionReplyDescription'))
             .addFields({
-                name: this.i18n.getMessage(
-                    'errorsInteractionReplyIncidentName',
-                ),
+                name: this.i18n.getMessage('errorsInteractionReplyIncidentName'),
                 value: this.incidentId,
             });
 
@@ -63,10 +44,7 @@ export class InteractionErrorHandler<E> extends BaseInteractionErrorHandler<E> {
         };
 
         try {
-            if (
-                this.interaction.replied === true
-                || this.interaction.deferred === true
-            ) {
+            if (this.interaction.replied === true || this.interaction.deferred === true) {
                 await this.interaction.followUp(payLoad);
             } else {
                 await this.interaction.reply(payLoad);
@@ -78,9 +56,7 @@ export class InteractionErrorHandler<E> extends BaseInteractionErrorHandler<E> {
                 error,
             );
 
-            this.sentry
-                .setSeverity('error')
-                .captureException(error);
+            this.sentry.setSeverity('error').captureException(error);
         }
     }
 }

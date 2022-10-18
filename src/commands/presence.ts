@@ -3,10 +3,10 @@ import {
     BucketScope,
     Command,
 } from '@sapphire/framework';
-import {
-    type CommandInteraction,
-    type ExcludeEnum,
-    type PresenceStatusData,
+import type {
+    CommandInteraction,
+    ExcludeEnum,
+    PresenceStatusData,
 } from 'discord.js';
 import {
     ActivityTypes,
@@ -125,7 +125,7 @@ export class PresenceCommand extends Command {
         );
     }
 
-    public async chatInputRun(interaction: CommandInteraction) {
+    public override async chatInputRun(interaction: CommandInteraction) {
         const { i18n } = interaction;
 
         const responseEmbed = new BetterEmbed(interaction)
@@ -142,12 +142,12 @@ export class PresenceCommand extends Command {
 
             this.container.customPresence = {
                 activities: [{
-                    type: (type ?? currentActivity.type) as (
+                    type: (type ?? currentActivity?.type) as (
                         ExcludeEnum<typeof ActivityTypes, 'CUSTOM'>
                     ),
-                    name: name ?? currentActivity.name,
+                    name: name ?? currentActivity?.name,
                     // eslint-disable-next-line no-undefined
-                    url: url ?? currentActivity.url ?? undefined,
+                    url: url ?? currentActivity?.url ?? undefined,
                 }],
                 status: (
                     status ?? currentPresence.status
@@ -170,19 +170,19 @@ export class PresenceCommand extends Command {
                     {
                         name: i18n.getMessage('commandsPresenceSetTypeName'),
                         value: type
-                            ?? currentActivity.type
+                            ?? currentActivity?.type
                             ?? i18n.getMessage('null'),
                     },
                     {
                         name: i18n.getMessage('commandsPresenceSetNameName'),
                         value: name
-                            ?? currentActivity.name
+                            ?? currentActivity?.name
                             ?? i18n.getMessage('null'),
                     },
                     {
                         name: i18n.getMessage('commandsPresenceSetURLName'),
                         value: url
-                            ?? currentActivity.url
+                            ?? currentActivity?.url
                             ?? i18n.getMessage('null'),
                     },
                 ]);

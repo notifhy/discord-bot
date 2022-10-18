@@ -4,7 +4,7 @@ import {
     BucketScope,
     Command,
 } from '@sapphire/framework';
-import { type CommandInteraction } from 'discord.js';
+import type { CommandInteraction } from 'discord.js';
 import { ApplicationCommandOptionTypes } from 'discord.js/typings/enums';
 import { BetterEmbed } from '../structures/BetterEmbed';
 import { Options } from '../utility/Options';
@@ -142,7 +142,7 @@ export class APICommand extends Command {
         );
     }
 
-    public async chatInputRun(interaction: CommandInteraction) {
+    public override async chatInputRun(interaction: CommandInteraction) {
         switch (interaction.options.getSubcommand()) {
             case 'stats': await this.stats(interaction);
                 break;

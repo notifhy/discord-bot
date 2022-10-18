@@ -1,12 +1,12 @@
 import { URL } from 'node:url';
-import { type users as User } from '@prisma/client';
-import {
-    type CleanHypixelData,
-    type CleanHypixelPlayer,
-    type CleanHypixelStatus,
-    type HypixelAPIOk,
-    type RawHypixelPlayer,
-    type RawHypixelStatus,
+import type { users as User } from '@prisma/client';
+import type {
+    CleanHypixelData,
+    CleanHypixelPlayer,
+    CleanHypixelStatus,
+    HypixelAPIOk,
+    RawHypixelPlayer,
+    RawHypixelStatus,
 } from '../@types/Hypixel';
 import { Base } from '../structures/Base';
 import { Request } from '../structures/Request';

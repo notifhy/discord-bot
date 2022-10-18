@@ -1,6 +1,6 @@
-import { type users as User } from '@prisma/client';
-import { type CleanHypixelData } from '../@types/Hypixel';
-import { type Changes } from './Data';
+import type { users as User } from '@prisma/client';
+import type { CleanHypixelData } from '../@types/Hypixel';
+import type { Changes } from './Data';
 import { ModuleErrorHandler } from '../errors/ModuleErrorHandler';
 import { Base } from '../structures/Base';
 

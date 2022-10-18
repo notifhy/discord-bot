@@ -4,7 +4,7 @@ import {
     BucketScope,
     Command,
 } from '@sapphire/framework';
-import { type CommandInteraction } from 'discord.js';
+import type { CommandInteraction } from 'discord.js';
 import { Byte } from '../enums/Byte';
 import { Time } from '../enums/Time';
 import { Options } from '../utility/Options';
@@ -45,7 +45,7 @@ export class SystemCommand extends Command {
         );
     }
 
-    public async chatInputRun(interaction: CommandInteraction) {
+    public override async chatInputRun(interaction: CommandInteraction) {
         const { i18n } = interaction;
 
         const memoryMegaBytes = process.memoryUsage.rss() / Byte.MegaByte;

@@ -1,4 +1,5 @@
 import { setTimeout } from 'node:timers';
+import { fetch, RequestInit, Response } from 'undici';
 import { Base } from './Base';
 import { AbortError } from '../errors/AbortError';
 import { HTTPError } from '../errors/HTTPError';
@@ -102,6 +103,6 @@ export class Request extends Base {
     ): Promise<Type | null> {
         return response
             .json()
-            .catch(() => null);
+            .catch(() => null) as Promise<Type | null>;
     }
 }

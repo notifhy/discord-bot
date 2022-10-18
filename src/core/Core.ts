@@ -1,5 +1,5 @@
 import { setTimeout } from 'node:timers/promises';
-import { type users as User } from '@prisma/client';
+import type { users as User } from '@prisma/client';
 import { Data } from './Data';
 import { Time } from '../enums/Time';
 import { Errors } from './Errors';

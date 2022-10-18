@@ -3,7 +3,7 @@ import {
     BucketScope,
     Command,
 } from '@sapphire/framework';
-import { type CommandInteraction } from 'discord.js';
+import type { CommandInteraction } from 'discord.js';
 import { BetterEmbed } from '../structures/BetterEmbed';
 import { Options } from '../utility/Options';
 
@@ -38,7 +38,7 @@ export class PerformanceCommand extends Command {
         );
     }
 
-    public async chatInputRun(interaction: CommandInteraction) {
+    public override async chatInputRun(interaction: CommandInteraction) {
         const { i18n } = interaction;
 
         const { latest } = this.container.core.performance;

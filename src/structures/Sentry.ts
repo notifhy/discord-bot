@@ -1,5 +1,5 @@
 import { DiscordAPIError } from '@discordjs/rest';
-import { type users as User } from '@prisma/client';
+import type { users as User } from '@prisma/client';
 import * as SentryClient from '@sentry/node';
 import {
     CommandInteraction,
@@ -7,9 +7,9 @@ import {
     type Interaction,
     TextChannel,
 } from 'discord.js';
-import { type Core } from '../core/Core';
+import type { Core } from '../core/Core';
 import { HTTPError } from '../errors/HTTPError';
-import { type Module } from './Module';
+import type { Module } from './Module';
 import { slashCommandResolver } from '../utility/utility';
 
 export class Sentry {

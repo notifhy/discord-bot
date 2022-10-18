@@ -47,7 +47,7 @@ export class HelpCommand extends Command {
         );
     }
 
-    public async chatInputRun(interaction: CommandInteraction) {
+    public override async chatInputRun(interaction: CommandInteraction) {
         const { i18n } = interaction;
 
         const helpEmbed = new BetterEmbed(interaction)
@@ -200,7 +200,7 @@ export class HelpCommand extends Command {
         });
 
         collector.on('collect', async (componentInteraction) => {
-            selectedCommand = commands.get(componentInteraction.values[0])!;
+            selectedCommand = commands.get(componentInteraction.values[0]!)!;
 
             await componentInteraction.update({
                 embeds: [this.generateCommandResponse(interaction, selectedCommand)],

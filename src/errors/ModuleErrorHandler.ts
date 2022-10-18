@@ -1,9 +1,9 @@
-import { users as User } from '@prisma/client';
+import type { users as User } from '@prisma/client';
 import { DiscordAPIError } from '@discordjs/rest';
 import { RESTJSONErrorCodes } from 'discord-api-types/v10';
 import { BaseErrorHandler } from './BaseErrorHandler';
 import { ErrorHandler } from './ErrorHandler';
-import { type Module } from '../structures/Module';
+import type { Module } from '../structures/Module';
 import { BetterEmbed } from '../structures/BetterEmbed';
 import { HTTPError } from './HTTPError';
 
@@ -64,6 +64,7 @@ export class ModuleErrorHandler<E> extends BaseErrorHandler<E> {
         switch (error.code) {
             case RESTJSONErrorCodes.UnknownChannel:
             case RESTJSONErrorCodes.MissingAccess:
+            // @ts-ignore eslint-disable-next-line no-fallthrough
             case RESTJSONErrorCodes.MissingPermissions:
                 try {
                     const user = await this.container.client.users.fetch(this.user.id);

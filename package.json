@@ -4,6 +4,7 @@
     "author": "Attituding <attituding@outlook.com>",
     "main": "dist/index.js",
     "devDependencies": {
+        "@tsconfig/node18-strictest": "^1.0.0",
         "@types/node": "^18.7.18",
         "@types/turndown": "^5.0.1",
         "@typescript-eslint/eslint-plugin": "^5.38.0",
@@ -27,7 +28,8 @@
         "discord-api-types": "^0.37.10",
         "discord.js": "^13.11.0",
         "dotenv": "^16.0.2",
-        "tsx": "^3.9.0"
+        "tsx": "^3.9.0",
+        "undici": "^5.11.0"
     },
     "scripts": {
         "build": "prisma generate && tsc -p .",

@@ -1,8 +1,8 @@
-import { type users as User } from '@prisma/client';
+import type { users as User } from '@prisma/client';
 import { Piece } from '@sapphire/framework';
-import { type CleanHypixelData } from '../@types/Hypixel';
-import { type Changes } from '../core/Data';
-import { locales } from '../locales/locales';
+import type { CleanHypixelData } from '../@types/Hypixel';
+import type { Changes } from '../core/Data';
+import type { locales } from '../locales/locales';
 
 export abstract class Module<O extends Module.Options = Module.Options> extends Piece<O> {
     public readonly databaseColumn: keyof User;

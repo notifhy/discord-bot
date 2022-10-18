@@ -3,7 +3,7 @@ import {
     BucketScope,
     Command,
 } from '@sapphire/framework';
-import { type CommandInteraction } from 'discord.js';
+import type { CommandInteraction } from 'discord.js';
 import { ApplicationCommandOptionTypes } from 'discord.js/typings/enums';
 import { Options } from '../utility/Options';
 
@@ -60,7 +60,7 @@ export class TestCommand extends Command {
         );
     }
 
-    public async chatInputRun(interaction: CommandInteraction) {
+    public override async chatInputRun(interaction: CommandInteraction) {
         await interaction.followUp({
             content: 'e',
         });

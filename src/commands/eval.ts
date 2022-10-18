@@ -52,7 +52,7 @@ export class EvalCommand extends Command {
         );
     }
 
-    public async chatInputRun(interaction: CommandInteraction) {
+    public override async chatInputRun(interaction: CommandInteraction) {
         const { i18n } = interaction;
 
         const input = interaction.options.getString('string', true);

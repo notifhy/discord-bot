@@ -20,8 +20,7 @@ export async function awaitComponent<T extends MessageComponentTypeResolvable>(
     } catch (error) {
         if (
             error instanceof Error
-            && (error as Error & { code: string })
-                ?.code === 'INTERACTION_COLLECTOR_ERROR'
+            && (error as Error & { code: string })?.code === 'INTERACTION_COLLECTOR_ERROR'
         ) {
             return null;
         }
@@ -32,21 +31,13 @@ export async function awaitComponent<T extends MessageComponentTypeResolvable>(
 
 export function cleanDate(ms: number | Date): string | null {
     const newDate = new Date(ms);
-    if (
-        ms < 0
-        || !isDate(newDate)
-    ) {
+    if (ms < 0 || !isDate(newDate)) {
         return null;
     }
 
     const day = newDate.getDate();
 
-    const month = new Intl.DateTimeFormat(
-        'en-US',
-        { month: 'short' },
-    ).format(
-        newDate,
-    );
+    const month = new Intl.DateTimeFormat('en-US', { month: 'short' }).format(newDate);
 
     const year = newDate.getFullYear();
 
@@ -58,8 +49,7 @@ export function cleanLength(ms: number | null): string | null {
         return null;
     }
 
-    let newMS = Math.floor(ms / Time.Second)
-        * Time.Second;
+    let newMS = Math.floor(ms / Time.Second) * Time.Second;
 
     const days = Math.floor(newMS / Time.Day);
     newMS -= days * Time.Day;
@@ -104,8 +94,7 @@ export function createOffset(date = new Date()): string {
 }
 
 export function disableComponents(messageActionRows: MessageActionRow[]) {
-    const actionRows = messageActionRows
-        .map((row) => new MessageActionRow(row));
+    const actionRows = messageActionRows.map((row) => new MessageActionRow(row));
 
     actionRows.forEach((actionRow) => {
         actionRow.components.forEach((component) => {
@@ -121,30 +110,20 @@ export function formattedUnix({
     date = false,
     utc = true,
 }: {
-    ms?: number | Date,
-    date: boolean,
-    utc: boolean,
+    ms?: number | Date;
+    date: boolean;
+    utc: boolean;
 }): string | null {
     const newDate = new Date(ms);
-    if (
-        ms < 0
-        || !isDate(newDate)
-    ) {
+    if (ms < 0 || !isDate(newDate)) {
         return null;
     }
 
-    const utcString = utc === true
-        ? `UTC${createOffset()} `
-        : '';
+    const utcString = utc === true ? `UTC${createOffset()} ` : '';
 
-    const timeString = newDate.toLocaleTimeString(
-        'en-IN',
-        { hour12: true },
-    );
+    const timeString = newDate.toLocaleTimeString('en-IN', { hour12: true });
 
-    const dateString = date === true
-        ? `, ${cleanDate(ms)}`
-        : '';
+    const dateString = date === true ? `, ${cleanDate(ms)}` : '';
 
     return `${utcString}${timeString}${dateString}`;
 }
@@ -164,22 +143,18 @@ export function setPresence() {
 }
 
 export const slashCommandResolver = (interaction: CommandInteraction) => {
-    const commandOptions: (string | number | boolean)[] = [
-        `/${interaction.commandName}`,
-    ];
+    const commandOptions: (string | number | boolean)[] = [`/${interaction.commandName}`];
 
     interaction.options.data.forEach((value) => {
         let option = value;
 
         if (typeof option.value !== 'undefined') {
-            commandOptions.push(
-                `${option.name}: ${option.value}`,
-            );
+            commandOptions.push(`${option.name}: ${option.value}`);
         }
 
         if (option.type === 'SUB_COMMAND_GROUP') {
             commandOptions.push(option.name);
-            [option] = option.options!;
+            option = option.options![0]!;
         }
 
         if (option.type === 'SUB_COMMAND') {
@@ -188,9 +163,7 @@ export const slashCommandResolver = (interaction: CommandInteraction) => {
 
         if (Array.isArray(option.options)) {
             value.options?.forEach((subOption) => {
-                commandOptions.push(
-                    `${subOption.name}: ${subOption.value}`,
-                );
+                commandOptions.push(`${subOption.name}: ${subOption.value}`);
             });
         }
     });
@@ -198,14 +171,8 @@ export const slashCommandResolver = (interaction: CommandInteraction) => {
     return commandOptions.join(' ');
 };
 
-export function timestamp(
-    ms: unknown,
-    style?: typeof Formatters.TimestampStylesString,
-) {
-    if (
-        !isNumber(ms)
-        || ms < 0
-    ) {
+export function timestamp(ms: unknown, style?: typeof Formatters.TimestampStylesString) {
+    if (!isNumber(ms) || ms < 0) {
         return null;
     }
 

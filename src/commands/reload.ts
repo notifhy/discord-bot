@@ -5,7 +5,7 @@ import {
     type Listener,
     Command as SapphireCommand,
 } from '@sapphire/framework';
-import { type CommandInteraction } from 'discord.js';
+import type { CommandInteraction } from 'discord.js';
 import { ApplicationCommandOptionTypes } from 'discord.js/typings/enums';
 import { BetterEmbed } from '../structures/BetterEmbed';
 import { Options } from '../utility/Options';
@@ -78,7 +78,7 @@ export class ReloadCommand extends Command {
         );
     }
 
-    public async chatInputRun(interaction: CommandInteraction) {
+    public override async chatInputRun(interaction: CommandInteraction) {
         switch (interaction.options.getSubcommand()) {
             case 'all': await this.all(interaction);
                 break;

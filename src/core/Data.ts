@@ -1,5 +1,5 @@
-import { type users as User } from '@prisma/client';
-import { type CleanHypixelData } from '../@types/Hypixel';
+import type { users as User } from '@prisma/client';
+import type { CleanHypixelData } from '../@types/Hypixel';
 import { Base } from '../structures/Base';
 
 type DataChanges = { [key: string]: string | number | null };

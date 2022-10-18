@@ -1,17 +1,14 @@
-import {
-    clearTimeout,
-    setTimeout,
-} from 'node:timers';
+import { clearTimeout, setTimeout } from 'node:timers';
 import { Time } from '../enums/Time';
 import { Options } from '../utility/Options';
 
 /* eslint-disable no-unused-vars */
 
 type TimeoutOptions = {
-    baseTimeout?: number,
-    increment?: (current: number) => number,
-    maxTimeout?: number,
-    resetAfter?: number,
+    baseTimeout?: number;
+    increment?: (current: number) => number;
+    maxTimeout?: number;
+    resetAfter?: number;
 };
 
 export class Timeout {
@@ -73,25 +70,18 @@ export class Timeout {
         this.resumeAfter = this.timeout + Date.now();
 
         const baseTimeout = Math.max(
-            this.increment
-                ? this.increment(this.timeout)
-                : (this.timeout * 2),
+            this.increment ? this.increment(this.timeout) : this.timeout * 2,
             this.baseTimeout,
         );
 
-        this.timeout = Math.min(
-            baseTimeout === 0
-                ? 30_000
-                : baseTimeout,
-            this.maxTimeout,
-        );
+        this.timeout = Math.min(baseTimeout === 0 ? 30_000 : baseTimeout, this.maxTimeout);
 
         clearTimeout(this.clearTimeout);
 
         this.clearTimeout = setTimeout(() => {
             this.pauseFor = 0;
             this.timeout = this.baseTimeout;
-        }, (this.timeout * 1.25) + this.resetAfter) as unknown as number;
+        }, this.timeout * 1.25 + this.resetAfter) as unknown as number;
 
         this.lastHour += 1;
 

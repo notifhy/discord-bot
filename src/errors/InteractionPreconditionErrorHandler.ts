@@ -1,13 +1,10 @@
 import { setTimeout } from 'node:timers/promises';
-import {
-    type Command,
-    type UserError,
-} from '@sapphire/framework';
-import {
-    type BaseCommandInteraction,
-    type ColorResolvable,
-    type CommandInteraction,
-    type ContextMenuInteraction,
+import type { Command, UserError } from '@sapphire/framework';
+import type {
+    BaseCommandInteraction,
+    ColorResolvable,
+    CommandInteraction,
+    ContextMenuInteraction,
 } from 'discord.js';
 import { BaseInteractionErrorHandler } from './BaseInteractionErrorHandler';
 import { Identifier } from '../enums/Identifier';
@@ -17,18 +14,13 @@ import { BetterEmbed } from '../structures/BetterEmbed';
 import { cleanRound } from '../utility/utility';
 import { Options } from '../utility/Options';
 
-export class InteractionPreconditionErrorHandler extends BaseInteractionErrorHandler<UserError> {
-    public readonly interaction: CommandInteraction | ContextMenuInteraction;
-
+export class InteractionPreconditionErrorHandler<
+    I extends CommandInteraction | ContextMenuInteraction,
+> extends BaseInteractionErrorHandler<UserError, I> {
     public readonly command: Command;
 
-    public constructor(
-        error: UserError,
-        interaction: CommandInteraction | ContextMenuInteraction,
-        command: Command,
-    ) {
+    public constructor(error: UserError, interaction: I, command: Command) {
         super(error, interaction);
-        this.interaction = interaction;
         this.command = command;
     }
 
@@ -48,53 +40,40 @@ export class InteractionPreconditionErrorHandler extends BaseInteractionErrorHan
                 case Identifier.DevMode:
                     await this.resolvePrecondition(
                         this.interaction,
-                        this.interaction.i18n.getMessage(
-                            'errorsPreconditionDevModeTitle',
-                        ),
-                        this.interaction.i18n.getMessage(
-                            'errorsPreconditionDevModeDescription',
-                        ),
+                        this.interaction.i18n.getMessage('errorsPreconditionDevModeTitle'),
+                        this.interaction.i18n.getMessage('errorsPreconditionDevModeDescription'),
                         Options.colorsWarning,
                     );
                     break;
                 case Identifier.OwnerOnly:
                     await this.resolvePrecondition(
                         this.interaction,
-                        this.interaction.i18n.getMessage(
-                            'errorsPreconditionOwnerTitle',
-                        ),
-                        this.interaction.i18n.getMessage(
-                            'errorsPreconditionOwnerDescription',
-                        ),
+                        this.interaction.i18n.getMessage('errorsPreconditionOwnerTitle'),
+                        this.interaction.i18n.getMessage('errorsPreconditionOwnerDescription'),
                         Options.colorsWarning,
                     );
                     break;
                 case Identifier.GuildOnly:
                     await this.resolvePrecondition(
                         this.interaction,
-                        this.interaction.i18n.getMessage(
-                            'errorsPreconditionDMTitle',
-                        ),
-                        this.interaction.i18n.getMessage(
-                            'errorsPreconditionDMDescription',
-                        ),
+                        this.interaction.i18n.getMessage('errorsPreconditionDMTitle'),
+                        this.interaction.i18n.getMessage('errorsPreconditionDMDescription'),
                         Options.colorsWarning,
                     );
                     break;
                 case Identifier.Cooldown:
                     await this.resolvePrecondition(
                         this.interaction,
+                        this.interaction.i18n.getMessage('errorsPreconditionCooldownWaitingTitle'),
                         this.interaction.i18n.getMessage(
-                            'errorsPreconditionCooldownWaitingTitle',
-                        ),
-                        this.interaction.i18n.getMessage(
-                            'errorsPreconditionCooldownWaitingDescription', [
+                            'errorsPreconditionCooldownWaitingDescription',
+                            [
                                 this.command.options.cooldownLimit!,
                                 this.command.options.cooldownDelay! / Time.Second,
                                 cleanRound(
                                     (
                                         this.error.context as {
-                                            remaining: number,
+                                            remaining: number;
                                         }
                                     ).remaining / Time.Second,
                                 ),
@@ -104,9 +83,11 @@ export class InteractionPreconditionErrorHandler extends BaseInteractionErrorHan
                     );
 
                     await setTimeout(
-                        (this.error.context as {
-                            remaining: number,
-                        }).remaining,
+                        (
+                            this.error.context as {
+                                remaining: number;
+                            }
+                        ).remaining,
                     );
 
                     await this.resolvePrecondition(
@@ -115,9 +96,8 @@ export class InteractionPreconditionErrorHandler extends BaseInteractionErrorHan
                             'errorsPreconditionCooldownCooldownOverTitle',
                         ),
                         this.interaction.i18n.getMessage(
-                            'errorsPreconditionCooldownCooldownOverDescription', [
-                                this.interaction.commandName,
-                            ],
+                            'errorsPreconditionCooldownCooldownOverDescription',
+                            [this.interaction.commandName],
                         ),
                         Options.colorsOn,
                     );

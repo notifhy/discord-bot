@@ -1,3 +1,4 @@
+import type { Response } from 'undici';
 import { HTTPError } from './HTTPError';
 
 export class RateLimitError extends HTTPError {

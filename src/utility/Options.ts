@@ -1,32 +1,23 @@
-import {
-    type Command,
-    container,
-    RegisterBehavior,
-} from '@sapphire/framework';
+import { type Command, container, RegisterBehavior } from '@sapphire/framework';
 import { PresenceUpdateStatus } from 'discord-api-types/v10';
-import {
-    type ColorResolvable,
-    type PresenceData,
-} from 'discord.js';
+import type { ColorResolvable, PresenceData } from 'discord.js';
 import { ActivityTypes } from 'discord.js/typings/enums';
 import { Time } from '../enums/Time';
-import { locales } from '../locales/locales';
+import type { locales } from '../locales/locales';
 
 export class Options {
-    static readonly colorsError: ColorResolvable = 0xAA0000;
+    static readonly colorsError: ColorResolvable = 0xaa0000;
 
-    static readonly colorsWarning: ColorResolvable = 0xFF5555;
+    static readonly colorsWarning: ColorResolvable = 0xff5555;
 
     static readonly colorsNormal: ColorResolvable = 0x2f3136;
 
-    static readonly colorsOk: ColorResolvable = 0xFFAA00;
+    static readonly colorsOk: ColorResolvable = 0xffaa00;
 
-    static readonly colorsOn: ColorResolvable = 0x00AA00;
+    static readonly colorsOn: ColorResolvable = 0x00aa00;
 
     static readonly commandRegistry = (command: Command) => ({
-        guildIds: command.options.preconditions?.find(
-            (condition) => condition === 'OwnerOnly',
-        )
+        guildIds: command.options.preconditions?.find((condition) => condition === 'OwnerOnly')
             ? container.config.ownerGuilds
             : undefined,
         registerCommandIfMissing: true,
@@ -52,10 +43,12 @@ export class Options {
     static readonly pingOnMinimum = 150;
 
     static readonly presence: PresenceData = {
-        activities: [{
-            name: 'accounts',
-            type: ActivityTypes.WATCHING,
-        }],
+        activities: [
+            {
+                name: 'accounts',
+                type: ActivityTypes.WATCHING,
+            },
+        ],
         status: PresenceUpdateStatus.Online,
     };
 

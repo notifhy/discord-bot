@@ -1,4 +1,4 @@
-import { type Command } from '@sapphire/framework';
+import type { Command } from '@sapphire/framework';
 import { locales } from './locales';
 import { Options } from '../utility/Options';
 

@@ -1,6 +1,6 @@
 import { AbortError } from './AbortError';
 import { BaseErrorHandler } from './BaseErrorHandler';
-import { type Core } from '../core/Core';
+import type { Core } from '../core/Core';
 import { ErrorHandler } from './ErrorHandler';
 import { HTTPError } from './HTTPError';
 import { RateLimitError } from './RateLimitError';

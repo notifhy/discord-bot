@@ -43,7 +43,7 @@ export class PingCommand extends Command {
         );
     }
 
-    public async chatInputRun(interaction: CommandInteraction) {
+    public override async chatInputRun(interaction: CommandInteraction) {
         const { i18n } = interaction;
 
         const initialPingEmbed = new BetterEmbed(interaction)
