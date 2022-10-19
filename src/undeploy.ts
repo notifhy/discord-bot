@@ -5,27 +5,20 @@ import { Routes } from 'discord-api-types/v10';
 
 (async () => {
     try {
-        const rest = new REST({ version: '10' })
-            .setToken(process.env.DISCORD_TOKEN!);
+        const clientId = process.env.DISCORD_CLIENT_ID!;
+        const rest = new REST({ version: '10' }).setToken(process.env.DISCORD_TOKEN!);
 
         const guildIds = ['873000534955667496'];
 
         await Promise.all([
-            rest.put(
-                Routes.applicationCommands(
-                    process.env.DISCORD_CLIENT_ID!,
-                ), {
+            rest.put(Routes.applicationCommands(process.env.DISCORD_CLIENT_ID!), {
+                body: [],
+            }),
+            ...guildIds.map(
+                (guildId) => rest.put(Routes.applicationGuildCommands(clientId, guildId), {
                     body: [],
-                },
+                }),
             ),
-            ...guildIds.map((guildId) => rest.put(
-                Routes.applicationGuildCommands(
-                    process.env.DISCORD_CLIENT_ID!,
-                    guildId,
-                ), {
-                    body: [],
-                },
-            )),
         ]);
 
         console.log('Successfully un-deployed!');

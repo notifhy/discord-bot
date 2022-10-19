@@ -1,13 +1,7 @@
 import { HTTPError } from './HTTPError';
 
 export class AbortError extends HTTPError {
-    public constructor({
-        message,
-        url,
-    }: {
-        message?: string | undefined,
-        url: string,
-    }) {
+    public constructor({ message, url }: { message?: string | undefined; url: string }) {
         super({
             message: message,
             url: url,

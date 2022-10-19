@@ -1,13 +1,7 @@
-import {
-    Events,
-    Listener,
-} from '@sapphire/framework';
+import { Events, Listener } from '@sapphire/framework';
 import type { Guild } from 'discord.js';
 import { ErrorHandler } from '../errors/ErrorHandler';
-import {
-    formattedUnix,
-    setPresence,
-} from '../utility/utility';
+import { formattedUnix, setPresence } from '../utility/utility';
 
 export class GuildDeleteListener extends Listener {
     public constructor(context: Listener.Context, options: Listener.Options) {
@@ -19,10 +13,7 @@ export class GuildDeleteListener extends Listener {
     }
 
     public run(guild: Guild) {
-        if (
-            guild.available === false
-            || !guild.client.isReady()
-        ) {
+        if (guild.available === false || !guild.client.isReady()) {
             return;
         }
 

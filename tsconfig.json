@@ -4,6 +4,6 @@
         "exactOptionalPropertyTypes": false,
         "noPropertyAccessFromIndexSignature": false,
         "outDir": "dist",
-        "resolveJsonModule": true,
+        "resolveJsonModule": true
     }
 }

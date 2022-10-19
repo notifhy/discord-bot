@@ -1,13 +1,5 @@
-import {
-    type ApplicationCommandRegistry,
-    BucketScope,
-    Command,
-} from '@sapphire/framework';
-import {
-    type ColorResolvable,
-    type CommandInteraction,
-    Message,
-} from 'discord.js';
+import { type ApplicationCommandRegistry, BucketScope, Command } from '@sapphire/framework';
+import { type ColorResolvable, type CommandInteraction, Message } from 'discord.js';
 import { BetterEmbed } from '../structures/BetterEmbed';
 import { Options } from '../utility/Options';
 import { interactionLogContext } from '../utility/utility';
@@ -21,11 +13,7 @@ export class PingCommand extends Command {
             cooldownLimit: 0,
             cooldownDelay: 0,
             cooldownScope: BucketScope.User,
-            preconditions: [
-                'Base',
-                'DevMode',
-                'OwnerOnly',
-            ],
+            preconditions: ['Base', 'DevMode', 'OwnerOnly'],
             requiredUserPermissions: [],
             requiredClientPermissions: [],
         });
@@ -37,10 +25,7 @@ export class PingCommand extends Command {
     }
 
     public override registerApplicationCommands(registry: ApplicationCommandRegistry) {
-        registry.registerChatInputCommand(
-            this.chatInputStructure,
-            Options.commandRegistry(this),
-        );
+        registry.registerChatInputCommand(this.chatInputStructure, Options.commandRegistry(this));
     }
 
     public override async chatInputRun(interaction: CommandInteraction) {
@@ -48,25 +33,17 @@ export class PingCommand extends Command {
 
         const initialPingEmbed = new BetterEmbed(interaction)
             .setColor(Options.colorsNormal)
-            .setTitle(
-                i18n.getMessage(
-                    'commandsPingLoadingTitle',
-                ),
-            );
+            .setTitle(i18n.getMessage('commandsPingLoadingTitle'));
 
         const sentReply = await interaction.editReply({
             embeds: [initialPingEmbed],
         });
 
-        const roundTripDelay = (
-            sentReply instanceof Message
-                ? sentReply.createdTimestamp
-                : Date.parse(sentReply.timestamp)
-        ) - interaction.createdTimestamp;
+        const roundTripDelay = (sentReply instanceof Message
+            ? sentReply.createdTimestamp
+            : Date.parse(sentReply.timestamp)) - interaction.createdTimestamp;
 
-        const mixedPing = (
-            interaction.client.ws.ping + roundTripDelay
-        ) / 2;
+        const mixedPing = (interaction.client.ws.ping + roundTripDelay) / 2;
 
         let embedColor: ColorResolvable;
 
@@ -80,18 +57,12 @@ export class PingCommand extends Command {
 
         const pingEmbed = new BetterEmbed(interaction)
             .setColor(embedColor)
-            .setTitle(
-                i18n.getMessage(
-                    'commandsPingTitle',
-                ),
-            )
+            .setTitle(i18n.getMessage('commandsPingTitle'))
             .setDescription(
-                i18n.getMessage(
-                    'commandsPingDescription', [
-                        interaction.client.ws.ping,
-                        roundTripDelay,
-                    ],
-                ),
+                i18n.getMessage('commandsPingDescription', [
+                    interaction.client.ws.ping,
+                    roundTripDelay,
+                ]),
             );
 
         this.container.logger.info(

@@ -1,7 +1,4 @@
-import {
-    Events,
-    Listener,
-} from '@sapphire/framework';
+import { Events, Listener } from '@sapphire/framework';
 import type { Guild } from 'discord.js';
 import { ErrorHandler } from '../errors/ErrorHandler';
 import { setPresence } from '../utility/utility';
@@ -16,10 +13,7 @@ export class GuildCreateListener extends Listener {
     }
 
     public run(guild: Guild) {
-        if (
-            guild.available === false
-            || !guild.client.isReady()
-        ) {
+        if (guild.available === false || !guild.client.isReady()) {
             return;
         }
 

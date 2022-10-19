@@ -1,17 +1,6 @@
-import {
-    type ApplicationCommandRegistry,
-    BucketScope,
-    Command,
-} from '@sapphire/framework';
-import type {
-    CommandInteraction,
-    ExcludeEnum,
-    PresenceStatusData,
-} from 'discord.js';
-import {
-    ActivityTypes,
-    ApplicationCommandOptionTypes,
-} from 'discord.js/typings/enums';
+import { type ApplicationCommandRegistry, BucketScope, Command } from '@sapphire/framework';
+import type { CommandInteraction, ExcludeEnum, PresenceStatusData } from 'discord.js';
+import { ActivityTypes, ApplicationCommandOptionTypes } from 'discord.js/typings/enums';
 import { BetterEmbed } from '../structures/BetterEmbed';
 import { Options } from '../utility/Options';
 import { setPresence } from '../utility/utility';
@@ -25,11 +14,7 @@ export class PresenceCommand extends Command {
             cooldownLimit: 0,
             cooldownDelay: 0,
             cooldownScope: BucketScope.User,
-            preconditions: [
-                'Base',
-                'DevMode',
-                'OwnerOnly',
-            ],
+            preconditions: ['Base', 'DevMode', 'OwnerOnly'],
             requiredUserPermissions: [],
             requiredClientPermissions: [],
         });
@@ -119,17 +104,13 @@ export class PresenceCommand extends Command {
     }
 
     public override registerApplicationCommands(registry: ApplicationCommandRegistry) {
-        registry.registerChatInputCommand(
-            this.chatInputStructure,
-            Options.commandRegistry(this),
-        );
+        registry.registerChatInputCommand(this.chatInputStructure, Options.commandRegistry(this));
     }
 
     public override async chatInputRun(interaction: CommandInteraction) {
         const { i18n } = interaction;
 
-        const responseEmbed = new BetterEmbed(interaction)
-            .setColor(Options.colorsNormal);
+        const responseEmbed = new BetterEmbed(interaction).setColor(Options.colorsNormal);
 
         if (interaction.options.getSubcommand() === 'set') {
             const type = interaction.options.getString('type', false);
@@ -141,63 +122,42 @@ export class PresenceCommand extends Command {
             const currentActivity = currentPresence.activities[0];
 
             this.container.customPresence = {
-                activities: [{
-                    type: (type ?? currentActivity?.type) as (
-                        ExcludeEnum<typeof ActivityTypes, 'CUSTOM'>
-                    ),
-                    name: name ?? currentActivity?.name,
-                    // eslint-disable-next-line no-undefined
-                    url: url ?? currentActivity?.url ?? undefined,
-                }],
-                status: (
-                    status ?? currentPresence.status
-                ) as PresenceStatusData,
+                activities: [
+                    {
+                        type: (type ?? currentActivity?.type) as ExcludeEnum<
+                            typeof ActivityTypes,
+                        'CUSTOM'
+                        >,
+                        name: name ?? currentActivity?.name,
+                        // eslint-disable-next-line no-undefined
+                        url: url ?? currentActivity?.url ?? undefined,
+                    },
+                ],
+                status: (status ?? currentPresence.status) as PresenceStatusData,
             };
 
-            responseEmbed
-                .setTitle(
-                    i18n.getMessage(
-                        'commandsPresenceSetTitle',
-                    ),
-                )
-                .addFields([
-                    {
-                        name: i18n.getMessage('commandsPresenceSetStatusName'),
-                        value: status
-                            ?? currentPresence.status
-                            ?? i18n.getMessage('null'),
-                    },
-                    {
-                        name: i18n.getMessage('commandsPresenceSetTypeName'),
-                        value: type
-                            ?? currentActivity?.type
-                            ?? i18n.getMessage('null'),
-                    },
-                    {
-                        name: i18n.getMessage('commandsPresenceSetNameName'),
-                        value: name
-                            ?? currentActivity?.name
-                            ?? i18n.getMessage('null'),
-                    },
-                    {
-                        name: i18n.getMessage('commandsPresenceSetURLName'),
-                        value: url
-                            ?? currentActivity?.url
-                            ?? i18n.getMessage('null'),
-                    },
-                ]);
+            responseEmbed.setTitle(i18n.getMessage('commandsPresenceSetTitle')).addFields([
+                {
+                    name: i18n.getMessage('commandsPresenceSetStatusName'),
+                    value: status ?? currentPresence.status ?? i18n.getMessage('null'),
+                },
+                {
+                    name: i18n.getMessage('commandsPresenceSetTypeName'),
+                    value: type ?? currentActivity?.type ?? i18n.getMessage('null'),
+                },
+                {
+                    name: i18n.getMessage('commandsPresenceSetNameName'),
+                    value: name ?? currentActivity?.name ?? i18n.getMessage('null'),
+                },
+                {
+                    name: i18n.getMessage('commandsPresenceSetURLName'),
+                    value: url ?? currentActivity?.url ?? i18n.getMessage('null'),
+                },
+            ]);
         } else {
             responseEmbed
-                .setTitle(
-                    i18n.getMessage(
-                        'commandsPresenceClearTitle',
-                    ),
-                )
-                .setDescription(
-                    i18n.getMessage(
-                        'commandsPresenceClearTitle',
-                    ),
-                );
+                .setTitle(i18n.getMessage('commandsPresenceClearTitle'))
+                .setDescription(i18n.getMessage('commandsPresenceClearTitle'));
 
             this.container.customPresence = null;
         }

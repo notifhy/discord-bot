@@ -1,17 +1,6 @@
-import {
-    config as Config,
-    PrismaClient,
-} from '@prisma/client';
-import {
-    container,
-    SapphireClient,
-} from '@sapphire/framework';
-import {
-    Intents,
-    Options,
-    type PresenceData,
-    Sweepers,
-} from 'discord.js';
+import { config as Config, PrismaClient } from '@prisma/client';
+import { container, SapphireClient } from '@sapphire/framework';
+import { Intents, Options, type PresenceData, Sweepers } from 'discord.js';
 import { join } from 'node:path';
 import { Core } from '../core/Core';
 import { i18n } from '../locales/i18n';
@@ -91,12 +80,9 @@ export class Client extends SapphireClient {
 
         const { config } = container.database;
 
-        container.config = await config.findFirst() as Config;
+        container.config = (await config.findFirst()) as Config;
 
-        container.logger.info(
-            `${this.constructor.name}:`,
-            'Fetched config from the database.',
-        );
+        container.logger.info(`${this.constructor.name}:`, 'Fetched config from the database.');
 
         const endTime = Date.now();
 
@@ -113,11 +99,11 @@ export class Client extends SapphireClient {
 
 declare module '@sapphire/pieces' {
     interface Container {
-        config: Config,
-        core: Core,
-        customPresence: PresenceData | null,
+        config: Config;
+        core: Core;
+        customPresence: PresenceData | null;
         database: PrismaClient;
-        i18n: i18n,
+        i18n: i18n;
     }
 
     interface StoreRegistryEntries {

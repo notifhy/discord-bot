@@ -4,8 +4,8 @@ import { Options } from '../utility/Options';
 /* eslint-disable no-underscore-dangle */
 
 type PerformanceOptions = {
-    interval?: number,
-    maxDataPoints?: number,
+    interval?: number;
+    maxDataPoints?: number;
 };
 
 export class Performance {
@@ -32,9 +32,7 @@ export class Performance {
     }
 
     public addDataPoint() {
-        this.current.sort(
-            (firstValue, secondValue) => firstValue - secondValue,
-        );
+        this.current.sort((firstValue, secondValue) => firstValue - secondValue);
 
         if (this.current.size > 2) {
             const end = Date.now();
@@ -58,10 +56,7 @@ export class Performance {
 
         const latestTimestamp = this.dataPoints[0]?.get('_timestamp');
 
-        if (
-            latestTimestamp
-            && Date.now() > latestTimestamp + this.interval
-        ) {
+        if (latestTimestamp && Date.now() > latestTimestamp + this.interval) {
             this.current.set('_timestamp', Date.now());
             this.dataPoints.push(this.current);
             this.dataPoints.length = this.maxDataPoints;

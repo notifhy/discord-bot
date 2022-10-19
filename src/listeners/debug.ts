@@ -1,7 +1,4 @@
-import {
-    Events,
-    Listener,
-} from '@sapphire/framework';
+import { Events, Listener } from '@sapphire/framework';
 // import { Sentry } from '../structures/Sentry';
 
 export class DebugListener extends Listener {

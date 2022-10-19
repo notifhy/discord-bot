@@ -1,17 +1,10 @@
 import process from 'node:process';
-import {
-    ApplicationCommandRegistry,
-    BucketScope,
-    Command,
-} from '@sapphire/framework';
+import { ApplicationCommandRegistry, BucketScope, Command } from '@sapphire/framework';
 import type { CommandInteraction } from 'discord.js';
 import { Byte } from '../enums/Byte';
 import { Time } from '../enums/Time';
 import { Options } from '../utility/Options';
-import {
-    cleanLength,
-    cleanRound,
-} from '../utility/utility';
+import { cleanLength, cleanRound } from '../utility/utility';
 import { BetterEmbed } from '../structures/BetterEmbed';
 
 export class SystemCommand extends Command {
@@ -23,11 +16,7 @@ export class SystemCommand extends Command {
             cooldownLimit: 0,
             cooldownDelay: 0,
             cooldownScope: BucketScope.User,
-            preconditions: [
-                'Base',
-                'DevMode',
-                'OwnerOnly',
-            ],
+            preconditions: ['Base', 'DevMode', 'OwnerOnly'],
             requiredUserPermissions: [],
             requiredClientPermissions: [],
         });
@@ -39,10 +28,7 @@ export class SystemCommand extends Command {
     }
 
     public override registerApplicationCommands(registry: ApplicationCommandRegistry) {
-        registry.registerChatInputCommand(
-            this.chatInputStructure,
-            Options.commandRegistry(this),
-        );
+        registry.registerChatInputCommand(this.chatInputStructure, Options.commandRegistry(this));
     }
 
     public override async chatInputRun(interaction: CommandInteraction) {
@@ -60,11 +46,9 @@ export class SystemCommand extends Command {
                 },
                 {
                     name: i18n.getMessage('commandsSystemMemoryName'),
-                    value: i18n.getMessage(
-                        'commandsSystemMemberValue', [
-                            cleanRound(memoryMegaBytes, 1),
-                        ],
-                    ),
+                    value: i18n.getMessage('commandsSystemMemberValue', [
+                        cleanRound(memoryMegaBytes, 1),
+                    ]),
                 },
                 {
                     name: i18n.getMessage('commandsSystemServersName'),

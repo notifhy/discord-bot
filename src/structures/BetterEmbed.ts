@@ -1,13 +1,9 @@
-import {
-    BaseCommandInteraction,
-    type EmbedFieldData,
-    MessageEmbed,
-} from 'discord.js';
+import { BaseCommandInteraction, type EmbedFieldData, MessageEmbed } from 'discord.js';
 
 type Footer =
     | {
-        text: string,
-        iconURL?: string,
+        text: string;
+        iconURL?: string;
     }
     | BaseCommandInteraction;
 
@@ -44,11 +40,7 @@ export class BetterEmbed extends MessageEmbed {
         return this;
     }
 
-    public unshiftField(
-        name: string,
-        value: string,
-        inline?: boolean | undefined,
-    ): this {
+    public unshiftField(name: string, value: string, inline?: boolean | undefined): this {
         this.unshiftFields({
             name: name,
             value: value,
@@ -59,11 +51,7 @@ export class BetterEmbed extends MessageEmbed {
     }
 
     public unshiftFields(...fields: EmbedFieldData[] | EmbedFieldData[][]) {
-        this.fields.unshift(
-            ...MessageEmbed.normalizeFields(
-                ...fields,
-            ),
-        );
+        this.fields.unshift(...MessageEmbed.normalizeFields(...fields));
 
         return this;
     }

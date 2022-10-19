@@ -6,8 +6,8 @@ export class RateLimitError extends HTTPError {
         message,
         response,
     }: {
-        message?: string | undefined,
-        response: Response,
+        message?: string | undefined;
+        response: Response;
     }) {
         super({
             message: message,

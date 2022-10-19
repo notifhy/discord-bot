@@ -1,8 +1,5 @@
 import { Precondition } from '@sapphire/framework';
-import type {
-    CommandInteraction,
-    ContextMenuInteraction,
-} from 'discord.js';
+import type { CommandInteraction, ContextMenuInteraction } from 'discord.js';
 import { Identifier } from '../enums/Identifier';
 
 export class DevModePrecondition extends Precondition {
@@ -16,7 +13,7 @@ export class DevModePrecondition extends Precondition {
 
     private checkDeveloper(userId: string) {
         return this.container.config.devMode === false
-        || this.container.config.owners.includes(userId)
+            || this.container.config.owners.includes(userId)
             ? this.ok()
             : this.error({
                 identifier: Identifier.DevMode,

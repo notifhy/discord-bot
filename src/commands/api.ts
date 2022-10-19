@@ -1,27 +1,14 @@
 import { EmbedLimits } from '@sapphire/discord-utilities';
-import {
-    type ApplicationCommandRegistry,
-    BucketScope,
-    Command,
-} from '@sapphire/framework';
+import { type ApplicationCommandRegistry, BucketScope, Command } from '@sapphire/framework';
 import type { CommandInteraction } from 'discord.js';
 import { ApplicationCommandOptionTypes } from 'discord.js/typings/enums';
 import { BetterEmbed } from '../structures/BetterEmbed';
 import { Options } from '../utility/Options';
-import {
-    cleanLength,
-    interactionLogContext,
-} from '../utility/utility';
+import { cleanLength, interactionLogContext } from '../utility/utility';
 
-type ErrorTypes =
-    | 'abort'
-    | 'generic'
-    | 'http'
-    | 'rateLimit';
+type ErrorTypes = 'abort' | 'generic' | 'http' | 'rateLimit';
 
-type TimeoutSettables =
-    | 'timeout'
-    | 'resumeAfter';
+type TimeoutSettables = 'timeout' | 'resumeAfter';
 
 export class APICommand extends Command {
     public constructor(context: Command.Context, options: Command.Options) {
@@ -32,11 +19,7 @@ export class APICommand extends Command {
             cooldownLimit: 0,
             cooldownDelay: 0,
             cooldownScope: BucketScope.User,
-            preconditions: [
-                'Base',
-                'DevMode',
-                'OwnerOnly',
-            ],
+            preconditions: ['Base', 'DevMode', 'OwnerOnly'],
             requiredUserPermissions: [],
             requiredClientPermissions: [],
         });
@@ -136,19 +119,19 @@ export class APICommand extends Command {
     }
 
     public override registerApplicationCommands(registry: ApplicationCommandRegistry) {
-        registry.registerChatInputCommand(
-            this.chatInputStructure,
-            Options.commandRegistry(this),
-        );
+        registry.registerChatInputCommand(this.chatInputStructure, Options.commandRegistry(this));
     }
 
     public override async chatInputRun(interaction: CommandInteraction) {
         switch (interaction.options.getSubcommand()) {
-            case 'stats': await this.stats(interaction);
+            case 'stats':
+                await this.stats(interaction);
                 break;
-            case 'set': await this.set(interaction);
+            case 'set':
+                await this.set(interaction);
                 break;
-            case 'call': await this.call(interaction);
+            case 'call':
+                await this.call(interaction);
                 break;
             // no default
         }
@@ -157,56 +140,42 @@ export class APICommand extends Command {
     public async stats(interaction: CommandInteraction) {
         const { i18n } = interaction;
 
-        const {
-            abort,
-            generic,
-            http,
-            getTimeout,
-        } = this.container.core.errors;
+        const { abort, generic, http, getTimeout } = this.container.core.errors;
 
         const { uses } = this.container.core.requests;
 
         const statsEmbed = new BetterEmbed(interaction)
             .setColor(Options.colorsNormal)
             .setDescription(
-                JSON.stringify(
-                    this.container.core.performance,
-                ).slice(0, EmbedLimits.MaximumDescriptionLength),
+                JSON.stringify(this.container.core.performance).slice(
+                    0,
+                    EmbedLimits.MaximumDescriptionLength,
+                ),
             )
             .addFields(
                 {
                     name: i18n.getMessage('commandsAPIStatsEnabledName'),
-                    value: i18n.getMessage(
-                        this.container.config.core === true
-                            ? 'yes'
-                            : 'no',
-                    ),
+                    value: i18n.getMessage(this.container.config.core === true ? 'yes' : 'no'),
                 },
                 {
                     name: i18n.getMessage('commandsAPIStatsResumeName'),
-                    value: getTimeout()
-                        ? cleanLength(getTimeout())!
-                        : i18n.getMessage('null'),
+                    value: getTimeout() ? cleanLength(getTimeout())! : i18n.getMessage('null'),
                 },
                 {
                     name: i18n.getMessage('commandsAPIStatsLastHourName'),
-                    value: i18n.getMessage(
-                        'commandsAPIStatsLastHourValue', [
-                            abort.getLastHour(),
-                            generic.getLastHour(),
-                            http.getLastHour(),
-                        ],
-                    ),
+                    value: i18n.getMessage('commandsAPIStatsLastHourValue', [
+                        abort.getLastHour(),
+                        generic.getLastHour(),
+                        http.getLastHour(),
+                    ]),
                 },
                 {
                     name: i18n.getMessage('commandsAPIStatsNextTimeoutsName'),
-                    value: i18n.getMessage(
-                        'commandsAPIStatsNextTimeoutsValue', [
-                            cleanLength(abort.getTimeout()) ?? i18n.getMessage('null'),
-                            cleanLength(generic.getTimeout()) ?? i18n.getMessage('null'),
-                            cleanLength(http.getTimeout()) ?? i18n.getMessage('null'),
-                        ],
-                    ),
+                    value: i18n.getMessage('commandsAPIStatsNextTimeoutsValue', [
+                        cleanLength(abort.getTimeout()) ?? i18n.getMessage('null'),
+                        cleanLength(generic.getTimeout()) ?? i18n.getMessage('null'),
+                        cleanLength(http.getTimeout()) ?? i18n.getMessage('null'),
+                    ]),
                 },
                 {
                     name: i18n.getMessage('commandsAPIStatsUsesName'),
@@ -226,26 +195,12 @@ export class APICommand extends Command {
         const type = interaction.options.getString('type', true);
         const value = interaction.options.getNumber('value', true);
 
-        this.container.core.errors[category][
-            type as TimeoutSettables
-        ] = value;
+        this.container.core.errors[category][type as TimeoutSettables] = value;
 
         const setEmbed = new BetterEmbed(interaction)
             .setColor(Options.colorsNormal)
-            .setTitle(
-                i18n.getMessage(
-                    'commandsAPISetTitle',
-                ),
-            )
-            .setDescription(
-                i18n.getMessage(
-                    'commandsAPISetDescription', [
-                        category,
-                        type,
-                        value,
-                    ],
-                ),
-            );
+            .setTitle(i18n.getMessage('commandsAPISetTitle'))
+            .setDescription(i18n.getMessage('commandsAPISetDescription', [category, type, value]));
 
         this.container.logger.info(
             interactionLogContext(interaction),
@@ -264,28 +219,14 @@ export class APICommand extends Command {
 
         const hypixelModuleErrors = this.container.core.errors;
 
-        if (
-            method === 'addAbort'
-            || method === 'addGeneric'
-            || method === 'addHTTP'
-        ) {
+        if (method === 'addAbort' || method === 'addGeneric' || method === 'addHTTP') {
             hypixelModuleErrors[method]();
         }
 
         const callEmbed = new BetterEmbed(interaction)
             .setColor(Options.colorsNormal)
-            .setTitle(
-                i18n.getMessage(
-                    'commandsAPICallTitle',
-                ),
-            )
-            .setDescription(
-                i18n.getMessage(
-                    'commandsAPICallDescription', [
-                        method,
-                    ],
-                ),
-            );
+            .setTitle(i18n.getMessage('commandsAPICallTitle'))
+            .setDescription(i18n.getMessage('commandsAPICallDescription', [method]));
 
         this.container.logger.info(
             interactionLogContext(interaction),

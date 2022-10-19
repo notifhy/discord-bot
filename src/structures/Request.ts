@@ -1,5 +1,5 @@
 import { setTimeout } from 'node:timers';
-import { fetch, RequestInit, Response } from 'undici';
+import { fetch, type RequestInit, type Response } from 'undici';
 import { Base } from './Base';
 import { AbortError } from '../errors/AbortError';
 import { HTTPError } from '../errors/HTTPError';
@@ -13,14 +13,10 @@ export class Request extends Base {
 
     public readonly retryLimit: number;
 
-    public constructor(config?: {
-        retryLimit?: number,
-        restRequestTimeout?: number,
-    }) {
+    public constructor(config?: { retryLimit?: number; restRequestTimeout?: number }) {
         super();
 
-        this.restRequestTimeout = config?.restRequestTimeout
-            ?? Options.restRequestTimeout;
+        this.restRequestTimeout = config?.restRequestTimeout ?? Options.restRequestTimeout;
 
         this.retry = 0;
 
@@ -29,10 +25,7 @@ export class Request extends Base {
 
     public async request(url: string, fetchOptions?: RequestInit): Promise<Response> {
         const controller = new AbortController();
-        const abortTimeout = setTimeout(
-            () => controller.abort(),
-            this.restRequestTimeout,
-        ).unref();
+        const abortTimeout = setTimeout(() => controller.abort(), this.restRequestTimeout).unref();
 
         try {
             const response = await fetch(url, {
@@ -52,11 +45,7 @@ export class Request extends Base {
                 return response;
             }
 
-            if (
-                this.retry < this.retryLimit
-                && response.status >= 500
-                && response.status < 600
-            ) {
+            if (this.retry < this.retryLimit && response.status >= 500 && response.status < 600) {
                 this.container.logger.warn(
                     `${this.constructor.name}:`,
                     `Retrying due to a response between 500 and 600: ${response.status}.`,
@@ -98,11 +87,7 @@ export class Request extends Base {
         }
     }
 
-    static async tryParse<Type>(
-        response: Response,
-    ): Promise<Type | null> {
-        return response
-            .json()
-            .catch(() => null) as Promise<Type | null>;
+    static async tryParse<Type>(response: Response): Promise<Type | null> {
+        return response.json().catch(() => null) as Promise<Type | null>;
     }
 }

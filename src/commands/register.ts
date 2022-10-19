@@ -35,7 +35,5 @@ export class PresenceCommand extends Command {
         registry.registerChatInputCommand(this.chatInputStructure, Options.commandRegistry(this));
     }
 
-    public override async chatInputRun(interaction: CommandInteraction) {
-        
-    }
+    public override async chatInputRun(interaction: CommandInteraction) {}
 }

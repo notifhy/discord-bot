@@ -15,20 +15,12 @@ Sentry.init({
 });
 
 process.on('unhandledRejection', (error) => {
-    new ErrorHandler(
-        error,
-        'unhandledRejection',
-    ).init('fatal');
-
+    new ErrorHandler(error, 'unhandledRejection').init('fatal');
     process.exit(1);
 });
 
 process.on('uncaughtException', (error) => {
-    new ErrorHandler(
-        error,
-        'uncaughtException',
-    ).init('fatal');
-
+    new ErrorHandler(error, 'uncaughtException').init('fatal');
     process.exit(1);
 });
 

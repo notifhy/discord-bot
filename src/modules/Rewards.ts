@@ -14,7 +14,5 @@ export class RewardsModule extends Module {
         });
     }
 
-    public async run(user: User, newData: CleanHypixelData, changes: Changes) {
-
-    }
+    public async run(user: User, newData: CleanHypixelData, changes: Changes) {}
 }

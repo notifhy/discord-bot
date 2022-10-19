@@ -21,9 +21,7 @@ export class Requests extends Base {
     }
 
     public async request(urls: URL[]) {
-        const [player, status] = await Promise.all(
-            urls.map((url) => this.fetch(url.toString())),
-        );
+        const [player, status] = await Promise.all(urls.map((url) => this.fetch(url.toString())));
 
         return {
             ...this.cleanPlayerData(player as RawHypixelPlayer),
@@ -45,10 +43,7 @@ export class Requests extends Base {
     public async getURLs(user: User) {
         const { uuid } = user;
 
-        const {
-            lastLogin,
-            lastLogout,
-        } = await this.container.database.activities.findFirst({
+        const { lastLogin, lastLogout } = (await this.container.database.activities.findFirst({
             select: {
                 lastLogin: true,
                 lastLogout: true,
@@ -58,7 +53,7 @@ export class Requests extends Base {
                     equals: uuid,
                 },
             },
-        }) ?? {};
+        })) ?? {};
 
         const playerURL = new URL(Options.hypixelPlayerURL);
         playerURL.searchParams.append('uuid', uuid);

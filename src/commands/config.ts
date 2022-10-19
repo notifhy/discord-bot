@@ -1,8 +1,4 @@
-import {
-    type ApplicationCommandRegistry,
-    BucketScope,
-    Command,
-} from '@sapphire/framework';
+import { type ApplicationCommandRegistry, BucketScope, Command } from '@sapphire/framework';
 import type { CommandInteraction } from 'discord.js';
 import { ApplicationCommandOptionTypes } from 'discord.js/typings/enums';
 import { BetterEmbed } from '../structures/BetterEmbed';
@@ -18,11 +14,7 @@ export class ConfigCommand extends Command {
             cooldownLimit: 0,
             cooldownDelay: 0,
             cooldownScope: BucketScope.User,
-            preconditions: [
-                'Base',
-                'DevMode',
-                'OwnerOnly',
-            ],
+            preconditions: ['Base', 'DevMode', 'OwnerOnly'],
             requiredUserPermissions: [],
             requiredClientPermissions: [],
         });
@@ -122,10 +114,7 @@ export class ConfigCommand extends Command {
     }
 
     public override registerApplicationCommands(registry: ApplicationCommandRegistry) {
-        registry.registerChatInputCommand(
-            this.chatInputStructure,
-            Options.commandRegistry(this),
-        );
+        registry.registerChatInputCommand(this.chatInputStructure, Options.commandRegistry(this));
     }
 
     public override async chatInputRun(interaction: CommandInteraction) {
@@ -176,22 +165,18 @@ export class ConfigCommand extends Command {
             .setColor(Options.colorsNormal)
             .setTitle(i18n.getMessage('commandsConfigCoreTitle'))
             .setDescription(
-                i18n.getMessage(
-                    'commandsConfigCoreDescription', [
-                        this.container.config.core === true
-                            ? i18n.getMessage('on')
-                            : i18n.getMessage('off'),
-                    ],
-                ),
+                i18n.getMessage('commandsConfigCoreDescription', [
+                    this.container.config.core === true
+                        ? i18n.getMessage('on')
+                        : i18n.getMessage('off'),
+                ]),
             );
 
         await interaction.editReply({
             embeds: [coreEmbed],
         });
 
-        const state = this.container.config.core === true
-            ? 'on'
-            : 'off';
+        const state = this.container.config.core === true ? 'on' : 'off';
 
         this.container.logger.info(
             interactionLogContext(interaction),
@@ -216,26 +201,18 @@ export class ConfigCommand extends Command {
 
         const devModeEmbed = new BetterEmbed(interaction)
             .setColor(Options.colorsNormal)
-            .setTitle(
-                i18n.getMessage(
-                    'commandsConfigDevModeTitle',
-                ),
-            )
+            .setTitle(i18n.getMessage('commandsConfigDevModeTitle'))
             .setDescription(
-                i18n.getMessage(
-                    'commandsConfigDevModeDescription', [
-                        this.container.config.devMode === true
-                            ? i18n.getMessage('on')
-                            : i18n.getMessage('off'),
-                    ],
-                ),
+                i18n.getMessage('commandsConfigDevModeDescription', [
+                    this.container.config.devMode === true
+                        ? i18n.getMessage('on')
+                        : i18n.getMessage('off'),
+                ]),
             );
 
         await interaction.editReply({ embeds: [devModeEmbed] });
 
-        const state = this.container.config.devMode === true
-            ? 'on'
-            : 'off';
+        const state = this.container.config.devMode === true ? 'on' : 'off';
 
         this.container.logger.info(
             interactionLogContext(interaction),
@@ -247,10 +224,7 @@ export class ConfigCommand extends Command {
     public async requestBucket(interaction: CommandInteraction) {
         const { i18n } = interaction;
 
-        const amount = interaction.options.getInteger(
-            'amount',
-            true,
-        );
+        const amount = interaction.options.getInteger('amount', true);
 
         this.container.config.requestBucket = amount;
 
@@ -265,18 +239,8 @@ export class ConfigCommand extends Command {
 
         const requestBucketEmbed = new BetterEmbed(interaction)
             .setColor(Options.colorsNormal)
-            .setTitle(
-                i18n.getMessage(
-                    'commandsConfigRequestBucketTitle',
-                ),
-            )
-            .setDescription(
-                i18n.getMessage(
-                    'commandsConfigRequestBucketDescription', [
-                        amount,
-                    ],
-                ),
-            );
+            .setTitle(i18n.getMessage('commandsConfigRequestBucketTitle'))
+            .setDescription(i18n.getMessage('commandsConfigRequestBucketDescription', [amount]));
 
         await interaction.editReply({ embeds: [requestBucketEmbed] });
 
@@ -290,10 +254,7 @@ export class ConfigCommand extends Command {
     public async restRequestTimeout(interaction: CommandInteraction) {
         const { i18n } = interaction;
 
-        const milliseconds = interaction.options.getInteger(
-            'milliseconds',
-            true,
-        );
+        const milliseconds = interaction.options.getInteger('milliseconds', true);
 
         this.container.config.restRequestTimeout = milliseconds;
 
@@ -308,17 +269,9 @@ export class ConfigCommand extends Command {
 
         const restRequestTimeoutEmbed = new BetterEmbed(interaction)
             .setColor(Options.colorsNormal)
-            .setTitle(
-                i18n.getMessage(
-                    'commandsConfigRestRequestTimeoutTitle',
-                ),
-            )
+            .setTitle(i18n.getMessage('commandsConfigRestRequestTimeoutTitle'))
             .setDescription(
-                i18n.getMessage(
-                    'commandsConfigRestRequestTimeoutDescription', [
-                        milliseconds,
-                    ],
-                ),
+                i18n.getMessage('commandsConfigRestRequestTimeoutDescription', [milliseconds]),
             );
 
         await interaction.editReply({
@@ -335,10 +288,7 @@ export class ConfigCommand extends Command {
     public async retryLimit(interaction: CommandInteraction) {
         const { i18n } = interaction;
 
-        const limit = interaction.options.getInteger(
-            'limit',
-            true,
-        );
+        const limit = interaction.options.getInteger('limit', true);
 
         this.container.config.retryLimit = limit;
 
@@ -353,18 +303,8 @@ export class ConfigCommand extends Command {
 
         const retryLimitEmbed = new BetterEmbed(interaction)
             .setColor(Options.colorsNormal)
-            .setTitle(
-                i18n.getMessage(
-                    'commandsConfigRetryLimitTitle',
-                ),
-            )
-            .setDescription(
-                i18n.getMessage(
-                    'commandsConfigRetryLimitDescription', [
-                        limit,
-                    ],
-                ),
-            );
+            .setTitle(i18n.getMessage('commandsConfigRetryLimitTitle'))
+            .setDescription(i18n.getMessage('commandsConfigRetryLimitDescription', [limit]));
 
         await interaction.editReply({ embeds: [retryLimitEmbed] });
 
@@ -378,10 +318,7 @@ export class ConfigCommand extends Command {
     public async ownerGuilds(interaction: CommandInteraction) {
         const { i18n } = interaction;
 
-        const guilds = interaction.options.getString(
-            'guilds',
-            true,
-        ).split(',');
+        const guilds = interaction.options.getString('guilds', true).split(',');
 
         this.container.config.ownerGuilds = guilds;
 
@@ -396,17 +333,9 @@ export class ConfigCommand extends Command {
 
         const ownerGuildsEmbed = new BetterEmbed(interaction)
             .setColor(Options.colorsNormal)
-            .setTitle(
-                i18n.getMessage(
-                    'commandsConfigOwnerGuildsTitle',
-                ),
-            )
+            .setTitle(i18n.getMessage('commandsConfigOwnerGuildsTitle'))
             .setDescription(
-                i18n.getMessage(
-                    'commandsConfigOwnerGuildsDescription', [
-                        guilds.join(', '),
-                    ],
-                ),
+                i18n.getMessage('commandsConfigOwnerGuildsDescription', [guilds.join(', ')]),
             );
 
         await interaction.editReply({ embeds: [ownerGuildsEmbed] });
@@ -421,10 +350,7 @@ export class ConfigCommand extends Command {
     public async owners(interaction: CommandInteraction) {
         const { i18n } = interaction;
 
-        const owners = interaction.options.getString(
-            'owners',
-            true,
-        ).split(',');
+        const owners = interaction.options.getString('owners', true).split(',');
 
         this.container.config.owners = owners;
 
@@ -439,17 +365,9 @@ export class ConfigCommand extends Command {
 
         const ownersEmbed = new BetterEmbed(interaction)
             .setColor(Options.colorsNormal)
-            .setTitle(
-                i18n.getMessage(
-                    'commandsConfigOwnersTitle',
-                ),
-            )
+            .setTitle(i18n.getMessage('commandsConfigOwnersTitle'))
             .setDescription(
-                i18n.getMessage(
-                    'commandsConfigOwnersDescription', [
-                        owners.join(', '),
-                    ],
-                ),
+                i18n.getMessage('commandsConfigOwnersDescription', [owners.join(', ')]),
             );
 
         await interaction.editReply({ embeds: [ownersEmbed] });
@@ -466,28 +384,21 @@ export class ConfigCommand extends Command {
 
         const viewEmbed = new BetterEmbed(interaction)
             .setColor(Options.colorsNormal)
-            .setTitle(
-                i18n.getMessage(
-                    'commandsConfigViewTitle',
-                ),
-            )
+            .setTitle(i18n.getMessage('commandsConfigViewTitle'))
             .setDescription(
-                i18n.getMessage(
-                    'commandsConfigViewDescription', [
-                        this.container.config.core === true
-                            ? i18n.getMessage('on')
-                            : i18n.getMessage('off'),
-                        this.container.config.devMode === true
-                            ? i18n.getMessage('on')
-                            : i18n.getMessage('off'),
-                        this.container.config.requestBucket,
-                        this.container.config.restRequestTimeout,
-                        this.container.config.retryLimit,
-                        this.container.config.ownerGuilds.join(', '),
-                        this.container.config.owners.join(', '),
-
-                    ],
-                ),
+                i18n.getMessage('commandsConfigViewDescription', [
+                    this.container.config.core === true
+                        ? i18n.getMessage('on')
+                        : i18n.getMessage('off'),
+                    this.container.config.devMode === true
+                        ? i18n.getMessage('on')
+                        : i18n.getMessage('off'),
+                    this.container.config.requestBucket,
+                    this.container.config.restRequestTimeout,
+                    this.container.config.retryLimit,
+                    this.container.config.ownerGuilds.join(', '),
+                    this.container.config.owners.join(', '),
+                ]),
             );
 
         await interaction.editReply({ embeds: [viewEmbed] });

@@ -20,11 +20,7 @@ export class ReloadCommand extends Command {
             cooldownLimit: 0,
             cooldownDelay: 0,
             cooldownScope: BucketScope.User,
-            preconditions: [
-                'Base',
-                'DevMode',
-                'OwnerOnly',
-            ],
+            preconditions: ['Base', 'DevMode', 'OwnerOnly'],
             requiredUserPermissions: [],
             requiredClientPermissions: [],
         });
@@ -72,17 +68,16 @@ export class ReloadCommand extends Command {
     }
 
     public override registerApplicationCommands(registry: ApplicationCommandRegistry) {
-        registry.registerChatInputCommand(
-            this.chatInputStructure,
-            Options.commandRegistry(this),
-        );
+        registry.registerChatInputCommand(this.chatInputStructure, Options.commandRegistry(this));
     }
 
     public override async chatInputRun(interaction: CommandInteraction) {
         switch (interaction.options.getSubcommand()) {
-            case 'all': await this.all(interaction);
+            case 'all':
+                await this.all(interaction);
                 break;
-            case 'single': await this.single(interaction);
+            case 'single':
+                await this.single(interaction);
                 break;
             // no default
         }
@@ -108,18 +103,12 @@ export class ReloadCommand extends Command {
 
         const reloadedEmbed = new BetterEmbed(interaction)
             .setColor(Options.colorsNormal)
-            .setTitle(
-                i18n.getMessage(
-                    'commandsReloadAllTitle',
-                ),
-            )
+            .setTitle(i18n.getMessage('commandsReloadAllTitle'))
             .setDescription(
-                i18n.getMessage(
-                    'commandsReloadAllDescription', [
-                        promises.length,
-                        Date.now() - now,
-                    ],
-                ),
+                i18n.getMessage('commandsReloadAllDescription', [
+                    promises.length,
+                    Date.now() - now,
+                ]),
             );
 
         const timeTaken = Date.now() - now;
@@ -138,11 +127,7 @@ export class ReloadCommand extends Command {
 
         const now = Date.now();
         const typeName = interaction.options.getString('type', true);
-        const type = this.container.stores.get(
-            typeName as
-                | 'commands'
-                | 'listeners',
-        );
+        const type = this.container.stores.get(typeName as 'commands' | 'listeners');
 
         const item = interaction.options.getString('item')!;
         const selected = type.get(item);
@@ -150,18 +135,9 @@ export class ReloadCommand extends Command {
         if (typeof selected === 'undefined') {
             const undefinedSelected = new BetterEmbed(interaction)
                 .setColor(Options.colorsWarning)
-                .setTitle(
-                    i18n.getMessage(
-                        'commandsReloadSingleUnknownTitle',
-                    ),
-                )
+                .setTitle(i18n.getMessage('commandsReloadSingleUnknownTitle'))
                 .setDescription(
-                    i18n.getMessage(
-                        'commandsReloadSingleUnknownDescription', [
-                            typeName,
-                            item,
-                        ],
-                    ),
+                    i18n.getMessage('commandsReloadSingleUnknownDescription', [typeName, item]),
                 );
 
             await interaction.editReply({ embeds: [undefinedSelected] });
@@ -172,19 +148,13 @@ export class ReloadCommand extends Command {
 
         const reloadedEmbed = new BetterEmbed(interaction)
             .setColor(Options.colorsNormal)
-            .setTitle(
-                i18n.getMessage(
-                    'commandsReloadSingleSuccessTitle',
-                ),
-            )
+            .setTitle(i18n.getMessage('commandsReloadSingleSuccessTitle'))
             .setDescription(
-                i18n.getMessage(
-                    'commandsReloadSingleSuccessDescription', [
-                        typeName,
-                        item,
-                        Date.now() - now,
-                    ],
-                ),
+                i18n.getMessage('commandsReloadSingleSuccessDescription', [
+                    typeName,
+                    item,
+                    Date.now() - now,
+                ]),
             );
 
         const timeTaken = Date.now() - now;

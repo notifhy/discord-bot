@@ -62,10 +62,7 @@ export class Core extends Base {
 
         // eslint-disable-next-line no-restricted-syntax
         for (const user of users) {
-            if (
-                this.errors.isTimeout()
-                || this.container.config.core === false
-            ) {
+            if (this.errors.isTimeout() || this.container.config.core === false) {
                 return;
             }
 
@@ -89,9 +86,7 @@ export class Core extends Base {
 
             this.performance.addDataPoint();
 
-            await setTimeout(
-                (Time.Minute / this.container.config.requestBucket) * urls.length,
-            );
+            await setTimeout((Time.Minute / this.container.config.requestBucket) * urls.length);
         } catch (error) {
             if (error instanceof HTTPError) {
                 new RequestErrorHandler(error, this).init();

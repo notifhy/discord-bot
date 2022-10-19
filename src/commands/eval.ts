@@ -1,13 +1,6 @@
 import { EmbedLimits } from '@sapphire/discord-utilities';
-import {
-    type ApplicationCommandRegistry,
-    BucketScope,
-    Command,
-} from '@sapphire/framework';
-import {
-    type CommandInteraction,
-    Formatters,
-} from 'discord.js';
+import { type ApplicationCommandRegistry, BucketScope, Command } from '@sapphire/framework';
+import { type CommandInteraction, Formatters } from 'discord.js';
 import { ApplicationCommandOptionTypes } from 'discord.js/typings/enums';
 import { BetterEmbed } from '../structures/BetterEmbed';
 import { Options } from '../utility/Options';
@@ -22,11 +15,7 @@ export class EvalCommand extends Command {
             cooldownLimit: 0,
             cooldownDelay: 0,
             cooldownScope: BucketScope.User,
-            preconditions: [
-                'Base',
-                'DevMode',
-                'OwnerOnly',
-            ],
+            preconditions: ['Base', 'DevMode', 'OwnerOnly'],
             requiredUserPermissions: [],
             requiredClientPermissions: [],
         });
@@ -46,10 +35,7 @@ export class EvalCommand extends Command {
     }
 
     public override registerApplicationCommands(registry: ApplicationCommandRegistry) {
-        registry.registerChatInputCommand(
-            this.chatInputStructure,
-            Options.commandRegistry(this),
-        );
+        registry.registerChatInputCommand(this.chatInputStructure, Options.commandRegistry(this));
     }
 
     public override async chatInputRun(interaction: CommandInteraction) {
@@ -68,15 +54,13 @@ export class EvalCommand extends Command {
             const output = await eval(input); // eslint-disable-line no-eval
             const end = Date.now();
             const timeTaken = end - start;
-            const outputMaxLength = (
-                output?.length >= EmbedLimits.MaximumFieldValueLength
-            );
+            const outputMaxLength = output?.length >= EmbedLimits.MaximumFieldValueLength;
 
             let jsonStringified;
 
             try {
                 jsonStringified = JSON.stringify(output);
-            // eslint-disable-next-line no-empty
+                // eslint-disable-next-line no-empty
             } catch {}
 
             evalEmbed.setColor(Options.colorsNormal).addFields(
@@ -84,20 +68,14 @@ export class EvalCommand extends Command {
                     name: i18n.getMessage('commandsEvalOutputName'),
                     value: Formatters.codeBlock(
                         'javascript',
-                        output?.toString()?.slice(
-                            0,
-                            EmbedLimits.MaximumFieldValueLength,
-                        ),
+                        output?.toString()?.slice(0, EmbedLimits.MaximumFieldValueLength),
                     ),
                 },
                 {
                     name: i18n.getMessage('commandsEvalStringifiedJSONOutputName'),
                     value: Formatters.codeBlock(
                         'json',
-                        String(jsonStringified).slice(
-                            0,
-                            EmbedLimits.MaximumFieldValueLength,
-                        ),
+                        String(jsonStringified).slice(0, EmbedLimits.MaximumFieldValueLength),
                     ),
                 },
                 {
@@ -107,11 +85,7 @@ export class EvalCommand extends Command {
                 {
                     name: i18n.getMessage('commandsEvalTimeTakenName'),
                     value: Formatters.codeBlock(
-                        i18n.getMessage(
-                            'commandsEvalTimeTakenValue', [
-                                timeTaken,
-                            ],
-                        ),
+                        i18n.getMessage('commandsEvalTimeTakenValue', [timeTaken]),
                     ),
                 },
             );
@@ -145,18 +119,12 @@ export class EvalCommand extends Command {
                 (error as Error).message.length >= EmbedLimits.MaximumFieldValueLength,
             );
 
-            evalEmbed.setColor(Options.colorsNormal).addFields(
-                {
-                    name: i18n.getMessage('commandsEvalTimeTakenName'),
-                    value: Formatters.codeBlock(
-                        i18n.getMessage(
-                            'commandsEvalTimeTakenValue', [
-                                timeTaken,
-                            ],
-                        ),
-                    ),
-                },
-            );
+            evalEmbed.setColor(Options.colorsNormal).addFields({
+                name: i18n.getMessage('commandsEvalTimeTakenName'),
+                value: Formatters.codeBlock(
+                    i18n.getMessage('commandsEvalTimeTakenValue', [timeTaken]),
+                ),
+            });
 
             if (outputMaxLength === true) {
                 evalEmbed.addFields({
@@ -167,15 +135,9 @@ export class EvalCommand extends Command {
 
             const errorStackAttachment = {
                 attachment: Buffer.from(
-                    JSON.stringify(
-                        error,
-                        Object.getOwnPropertyNames(error),
-                        4,
-                    ),
+                    JSON.stringify(error, Object.getOwnPropertyNames(error), 4),
                 ),
-                name: error instanceof Error
-                    ? `${error.name}.txt`
-                    : 'error.txt',
+                name: error instanceof Error ? `${error.name}.txt` : 'error.txt',
             };
 
             await interaction.editReply({

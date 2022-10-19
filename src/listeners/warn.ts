@@ -1,7 +1,4 @@
-import {
-    Events,
-    Listener,
-} from '@sapphire/framework';
+import { Events, Listener } from '@sapphire/framework';
 import { Sentry } from '../structures/Sentry';
 
 export class WarnListener extends Listener {
@@ -14,13 +11,8 @@ export class WarnListener extends Listener {
     }
 
     public run(info: string) {
-        this.container.logger.warn(
-            `${this.constructor.name}:`,
-            info,
-        );
+        this.container.logger.warn(`${this.constructor.name}:`, info);
 
-        new Sentry()
-            .setSeverity('warning')
-            .captureException(info);
+        new Sentry().setSeverity('warning').captureException(info);
     }
 }

@@ -77,7 +77,7 @@ export class ModuleErrorHandler<E> extends BaseErrorHandler<E> {
                 } catch (error3) {
                     this.log(`${this.constructor.name}:`, 'Failed to send DM alert', error3);
                 }
-            // fall through - eslint
+            // fall through - only send message if remotely possible
             case RESTJSONErrorCodes.UnknownUser:
             case RESTJSONErrorCodes.CannotSendMessagesToThisUser:
                 try {

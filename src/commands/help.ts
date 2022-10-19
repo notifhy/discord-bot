@@ -1,8 +1,4 @@
-import {
-    type ApplicationCommandRegistry,
-    BucketScope,
-    Command,
-} from '@sapphire/framework';
+import { type ApplicationCommandRegistry, BucketScope, Command } from '@sapphire/framework';
 import {
     type ButtonInteraction,
     type CommandInteraction,
@@ -26,10 +22,7 @@ export class HelpCommand extends Command {
             cooldownLimit: 1,
             cooldownDelay: Time.Second * 10,
             cooldownScope: BucketScope.User,
-            preconditions: [
-                'Base',
-                'DevMode',
-            ],
+            preconditions: ['Base', 'DevMode'],
             requiredUserPermissions: [],
             requiredClientPermissions: [],
         });
@@ -41,10 +34,7 @@ export class HelpCommand extends Command {
     }
 
     public override registerApplicationCommands(registry: ApplicationCommandRegistry) {
-        registry.registerChatInputCommand(
-            this.chatInputStructure,
-            Options.commandRegistry(this),
-        );
+        registry.registerChatInputCommand(this.chatInputStructure, Options.commandRegistry(this));
     }
 
     public override async chatInputRun(interaction: CommandInteraction) {
@@ -77,11 +67,7 @@ export class HelpCommand extends Command {
             .setStyle('PRIMARY')
             .setLabel(i18n.getMessage('commandsHelpCommandsLabel'));
 
-        const row = new MessageActionRow()
-            .setComponents(
-                informationButton,
-                commandsButton,
-            );
+        const row = new MessageActionRow().setComponents(informationButton, commandsButton);
 
         const reply = await interaction.editReply({
             embeds: [helpEmbed],
@@ -92,8 +78,7 @@ export class HelpCommand extends Command {
 
         // eslint-disable-next-line arrow-body-style
         const componentFilter = (i: MessageComponentInteraction) => {
-            return interaction.user.id === i.user.id
-            && i.message.id === reply.id;
+            return interaction.user.id === i.user.id && i.message.id === reply.id;
         };
 
         const selectMenuInteraction = await awaitComponent(interaction.channel!, {
@@ -151,33 +136,28 @@ export class HelpCommand extends Command {
 
         const commands = this.container.stores
             .get('commands')
-            .filter((command) => typeof command.options.preconditions?.find(
-                (condition) => condition === 'OwnerOnly',
-            ) === 'undefined');
+            .filter(
+                (command) => typeof command.options.preconditions?.find(
+                    (condition) => condition === 'OwnerOnly',
+                ) === 'undefined',
+            );
 
         const snowflake = SnowflakeUtil.generate();
 
         let selectedCommand = commands.first()!;
 
-        const commandsSelectMenu = () => new MessageSelectMenu()
-            .setCustomId(snowflake)
-            .setOptions(
-                ...commands.map(
-                    (command) => ({
-                        label: i18n.getMessage(
-                            'commandsHelpCommandsMenuLabel', [
-                                i18n.getChatInputName(command),
-                            ],
-                        ),
-                        description: i18n.getChatInputDescription(command),
-                        value: i18n.getChatInputName(command),
-                        default: command.name === selectedCommand.name,
-                    }),
-                ),
-            );
+        const commandsSelectMenu = () => new MessageSelectMenu().setCustomId(snowflake).setOptions(
+            ...commands.map((command) => ({
+                label: i18n.getMessage('commandsHelpCommandsMenuLabel', [
+                    i18n.getChatInputName(command),
+                ]),
+                description: i18n.getChatInputDescription(command),
+                value: i18n.getChatInputName(command),
+                default: command.name === selectedCommand.name,
+            })),
+        );
 
-        const row = () => new MessageActionRow()
-            .setComponents(commandsSelectMenu());
+        const row = () => new MessageActionRow().setComponents(commandsSelectMenu());
 
         const reply = await component.update({
             embeds: [this.generateCommandResponse(interaction, selectedCommand)],
@@ -187,9 +167,11 @@ export class HelpCommand extends Command {
 
         // eslint-disable-next-line arrow-body-style
         const componentFilter = (i: MessageComponentInteraction) => {
-            return interaction.user.id === i.user.id
-            && i.message.id === reply.id
-            && i.customId === snowflake;
+            return (
+                interaction.user.id === i.user.id
+                && i.message.id === reply.id
+                && i.customId === snowflake
+            );
         };
 
         const collector = interaction.channel!.createMessageComponentCollector({
@@ -220,32 +202,21 @@ export class HelpCommand extends Command {
     public generateCommandResponse(interaction: CommandInteraction, command: Command) {
         const { i18n } = interaction;
 
-        const commandEmbed = new BetterEmbed(interaction)
-            .setColor(Options.colorsNormal);
+        const commandEmbed = new BetterEmbed(interaction).setColor(Options.colorsNormal);
 
         commandEmbed.setTitle(
-            i18n.getMessage(
-                'commandsHelpCommandsMenuTitle', [
-                    i18n.getChatInputName(command),
-                ],
-            ),
+            i18n.getMessage('commandsHelpCommandsMenuTitle', [i18n.getChatInputName(command)]),
         );
 
         commandEmbed.setDescription(
-            i18n.getMessage(
-                'commandsHelpCommandsMenuDescription', [
-                    command.description,
-                ],
-            ),
+            i18n.getMessage('commandsHelpCommandsMenuDescription', [command.description]),
         );
 
         commandEmbed.addFields({
             name: i18n.getMessage('commandsHelpCommandsMenuCooldownName'),
-            value: i18n.getMessage(
-                'commandsHelpCommandsMenuCooldownValue', [
-                    command.options.cooldownDelay! / Time.Second,
-                ],
-            ),
+            value: i18n.getMessage('commandsHelpCommandsMenuCooldownValue', [
+                command.options.cooldownDelay! / Time.Second,
+            ]),
         });
 
         const guildOnly = command.options.preconditions?.find(

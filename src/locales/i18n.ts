@@ -10,7 +10,8 @@ export class i18n {
     private localeName: string;
 
     public constructor(locale?: string) {
-        this.localeName = locale && locales[locale as keyof typeof locales]
+        this.localeName = locale
+        && locales[locale as keyof typeof locales]
             ? locale
             : Options.defaultLocale;
 
@@ -27,23 +28,24 @@ export class i18n {
     public getChatInputName(command: Command) {
         const structure = command.chatInputStructure;
 
-        return structure.nameLocalizations?.[
-            this.localeName as keyof typeof structure.nameLocalizations
-        ] ?? structure.name;
+        return (
+            structure.nameLocalizations?.[
+                this.localeName as keyof typeof structure.nameLocalizations
+            ] ?? structure.name
+        );
     }
 
     public getChatInputDescription(command: Command) {
         const structure = command.chatInputStructure;
 
-        return structure.descriptionLocalizations?.[
-            this.localeName as keyof typeof structure.descriptionLocalizations
-        ] ?? structure.description;
+        return (
+            structure.descriptionLocalizations?.[
+                this.localeName as keyof typeof structure.descriptionLocalizations
+            ] ?? structure.description
+        );
     }
 
-    public getMessage(
-        string: keyof typeof this.locale,
-        options?: (string | number | bigint)[],
-    ) {
+    public getMessage(string: keyof typeof this.locale, options?: (string | number | bigint)[]) {
         let message = this.locale[string]?.message;
 
         if (message && typeof options !== 'undefined') {
@@ -59,7 +61,8 @@ export class i18n {
     }
 
     public setLocale(locale: string) {
-        this.localeName = locale && locales[locale as keyof typeof locales]
+        this.localeName = locale
+        && locales[locale as keyof typeof locales]
             ? locale
             : Options.defaultLocale;
 

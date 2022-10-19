@@ -1,7 +1,4 @@
-import {
-    Events,
-    Listener,
-} from '@sapphire/framework';
+import { Events, Listener } from '@sapphire/framework';
 import type { Client } from 'discord.js';
 import { Time } from '../enums/Time';
 import { ErrorHandler } from '../errors/ErrorHandler';
@@ -19,7 +16,7 @@ export class ReadyListener extends Listener {
     public async run(client: Client) {
         this.container.logger.info(
             `${this.constructor.name}:`,
-            `Logged in as ${client!.user!.tag!}.`,
+            `Logged in as ${client.user?.tag}.`,
         );
 
         set();

@@ -6,7 +6,7 @@ import type {
 
 declare module '@sapphire/framework' {
     interface Command {
-        chatInputStructure: ChatInputApplicationCommandData,
-        contextMenuStructure?: UserApplicationCommandData | MessageApplicationCommandData,
+        chatInputStructure: ChatInputApplicationCommandData;
+        contextMenuStructure?: UserApplicationCommandData | MessageApplicationCommandData;
     }
 }

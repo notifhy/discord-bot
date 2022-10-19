@@ -1,7 +1,4 @@
-import {
-    Events,
-    Listener,
-} from '@sapphire/framework';
+import { Events, Listener } from '@sapphire/framework';
 import { Sentry } from '../structures/Sentry';
 
 export class RateLimitListener extends Listener {
@@ -14,13 +11,8 @@ export class RateLimitListener extends Listener {
     }
 
     public run(rateLimitInfo: string) {
-        this.container.logger.warn(
-            `${this.constructor.name}:`,
-            rateLimitInfo,
-        );
+        this.container.logger.warn(`${this.constructor.name}:`, rateLimitInfo);
 
-        new Sentry()
-            .setSeverity('warning')
-            .captureException(rateLimitInfo);
+        new Sentry().setSeverity('warning').captureException(rateLimitInfo);
     }
 }
