@@ -1,6 +1,5 @@
 import { type ApplicationCommandRegistry, BucketScope, Command } from '@sapphire/framework';
-import type { CommandInteraction } from 'discord.js';
-import { ApplicationCommandOptionTypes } from 'discord.js/typings/enums';
+import { type CommandInteraction, Constants } from 'discord.js';
 import { Options } from '../utility/Options';
 
 export class PresenceCommand extends Command {
@@ -23,7 +22,7 @@ export class PresenceCommand extends Command {
             options: [
                 {
                     name: 'player',
-                    type: ApplicationCommandOptionTypes.STRING,
+                    type: Constants.ApplicationCommandOptionTypes.STRING,
                     description: 'Your username or UUID',
                     required: true,
                 },

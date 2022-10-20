@@ -1,7 +1,6 @@
 import { EmbedLimits } from '@sapphire/discord-utilities';
 import { type ApplicationCommandRegistry, BucketScope, Command } from '@sapphire/framework';
-import type { CommandInteraction } from 'discord.js';
-import { ApplicationCommandOptionTypes } from 'discord.js/typings/enums';
+import { type CommandInteraction, Constants } from 'discord.js';
 import { BetterEmbed } from '../structures/BetterEmbed';
 import { Options } from '../utility/Options';
 import { cleanLength, interactionLogContext } from '../utility/utility';
@@ -30,17 +29,17 @@ export class APICommand extends Command {
             options: [
                 {
                     name: 'stats',
-                    type: ApplicationCommandOptionTypes.SUB_COMMAND,
+                    type: Constants.ApplicationCommandOptionTypes.SUB_COMMAND,
                     description: 'Returns some stats about the API Request Handler',
                 },
                 {
                     name: 'set',
-                    type: ApplicationCommandOptionTypes.SUB_COMMAND,
+                    type: Constants.ApplicationCommandOptionTypes.SUB_COMMAND,
                     description: 'Set data for the API Request Handler',
                     options: [
                         {
                             name: 'category',
-                            type: ApplicationCommandOptionTypes.STRING,
+                            type: Constants.ApplicationCommandOptionTypes.STRING,
                             description: 'The category to execute on',
                             required: true,
                             choices: [
@@ -60,7 +59,7 @@ export class APICommand extends Command {
                         },
                         {
                             name: 'type',
-                            type: ApplicationCommandOptionTypes.STRING,
+                            type: Constants.ApplicationCommandOptionTypes.STRING,
                             description: 'The category to execute on',
                             required: true,
                             choices: [
@@ -80,7 +79,7 @@ export class APICommand extends Command {
                         },
                         {
                             name: 'value',
-                            type: ApplicationCommandOptionTypes.NUMBER,
+                            type: Constants.ApplicationCommandOptionTypes.NUMBER,
                             description: 'An integer as an input',
                             required: true,
                             min_value: 0,
@@ -89,12 +88,12 @@ export class APICommand extends Command {
                 },
                 {
                     name: 'call',
-                    type: ApplicationCommandOptionTypes.SUB_COMMAND,
+                    type: Constants.ApplicationCommandOptionTypes.SUB_COMMAND,
                     description: 'Call a function from the API Request Handler',
                     options: [
                         {
                             name: 'method',
-                            type: ApplicationCommandOptionTypes.STRING,
+                            type: Constants.ApplicationCommandOptionTypes.STRING,
                             description: 'The method to call',
                             required: true,
                             choices: [

@@ -1,7 +1,6 @@
 import { EmbedLimits } from '@sapphire/discord-utilities';
 import { type ApplicationCommandRegistry, BucketScope, Command } from '@sapphire/framework';
-import { type CommandInteraction, Formatters } from 'discord.js';
-import { ApplicationCommandOptionTypes } from 'discord.js/typings/enums';
+import { type CommandInteraction, Constants, Formatters } from 'discord.js';
 import { BetterEmbed } from '../structures/BetterEmbed';
 import { Options } from '../utility/Options';
 import { interactionLogContext } from '../utility/utility';
@@ -26,7 +25,7 @@ export class EvalCommand extends Command {
             options: [
                 {
                     name: 'string',
-                    type: ApplicationCommandOptionTypes.STRING,
+                    type: Constants.ApplicationCommandOptionTypes.STRING,
                     description: 'Code',
                     required: true,
                 },

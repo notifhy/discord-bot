@@ -1,6 +1,10 @@
 import { type ApplicationCommandRegistry, BucketScope, Command } from '@sapphire/framework';
-import type { CommandInteraction, ExcludeEnum, PresenceStatusData } from 'discord.js';
-import { ActivityTypes, ApplicationCommandOptionTypes } from 'discord.js/typings/enums';
+import {
+    type CommandInteraction,
+    Constants,
+    type ExcludeEnum,
+    type PresenceStatusData,
+} from 'discord.js';
 import { BetterEmbed } from '../structures/BetterEmbed';
 import { Options } from '../utility/Options';
 import { setPresence } from '../utility/utility';
@@ -25,17 +29,17 @@ export class PresenceCommand extends Command {
             options: [
                 {
                     name: 'clear',
-                    type: ApplicationCommandOptionTypes.SUB_COMMAND,
+                    type: Constants.ApplicationCommandOptionTypes.SUB_COMMAND,
                     description: 'Clear the custom presence',
                 },
                 {
                     name: 'set',
                     description: 'Set a custom presence',
-                    type: ApplicationCommandOptionTypes.SUB_COMMAND,
+                    type: Constants.ApplicationCommandOptionTypes.SUB_COMMAND,
                     options: [
                         {
                             name: 'status',
-                            type: ApplicationCommandOptionTypes.STRING,
+                            type: Constants.ApplicationCommandOptionTypes.STRING,
                             description: 'The status to use',
                             required: false,
                             choices: [
@@ -59,7 +63,7 @@ export class PresenceCommand extends Command {
                         },
                         {
                             name: 'type',
-                            type: ApplicationCommandOptionTypes.STRING,
+                            type: Constants.ApplicationCommandOptionTypes.STRING,
                             description: 'The type to display',
                             required: false,
                             choices: [
@@ -87,13 +91,13 @@ export class PresenceCommand extends Command {
                         },
                         {
                             name: 'name',
-                            type: ApplicationCommandOptionTypes.STRING,
+                            type: Constants.ApplicationCommandOptionTypes.STRING,
                             description: 'The message/name to display',
                             required: false,
                         },
                         {
                             name: 'url',
-                            type: ApplicationCommandOptionTypes.STRING,
+                            type: Constants.ApplicationCommandOptionTypes.STRING,
                             description: 'The url to stream at',
                             required: false,
                         },
@@ -125,7 +129,7 @@ export class PresenceCommand extends Command {
                 activities: [
                     {
                         type: (type ?? currentActivity?.type) as ExcludeEnum<
-                            typeof ActivityTypes,
+                            typeof Constants.ActivityTypes,
                         'CUSTOM'
                         >,
                         name: name ?? currentActivity?.name,

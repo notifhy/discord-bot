@@ -1,6 +1,5 @@
 import { type ApplicationCommandRegistry, BucketScope, Command } from '@sapphire/framework';
-import type { CommandInteraction } from 'discord.js';
-import { ApplicationCommandOptionTypes } from 'discord.js/typings/enums';
+import { type CommandInteraction, Constants } from 'discord.js';
 import { Options } from '../utility/Options';
 
 export class TestCommand extends Command {
@@ -23,17 +22,17 @@ export class TestCommand extends Command {
             options: [
                 {
                     name: 'delete',
-                    type: ApplicationCommandOptionTypes.SUB_COMMAND_GROUP,
+                    type: Constants.ApplicationCommandOptionTypes.SUB_COMMAND_GROUP,
                     description: 'Delete all of your data',
                     options: [
                         {
                             name: 'view',
                             description: 'Returns a file with all of your data',
-                            type: ApplicationCommandOptionTypes.SUB_COMMAND,
+                            type: Constants.ApplicationCommandOptionTypes.SUB_COMMAND,
                             options: [
                                 {
                                     name: 'command',
-                                    type: ApplicationCommandOptionTypes.STRING,
+                                    type: Constants.ApplicationCommandOptionTypes.STRING,
                                     description:
                                         'A command to get info about. This parameter is completely optional',
                                     required: false,
