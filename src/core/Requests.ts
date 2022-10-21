@@ -1,5 +1,6 @@
 import { URL } from 'node:url';
 import type { users as User } from '@prisma/client';
+import { container } from '@sapphire/framework';
 import type {
     CleanHypixelData,
     CleanHypixelPlayer,
@@ -21,18 +22,20 @@ export class Requests extends Base {
     }
 
     public async request(urls: URL[]) {
-        const [player, status] = await Promise.all(urls.map((url) => this.fetch(url.toString())));
+        const [player, status] = await Promise.all(
+            urls.map((url) => Requests.fetch(url.toString())),
+        );
 
         return {
-            ...this.cleanPlayerData(player as RawHypixelPlayer),
-            ...this.cleanStatusData(status as RawHypixelStatus),
+            ...Requests.cleanPlayerData(player as RawHypixelPlayer),
+            ...Requests.cleanStatusData(status as RawHypixelStatus),
         } as CleanHypixelData;
     }
 
-    public async fetch(url: string) {
+    public static async fetch(url: string) {
         const response = await new Request({
-            restRequestTimeout: this.container.config.restRequestTimeout,
-            retryLimit: this.container.config.retryLimit,
+            restRequestTimeout: container.config.restRequestTimeout,
+            retryLimit: container.config.retryLimit,
         }).request(url, {
             headers: { 'API-Key': process.env.HYPIXEL_API_KEY! },
         });
@@ -75,7 +78,7 @@ export class Requests extends Base {
         return urls;
     }
 
-    private cleanPlayerData({
+    public static cleanPlayerData({
         player: {
             firstLogin = null,
             lastLogin = null,
@@ -103,7 +106,7 @@ export class Requests extends Base {
         };
     }
 
-    private cleanStatusData(rawHypixelStatus?: RawHypixelStatus) {
+    public static cleanStatusData(rawHypixelStatus?: RawHypixelStatus) {
         if (typeof rawHypixelStatus === 'undefined') {
             return undefined;
         }

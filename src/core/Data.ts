@@ -18,7 +18,7 @@ export class Data extends Base {
                     equals: user.uuid,
                 },
             },
-        })) as CleanHypixelData;
+        }) ?? {}) as CleanHypixelData;
 
         const changes = this.changes(newData, oldData);
 

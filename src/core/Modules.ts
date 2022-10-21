@@ -13,7 +13,7 @@ export class Modules extends Base {
         const modulesStore = this.container.stores
             .get('modules')
             .filter(
-                (module) => user[module.databaseColumn]
+                (module) => module.isEnabled(user)
                     && (statusAPIEnabled || module.requireStatusAPI === false),
             );
 

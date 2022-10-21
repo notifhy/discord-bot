@@ -39,12 +39,13 @@ model activities {
 
 model defender {
   id            String   @id @db.VarChar(20)
+  enabled       Boolean  @default(false)
   channel       String?  @db.VarChar(20)
-  loginAlert    Boolean? @default(true)
-  logoutAlert   Boolean? @default(true)
-  versionAlert  Boolean? @default(true)
-  gameTypeAlert Boolean? @default(true)
-  languageAlert Boolean? @default(true)
+  loginAlert    Boolean  @default(true)
+  logoutAlert   Boolean  @default(true)
+  versionAlert  Boolean  @default(true)
+  gameTypeAlert Boolean  @default(true)
+  languageAlert Boolean  @default(true)
   gameTypes     String[] @default([]) @db.VarChar(25)
   languages     String[] @default([]) @db.VarChar(15)
   versions      String[] @default([]) @db.VarChar(10)
@@ -52,11 +53,13 @@ model defender {
 
 model friends {
   id      String  @id @db.VarChar(20)
+  enabled Boolean @default(false)
   channel String? @db.VarChar(20)
 }
 
 model rewards {
   id                String  @id @db.VarChar(20)
+  enabled           Boolean @default(false)
   claimNotification Boolean @default(true)
   delay             Int     @default(0)
   interval          Int     @default(1800000)
@@ -72,10 +75,7 @@ model system_messages {
 }
 
 model users {
-  id             String  @id @db.VarChar(20)
-  uuid           String  @unique(map: "uuid_ukey") @db.Uuid
-  locale         String  @default("en-US") @db.VarChar(5)
-  defenderModule Boolean @default(false)
-  friendsModule  Boolean @default(false)
-  rewardsModule  Boolean @default(false)
+  id     String @id @db.VarChar(20)
+  uuid   String @unique(map: "uuid_ukey") @db.Uuid
+  locale String @default("en-US") @db.VarChar(5)
 }
