@@ -1,3 +1,4 @@
+// Hypixel
 export interface BaseHypixelAPI {
     success: boolean;
 }
@@ -59,3 +60,47 @@ export interface CleanHypixelStatus {
 }
 
 export type CleanHypixelData = CleanHypixelPlayer & CleanHypixelStatus;
+
+// Slothpixel
+
+export interface SlothpixelPlayer {
+    uuid: string,
+    username: string,
+    mc_version: string | null,
+    first_login: number | null,
+    last_login: number | null,
+    last_logout: number | null,
+    last_game: string | null,
+    language: string | null,
+    rewards: {
+        streak_current: number,
+        streak_best: number,
+        claimed_daily: number,
+        claimed: number,
+    },
+    links: {
+        TWITTER: string | null,
+        YOUTUBE: string | null,
+        INSTAGRAM: string | null,
+        TWITCH: string | null,
+        DISCORD: string | null,
+        HYPIXEL: string | null,
+    },
+}
+
+export type SlothpixelRecentGames = {
+    date: number,
+    gameType: string,
+    mode?: string,
+    map?: string,
+    ended?: number,
+}[];
+
+export interface SlothpixelStatus {
+    online: boolean,
+    game: {
+        type: string | null,
+        mode: string | null,
+        map: string | null,
+    },
+}

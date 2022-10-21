@@ -3,9 +3,9 @@ import type { users as User } from '@prisma/client';
 import { Data } from './Data';
 import { Time } from '../enums/Time';
 import { Errors } from './Errors';
+import { CoreRequestErrorHandler } from '../errors/CoreRequestErrorHandler';
 import { ErrorHandler } from '../errors/ErrorHandler';
 import { HTTPError } from '../errors/HTTPError';
-import { RequestErrorHandler } from '../errors/RequestErrorHandler';
 import { Modules } from './Modules';
 import { Requests } from './Requests';
 import { Base } from '../structures/Base';
@@ -89,7 +89,7 @@ export class Core extends Base {
             await setTimeout((Time.Minute / this.container.config.requestBucket) * urls.length);
         } catch (error) {
             if (error instanceof HTTPError) {
-                new RequestErrorHandler(error, this).init();
+                new CoreRequestErrorHandler(error, this).init();
             } else {
                 this.errors.addGeneric();
                 new ErrorHandler(error).init();

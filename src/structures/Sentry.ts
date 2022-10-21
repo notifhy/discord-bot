@@ -86,9 +86,18 @@ export class Sentry {
         return this;
     }
 
-    public requestContext(error: unknown, core: Core) {
+    public requestContext(error: unknown) {
         this.scope.setTags({
             type: error instanceof Error ? error.name : null,
+            status: error instanceof HTTPError ? error.status : null,
+            statusText: error instanceof HTTPError ? error.statusText : null,
+        });
+
+        return this;
+    }
+
+    public requestContextCore(core: Core) {
+        this.scope.setTags({
             resumingIn: core.errors.getTimeout(),
             lastHourAbort: core.errors.abort.getLastHour(),
             lastHourGeneric: core.errors.generic.getLastHour(),
@@ -97,8 +106,6 @@ export class Sentry {
             nextTimeoutGeneric: core.errors.generic.getTimeout(),
             nextTimeoutHTTP: core.errors.http.getTimeout(),
             uses: core.requests.uses,
-            status: error instanceof HTTPError ? error.status : null,
-            statusText: error instanceof HTTPError ? error.statusText : null,
         });
 
         return this;

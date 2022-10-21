@@ -14,8 +14,8 @@ export class Data extends Base {
         // https://github.com/prisma/prisma/issues/5042
         const oldData = (await this.container.database.activities.findFirst({
             where: {
-                uuid: {
-                    equals: user.uuid,
+                id: {
+                    equals: user.id,
                 },
             },
         }) ?? {}) as CleanHypixelData;
@@ -25,7 +25,7 @@ export class Data extends Base {
         if (Object.keys(changes.new).length > 0) {
             await this.container.database.activities.create({
                 data: {
-                    uuid: user.uuid,
+                    id: user.id,
                     timestamp: Date.now(),
                     ...newData,
                 },

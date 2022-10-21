@@ -27,10 +27,6 @@ export class Options {
 
     static readonly defaultLocale: keyof typeof locales = 'en-US';
 
-    static readonly hypixelPlayerURL = 'https://api.hypixel.net/player';
-
-    static readonly hypixelStatusURL = 'https://api.hypixel.net/status';
-
     static readonly performanceInterval = Time.Hour / 2;
 
     static readonly performanceMaxDataPoints = 100;
@@ -51,6 +47,10 @@ export class Options {
         status: PresenceUpdateStatus.Online,
     };
 
+    static readonly regexUsername = /^[a-zA-Z0-9_-]{1,24}$/;
+
+    static readonly regexUUID = /^[0-9a-f]{8}(-?)[0-9a-f]{4}(-?)[1-5][0-9a-f]{3}(-?)[89AB][0-9a-f]{3}(-?)[0-9a-f]{12}$/i;
+
     static readonly restRequestTimeout = Time.Second * 5;
 
     static readonly retryLimit = 2;
@@ -60,4 +60,12 @@ export class Options {
     static readonly timeoutMaxTimeout = Time.Day / 2;
 
     static readonly timeoutResetAfter = Time.Minute * 10;
+
+    static readonly urlSlothpixelPlayer = 'https://api.slothpixel.me/api/players';
+
+    static readonly urlHypixelDiscord = 'https://i.imgur.com/gGKd2s8.gif';
+
+    static readonly urlHypixelPlayer = 'https://api.hypixel.net/player';
+
+    static readonly urlHypixelStatus = 'https://api.hypixel.net/status';
 }

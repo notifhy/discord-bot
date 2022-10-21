@@ -1,10 +1,14 @@
 import { type ApplicationCommandRegistry, BucketScope, Command } from '@sapphire/framework';
-import { type CommandInteraction, Constants } from 'discord.js';
-import type { RawHypixelPlayer } from '../@types/Hypixel';
-import { Requests } from '../core/Requests';
+import { type CommandInteraction, Constants, DiscordAPIError } from 'discord.js';
+import type { SlothpixelPlayer } from '../@types/Hypixel';
+import { HTTPError } from '../errors/HTTPError';
+import { RequestErrorHandler } from '../errors/RequestErrorHandler';
+import { BetterEmbed } from '../structures/BetterEmbed';
+import { Request } from '../structures/Request';
 import { Options } from '../utility/Options';
+import { interactionLogContext, setPresence } from '../utility/utility';
 
-export class PresenceCommand extends Command {
+export class RegisterCommand extends Command {
     public constructor(context: Command.Context, options: Command.Options) {
         super(context, {
             ...options,
@@ -37,43 +41,218 @@ export class PresenceCommand extends Command {
     }
 
     public override async chatInputRun(interaction: CommandInteraction) {
-        const uuid = interaction.options.getString('player', true);
+        const { i18n } = interaction;
 
-        const playerURL = new URL(Options.hypixelPlayerURL);
-        playerURL.searchParams.append('uuid', uuid);
+        const exists = await this.container.database.users.findUnique({
+            where: {
+                id: interaction.user.id,
+            },
+        });
 
-        const rawData = await Requests.fetch(playerURL.toString());
-        const data = Requests.cleanPlayerData(rawData as RawHypixelPlayer);
+        if (exists) {
+            const alreadyRegisteredEmbed = new BetterEmbed(interaction)
+                .setColor(Options.colorsWarning)
+                .setTitle(i18n.getMessage('commandsRegisterAlreadyRegisteredTitle'))
+                .setDescription(i18n.getMessage('commandsRegisterAlreadyRegisteredDescription'));
 
-        await this.container.database.$transaction([
-            this.container.database.users.create({
-                data: {
-                    id: interaction.user.id,
-                    locale: interaction.locale,
-                    uuid: uuid,
+            this.container.logger.warn(
+                interactionLogContext(interaction),
+                `${this.constructor.name}:`,
+                'Already registered.',
+            );
+
+            await interaction.editReply({ embeds: [alreadyRegisteredEmbed] });
+            return;
+        }
+
+        const player = interaction.options.getString('player', true);
+
+        if (
+            Options.regexUUID.test(player) === false
+            && Options.regexUsername.test(player) === false
+        ) {
+            const invalidEmbed = new BetterEmbed(interaction)
+                .setColor(Options.colorsWarning)
+                .setTitle(i18n.getMessage('commandsRegisterInvalidInputTitle'))
+                .setDescription(
+                    i18n.getMessage('commandsRegisterInvalidInputDescription', [player]),
+                );
+
+            this.container.logger.warn(
+                interactionLogContext(interaction),
+                `${this.constructor.name}:`,
+                'Invalid input:',
+                player,
+            );
+
+            await interaction.editReply({ embeds: [invalidEmbed] });
+            return;
+        }
+
+        const url = `${Options.urlSlothpixelPlayer}/${player}`;
+
+        let response;
+
+        try {
+            response = await new Request().request(url);
+        } catch (error) {
+            if (error instanceof HTTPError && error.response?.status === 404) {
+                const notFoundEmbed = new BetterEmbed(interaction)
+                    .setColor(Options.colorsWarning)
+                    .setTitle(i18n.getMessage('commandsRegisterInvalidPlayerTitle'))
+                    .setDescription(i18n.getMessage('commandsRegisterInvalidPlayerDescription'));
+
+                this.container.logger.warn(
+                    interactionLogContext(interaction),
+                    `${this.constructor.name}:`,
+                    'Invalid player:',
+                    player,
+                );
+
+                await interaction.editReply({ embeds: [notFoundEmbed] });
+                return;
+            }
+
+            const slothpixelErrorEmbed = new BetterEmbed(interaction)
+                .setColor(Options.colorsWarning)
+                .setTitle(i18n.getMessage('commandsRegisterSlothpixelErrorTitle'))
+                .setDescription(i18n.getMessage('commandsRegisterSlothpixelErrorDescription'));
+
+            this.container.logger.error(
+                interactionLogContext(interaction),
+                `${this.constructor.name}:`,
+                'Slothpixel error.',
+                error,
+            );
+
+            new RequestErrorHandler(error).init();
+
+            await interaction.editReply({ embeds: [slothpixelErrorEmbed] });
+            return;
+        }
+
+        const data = (await response.json()) as SlothpixelPlayer;
+
+        const uuids = (
+            await this.container.database.users.findMany({
+                select: {
+                    uuid: true,
                 },
-            }),
-            this.container.database.defender.create({
-                data: {
-                    id: interaction.user.id,
-                    ...data.language && {
-                        languages: [data.language],
+            })
+        ).map((user) => user.uuid);
+
+        if (uuids.includes(data.uuid)) {
+            const alreadyRegisteredEmbed = new BetterEmbed(interaction)
+                .setColor(Options.colorsWarning)
+                .setTitle(i18n.getMessage('commandsRegisterAlreadyRegisteredTitle'))
+                .setDescription(i18n.getMessage('commandsRegisterAlreadyRegisteredDescription'));
+
+            this.container.logger.warn(
+                interactionLogContext(interaction),
+                `${this.constructor.name}:`,
+                'UUID already registered.',
+            );
+
+            await interaction.editReply({ embeds: [alreadyRegisteredEmbed] });
+            return;
+        }
+
+        if (data.links.DISCORD === null) {
+            const unlinkedEmbed = new BetterEmbed(interaction)
+                .setColor(Options.colorsWarning)
+                .setTitle(i18n.getMessage('commandsRegisterDiscordUnlinkedTitle'))
+                .setDescription(i18n.getMessage('commandsRegisterDiscordUnlinkedDescription'))
+                .setImage(Options.urlHypixelDiscord);
+
+            this.container.logger.warn(
+                interactionLogContext(interaction),
+                `${this.constructor.name}:`,
+                'Discord not linked.',
+            );
+
+            await interaction.editReply({ embeds: [unlinkedEmbed] });
+            return;
+        }
+
+        if (data.links.DISCORD !== interaction.user.tag) {
+            const mismatchedEmbed = new BetterEmbed(interaction)
+                .setColor(Options.colorsWarning)
+                .setTitle(i18n.getMessage('commandsRegisterDiscordMismatchTitle'))
+                .setDescription(i18n.getMessage('commandsRegisterDiscordMismatchDescription'))
+                .setImage(Options.urlHypixelDiscord);
+
+            this.container.logger.warn(
+                interactionLogContext(interaction),
+                `${this.constructor.name}:`,
+                'Discord mismatch.',
+            );
+
+            await interaction.editReply({ embeds: [mismatchedEmbed] });
+            return;
+        }
+
+        await this.container.database.users.create({
+            data: {
+                locale: interaction.locale,
+                uuid: data.uuid,
+                defender: {
+                    create: {
+                        id: interaction.user.id,
+                        ...(data.language && {
+                            languages: [data.language],
+                        }),
+                        ...(data.mc_version && {
+                            versions: [data.mc_version],
+                        }),
                     },
-                    ...data.version && {
-                        versions: [data.version],
+                },
+                friends: {
+                    create: {
+                        id: interaction.user.id,
                     },
                 },
-            }),
-            this.container.database.friends.create({
-                data: {
-                    id: interaction.user.id,
+                modules: {
+                    create: {
+                        id: interaction.user.id,
+                    },
                 },
-            }),
-            this.container.database.rewards.create({
-                data: {
-                    id: interaction.user.id,
+                rewards: {
+                    create: {
+                        id: interaction.user.id,
+                    },
                 },
-            }),
-        ]);
+            },
+        });
+
+        const registeredEmbed = new BetterEmbed(interaction)
+            .setColor(Options.colorsNormal)
+            .setTitle(i18n.getMessage('commandsRegisterSuccessTitle'))
+            .setDescription(i18n.getMessage('commandsRegisterSuccessDescription'));
+
+        try {
+            const testEmbed = new BetterEmbed(interaction)
+                .setColor(Options.colorsNormal)
+                .setTitle(i18n.getMessage('commandsRegisterTestTitle'))
+                .setDescription(i18n.getMessage('commandsRegisterTestDescription'));
+
+            await interaction.user.send({ embeds: [testEmbed] });
+        } catch (error) {
+            if (error instanceof DiscordAPIError && error.code === 50007) {
+                registeredEmbed.setColor(Options.colorsOk).unshiftFields({
+                    name: i18n.getMessage('commandsRegisterNoDMName'),
+                    value: i18n.getMessage('commandsRegisterNoDMValue'),
+                });
+            }
+        }
+
+        this.container.logger.info(
+            interactionLogContext(interaction),
+            `${this.constructor.name}:`,
+            'Registration success!',
+        );
+
+        await interaction.editReply({ embeds: [registeredEmbed] });
+
+        setPresence();
     }
 }

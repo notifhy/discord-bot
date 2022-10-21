@@ -23,16 +23,16 @@ export class Requests extends Base {
 
     public async request(urls: URL[]) {
         const [player, status] = await Promise.all(
-            urls.map((url) => Requests.fetch(url.toString())),
+            urls.map((url) => this.fetch(url.toString())),
         );
 
         return {
-            ...Requests.cleanPlayerData(player as RawHypixelPlayer),
-            ...Requests.cleanStatusData(status as RawHypixelStatus),
+            ...this.cleanPlayerData(player as RawHypixelPlayer),
+            ...this.cleanStatusData(status as RawHypixelStatus),
         } as CleanHypixelData;
     }
 
-    public static async fetch(url: string) {
+    private async fetch(url: string) {
         const response = await new Request({
             restRequestTimeout: container.config.restRequestTimeout,
             retryLimit: container.config.retryLimit,
@@ -52,13 +52,11 @@ export class Requests extends Base {
                 lastLogout: true,
             },
             where: {
-                uuid: {
-                    equals: uuid,
-                },
+                id: user.id,
             },
         })) ?? {};
 
-        const playerURL = new URL(Options.hypixelPlayerURL);
+        const playerURL = new URL(Options.urlHypixelPlayer);
         playerURL.searchParams.append('uuid', uuid);
 
         const urls = [];
@@ -66,7 +64,7 @@ export class Requests extends Base {
         urls.push(playerURL);
 
         if (lastLogin && lastLogout && lastLogin > lastLogout) {
-            const statusURL = new URL(Options.hypixelStatusURL);
+            const statusURL = new URL(Options.urlHypixelStatus);
             statusURL.search = playerURL.search;
             urls.push(statusURL);
         }
@@ -78,7 +76,7 @@ export class Requests extends Base {
         return urls;
     }
 
-    public static cleanPlayerData({
+    private cleanPlayerData({
         player: {
             firstLogin = null,
             lastLogin = null,
@@ -106,7 +104,7 @@ export class Requests extends Base {
         };
     }
 
-    public static cleanStatusData(rawHypixelStatus?: RawHypixelStatus) {
+    private cleanStatusData(rawHypixelStatus?: RawHypixelStatus) {
         if (typeof rawHypixelStatus === 'undefined') {
             return undefined;
         }

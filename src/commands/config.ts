@@ -33,7 +33,7 @@ export class ConfigCommand extends Command {
                     description: 'Toggle Developer Mode',
                 },
                 {
-                    name: 'requestBucket',
+                    name: 'requestbucket',
                     description: 'Set how many requests should be made per minute',
                     type: Constants.ApplicationCommandOptionTypes.SUB_COMMAND,
                     options: [
@@ -124,7 +124,7 @@ export class ConfigCommand extends Command {
             case 'devmode':
                 await this.devModeCommand(interaction);
                 break;
-            case 'requestBucket':
+            case 'requestbucket':
                 await this.requestBucket(interaction);
                 break;
             case 'restrequesttimeout':

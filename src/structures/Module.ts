@@ -4,10 +4,7 @@ import type { CleanHypixelData } from '../@types/Hypixel';
 import type { Changes } from '../core/Data';
 import type { locales } from '../locales/locales';
 
-export abstract class Module<
-    Table extends Record<string, unknown>,
-    O extends Module.Options = Module.Options,
-> extends Piece<O> {
+export abstract class Module<O extends Module.Options = Module.Options> extends Piece<O> {
     public override name: 'defender' | 'friends' | 'rewards';
 
     public readonly localization: keyof typeof locales[keyof typeof locales];
@@ -21,8 +18,6 @@ export abstract class Module<
         this.localization = options.localization;
         this.requireStatusAPI = options.requireStatusAPI ?? false;
     }
-
-    public abstract isEnabled(user: User): Promise<Table>;
 
     public abstract run(user: User, newData: CleanHypixelData, changes: Changes): Promise<void>;
 }

@@ -239,6 +239,60 @@
     "commandsPresenceSetURLName": {
         "message": "URL"
     },
+    "commandsRegisterAlreadyRegisteredDescription": {
+        "message": "You are already registered! Use **/data** to unregister before reusing this command again."
+    },
+    "commandsRegisterAlreadyRegisteredTitle": {
+        "message": "Already Registered"
+    },
+    "commandsRegisterDiscordMismatchDescription": {
+        "message": "Your Discord account is not linked to that player! If that is your account, follow the guide below to relink it. If you just relinked it, please wait a few minutes and try again."
+    },
+    "commandsRegisterDiscordMismatchTitle": {
+        "message": "Mismatched"
+    },
+    "commandsRegisterDiscordUnlinkedDescription": {
+        "message": "Your Discord account is not linked on Hypixel! Follow the guide below. If you just linked it, please wait a few minutes and then try again."
+    },
+    "commandsRegisterDiscordUnlinkedTitle": {
+        "message": "Unlinked"
+    },
+    "commandsRegisterInvalidInputDescription": {
+        "message": "`$1` is not a valid username or UUID! Please try again."
+    },
+    "commandsRegisterInvalidInputTitle": {
+        "message": "Invalid Input"
+    },
+    "commandsRegisterInvalidPlayerDescription": {
+        "message": "`$1` is not a valid player! Please make sure you didn't make any typos."
+    },
+    "commandsRegisterInvalidPlayerTitle": {
+        "message": "Invalid Player"
+    },
+    "commandsRegisterNoDMName": {
+        "message": "Unable to DM"
+    },
+    "commandsRegisterNoDMValue": {
+        "message": "This bot ia unable to DM you, which may mean that some module will not work correctly. Please check your privacy settings."
+    },
+    "commandsRegisterSlothpixelErrorDescription": {
+        "message": "A request to Slothpixel failed. This may happen occasionally. Please try again later."
+    },
+    "commandsRegisterSlothpixelErrorTitle": {
+        "message": "Unexpected Error"
+    },
+    "commandsRegisterSuccessDescription": {
+        "message": "Registered!\n\nNext Steps:\n**/modules** • Configure modules and set up notifications\n**/help** • See information about any command or about this bot"
+    },
+    "commandsRegisterSuccessTitle": {
+        "message": "Success"
+    },
+    "commandsRegisterTestDescription": {
+        "message": "This message is a test of whether you have DMs enabled. You may ignore this message."
+    },
+    "commandsRegisterTestTitle": {
+        "message": "Test"
+    },
     "commandsReloadAllDescription": {
         "message": "$1 imports have been reloaded! This action took $2ms."
     },

@@ -45,14 +45,11 @@ export class ModuleErrorHandler<E> extends BaseErrorHandler<E> {
     }
 
     private async disableModule() {
-        return this.container.database.users.update({
+        return this.container.database.modules.update({
             data: {
-                [this.module.databaseColumn]: false,
-            },
-            select: {
-                defenderModule: true,
-                friendsModule: true,
-                rewardsModule: true,
+                [this.module.name]: {
+                    enabled: false,
+                },
             },
             where: {
                 id: this.user.id,

@@ -7,20 +7,9 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model config {
-  index              Int      @id @default(0)
-  core               Boolean  @default(true)
-  devMode            Boolean  @default(false)
-  requestBucket      Int      @default(10)
-  restRequestTimeout Int      @default(5000)
-  retryLimit         Int      @default(3)
-  ownerGuilds        String[] @default([]) @db.VarChar(20)
-  owners             String[] @default([]) @db.VarChar(20)
-}
-
 model activities {
   index             Int     @id @default(autoincrement())
-  uuid              String  @db.Uuid
+  id                String  @db.VarChar(20)
   timestamp         Int
   firstLogin        Int?
   lastLogin         Int?
@@ -35,11 +24,22 @@ model activities {
   rewardHighScore   Int?
   totalDailyRewards Int?
   totalRewards      Int?
+  users             users   @relation(fields: [id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "users")
+}
+
+model config {
+  index              Int      @id @default(0)
+  core               Boolean  @default(true)
+  devMode            Boolean  @default(false)
+  requestBucket      Int      @default(10)
+  restRequestTimeout Int      @default(5000)
+  retryLimit         Int      @default(3)
+  ownerGuilds        String[] @default([]) @db.VarChar(20)
+  owners             String[] @default([]) @db.VarChar(20)
 }
 
 model defender {
   id            String   @id @db.VarChar(20)
-  enabled       Boolean  @default(false)
   channel       String?  @db.VarChar(20)
   loginAlert    Boolean  @default(true)
   logoutAlert   Boolean  @default(true)
@@ -49,33 +49,50 @@ model defender {
   gameTypes     String[] @default([]) @db.VarChar(25)
   languages     String[] @default([]) @db.VarChar(15)
   versions      String[] @default([]) @db.VarChar(10)
+  users         users?
 }
 
 model friends {
   id      String  @id @db.VarChar(20)
-  enabled Boolean @default(false)
   channel String? @db.VarChar(20)
+  users   users?
+}
+
+model modules {
+  id       String  @id @db.VarChar(20)
+  defender Boolean @default(false)
+  friends  Boolean @default(false)
+  rewards  Boolean @default(false)
+  users    users?
 }
 
 model rewards {
   id                String  @id @db.VarChar(20)
-  enabled           Boolean @default(false)
   claimNotification Boolean @default(true)
   delay             Int     @default(0)
   interval          Int     @default(1800000)
   lastNotified      Int     @default(0)
   milestones        Boolean @default(true)
+  users             users?
 }
 
 model system_messages {
-  id        String @id @db.VarChar(20)
+  index     Int    @id @default(autoincrement())
+  id        String @db.VarChar(20)
   timestamp Int
   name      String @db.VarChar(256)
   value     String @db.VarChar(1024)
+  users     users  @relation(fields: [id], references: [id], onDelete: NoAction, onUpdate: NoAction)
 }
 
 model users {
-  id     String @id @db.VarChar(20)
-  uuid   String @unique(map: "uuid_ukey") @db.Uuid
-  locale String @default("en-US") @db.VarChar(5)
+  id              String            @id @db.VarChar(20)
+  uuid            String            @unique(map: "uuid_ukey") @db.Uuid
+  locale          String            @default("en-US") @db.VarChar(5)
+  defender        defender          @relation(fields: [id], references: [id], onDelete: Cascade, map: "defender")
+  friends         friends           @relation(fields: [id], references: [id], onDelete: Cascade, map: "friends")
+  modules         modules           @relation(fields: [id], references: [id], onDelete: Cascade, map: "modules")
+  rewards         rewards           @relation(fields: [id], references: [id], onDelete: Cascade, map: "rewards")
+  activities      activities[]
+  system_messages system_messages[]
 }
