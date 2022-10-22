@@ -37,30 +37,6 @@ export class InteractionPreconditionErrorHandler<
                 .captureMessages(this.error.identifier);
 
             switch (this.error.identifier) {
-                case Identifier.DevMode:
-                    await this.resolvePrecondition(
-                        this.interaction,
-                        this.interaction.i18n.getMessage('errorsPreconditionDevModeTitle'),
-                        this.interaction.i18n.getMessage('errorsPreconditionDevModeDescription'),
-                        Options.colorsWarning,
-                    );
-                    break;
-                case Identifier.OwnerOnly:
-                    await this.resolvePrecondition(
-                        this.interaction,
-                        this.interaction.i18n.getMessage('errorsPreconditionOwnerTitle'),
-                        this.interaction.i18n.getMessage('errorsPreconditionOwnerDescription'),
-                        Options.colorsWarning,
-                    );
-                    break;
-                case Identifier.GuildOnly:
-                    await this.resolvePrecondition(
-                        this.interaction,
-                        this.interaction.i18n.getMessage('errorsPreconditionDMTitle'),
-                        this.interaction.i18n.getMessage('errorsPreconditionDMDescription'),
-                        Options.colorsWarning,
-                    );
-                    break;
                 case Identifier.Cooldown:
                     await this.resolvePrecondition(
                         this.interaction,
@@ -100,6 +76,40 @@ export class InteractionPreconditionErrorHandler<
                             [this.interaction.commandName],
                         ),
                         Options.colorsOn,
+                    );
+                    break;
+                case Identifier.DevMode:
+                    await this.resolvePrecondition(
+                        this.interaction,
+                        this.interaction.i18n.getMessage('errorsPreconditionDevModeTitle'),
+                        this.interaction.i18n.getMessage('errorsPreconditionDevModeDescription'),
+                        Options.colorsWarning,
+                    );
+                    break;
+                case Identifier.GuildOnly:
+                    await this.resolvePrecondition(
+                        this.interaction,
+                        this.interaction.i18n.getMessage('errorsPreconditionGuildOnlyTitle'),
+                        this.interaction.i18n.getMessage('errorsPreconditionGuildOnlyDescription'),
+                        Options.colorsWarning,
+                    );
+                    break;
+                case Identifier.OwnerOnly:
+                    await this.resolvePrecondition(
+                        this.interaction,
+                        this.interaction.i18n.getMessage('errorsPreconditionOwnerTitle'),
+                        this.interaction.i18n.getMessage('errorsPreconditionOwnerDescription'),
+                        Options.colorsWarning,
+                    );
+                    break;
+                case Identifier.Registration:
+                    await this.resolvePrecondition(
+                        this.interaction,
+                        this.interaction.i18n.getMessage('errorsPreconditionRegistrationTitle'),
+                        this.interaction.i18n.getMessage(
+                            'errorsPreconditionRegistrationDescription',
+                        ),
+                        Options.colorsWarning,
                     );
                     break;
 

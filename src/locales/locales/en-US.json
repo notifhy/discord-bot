@@ -104,6 +104,24 @@
     "commandsConfigViewTitle": {
         "message": "Current Configuration"
     },
+    "commandsDataDeleteAbortedDescription": {
+        "message": "Deletion aborted."
+    },
+    "commandsDataDeleteAbortedTitle": {
+        "message": "Aborted"
+    },
+    "commandsDataDeleteConfirmDescription": {
+        "message": "Are you sure you want to delete your data? This is irreversible. Please confirm with the buttons below."
+    },
+    "commandsDataDeleteConfirmTitle": {
+        "message": "Confirmation"
+    },
+    "commandsDataDeleteDeletedDescription": {
+        "message": "Your data has been deleted."
+    },
+    "commandsDataDeleteDeletedTitle": {
+        "message": "Deleted"
+    },
     "commandsEvalFailTitle": {
         "message": "Failed Eval"
     },
@@ -264,7 +282,7 @@
         "message": "Invalid Input"
     },
     "commandsRegisterInvalidPlayerDescription": {
-        "message": "`$1` is not a valid player! Please make sure you didn't make any typos."
+        "message": "`$1` is not a valid player! Please check and make sure you didn't make any typos."
     },
     "commandsRegisterInvalidPlayerTitle": {
         "message": "Invalid Player"
@@ -273,7 +291,7 @@
         "message": "Unable to DM"
     },
     "commandsRegisterNoDMValue": {
-        "message": "This bot ia unable to DM you, which may mean that some module will not work correctly. Please check your privacy settings."
+        "message": "While you registered successfully, this bot ia unable to DM you. This may mean that some modules will not work correctly. Please check your privacy settings and adjust accordingly."
     },
     "commandsRegisterSlothpixelErrorDescription": {
         "message": "A request to Slothpixel failed. This may happen occasionally. Please try again later."
@@ -282,7 +300,13 @@
         "message": "Unexpected Error"
     },
     "commandsRegisterSuccessDescription": {
-        "message": "Registered!\n\nNext Steps:\n**/modules** • Configure modules and set up notifications\n**/help** • See information about any command or about this bot"
+        "message": "Registered!"
+    },
+    "commandsRegisterSuccessFieldName": {
+        "message": "Next Steps"
+    },
+    "commandsRegisterSuccessFieldValue": {
+        "message": "**/modules** • Configure modules and set up notifications\n**/help** • See information about any command or about this bot"
     },
     "commandsRegisterSuccessTitle": {
         "message": "Success"
@@ -339,7 +363,7 @@
         "message": "Unexpected Error"
     },
     "errorsInteractionReplyDescription": {
-        "message": "An error occurred while executing the interaction! This error has been automatically forwarded for review. Sorry."
+        "message": "An error occurred while processing this interaction! This error has been automatically forwarded for review. Sorry."
     },
     "errorsInteractionReplyIncidentName": {
         "message": "Incident Id"
@@ -398,23 +422,29 @@
     "errorsPreconditionCooldownWaitingTitle": {
         "message": "Cooldown"
     },
-    "errorsPreconditionDMDescription": {
-        "message": "You cannot execute this command in the DM channel! Please switch to a server channel!"
-    },
-    "errorsPreconditionDMTitle": {
-        "message": "DM Channel"
-    },
     "errorsPreconditionDevModeDescription": {
         "message": "This bot is in developer only mode, likely due to a major issue or an upgrade that is taking place. Please check back later!"
     },
     "errorsPreconditionDevModeTitle": {
         "message": "Developer Mode"
     },
+    "errorsPreconditionGuildOnlyDescription": {
+        "message": "You cannot execute this command in the DM channel! Please switch to a server channel!"
+    },
+    "errorsPreconditionGuildOnlyTitle": {
+        "message": "DM Channel"
+    },
     "errorsPreconditionOwnerDescription": {
         "message": "You cannot execute this command without being an owner!"
     },
     "errorsPreconditionOwnerTitle": {
         "message": "Insufficient Permissions"
+    },
+    "errorsPreconditionRegistrationDescription": {
+        "message": "You cannot execute this command without being registered! Please register with **/register** before using this command."
+    },
+    "errorsPreconditionRegistrationTitle": {
+        "message": "Not Registered"
     },
     "errorsPreconditionUserGlobalPermissionsDescription": {
         "message": "You don't have the required server permission(s) to use this command! Please ensure that you have the following given through your role: $1"

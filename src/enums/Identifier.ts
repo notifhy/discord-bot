@@ -1,7 +1,8 @@
 export const enum Identifier {
-    DevMode = 'preconditionDevMode',
-    OwnerOnly = 'preconditionOwnerOnly',
     Cooldown = 'preconditionCooldown',
+    DevMode = 'preconditionDevMode',
     GuildOnly = 'preconditionGuildOnly',
-    GuildTextOnly = 'preconditionGuildTextOnly',
+    // GuildTextOnly = 'preconditionGuildTextOnly',
+    OwnerOnly = 'preconditionOwnerOnly',
+    Registration = 'preconditionRegistration',
 }

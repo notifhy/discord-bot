@@ -7,6 +7,7 @@ import {
 } from '@sapphire/framework';
 import { type CommandInteraction, Constants } from 'discord.js';
 import { BetterEmbed } from '../structures/BetterEmbed';
+import type { Module } from '../structures/Module';
 import { Options } from '../utility/Options';
 import { interactionLogContext } from '../utility/utility';
 
@@ -98,6 +99,11 @@ export class ReloadCommand extends Command {
             promises.push(this.reloadItem(listener));
         }
 
+        // eslint-disable-next-line no-restricted-syntax
+        for (const [, module] of this.container.stores.get('modules')) {
+            promises.push(this.reloadItem(module));
+        }
+
         await Promise.all(promises);
 
         const reloadedEmbed = new BetterEmbed(interaction)
@@ -126,7 +132,7 @@ export class ReloadCommand extends Command {
 
         const now = Date.now();
         const typeName = interaction.options.getString('type', true);
-        const type = this.container.stores.get(typeName as 'commands' | 'listeners');
+        const type = this.container.stores.get(typeName as 'commands' | 'listeners' | 'modules');
 
         const item = interaction.options.getString('item')!;
         const selected = type.get(item);
@@ -138,6 +144,12 @@ export class ReloadCommand extends Command {
                 .setDescription(
                     i18n.getMessage('commandsReloadSingleUnknownDescription', [typeName, item]),
                 );
+
+            this.container.logger.info(
+                interactionLogContext(interaction),
+                `${this.constructor.name}:`,
+                `Unknown item: ${typeName}.${item}.`,
+            );
 
             await interaction.editReply({ embeds: [undefinedSelected] });
             return;
@@ -169,7 +181,7 @@ export class ReloadCommand extends Command {
         });
     }
 
-    private async reloadItem(item: SapphireCommand | Listener) {
+    private async reloadItem(item: SapphireCommand | Listener | Module) {
         await item.reload();
     }
 }

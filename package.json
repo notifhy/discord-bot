@@ -15,6 +15,7 @@
         "eslint-plugin-import": "^2.26.0",
         "prettier": "^2.7.1",
         "prisma": "^4.5.0",
+        "tsx": "^3.10.4",
         "typescript": "^4.7.4"
     },
     "dependencies": {
@@ -29,7 +30,6 @@
         "discord-api-types": "^0.37.14",
         "discord.js": "^13.12.0",
         "dotenv": "^16.0.3",
-        "tsx": "^3.10.3",
         "undici": "^5.11.0"
     },
     "scripts": {

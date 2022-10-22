@@ -14,10 +14,10 @@ export class RegisterCommand extends Command {
             ...options,
             name: 'register',
             description: 'Register your Minecraft account and begin using modules',
-            cooldownLimit: 0,
-            cooldownDelay: 0,
+            cooldownLimit: 5,
+            cooldownDelay: 30_000,
             cooldownScope: BucketScope.User,
-            preconditions: ['Base', 'DevMode', 'OwnerOnly'],
+            preconditions: ['Base', 'DevMode'],
             requiredUserPermissions: [],
             requiredClientPermissions: [],
         });
@@ -227,7 +227,11 @@ export class RegisterCommand extends Command {
         const registeredEmbed = new BetterEmbed(interaction)
             .setColor(Options.colorsNormal)
             .setTitle(i18n.getMessage('commandsRegisterSuccessTitle'))
-            .setDescription(i18n.getMessage('commandsRegisterSuccessDescription'));
+            .setDescription(i18n.getMessage('commandsRegisterSuccessDescription'))
+            .setFields({
+                name: i18n.getMessage('commandsRegisterSuccessFieldName'),
+                value: i18n.getMessage('commandsRegisterSuccessFieldValue'),
+            });
 
         try {
             const testEmbed = new BetterEmbed(interaction)
