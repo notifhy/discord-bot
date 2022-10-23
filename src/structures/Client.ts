@@ -70,7 +70,7 @@ export class Client extends SapphireClient {
         const startTime = Date.now();
 
         container.stores.register(
-            new ModuleStore().registerPath(join(__dirname, '..', 'arguments')),
+            new ModuleStore().registerPath(join(__dirname, '..', 'modules')),
         );
 
         container.database = new PrismaClient();

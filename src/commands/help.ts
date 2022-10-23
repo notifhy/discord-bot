@@ -215,6 +215,7 @@ export class HelpCommand extends Command {
         commandEmbed.addFields({
             name: i18n.getMessage('commandsHelpCommandsMenuCooldownName'),
             value: i18n.getMessage('commandsHelpCommandsMenuCooldownValue', [
+                command.options.cooldownLimit!,
                 command.options.cooldownDelay! / Time.Second,
             ]),
         });

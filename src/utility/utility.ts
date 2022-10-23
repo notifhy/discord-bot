@@ -132,11 +132,13 @@ export function interactionLogContext(interaction: Interaction) {
     return `Interaction ${interaction.id} Type ${interaction.type} User ${interaction.user.id}`;
 }
 
-export function setPresence() {
+export async function setPresence() {
     let presence = container.customPresence;
 
     if (presence === null) {
-        presence = structuredClone(Options.presence);
+        const userCount = await container.database.users.count();
+        const guildCount = container.client.guilds.cache.size;
+        presence = structuredClone(Options.presence(userCount, guildCount));
     }
 
     container.client.user?.setPresence(presence!);

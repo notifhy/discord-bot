@@ -257,6 +257,6 @@ export class RegisterCommand extends Command {
 
         await interaction.editReply({ embeds: [registeredEmbed] });
 
-        setPresence();
+        await setPresence();
     }
 }

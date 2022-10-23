@@ -166,7 +166,7 @@ export class PresenceCommand extends Command {
             this.container.customPresence = null;
         }
 
-        setPresence();
+        await setPresence();
 
         await interaction.editReply({
             embeds: [responseEmbed],

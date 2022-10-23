@@ -19,13 +19,13 @@ export class ReadyListener extends Listener {
             `Logged in as ${client.user?.tag}.`,
         );
 
-        set();
+        await set();
 
         setInterval(set, Time.Hour);
 
-        function set() {
+        async function set() {
             try {
-                setPresence();
+                await setPresence();
             } catch (error) {
                 new ErrorHandler(error).init();
             }

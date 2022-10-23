@@ -162,7 +162,7 @@ export class DataCommand extends Command {
                 components: disabledRows,
             });
 
-            setPresence();
+            await setPresence();
         } else {
             const aborted = new BetterEmbed(interaction)
                 .setColor(Options.colorsNormal)

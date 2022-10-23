@@ -37,15 +37,15 @@ export class Options {
 
     static readonly pingOnMinimum = 150;
 
-    static readonly presence: PresenceData = {
+    static readonly presence = (userCount: number, guildCOunt: number) => ({
         activities: [
             {
-                name: 'accounts',
+                name: `${userCount} accounts in ${guildCOunt} servers | /register /help`,
                 type: Constants.ActivityTypes.WATCHING,
             },
         ],
         status: PresenceUpdateStatus.Online,
-    };
+    }) as PresenceData;
 
     static readonly regexUsername = /^[a-zA-Z0-9_-]{1,24}$/;
 

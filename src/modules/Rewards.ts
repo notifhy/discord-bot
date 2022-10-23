@@ -9,7 +9,7 @@ export class RewardsModule extends Module {
             ...options,
             name: 'rewards',
             localization: 'modulesRewardsName',
-            requireStatusAPI: true,
+            requireStatusAPI: false,
         });
     }
 

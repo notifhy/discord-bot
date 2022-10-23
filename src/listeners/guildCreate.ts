@@ -12,7 +12,7 @@ export class GuildCreateListener extends Listener {
         });
     }
 
-    public run(guild: Guild) {
+    public async run(guild: Guild) {
         if (guild.available === false || !guild.client.isReady()) {
             return;
         }
@@ -25,7 +25,7 @@ export class GuildCreateListener extends Listener {
         );
 
         try {
-            setPresence();
+            await setPresence();
         } catch (error) {
             new ErrorHandler(error).init();
         }
