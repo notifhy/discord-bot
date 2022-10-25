@@ -89,7 +89,7 @@ export class EvalCommand extends Command {
                 },
             );
 
-            if (outputMaxLength === true) {
+            if (outputMaxLength) {
                 evalEmbed.addFields({
                     name: i18n.getMessage('commandsEvalMaxLengthName'),
                     value: i18n.getMessage('commandsEvalMaxLengthValue'),
@@ -125,7 +125,7 @@ export class EvalCommand extends Command {
                 ),
             });
 
-            if (outputMaxLength === true) {
+            if (outputMaxLength) {
                 evalEmbed.addFields({
                     name: i18n.getMessage('commandsEvalMaxLengthName'),
                     value: i18n.getMessage('commandsEvalMaxLengthValue'),

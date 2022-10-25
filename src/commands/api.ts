@@ -154,7 +154,7 @@ export class APICommand extends Command {
             .addFields(
                 {
                     name: i18n.getMessage('commandsAPIStatsEnabledName'),
-                    value: i18n.getMessage(this.container.config.core === true ? 'yes' : 'no'),
+                    value: i18n.getMessage(this.container.config.core ? 'yes' : 'no'),
                 },
                 {
                     name: i18n.getMessage('commandsAPIStatsResumeName'),

@@ -119,11 +119,11 @@ export function formattedUnix({
         return null;
     }
 
-    const utcString = utc === true ? `UTC${createOffset()} ` : '';
+    const utcString = utc ? `UTC${createOffset()} ` : '';
 
     const timeString = newDate.toLocaleTimeString('en-IN', { hour12: true });
 
-    const dateString = date === true ? `, ${cleanDate(ms)}` : '';
+    const dateString = date ? `, ${cleanDate(ms)}` : '';
 
     return `${utcString}${timeString}${dateString}`;
 }

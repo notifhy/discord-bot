@@ -165,7 +165,7 @@ export class ConfigCommand extends Command {
             .setTitle(i18n.getMessage('commandsConfigCoreTitle'))
             .setDescription(
                 i18n.getMessage('commandsConfigCoreDescription', [
-                    this.container.config.core === true
+                    this.container.config.core
                         ? i18n.getMessage('on')
                         : i18n.getMessage('off'),
                 ]),
@@ -175,7 +175,7 @@ export class ConfigCommand extends Command {
             embeds: [coreEmbed],
         });
 
-        const state = this.container.config.core === true ? 'on' : 'off';
+        const state = this.container.config.core ? 'on' : 'off';
 
         this.container.logger.info(
             interactionLogContext(interaction),
@@ -203,7 +203,7 @@ export class ConfigCommand extends Command {
             .setTitle(i18n.getMessage('commandsConfigDevModeTitle'))
             .setDescription(
                 i18n.getMessage('commandsConfigDevModeDescription', [
-                    this.container.config.devMode === true
+                    this.container.config.devMode
                         ? i18n.getMessage('on')
                         : i18n.getMessage('off'),
                 ]),
@@ -211,7 +211,7 @@ export class ConfigCommand extends Command {
 
         await interaction.editReply({ embeds: [devModeEmbed] });
 
-        const state = this.container.config.devMode === true ? 'on' : 'off';
+        const state = this.container.config.devMode ? 'on' : 'off';
 
         this.container.logger.info(
             interactionLogContext(interaction),
@@ -386,10 +386,10 @@ export class ConfigCommand extends Command {
             .setTitle(i18n.getMessage('commandsConfigViewTitle'))
             .setDescription(
                 i18n.getMessage('commandsConfigViewDescription', [
-                    this.container.config.core === true
+                    this.container.config.core
                         ? i18n.getMessage('on')
                         : i18n.getMessage('off'),
-                    this.container.config.devMode === true
+                    this.container.config.devMode
                         ? i18n.getMessage('on')
                         : i18n.getMessage('off'),
                     this.container.config.requestBucket,

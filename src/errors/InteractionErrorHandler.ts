@@ -44,7 +44,7 @@ export class InteractionErrorHandler<
         };
 
         try {
-            if (this.interaction.replied === true || this.interaction.deferred === true) {
+            if (this.interaction.replied || this.interaction.deferred) {
                 await this.interaction.followUp(payLoad);
             } else {
                 await this.interaction.reply(payLoad);

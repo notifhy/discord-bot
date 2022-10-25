@@ -34,7 +34,7 @@ export class Request extends Base {
                 ...fetchOptions,
             });
 
-            if (response.ok === true) {
+            if (response.ok) {
                 if (this.retry >= 1) {
                     this.container.logger.warn(
                         `${this.constructor.name}:`,
