@@ -104,14 +104,8 @@
     "commandsConfigViewTitle": {
         "message": "Current Configuration"
     },
-    "commandsDataDeleteAbortedDescription": {
-        "message": "Deletion aborted."
-    },
-    "commandsDataDeleteAbortedTitle": {
-        "message": "Aborted"
-    },
     "commandsDataDeleteConfirmDescription": {
-        "message": "Are you sure you want to delete your data? This is irreversible. Please confirm with the buttons below."
+        "message": "Are you sure you want to delete your data? This is irreversible. Please confirm if you want to proceed with the buttons below."
     },
     "commandsDataDeleteConfirmTitle": {
         "message": "Confirmation"
@@ -335,23 +329,50 @@
     "commandsReloadSingleUnknownTitle": {
         "message": "Unknown Item"
     },
-    "commandsSystemMemberValue": {
+    "commandsSystemInfoMemberValue": {
         "message": "$1MB"
     },
-    "commandsSystemMemoryName": {
+    "commandsSystemInfoMemoryName": {
         "message": "Memory Usage"
     },
-    "commandsSystemServersName": {
+    "commandsSystemInfoServersName": {
         "message": "Servers"
     },
-    "commandsSystemTitle": {
+    "commandsSystemInfoTitle": {
         "message": "System"
     },
-    "commandsSystemUptimeName": {
+    "commandsSystemInfoUptimeName": {
         "message": "Uptime"
     },
-    "commandsSystemUsersName": {
+    "commandsSystemInfoUsersName": {
         "message": "Users"
+    },
+    "commandsSystemMessageAllNoUsersTitle": {
+        "message": "No Users"
+    },
+    "commandsSystemMessageAllNoUsersDescription": {
+        "message": "You must have at least one user to use this command."
+    },
+    "commandsSystemMessageSingleInvalidUserTitle": {
+        "message": "Invalid User"
+    },
+    "commandsSystemMessageSingleInvalidUserDescription": {
+        "message": "The specified user Id $1 is not a valid user."
+    },
+    "commandsSystemMessagePreviewDescription": {
+        "message": "Below is a preview of your system message. Please confirm if you want to proceed with the buttons below."
+    },
+    "commandsSystemMessagePreviewFieldIdsName": {
+        "message": "Ids"
+    },
+    "commandsSystemMessagePreviewTitle": {
+        "message": "Preview"
+    },
+    "commandsSystemMessageSuccessTitle": {
+        "message": "Success"
+    },
+    "commandsSystemMessageSuccessDescription": {
+        "message": "Your system message was created successfully."
     },
     "coreComponentsButtonsReadMoreLabel": {
         "message": "Read More"

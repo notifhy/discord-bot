@@ -7,11 +7,11 @@ import { Options } from '../utility/Options';
 import { cleanLength, cleanRound } from '../utility/utility';
 import { BetterEmbed } from '../structures/BetterEmbed';
 
-export class SystemCommand extends Command {
+export class SystemInfoCommand extends Command {
     public constructor(context: Command.Context, options: Command.Options) {
         super(context, {
             ...options,
-            name: 'system',
+            name: 'systeminfo',
             description: 'View system information',
             cooldownLimit: 0,
             cooldownDelay: 0,
@@ -38,24 +38,24 @@ export class SystemCommand extends Command {
 
         const responseEmbed = new BetterEmbed(interaction)
             .setColor(Options.colorsNormal)
-            .setTitle(i18n.getMessage('commandsSystemTitle'))
+            .setTitle(i18n.getMessage('commandsSystemInfoTitle'))
             .addFields(
                 {
-                    name: i18n.getMessage('commandsSystemUptimeName'),
+                    name: i18n.getMessage('commandsSystemInfoUptimeName'),
                     value: cleanLength(process.uptime() * Time.Second)!,
                 },
                 {
-                    name: i18n.getMessage('commandsSystemMemoryName'),
-                    value: i18n.getMessage('commandsSystemMemberValue', [
+                    name: i18n.getMessage('commandsSystemInfoMemoryName'),
+                    value: i18n.getMessage('commandsSystemInfoMemberValue', [
                         cleanRound(memoryMegaBytes, 1),
                     ]),
                 },
                 {
-                    name: i18n.getMessage('commandsSystemServersName'),
+                    name: i18n.getMessage('commandsSystemInfoServersName'),
                     value: String(interaction.client.guilds.cache.size),
                 },
                 {
-                    name: i18n.getMessage('commandsSystemUsersName'),
+                    name: i18n.getMessage('commandsSystemInfoUsersName'),
                     value: String(
                         interaction.client.guilds.cache.reduce(
                             (acc, guild) => acc + guild.memberCount,

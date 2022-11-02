@@ -40,6 +40,18 @@ export class DataCommand extends Command {
                     type: Constants.ApplicationCommandOptionTypes.SUB_COMMAND,
                     description: 'Delete your data',
                 },
+                {
+                    name: 'view',
+                    description: 'View your data',
+                    type: Constants.ApplicationCommandOptionTypes.SUB_COMMAND_GROUP,
+                    options: [
+                        {
+                            name: 'all',
+                            type: Constants.ApplicationCommandOptionTypes.SUB_COMMAND,
+                            description: 'Returns a file with all of your player data',
+                        },
+                    ],
+                },
             ],
         };
     }
@@ -50,6 +62,9 @@ export class DataCommand extends Command {
 
     public override async chatInputRun(interaction: CommandInteraction) {
         switch (interaction.options.getSubcommand()) {
+            case 'all':
+                await this.viewAll(interaction);
+                break;
             case 'delete':
                 await this.delete(interaction);
                 break;
@@ -57,7 +72,7 @@ export class DataCommand extends Command {
         }
     }
 
-    public async delete(interaction: CommandInteraction) {
+    private async delete(interaction: CommandInteraction) {
         const { i18n } = interaction;
 
         const confirmEmbed = new BetterEmbed(interaction)
@@ -75,11 +90,11 @@ export class DataCommand extends Command {
             .setLabel(i18n.getMessage('no'))
             .setStyle(Constants.MessageButtonStyles.DANGER);
 
-        const buttonRow = new MessageActionRow().addComponents(yesButton, noButton);
+        const buttons = new MessageActionRow().addComponents(yesButton, noButton);
 
         const message = (await interaction.editReply({
             embeds: [confirmEmbed],
-            components: [buttonRow],
+            components: [buttons],
         })) as Message;
 
         const disabledRows = disableComponents(message.components);
@@ -107,78 +122,103 @@ export class DataCommand extends Command {
             await interaction.editReply({
                 components: disabledRows,
             });
-        } else if (button.customId === yesButton.customId) {
-            await this.container.database.$transaction([
-                this.container.database.users.delete({
-                    where: {
-                        id: interaction.user.id,
-                    },
-                }),
-                this.container.database.activities.deleteMany({
-                    where: {
-                        id: interaction.user.id,
-                    },
-                }),
-                this.container.database.defender.delete({
-                    where: {
-                        id: interaction.user.id,
-                    },
-                }),
-                this.container.database.friends.delete({
-                    where: {
-                        id: interaction.user.id,
-                    },
-                }),
-                this.container.database.modules.delete({
-                    where: {
-                        id: interaction.user.id,
-                    },
-                }),
-                this.container.database.rewards.delete({
-                    where: {
-                        id: interaction.user.id,
-                    },
-                }),
-                this.container.database.system_messages.deleteMany({
-                    where: {
-                        id: interaction.user.id,
-                    },
-                }),
-            ]);
 
-            const deleted = new BetterEmbed(interaction)
-                .setColor(Options.colorsNormal)
-                .setTitle(i18n.getMessage('commandsDataDeleteDeletedTitle'))
-                .setDescription(i18n.getMessage('commandsDataDeleteDeletedDescription'));
-
-            this.container.logger.info(
-                interactionLogContext(interaction),
-                `${this.constructor.name}:`,
-                'Accepted data deletion.',
-            );
-
-            await button.update({
-                embeds: [deleted],
-                components: disabledRows,
-            });
-
-            await setPresence();
-        } else {
-            const aborted = new BetterEmbed(interaction)
-                .setColor(Options.colorsNormal)
-                .setTitle(i18n.getMessage('commandsDataDeleteAbortedTitle'))
-                .setDescription(i18n.getMessage('commandsDataDeleteAbortedDescription'));
-
-            this.container.logger.info(
-                interactionLogContext(interaction),
-                `${this.constructor.name}:`,
-                'Aborted data deletion.',
-            );
-
-            await button.update({
-                embeds: [aborted],
-                components: disabledRows,
-            });
+            return;
         }
+
+        if (button.customId === noButton.customId) {
+            this.container.logger.info(
+                interactionLogContext(interaction),
+                `${this.constructor.name}:`,
+                'Pressed no.',
+            );
+
+            await button.update({
+                components: disabledRows,
+            });
+
+            return;
+        }
+
+        await this.container.database.$transaction([
+            this.container.database.system_messages.deleteMany({
+                where: {
+                    id: interaction.user.id,
+                },
+            }),
+            this.container.database.activities.deleteMany({
+                where: {
+                    id: interaction.user.id,
+                },
+            }),
+            this.container.database.users.delete({
+                where: {
+                    id: interaction.user.id,
+                },
+            }),
+            this.container.database.defender.delete({
+                where: {
+                    id: interaction.user.id,
+                },
+            }),
+            this.container.database.friends.delete({
+                where: {
+                    id: interaction.user.id,
+                },
+            }),
+            this.container.database.modules.delete({
+                where: {
+                    id: interaction.user.id,
+                },
+            }),
+            this.container.database.rewards.delete({
+                where: {
+                    id: interaction.user.id,
+                },
+            }),
+        ]);
+
+        const deleted = new BetterEmbed(interaction)
+            .setColor(Options.colorsNormal)
+            .setTitle(i18n.getMessage('commandsDataDeleteDeletedTitle'))
+            .setDescription(i18n.getMessage('commandsDataDeleteDeletedDescription'));
+
+        this.container.logger.info(
+            interactionLogContext(interaction),
+            `${this.constructor.name}:`,
+            'Accepted data deletion.',
+        );
+
+        await button.update({
+            embeds: [deleted],
+            components: disabledRows,
+        });
+
+        await setPresence();
+    }
+
+    private async viewAll(interaction: CommandInteraction) {
+        const data = await this.container.database.users.findUnique({
+            include: {
+                activities: true,
+                defender: true,
+                friends: true,
+                modules: true,
+                rewards: true,
+                system_messages: true,
+            },
+            where: {
+                id: interaction.user.id,
+            },
+        });
+
+        await interaction.editReply({
+            files: [
+                {
+                    attachment: Buffer.from(JSON.stringify(data, null, 2)),
+                    name: 'data.json',
+                },
+            ],
+        });
     }
 }
