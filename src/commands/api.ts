@@ -218,7 +218,12 @@ export class APICommand extends Command {
 
         const hypixelModuleErrors = this.container.core.errors;
 
-        if (method === 'addAbort' || method === 'addGeneric' || method === 'addHTTP') {
+        if (
+            method === 'addAbort'
+            || method === 'addGeneric'
+            || method === 'addHTTP'
+            || method === 'addRateLimit'
+        ) {
             hypixelModuleErrors[method]();
         }
 
