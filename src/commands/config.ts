@@ -180,7 +180,7 @@ export class ConfigCommand extends Command {
         this.container.logger.info(
             interactionLogContext(interaction),
             `${this.constructor.name}:`,
-            `Developer Mode is now ${state}.`,
+            `The core is now ${state}.`,
         );
     }
 

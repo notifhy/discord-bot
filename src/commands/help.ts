@@ -18,7 +18,7 @@ export class HelpCommand extends Command {
         super(context, {
             ...options,
             name: 'help',
-            description: 'Displays helpful information and available commands',
+            description: 'Display helpful information and available commands',
             cooldownLimit: 1,
             cooldownDelay: Time.Second * 10,
             cooldownScope: BucketScope.User,

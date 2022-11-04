@@ -27,6 +27,12 @@ export class Options {
 
     static readonly defaultLocale: keyof typeof locales = 'en-US';
 
+    static readonly modulesRewardsHypixelTimezone = 'EST5EDT';
+
+    static readonly modulesRewardsMilestones = [
+        7, 30, 60, 90, 100, 150, 200, 250, 300, 365, 500, 750, 1000,
+    ];
+
     static readonly performanceInterval = Time.Hour / 2;
 
     static readonly performanceMaxDataPoints = 100;

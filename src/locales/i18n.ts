@@ -1,5 +1,5 @@
 import type { Command } from '@sapphire/framework';
-import { locales } from './locales';
+import { ListKeys, locales, MessageKeys } from './locales';
 import { Options } from '../utility/Options';
 
 // Simple implementation of Chrome's/Firefox's i18n
@@ -45,8 +45,25 @@ export class i18n {
         );
     }
 
-    public getMessage(string: keyof typeof this.locale, options?: (string | number | bigint)[]) {
-        let message = this.locale[string]?.message;
+    public getList(string: keyof ListKeys, options?: (string | number | bigint)[]) {
+        const list = (this.locale[string] as { list?: string[] })?.list ?? ['null'];
+
+        if (typeof options !== 'undefined') {
+            let index = options.length;
+
+            options.reverse().forEach((option) => {
+                list.forEach((_item, itemIndex) => {
+                    list[itemIndex] = list[itemIndex]!.replaceAll(`$${index}`, String(option));
+                });
+                index -= 1;
+            });
+        }
+
+        return list;
+    }
+
+    public getMessage(string: keyof MessageKeys, options?: (string | number | bigint)[]) {
+        let message = (this.locale[string] as { message?: string })?.message ?? 'null';
 
         if (message && typeof options !== 'undefined') {
             let index = options.length;
@@ -57,7 +74,7 @@ export class i18n {
             });
         }
 
-        return message || 'null';
+        return message;
     }
 
     public setLocale(locale: string) {

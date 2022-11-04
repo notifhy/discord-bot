@@ -53,7 +53,13 @@ export class Core extends Base {
     }
 
     private async refresh() {
-        const users = await this.container.database.users.findMany();
+        const allUsers = await this.container.database.users.findMany({
+            include: {
+                modules: true,
+            },
+        });
+
+        const users = allUsers.filter((user) => Object.values(user.modules).includes(true));
 
         if (users.length === 0) {
             await setTimeout(Time.Second * 10);

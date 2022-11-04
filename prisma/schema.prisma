@@ -10,16 +10,16 @@ datasource db {
 model activities {
   index             Int     @id @default(autoincrement())
   id                String  @db.VarChar(20)
-  timestamp         Int
-  firstLogin        Int?
-  lastLogin         Int?
-  lastLogout        Int?
+  timestamp         Float
+  firstLogin        Float?
+  lastLogin         Float?
+  lastLogout        Float?
   version           String? @db.VarChar(10)
   language          String? @db.VarChar(15)
   gameType          String? @db.VarChar(25)
   gameMode          String? @db.VarChar(25)
   gameMap           String? @db.VarChar(25)
-  lastClaimedReward Int?
+  lastClaimedReward Float?
   rewardScore       Int?
   rewardHighScore   Int?
   totalDailyRewards Int?
@@ -71,7 +71,7 @@ model rewards {
   claimNotification Boolean @default(true)
   delay             Int     @default(0)
   interval          Int     @default(1800000)
-  lastNotified      Int     @default(0)
+  lastNotified      Float   @default(0)
   milestones        Boolean @default(true)
   users             users?
 }
@@ -79,7 +79,7 @@ model rewards {
 model system_messages {
   index     Int    @id @default(autoincrement())
   id        String @db.VarChar(20)
-  timestamp Int
+  timestamp Float
   name      String @db.VarChar(256)
   value     String @db.VarChar(1024)
   users     users  @relation(fields: [id], references: [id], onDelete: NoAction, onUpdate: NoAction)

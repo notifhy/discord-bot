@@ -300,13 +300,13 @@
         "message": "Next Steps"
     },
     "commandsRegisterSuccessFieldValue": {
-        "message": "**/modules** • Configure modules and set up notifications\n**/help** • See information about any command or about this bot"
+        "message": "**/module** • Enable, disable, and configure modules\n**/help** • Display helpful information and available commands"
     },
     "commandsRegisterSuccessTitle": {
         "message": "Success"
     },
     "commandsRegisterTestDescription": {
-        "message": "This message is a test of whether you have DMs enabled. You may ignore this message."
+        "message": "This message is a test for whether you have DMs enabled. You may ignore this message."
     },
     "commandsRegisterTestTitle": {
         "message": "Test"
@@ -485,7 +485,40 @@
     "modulesFriendsName": {
         "message": "Friends"
     },
+    "modulesRewardsClaimNotificationDescription": {
+        "message": "You now have a daily streak of $1 with $2 total daily rewards!"
+    },
+    "modulesRewardsClaimNotificationTitle": {
+        "message": "Daily Reward Claimed"
+    },
+    "modulesRewardsFooter": {
+        "message": "Notification"
+    },
     "modulesRewardsName": {
         "message": "Rewards"
+    },
+    "modulesRewardsMilestoneDescription": {
+        "message": "🎉 You have reached a daily streak of $1!"
+    },
+    "modulesRewardsMilestoneTitle": {
+        "message": "Congratulations"
+    },
+    "modulesRewardsReminderDescription": {
+        "list": [
+            "This is your reminder to claim your daily reward!",
+            "This is 🎉 your 👈➡ reminder 🔔 to claim your daily 📆 reward 🏆🏆 🏆🙄",
+            "This here be yer reminder to claim yer daily reward!",
+            "Your daily reward is available to claim!",
+            "You haven't claimed your daily reward yet!",
+            "This is a reminder to claim your daily reward!",
+            "You should go collect your daily reward!",
+            "Go claim your daily reward!",
+            "It is time to go claim your daily reward!",
+            "Your daily reward awaits collection!",
+            "Your daily reward is waiting!"
+        ]
+    },
+    "modulesRewardsReminderTitle": {
+        "message": "Daily Reward Reminder"
     }
 }

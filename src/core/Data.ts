@@ -2,7 +2,7 @@ import type { users as User } from '@prisma/client';
 import type { CleanHypixelData } from '../@types/Hypixel';
 import { Base } from '../structures/Base';
 
-type DataChanges = { [key: string]: string | number | null };
+type DataChanges = { [key: string]: bigint | null | number | string };
 
 export type Changes = {
     new: DataChanges;
@@ -13,6 +13,21 @@ export class Data extends Base {
     public async parse(user: User, newData: CleanHypixelData) {
         // https://github.com/prisma/prisma/issues/5042
         const oldData = (await this.container.database.activities.findFirst({
+            select: {
+                firstLogin: true,
+                lastLogin: true,
+                lastLogout: true,
+                version: true,
+                language: true,
+                gameType: true,
+                gameMode: true,
+                gameMap: true,
+                lastClaimedReward: true,
+                rewardScore: true,
+                rewardHighScore: true,
+                totalDailyRewards: true,
+                totalRewards: true,
+            },
             where: {
                 id: {
                     equals: user.id,

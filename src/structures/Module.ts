@@ -2,12 +2,12 @@ import type { users as User } from '@prisma/client';
 import { Piece } from '@sapphire/framework';
 import type { CleanHypixelData } from '../@types/Hypixel';
 import type { Changes } from '../core/Data';
-import type { locales } from '../locales/locales';
+import type { MessageKeys } from '../locales/locales';
 
 export abstract class Module<O extends Module.Options = Module.Options> extends Piece<O> {
     public override name: 'defender' | 'friends' | 'rewards';
 
-    public readonly localization: keyof typeof locales[keyof typeof locales];
+    public readonly localization: keyof MessageKeys;
 
     public readonly requireStatusAPI: boolean;
 
@@ -24,7 +24,7 @@ export abstract class Module<O extends Module.Options = Module.Options> extends 
 
 export interface ModuleOptions extends Piece.Options {
     readonly name: 'defender' | 'friends' | 'rewards';
-    readonly localization: keyof typeof locales[keyof typeof locales];
+    readonly localization: keyof MessageKeys;
     readonly requireStatusAPI: boolean;
 }
 

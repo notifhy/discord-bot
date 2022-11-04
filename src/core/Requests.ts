@@ -105,11 +105,7 @@ export class Requests extends Base {
     }
 
     private cleanStatusData(rawHypixelStatus?: RawHypixelStatus) {
-        if (typeof rawHypixelStatus === 'undefined') {
-            return undefined;
-        }
-
-        const { gameType = null, mode = null, map = null } = rawHypixelStatus.session;
+        const { gameType = null, mode = null, map = null } = rawHypixelStatus?.session ?? {};
 
         return {
             gameType: gameType,
