@@ -30,6 +30,7 @@ export interface RawHypixelPlayer extends BaseHypixelAPI {
 
 export interface RawHypixelStatus extends BaseHypixelAPI {
     session: {
+        online: boolean | null;
         gameType: string | null | undefined;
         mode: string | null | undefined;
         map: string | null | undefined;

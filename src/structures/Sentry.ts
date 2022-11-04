@@ -1,11 +1,17 @@
 import { DiscordAPIError } from '@discordjs/rest';
 import type { users as User } from '@prisma/client';
 import * as SentryClient from '@sentry/node';
-import { CommandInteraction, GuildChannel, type Interaction, TextChannel } from 'discord.js';
+import {
+    CommandInteraction,
+    ContextMenuInteraction,
+    GuildChannel,
+    type Interaction,
+    TextChannel,
+} from 'discord.js';
 import type { Core } from '../core/Core';
 import { HTTPError } from '../errors/HTTPError';
 import type { Module } from './Module';
-import { slashCommandResolver } from '../utility/utility';
+import { chatInputResolver, contextMenuResolver } from '../utility/utility';
 
 export class Sentry {
     public readonly scope: SentryClient.Scope;
@@ -27,9 +33,12 @@ export class Sentry {
 
         this.scope.setTags({
             interactionCommand:
+                // eslint-disable-next-line no-nested-ternary
                 interaction instanceof CommandInteraction
-                    ? slashCommandResolver(interaction).slice(0, 200)
-                    : null,
+                    ? chatInputResolver(interaction).slice(0, 200)
+                    : interaction instanceof ContextMenuInteraction
+                        ? contextMenuResolver(interaction)
+                        : null,
             interactionCreatedTimestamp: interaction.createdTimestamp,
             userId: user.id,
             interactionId: interaction.id,

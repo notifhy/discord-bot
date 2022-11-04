@@ -2,6 +2,7 @@ import { container } from '@sapphire/framework';
 import {
     type AwaitMessageCollectorOptionsParams,
     type CommandInteraction,
+    type ContextMenuInteraction,
     Formatters,
     type Interaction,
     MessageActionRow,
@@ -27,6 +28,35 @@ export async function awaitComponent<T extends MessageComponentTypeResolvable>(
 
         throw error;
     }
+}
+
+export function chatInputResolver(interaction: CommandInteraction) {
+    const commandOptions: (string | number | boolean)[] = [`/${interaction.commandName}`];
+
+    interaction.options.data.forEach((value) => {
+        let option = value;
+
+        if (typeof option.value !== 'undefined') {
+            commandOptions.push(`${option.name}: ${option.value}`);
+        }
+
+        if (option.type === 'SUB_COMMAND_GROUP') {
+            commandOptions.push(option.name);
+            option = option.options![0]!;
+        }
+
+        if (option.type === 'SUB_COMMAND') {
+            commandOptions.push(value.name);
+        }
+
+        if (Array.isArray(option.options)) {
+            value.options?.forEach((subOption) => {
+                commandOptions.push(`${subOption.name}: ${subOption.value}`);
+            });
+        }
+    });
+
+    return commandOptions.join(' ');
 }
 
 export function cleanDate(ms: number | Date): string | null {
@@ -79,6 +109,18 @@ export function cleanRound(number: number, decimals?: number) {
     return Math.round(number * decimalsFactor) / decimalsFactor;
 }
 
+export function contextMenuResolver(interaction: ContextMenuInteraction) {
+    const command = [interaction.commandName];
+
+    if (interaction.isUserContextMenu()) {
+        command.push(interaction.targetUser.id);
+    } else if (interaction.isMessageContextMenu()) {
+        command.push(interaction.targetMessage.id);
+    }
+
+    return command.join(' ');
+}
+
 // Taken from https://stackoverflow.com/a/13016136 under CC BY-SA 3.0 matching ISO 8601
 export function createOffset(date = new Date()): string {
     function pad(value: number) {
@@ -129,7 +171,7 @@ export function formattedUnix({
 }
 
 export function interactionLogContext(interaction: Interaction) {
-    return `Interaction ${interaction.id} Type ${interaction.type} User ${interaction.user.id}`;
+    return `Interaction ${interaction.id} User ${interaction.user.id}`;
 }
 
 export async function setPresence() {
@@ -143,35 +185,6 @@ export async function setPresence() {
 
     container.client.user?.setPresence(presence!);
 }
-
-export const slashCommandResolver = (interaction: CommandInteraction) => {
-    const commandOptions: (string | number | boolean)[] = [`/${interaction.commandName}`];
-
-    interaction.options.data.forEach((value) => {
-        let option = value;
-
-        if (typeof option.value !== 'undefined') {
-            commandOptions.push(`${option.name}: ${option.value}`);
-        }
-
-        if (option.type === 'SUB_COMMAND_GROUP') {
-            commandOptions.push(option.name);
-            option = option.options![0]!;
-        }
-
-        if (option.type === 'SUB_COMMAND') {
-            commandOptions.push(value.name);
-        }
-
-        if (Array.isArray(option.options)) {
-            value.options?.forEach((subOption) => {
-                commandOptions.push(`${subOption.name}: ${subOption.value}`);
-            });
-        }
-    });
-
-    return commandOptions.join(' ');
-};
 
 export function timestamp(ms: unknown, style?: typeof Formatters.TimestampStylesString) {
     if (!isNumber(ms) || ms < 0) {

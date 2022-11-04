@@ -30,6 +30,6 @@ export class Modules extends Base {
             }
         }
 
-        // add logic for notifying about api toggles
+        // add logic for notifying about limited api data
     }
 }
