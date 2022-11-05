@@ -31,6 +31,7 @@ model config {
   index              Int      @id @default(0)
   core               Boolean  @default(true)
   devMode            Boolean  @default(false)
+  logLevel           Int      @default(30)
   requestBucket      Int      @default(10)
   restRequestTimeout Int      @default(5000)
   retryLimit         Int      @default(3)

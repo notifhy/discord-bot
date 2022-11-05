@@ -79,7 +79,8 @@ export class ReloadCommand extends Command {
             case 'single':
                 await this.single(interaction);
                 break;
-            // no default
+            default:
+                throw new RangeError();
         }
     }
 

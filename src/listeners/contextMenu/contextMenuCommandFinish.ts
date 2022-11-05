@@ -15,7 +15,7 @@ export class ContextMenuCommandFinishListener extends Listener {
     }
 
     public async run(_: never, __: never, payload: ContextMenuCommandFinishPayload) {
-        this.container.logger[payload.success ? 'info' : 'error'](
+        this.container.logger[payload.success ? 'debug' : 'error'](
             interactionLogContext(payload.interaction),
             `${this.constructor.name}:`,
             `Took ${cleanRound(payload.duration, 0)}ms.`,

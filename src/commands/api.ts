@@ -132,7 +132,8 @@ export class APICommand extends Command {
             case 'call':
                 await this.call(interaction);
                 break;
-            // no default
+            default:
+                throw new RangeError();
         }
     }
 

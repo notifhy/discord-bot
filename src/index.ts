@@ -24,4 +24,4 @@ process.on('uncaughtException', (error) => {
     process.exit(1);
 });
 
-new Client().init();
+Client.init();

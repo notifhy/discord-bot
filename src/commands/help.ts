@@ -104,7 +104,8 @@ export class HelpCommand extends Command {
             case commandsSnowflake:
                 await this.commandsMenu(interaction, selectMenuInteraction);
                 break;
-            // no default
+            default:
+                throw new RangeError();
         }
     }
 

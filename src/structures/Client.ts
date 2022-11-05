@@ -1,5 +1,5 @@
 import { config as Config, PrismaClient } from '@prisma/client';
-import { container, LogLevel, SapphireClient } from '@sapphire/framework';
+import { container, SapphireClient } from '@sapphire/framework';
 import { Intents, Options, type PresenceData, Sweepers } from 'discord.js';
 import { join } from 'node:path';
 import { Core } from '../core/Core';
@@ -7,7 +7,7 @@ import { i18n } from '../locales/i18n';
 import { ModuleStore } from './ModuleStore';
 
 export class Client extends SapphireClient {
-    public constructor() {
+    public constructor(config: Config) {
         super({
             allowedMentions: {
                 parse: ['users'],
@@ -15,8 +15,9 @@ export class Client extends SapphireClient {
             },
             failIfNotExists: false,
             intents: [Intents.FLAGS.GUILDS],
+            loadDefaultErrorListeners: false,
             logger: {
-                level: LogLevel.Debug,
+                level: config.logLevel,
             },
             makeCache: Options.cacheWithLimits({
                 GuildBanManager: 0,
@@ -34,7 +35,6 @@ export class Client extends SapphireClient {
                 ThreadMemberManager: 0,
                 VoiceStateManager: 0,
             }),
-            loadDefaultErrorListeners: false,
             presence: {
                 status: 'online',
             },
@@ -69,34 +69,26 @@ export class Client extends SapphireClient {
         });
     }
 
-    public async init() {
+    public static async init() {
         const startTime = Date.now();
+
+        container.database = new PrismaClient();
+
+        container.config = (await container.database.config.findFirst()) as Config;
+        container.core = new Core();
+        container.customPresence = null;
+        container.i18n = new i18n();
+
+        await new Client(container.config).login();
 
         container.stores.register(
             new ModuleStore().registerPath(join(__dirname, '..', 'modules')),
         );
 
-        container.database = new PrismaClient();
-        container.core = new Core();
-        container.customPresence = null;
-        container.i18n = new i18n();
-
-        const { config } = container.database;
-
-        container.config = (await config.findFirst()) as Config;
-
-        container.logger.info(`${this.constructor.name}:`, 'Fetched config from the database.');
-
-        const endTime = Date.now();
-
-        const initTime = endTime - startTime;
-
         container.logger.info(
             `${this.constructor.name}:`,
-            `Initialized container after ${initTime}ms.`,
+            `Initialized container after ${Date.now() - startTime}ms.`,
         );
-
-        await this.login();
     }
 }
 

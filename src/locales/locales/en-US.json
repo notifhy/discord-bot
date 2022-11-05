@@ -68,6 +68,12 @@
     "commandsConfigDevModeTitle": {
         "message": "Developer Mode Updated"
     },
+    "commandsConfigLogLevelDescription": {
+        "message": "The minimum log level for logs to appear is now $1."
+    },
+    "commandsConfigLogLevelTitle": {
+        "message": "Log Level Updated"
+    },
     "commandsConfigRequestBucketDescription": {
         "message": "The request bucket is now **$1** per minute."
     },

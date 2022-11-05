@@ -68,7 +68,8 @@ export class DataCommand extends Command {
             case 'delete':
                 await this.delete(interaction);
                 break;
-            // no default
+            default:
+                throw new RangeError();
         }
     }
 

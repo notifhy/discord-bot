@@ -56,7 +56,7 @@ export class PresenceCommand extends Command {
                                     value: 'invisible',
                                 },
                                 {
-                                    name: 'Do Not Disturb ',
+                                    name: 'Do Not Disturb',
                                     value: 'dnd',
                                 },
                             ],

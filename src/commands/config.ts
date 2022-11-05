@@ -33,6 +33,49 @@ export class ConfigCommand extends Command {
                     description: 'Toggle Developer Mode',
                 },
                 {
+                    name: 'loglevel',
+                    type: Constants.ApplicationCommandOptionTypes.SUB_COMMAND,
+                    description: 'Set the minimum severity for logs to appear',
+                    options: [
+                        {
+                            name: 'level',
+                            type: Constants.ApplicationCommandOptionTypes.INTEGER,
+                            description: 'The minimum level for logs to appear',
+                            required: true,
+                            choices: [
+                                {
+                                    name: 'Trace',
+                                    value: 10,
+                                },
+                                {
+                                    name: 'Debug',
+                                    value: 20,
+                                },
+                                {
+                                    name: 'Info',
+                                    value: 30,
+                                },
+                                {
+                                    name: 'Warn',
+                                    value: 40,
+                                },
+                                {
+                                    name: 'Error',
+                                    value: 50,
+                                },
+                                {
+                                    name: 'Fatal',
+                                    value: 60,
+                                },
+                                {
+                                    name: 'None',
+                                    value: 100,
+                                },
+                            ],
+                        },
+                    ],
+                },
+                {
                     name: 'requestbucket',
                     description: 'Set how many requests should be made per minute',
                     type: Constants.ApplicationCommandOptionTypes.SUB_COMMAND,
@@ -122,7 +165,10 @@ export class ConfigCommand extends Command {
                 await this.core(interaction);
                 break;
             case 'devmode':
-                await this.devModeCommand(interaction);
+                await this.devMode(interaction);
+                break;
+            case 'loglevel':
+                await this.logLevel(interaction);
                 break;
             case 'requestbucket':
                 await this.requestBucket(interaction);
@@ -142,7 +188,8 @@ export class ConfigCommand extends Command {
             case 'view':
                 await this.view(interaction);
                 break;
-            // no default
+            default:
+                throw new RangeError();
         }
     }
 
@@ -165,9 +212,7 @@ export class ConfigCommand extends Command {
             .setTitle(i18n.getMessage('commandsConfigCoreTitle'))
             .setDescription(
                 i18n.getMessage('commandsConfigCoreDescription', [
-                    this.container.config.core
-                        ? i18n.getMessage('on')
-                        : i18n.getMessage('off'),
+                    this.container.config.core ? i18n.getMessage('on') : i18n.getMessage('off'),
                 ]),
             );
 
@@ -184,7 +229,7 @@ export class ConfigCommand extends Command {
         );
     }
 
-    public async devModeCommand(interaction: CommandInteraction) {
+    public async devMode(interaction: CommandInteraction) {
         const { i18n } = interaction;
 
         this.container.config.devMode = !this.container.config.devMode;
@@ -203,9 +248,7 @@ export class ConfigCommand extends Command {
             .setTitle(i18n.getMessage('commandsConfigDevModeTitle'))
             .setDescription(
                 i18n.getMessage('commandsConfigDevModeDescription', [
-                    this.container.config.devMode
-                        ? i18n.getMessage('on')
-                        : i18n.getMessage('off'),
+                    this.container.config.devMode ? i18n.getMessage('on') : i18n.getMessage('off'),
                 ]),
             );
 
@@ -217,6 +260,39 @@ export class ConfigCommand extends Command {
             interactionLogContext(interaction),
             `${this.constructor.name}:`,
             `Developer Mode is now ${state}.`,
+        );
+    }
+
+    public async logLevel(interaction: CommandInteraction) {
+        const { i18n } = interaction;
+
+        const level = interaction.options.getInteger('level', true);
+
+        this.container.config.logLevel = level;
+
+        // @ts-ignore
+        this.container.logger.level = this.container.config.logLevel;
+
+        await this.container.database.config.update({
+            data: {
+                logLevel: this.container.config.logLevel,
+            },
+            where: {
+                index: 0,
+            },
+        });
+
+        const logLevelEmbed = new BetterEmbed(interaction)
+            .setColor(Options.colorsNormal)
+            .setTitle(i18n.getMessage('commandsConfigLogLevelTitle'))
+            .setDescription(i18n.getMessage('commandsConfigLogLevelDescription', [level]));
+
+        await interaction.editReply({ embeds: [logLevelEmbed] });
+
+        this.container.logger.info(
+            interactionLogContext(interaction),
+            `${this.constructor.name}:`,
+            `The minimum log level for logs to appear is now ${level}.`,
         );
     }
 
@@ -386,12 +462,8 @@ export class ConfigCommand extends Command {
             .setTitle(i18n.getMessage('commandsConfigViewTitle'))
             .setDescription(
                 i18n.getMessage('commandsConfigViewDescription', [
-                    this.container.config.core
-                        ? i18n.getMessage('on')
-                        : i18n.getMessage('off'),
-                    this.container.config.devMode
-                        ? i18n.getMessage('on')
-                        : i18n.getMessage('off'),
+                    this.container.config.core ? i18n.getMessage('on') : i18n.getMessage('off'),
+                    this.container.config.devMode ? i18n.getMessage('on') : i18n.getMessage('off'),
                     this.container.config.requestBucket,
                     this.container.config.restRequestTimeout,
                     this.container.config.retryLimit,
