@@ -40,7 +40,11 @@ export class Data extends Base {
 
         const changes = this.changes(newData, oldData);
 
-        console.log(changes);
+        this.container.logger.debug(
+            `${this.constructor.name}:`,
+            'Parsed data:',
+            changes,
+        );
 
         if (Object.keys(changes.new).length > 0) {
             await this.container.database.activities.create({

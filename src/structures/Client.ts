@@ -1,5 +1,5 @@
 import { config as Config, PrismaClient } from '@prisma/client';
-import { container, SapphireClient } from '@sapphire/framework';
+import { container, LogLevel, SapphireClient } from '@sapphire/framework';
 import { Intents, Options, type PresenceData, Sweepers } from 'discord.js';
 import { join } from 'node:path';
 import { Core } from '../core/Core';
@@ -15,6 +15,9 @@ export class Client extends SapphireClient {
             },
             failIfNotExists: false,
             intents: [Intents.FLAGS.GUILDS],
+            logger: {
+                level: LogLevel.Debug,
+            },
             makeCache: Options.cacheWithLimits({
                 GuildBanManager: 0,
                 GuildInviteManager: 0,
