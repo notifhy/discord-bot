@@ -38,9 +38,7 @@ export class RewardsModule extends Module {
         const lastResetTime = new Date(hypixelTime).setHours(0, 0, 0, 0) - hypixelToClientOffset;
 
         // Is the user's last claimed reward between the last midnight and the coming midnight
-        const hasClaimed = lastResetTime < Math.ceil(
-            (data.lastClaimedReward ?? 0) / 1000,
-        ) * 1000;
+        const hasClaimed = lastResetTime < Math.ceil((data.lastClaimedReward ?? 0) / 1000) * 1000;
 
         const surpassedInterval = config.lastNotified < lastResetTime
             ? true // Bypass for alerts from the previous daily reward
@@ -84,12 +82,12 @@ export class RewardsModule extends Module {
             );
         }
 
-        if (config.milestones === true && changes.new.rewardScore) {
+        if (changes.new.rewardScore && changes.new.totalDailyRewards) {
             const milestone = Options.modulesRewardsMilestones.find(
                 (item) => item === changes.new.rewardScore,
             );
 
-            if (milestone !== undefined) {
+            if (config.milestones === true && milestone) {
                 const discordUser = await this.container.client.users.fetch(user.id);
                 const milestoneNotification = new BetterEmbed({
                     text: i18n.getMessage('modulesRewardsFooter'),
@@ -109,34 +107,30 @@ export class RewardsModule extends Module {
                     `${this.constructor.name}:`,
                     'Delivered milestone.',
                 );
-            }
-        } else if (
-            config.claimNotification === true
-            && changes.new.rewardScore
-            && changes.new.totalDailyRewards
-        ) {
-            const discordUser = await this.container.client.users.fetch(user.id);
-            const claimedNotification = new BetterEmbed({
-                text: i18n.getMessage('modulesRewardsFooter'),
-            })
-                .setColor(Options.colorsNormal)
-                .setTitle(i18n.getMessage('modulesRewardsClaimNotificationTitle'))
-                .setDescription(
-                    i18n.getMessage('modulesRewardsClaimNotificationDescription', [
-                        changes.new.rewardScore,
-                        changes.new.totalDailyRewards,
-                    ]),
+            } else if (config.claimNotification) {
+                const discordUser = await this.container.client.users.fetch(user.id);
+                const claimedNotification = new BetterEmbed({
+                    text: i18n.getMessage('modulesRewardsFooter'),
+                })
+                    .setColor(Options.colorsNormal)
+                    .setTitle(i18n.getMessage('modulesRewardsClaimNotificationTitle'))
+                    .setDescription(
+                        i18n.getMessage('modulesRewardsClaimNotificationDescription', [
+                            changes.new.rewardScore,
+                            changes.new.totalDailyRewards,
+                        ]),
+                    );
+
+                await discordUser.send({
+                    embeds: [claimedNotification],
+                });
+
+                this.container.logger.info(
+                    `User ${user.id}`,
+                    `${this.constructor.name}:`,
+                    'Delivered claimed notification.',
                 );
-
-            await discordUser.send({
-                embeds: [claimedNotification],
-            });
-
-            this.container.logger.info(
-                `User ${user.id}`,
-                `${this.constructor.name}:`,
-                'Delivered claimed notification.',
-            );
+            }
         }
     }
 }

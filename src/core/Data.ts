@@ -2,7 +2,7 @@ import type { users as User } from '@prisma/client';
 import type { CleanHypixelData } from '../@types/Hypixel';
 import { Base } from '../structures/Base';
 
-type DataChanges = { [key: string]: bigint | null | number | string };
+type DataChanges = Partial<CleanHypixelData>;
 
 export type Changes = {
     new: DataChanges;
@@ -56,17 +56,23 @@ export class Data extends Base {
     }
 
     private changes(newData: CleanHypixelData, oldData: CleanHypixelData) {
-        const newDataChanges: DataChanges = {} as Partial<CleanHypixelData>;
-        const oldDataChanges: DataChanges = {} as Partial<CleanHypixelData>;
+        const newDataChanges: DataChanges = {};
+        const oldDataChanges: DataChanges = {};
 
         const combined = { ...newData, ...oldData };
 
-        Object.keys(combined).forEach((key) => {
-            const newValue = newData[key as keyof typeof newData];
-            const oldValue = oldData[key as keyof typeof oldData];
+        Object.keys(combined).forEach((rawKey) => {
+            const key = rawKey as keyof CleanHypixelData;
+            const newValue = newData[key];
+            const oldValue = oldData[key];
 
             if (newValue !== oldValue) {
+                // Typescript cannot understand that the same key will yield the same type
+                // This seems to be the alternative to get good typings on the output
+
+                // @ts-ignore
                 newDataChanges[key] = newValue;
+                // @ts-ignore
                 oldDataChanges[key] = oldValue;
             }
         });

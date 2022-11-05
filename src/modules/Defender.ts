@@ -13,5 +13,5 @@ export class DefenderModule extends Module {
         });
     }
 
-    public async run(_user: User, _newData: CleanHypixelData, _changes: Changes) {}
+    public async run(_user: User, _data: CleanHypixelData, _changes: Changes) {}
 }
