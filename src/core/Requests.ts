@@ -47,6 +47,9 @@ export class Requests extends Base {
         const { uuid } = user;
 
         const { lastLogin, lastLogout } = (await this.container.database.activities.findFirst({
+            orderBy: {
+                index: 'desc',
+            },
             select: {
                 lastLogin: true,
                 lastLogout: true,

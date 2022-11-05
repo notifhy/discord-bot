@@ -186,11 +186,7 @@ export async function setPresence() {
     container.client.user?.setPresence(presence!);
 }
 
-export function timestamp(ms: unknown, style?: typeof Formatters.TimestampStylesString) {
-    if (!isNumber(ms) || ms < 0) {
-        return null;
-    }
-
+export function timestamp(ms: number, style?: typeof Formatters.TimestampStylesString) {
     return Formatters.time(Math.round(ms / 1000), style ?? 'f');
 }
 

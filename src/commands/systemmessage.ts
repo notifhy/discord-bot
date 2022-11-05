@@ -234,10 +234,10 @@ export class SystemMessageCommand extends Command {
         this.container.logger.info(
             interactionLogContext(interaction),
             `${this.constructor.name}:`,
-            `Creating for ${ids.length} users`,
-            `Name: ${name}`,
-            `Value: ${value}`,
-            `Ids: ${ids.join(', ')}`,
+            `Creating for ${ids.length} users.`,
+            `Name: ${name}.`,
+            `Value: ${value}.`,
+            `Ids: ${ids.join(', ')}.`,
         );
 
         await this.container.database.system_messages.createMany({

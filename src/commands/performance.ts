@@ -2,6 +2,7 @@ import { type ApplicationCommandRegistry, BucketScope, Command } from '@sapphire
 import type { CommandInteraction } from 'discord.js';
 import { BetterEmbed } from '../structures/BetterEmbed';
 import { Options } from '../utility/Options';
+import { timestamp } from '../utility/utility';
 
 export class PerformanceCommand extends Command {
     public constructor(context: Command.Context, options: Command.Options) {
@@ -37,12 +38,15 @@ export class PerformanceCommand extends Command {
         const data = latest?.get('data');
         const modules = latest?.get('modules');
         const total = latest?.get('total');
+        const end = latest?.get('end');
 
         const responseEmbed = new BetterEmbed(interaction)
             .setColor(Options.colorsNormal)
             .setTitle(i18n.getMessage('commandsPerformanceTitle'))
             .addFields({
-                name: i18n.getMessage('commandsPerformanceLatestName'),
+                name: i18n.getMessage('commandsPerformanceLatestName', [
+                    end ? timestamp(end, 'R') : i18n.getMessage('null'),
+                ]),
                 value: i18n.getMessage(
                     'commandsPerformanceLatestValue',
                     [urls, fetch, data, modules, total].map(

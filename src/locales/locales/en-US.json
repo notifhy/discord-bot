@@ -213,7 +213,7 @@
         "message": "Help"
     },
     "commandsPerformanceLatestName": {
-        "message": "Latest Performance"
+        "message": "Latest Performance - $1"
     },
     "commandsPerformanceLatestValue": {
         "message": "URL Generation: $1ms\nFetch Data: $2ms\nProcess Data: $3ms\nCall Modules: $4ms\nTotal: $5ms"
@@ -520,5 +520,14 @@
     },
     "modulesRewardsReminderTitle": {
         "message": "Daily Reward Reminder"
+    },
+    "systemMessagesDescription": {
+        "message": "You have one or more system messages that require your attention regarding your usage of this bot. These are part of this bot's automatic mailbox system. Please read the following message(s) and take action as appropriate."
+    },
+    "systemMessagesFooter": {
+        "message": "System Message"
+    },
+    "systemMessagesTitle": {
+        "message": "System Message"
     }
 }

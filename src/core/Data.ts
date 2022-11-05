@@ -13,6 +13,9 @@ export class Data extends Base {
     public async parse(user: User, newData: CleanHypixelData) {
         // https://github.com/prisma/prisma/issues/5042
         const oldData = (await this.container.database.activities.findFirst({
+            orderBy: {
+                index: 'desc',
+            },
             select: {
                 firstLogin: true,
                 lastLogin: true,
@@ -36,6 +39,8 @@ export class Data extends Base {
         }) ?? {}) as CleanHypixelData;
 
         const changes = this.changes(newData, oldData);
+
+        console.log(changes);
 
         if (Object.keys(changes.new).length > 0) {
             await this.container.database.activities.create({
