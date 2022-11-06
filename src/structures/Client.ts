@@ -17,6 +17,7 @@ export class Client extends SapphireClient {
             intents: [Intents.FLAGS.GUILDS],
             loadDefaultErrorListeners: false,
             logger: {
+                depth: 5,
                 level: config.logLevel,
             },
             makeCache: Options.cacheWithLimits({
@@ -79,11 +80,14 @@ export class Client extends SapphireClient {
         container.customPresence = null;
         container.i18n = new i18n();
 
-        await new Client(container.config).login();
+        const client = new Client(container.config);
 
+        // Must register stores before logging in
         container.stores.register(
             new ModuleStore().registerPath(join(__dirname, '..', 'modules')),
         );
+
+        await client.login();
 
         container.logger.info(
             `${this.constructor.name}:`,

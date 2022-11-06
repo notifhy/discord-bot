@@ -44,6 +44,15 @@ export class RewardsModule extends Module {
             ? true // Bypass for alerts from the previous daily reward
             : config.lastNotified + config.interval < Date.now();
 
+        this.container.logger.debug(
+            `User ${user.id}`,
+            `${this.constructor.name}:`,
+            `Last Reset: ${lastResetTime}.`,
+            `Within User Notify Time: ${lastResetTime + config.delay < Date.now()}.`,
+            `Has Claimed: ${hasClaimed}.`,
+            `Surpassed Interval: ${surpassedInterval}.`,
+        );
+
         if (
             lastResetTime + config.delay < Date.now() // Within user's notify time
             && hasClaimed === false // Claimed status

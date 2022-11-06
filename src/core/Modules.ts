@@ -10,20 +10,26 @@ export class Modules extends Base {
     public async execute(user: User, newData: CleanHypixelData, changes: Changes) {
         const statusAPIEnabled = newData.lastLogin !== null && newData.lastLogout !== null;
 
+        const modules = await this.container.database.modules.findUniqueOrThrow({
+            where: {
+                id: user.id,
+            },
+        });
+
         const modulesStore = this.container.stores.get('modules').filter(
-            async (module) => (
-                await this.container.database.modules.findUniqueOrThrow({
-                    where: {
-                        id: user.id,
-                    },
-                })
-            )[module.name]
+            (module) => modules[module.name]
                 && (statusAPIEnabled || module.requireStatusAPI === false),
         );
 
         // eslint-disable-next-line no-restricted-syntax
         for (const module of modulesStore.values()) {
             try {
+                this.container.logger.debug(
+                    `User ${user.id}`,
+                    `${this.constructor.name}:`,
+                    `Running ${module.name}.`,
+                );
+
                 await module.run(user, newData, changes);
             } catch (error) {
                 await new ModuleErrorHandler(error, module, user).init();
