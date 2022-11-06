@@ -49,7 +49,7 @@ export class RewardsModule extends Module {
             `${this.constructor.name}:`,
             `Last Reset: ${lastResetTime}.`,
             `Within User Notify Time: ${lastResetTime + config.delay < Date.now()}.`,
-            `Has Claimed: ${hasClaimed}.`,
+            `Has Not Claimed: ${hasClaimed === false}.`,
             `Surpassed Interval: ${surpassedInterval}.`,
         );
 
