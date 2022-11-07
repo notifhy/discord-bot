@@ -67,7 +67,7 @@ export class Modules extends Base {
                         .setDescription(i18n.getMessage('coreDataMissingOnlineStatusAPIDescription')),
                 );
 
-                this.container.logger.debug(
+                this.container.logger.info(
                     `User ${user.id}`,
                     `${this.constructor.name}:`,
                     'Missing Online Status API data.',
@@ -82,10 +82,10 @@ export class Modules extends Base {
                         .setDescription(i18n.getMessage('coreDataReceivedOnlineStatusAPIDescription')),
                 );
 
-                this.container.logger.debug(
+                this.container.logger.info(
                     `User ${user.id}`,
                     `${this.constructor.name}:`,
-                    'Missing Online Status API data.',
+                    'Received Online Status API data.',
                 );
             }
         }
