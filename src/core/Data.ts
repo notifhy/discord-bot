@@ -12,7 +12,7 @@ export type Changes = {
 export class Data extends Base {
     public async parse(user: User, newData: CleanHypixelData) {
         // https://github.com/prisma/prisma/issues/5042
-        const oldData = (await this.container.database.activities.findFirst({
+        const oldData = ((await this.container.database.activities.findFirst({
             orderBy: {
                 index: 'desc',
             },
@@ -36,15 +36,11 @@ export class Data extends Base {
                     equals: user.id,
                 },
             },
-        }) ?? {}) as CleanHypixelData;
+        })) ?? {}) as CleanHypixelData;
 
         const changes = this.changes(newData, oldData);
 
-        this.container.logger.debug(
-            `${this.constructor.name}:`,
-            'Parsed data:',
-            changes,
-        );
+        this.container.logger.debug(`${this.constructor.name}:`, 'Parsed data:', changes);
 
         if (Object.keys(changes.new).length > 0) {
             await this.container.database.activities.create({
@@ -85,5 +81,23 @@ export class Data extends Base {
             new: newDataChanges,
             old: oldDataChanges,
         };
+    }
+
+    public static onlineAPIMissing(changes: Changes) {
+        return (
+            changes.new.lastLogin === null
+            && changes.old.lastLogin !== null
+            && changes.new.lastLogout === null
+            && changes.old.lastLogout !== null
+        );
+    }
+
+    public static onlineAPIReceived(changes: Changes) {
+        return (
+            changes.new.lastLogin !== null
+            && changes.old.lastLogin === null
+            && changes.new.lastLogout !== null
+            && changes.old.lastLogout === null
+        );
     }
 }

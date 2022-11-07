@@ -9,7 +9,7 @@ export class DefenderModule extends Module {
             ...options,
             name: 'defender',
             localization: 'modulesDefenderName',
-            requireStatusAPI: true,
+            requireOnlineStatusAPI: true,
         });
     }
 

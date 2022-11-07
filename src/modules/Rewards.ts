@@ -12,7 +12,7 @@ export class RewardsModule extends Module {
             ...options,
             name: 'rewards',
             localization: 'modulesRewardsName',
-            requireStatusAPI: false,
+            requireOnlineStatusAPI: true,
         });
     }
 

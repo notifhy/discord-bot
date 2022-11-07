@@ -9,14 +9,14 @@ export abstract class Module<O extends Module.Options = Module.Options> extends 
 
     public readonly localization: keyof MessageKeys;
 
-    public readonly requireStatusAPI: boolean;
+    public readonly requireOnlineStatusAPI: boolean;
 
     public constructor(context: Module.Context, options: O = {} as O) {
         super(context, options);
 
         this.name = options.name;
         this.localization = options.localization;
-        this.requireStatusAPI = options.requireStatusAPI ?? false;
+        this.requireOnlineStatusAPI = options.requireOnlineStatusAPI ?? false;
     }
 
     public abstract run(user: User, newData: CleanHypixelData, changes: Changes): Promise<void>;
@@ -25,7 +25,7 @@ export abstract class Module<O extends Module.Options = Module.Options> extends 
 export interface ModuleOptions extends Piece.Options {
     readonly name: 'defender' | 'friends' | 'rewards';
     readonly localization: keyof MessageKeys;
-    readonly requireStatusAPI: boolean;
+    readonly requireOnlineStatusAPI: boolean;
 }
 
 export namespace Module {

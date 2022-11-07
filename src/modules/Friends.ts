@@ -9,7 +9,7 @@ export class FriendsModule extends Module {
             ...options,
             name: 'friends',
             localization: 'modulesFriendsName',
-            requireStatusAPI: true,
+            requireOnlineStatusAPI: true,
         });
     }
 
