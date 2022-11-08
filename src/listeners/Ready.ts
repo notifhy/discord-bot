@@ -1,8 +1,8 @@
 import { Events, Listener } from '@sapphire/framework';
 import type { Client } from 'discord.js';
-import { Time } from '../../enums/Time';
-import { ErrorHandler } from '../../errors/ErrorHandler';
-import { setPresence } from '../../utility/utility';
+import { Time } from '../enums/Time';
+import { ErrorHandler } from '../errors/ErrorHandler';
+import { setPresence } from '../utility/utility';
 
 export class ReadyListener extends Listener {
     public constructor(context: Listener.Context, options: Listener.Options) {

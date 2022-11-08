@@ -1,10 +1,10 @@
 import { EmbedLimits } from '@sapphire/discord-utilities';
 import { type ChatInputCommandFinishPayload, Events, Listener } from '@sapphire/framework';
 import type { CommandInteraction } from 'discord.js';
-import { ErrorHandler } from '../../../errors/ErrorHandler';
-import { BetterEmbed } from '../../../structures/BetterEmbed';
-import { Options } from '../../../utility/Options';
-import { cleanRound, interactionLogContext, timestamp } from '../../../utility/utility';
+import { ErrorHandler } from '../../errors/ErrorHandler';
+import { BetterEmbed } from '../../structures/BetterEmbed';
+import { Options } from '../../utility/Options';
+import { cleanRound, interactionLogContext, timestamp } from '../../utility/utility';
 
 export class ChatInputCommandFinishListener extends Listener {
     public constructor(context: Listener.Context, options: Listener.Options) {

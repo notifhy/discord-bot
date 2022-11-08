@@ -3,7 +3,7 @@ import {
     Events,
     Listener,
 } from '@sapphire/framework';
-import { cleanRound, interactionLogContext } from '../../../utility/utility';
+import { cleanRound, interactionLogContext } from '../../utility/utility';
 
 export class ContextMenuCommandFinishListener extends Listener {
     public constructor(context: Listener.Context, options: Listener.Options) {
