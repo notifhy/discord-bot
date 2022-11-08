@@ -201,12 +201,20 @@ export class DataCommand extends Command {
     private async viewAll(interaction: CommandInteraction) {
         const data = await this.container.database.users.findUnique({
             include: {
-                activities: true,
+                activities: {
+                    orderBy: {
+                        index: 'asc',
+                    },
+                },
                 defender: true,
                 friends: true,
                 modules: true,
                 rewards: true,
-                system_messages: true,
+                system_messages: {
+                    orderBy: {
+                        index: 'asc',
+                    },
+                },
             },
             where: {
                 id: interaction.user.id,
