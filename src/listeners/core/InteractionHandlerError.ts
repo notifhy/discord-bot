@@ -1,7 +1,7 @@
 import { Events, type InteractionHandlerError, Listener } from '@sapphire/framework';
 import { ErrorHandler } from '../../errors/ErrorHandler';
 
-export class CoreEvent extends Listener {
+export class InteractionHandlerErrorListener extends Listener {
     public constructor(context: Listener.Context) {
         super(context, { event: Events.InteractionHandlerError });
     }

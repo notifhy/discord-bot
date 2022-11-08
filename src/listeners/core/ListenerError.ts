@@ -1,7 +1,7 @@
 import { Events, Listener, type ListenerErrorPayload } from '@sapphire/framework';
 import { ErrorHandler } from '../../errors/ErrorHandler';
 
-export class CoreEvent extends Listener<typeof Events.ListenerError> {
+export class ListenerErrorListener extends Listener<typeof Events.ListenerError> {
     public constructor(context: Listener.Context) {
         super(context, { event: Events.ListenerError });
     }

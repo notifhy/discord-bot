@@ -1,7 +1,7 @@
 import { type Command, Events, Listener } from '@sapphire/framework';
 import { ErrorHandler } from '../../errors/ErrorHandler';
 
-export class CommandApplicationCommandRegistryError extends Listener {
+export class CommandApplicationCommandRegistryErrorListener extends Listener {
     public constructor(context: Listener.Context) {
         super(context, { event: Events.CommandApplicationCommandRegistryError });
     }
