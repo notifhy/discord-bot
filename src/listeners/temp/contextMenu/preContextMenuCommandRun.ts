@@ -3,7 +3,7 @@ import {
     Listener,
     type PreContextMenuCommandRunPayload,
 } from '@sapphire/framework';
-import { contextMenuResolver, interactionLogContext } from '../../utility/utility';
+import { contextMenuResolver, interactionLogContext } from '../../../utility/utility';
 
 export class PreContextMenuCommandRunListener extends Listener {
     public constructor(context: Listener.Context, options: Listener.Options) {

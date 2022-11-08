@@ -10,11 +10,11 @@ export class ErrorHandler<E> extends BaseErrorHandler<E> {
     }
 
     public init(severity?: SeverityLevel) {
-        this.log(this.error);
-
         if (this.data.length !== 0) {
             this.log(...this.data);
         }
+
+        this.log(this.error);
 
         this.sentry
             .setSeverity(severity ?? 'error')
