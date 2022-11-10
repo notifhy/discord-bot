@@ -142,7 +142,7 @@ export class APICommand extends Command {
 
         const { abort, generic, http, getTimeout } = this.container.core.errors;
 
-        const { uses } = this.container.core.requests;
+        const { fetches } = this.container.core.requests;
 
         const statsEmbed = new BetterEmbed(interaction)
             .setColor(Options.colorsNormal)
@@ -178,8 +178,8 @@ export class APICommand extends Command {
                     ]),
                 },
                 {
-                    name: i18n.getMessage('commandsAPIStatsUsesName'),
-                    value: String(uses),
+                    name: i18n.getMessage('commandsAPIStatsFetchesName'),
+                    value: String(fetches),
                 },
             );
 

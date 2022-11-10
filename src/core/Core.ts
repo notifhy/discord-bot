@@ -78,11 +78,8 @@ export class Core extends Base {
 
     private async refreshUser(user: User) {
         try {
-            this.performance.set('urls');
-            const urls = await this.requests.getURLs(user);
-
             this.performance.set('fetch');
-            const cleanHypixelData = await this.requests.request(urls);
+            const cleanHypixelData = await this.requests.request(user);
 
             this.performance.set('data');
             const changes = await this.data.parse(user, cleanHypixelData);
@@ -92,7 +89,10 @@ export class Core extends Base {
 
             this.performance.addDataPoint();
 
-            await setTimeout((Time.Minute / this.container.config.requestBucket) * urls.length);
+            await setTimeout(
+                (Time.Minute / this.container.config.requestBucket)
+                * this.requests.lastUserFetches,
+            );
         } catch (error) {
             if (error instanceof HTTPError) {
                 new CoreRequestErrorHandler(error, this).init();

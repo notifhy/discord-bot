@@ -14,69 +14,58 @@ import { Request } from '../structures/Request';
 import { Options } from '../utility/Options';
 
 export class Requests extends Base {
-    public uses: number;
+    public fetches: number;
+
+    public lastUserFetches: number;
 
     public constructor() {
         super();
-        this.uses = 0;
+        this.fetches = 0;
+        this.lastUserFetches = 0;
     }
 
-    public async request(urls: URL[]) {
-        const [player, status] = await Promise.all(
-            urls.map((url) => this.fetch(url.toString())),
-        );
+    public async request(user: User) {
+        this.lastUserFetches = 0;
+
+        const playerURL = new URL(Options.urlHypixelPlayer);
+        playerURL.searchParams.append('uuid', user.uuid);
+
+        const rawPlayerData = await this.fetch(playerURL) as RawHypixelPlayer;
+
+        this.lastUserFetches += 1;
+
+        let rawStatusData;
+
+        if (
+            rawPlayerData.player.lastLogin
+            && rawPlayerData.player.lastLogout
+            && rawPlayerData.player.lastLogin > rawPlayerData.player.lastLogout
+        ) {
+            const statusURL = new URL(Options.urlHypixelStatus);
+            statusURL.search = playerURL.search;
+
+            rawStatusData = await this.fetch(statusURL) as RawHypixelStatus;
+
+            this.lastUserFetches += 1;
+        }
 
         return {
-            ...this.cleanPlayerData(player as RawHypixelPlayer),
-            ...this.cleanStatusData(status as RawHypixelStatus),
+            ...this.cleanPlayerData(rawPlayerData),
+            ...this.cleanStatusData(rawStatusData),
         } as CleanHypixelData;
     }
 
-    private async fetch(url: string) {
+    private async fetch(url: URL) {
         const response = await new Request({
             restRequestTimeout: container.config.restRequestTimeout,
             retryLimit: container.config.retryLimit,
-        }).request(url, {
+        }).request(url.toString(), {
             headers: { 'API-Key': process.env.HYPIXEL_API_KEY! },
         });
 
+        this.fetches += 1;
+
         return response.json() as Promise<HypixelAPIOk>;
-    }
-
-    public async getURLs(user: User) {
-        const { uuid } = user;
-
-        const { lastLogin, lastLogout } = (await this.container.database.activities.findFirst({
-            orderBy: {
-                index: 'desc',
-            },
-            select: {
-                lastLogin: true,
-                lastLogout: true,
-            },
-            where: {
-                id: user.id,
-            },
-        })) ?? {};
-
-        const playerURL = new URL(Options.urlHypixelPlayer);
-        playerURL.searchParams.append('uuid', uuid);
-
-        const urls = [];
-
-        urls.push(playerURL);
-
-        if (lastLogin && lastLogout && lastLogin > lastLogout) {
-            const statusURL = new URL(Options.urlHypixelStatus);
-            statusURL.search = playerURL.search;
-            urls.push(statusURL);
-        }
-
-        urls.forEach(() => {
-            this.uses += 1;
-        });
-
-        return urls;
     }
 
     private cleanPlayerData({

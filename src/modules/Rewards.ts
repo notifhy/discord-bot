@@ -91,7 +91,12 @@ export class RewardsModule extends Module {
             );
         }
 
-        if (changes.new.rewardScore && changes.new.totalDailyRewards) {
+        if (
+            changes.new.rewardScore
+            && changes.new.totalDailyRewards
+            && typeof changes.old.rewardScore !== 'undefined'
+            && typeof changes.old.totalDailyRewards !== 'undefined'
+        ) {
             const milestone = Options.modulesRewardsMilestones.find(
                 (item) => item === changes.new.rewardScore,
             );

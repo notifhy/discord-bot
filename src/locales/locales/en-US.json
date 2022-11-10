@@ -47,8 +47,8 @@
     "commandsAPIStatsResumeName": {
         "message": "Resuming In"
     },
-    "commandsAPIStatsUsesName": {
-        "message": "Uses"
+    "commandsAPIStatsFetchesName": {
+        "message": "Fetches"
     },
     "commandsAnnouncementsAddDescription": {
         "message": "$1 will be sent to $2!"
@@ -267,7 +267,7 @@
         "message": "Latest Performance - $1"
     },
     "commandsPerformanceLatestValue": {
-        "message": "URL Generation: $1ms\nFetch Data: $2ms\nProcess Data: $3ms\nCall Modules: $4ms\nTotal: $5ms"
+        "message": "Fetch Data: $1ms\nProcess Data: $2ms\nCall Modules: $3ms\nTotal: $4ms"
     },
     "commandsPerformanceTitle": {
         "message": "Performance"

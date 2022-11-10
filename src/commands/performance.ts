@@ -33,7 +33,6 @@ export class PerformanceCommand extends Command {
 
         const { latest } = this.container.core.performance;
 
-        const urls = latest?.get('urls');
         const fetch = latest?.get('fetch');
         const data = latest?.get('data');
         const modules = latest?.get('modules');
@@ -49,7 +48,7 @@ export class PerformanceCommand extends Command {
                 ]),
                 value: i18n.getMessage(
                     'commandsPerformanceLatestValue',
-                    [urls, fetch, data, modules, total].map(
+                    [fetch, data, modules, total].map(
                         (value) => value ?? i18n.getMessage('null'),
                     ),
                 ),
