@@ -13,6 +13,6 @@ export class RateLimitListener extends Listener {
     public run(rateLimitInfo: string) {
         this.container.logger.warn(`${this.constructor.name}:`, rateLimitInfo);
 
-        new Sentry().setSeverity('warning').captureException(rateLimitInfo);
+        new Sentry().setSeverity('warning').captureMessages(rateLimitInfo);
     }
 }
