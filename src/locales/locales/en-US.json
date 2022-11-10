@@ -119,6 +119,51 @@
     "commandsDataDeleteDeletedDescription": {
         "message": "Your data has been deleted."
     },
+    "commandsDataHistoryTitle": {
+        "message": "History"
+    },
+    "commandsDataHistoryDescription": {
+        "message": "Showing $1 to $2 out of $3"
+    },
+    "commandsDataHistoryValues+firstLogin": {
+        "message": "First Login: $1"
+    },
+    "commandsDataHistoryValues+lastLogin": {
+        "message": "Last Login: $1"
+    },
+    "commandsDataHistoryValues+lastLogout": {
+        "message": "Last Logout: $1"
+    },
+    "commandsDataHistoryValues+version": {
+        "message": "Version: $1"
+    },
+    "commandsDataHistoryValues+language": {
+        "message": "Language: $1"
+    },
+    "commandsDataHistoryValues+lastClaimedReward": {
+        "message": "Last Reward Claimed: $1"
+    },
+    "commandsDataHistoryValues+rewardScore": {
+        "message": "Daily Rewards Streak: $1"
+    },
+    "commandsDataHistoryValues+rewardHighScore": {
+        "message": "Best Daily Rewards Streak: $1"
+    },
+    "commandsDataHistoryValues+totalDailyRewards": {
+        "message": "Total Daily Rewards: $1"
+    },
+    "commandsDataHistoryValues+totalRewards": {
+        "message": "Total Rewards: $1"
+    },
+    "commandsDataHistoryValues+gameType": {
+        "message": "Game Type: $1"
+    },
+    "commandsDataHistoryValues+gameMode": {
+        "message": "Game Mode: $1"
+    },
+    "commandsDataHistoryValues+gameMap": {
+        "message": "Map: $1"
+    },
     "commandsDataDeleteDeletedTitle": {
         "message": "Deleted"
     },

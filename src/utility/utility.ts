@@ -9,6 +9,8 @@ import {
     type MessageComponentTypeResolvable,
     type TextBasedChannel,
 } from 'discord.js';
+import gameTypes from '../assets/gameTypes.json';
+import modes from '../assets/modes.json';
 import { Time } from '../enums/Time';
 import { Options } from './Options';
 
@@ -28,6 +30,37 @@ export async function awaitComponent<T extends MessageComponentTypeResolvable>(
 
         throw error;
     }
+}
+
+export function capitolToNormal(item: string | null) {
+    function containsLowerCase(string: string): boolean {
+        let lowerCase = false;
+
+        for (let i = 0; i < string.length; i += 1) {
+            const character = string.charAt(i);
+            if (character === character.toLowerCase()) {
+                lowerCase = true;
+                break;
+            }
+        }
+
+        return lowerCase;
+    }
+
+    return typeof item === 'string'
+        ? item
+            .replaceAll('_', ' ')
+            .toLowerCase()
+            .split(' ')
+            .map((value) => {
+                if (containsLowerCase(value)) {
+                    return value.charAt(0).toUpperCase() + value.slice(1);
+                }
+
+                return value;
+            })
+            .join(' ')
+        : item;
 }
 
 export function chatInputResolver(interaction: CommandInteraction) {
@@ -72,6 +105,26 @@ export function cleanDate(ms: number | Date): string | null {
     const year = newDate.getFullYear();
 
     return `${month} ${day}, ${year}`;
+}
+
+export function cleanGameMode(mode: string) {
+    if (mode === 'LOBBY') {
+        return 'Lobby';
+    }
+
+    const gameMode = modes.find(
+        ({ key }) => (Array.isArray(key) ? key.includes(mode) : key === mode),
+    );
+
+    return gameMode?.name ?? mode;
+}
+
+export function cleanGameType(type: string) {
+    const gameType = gameTypes[
+        type as keyof typeof gameTypes
+    ];
+
+    return gameType ?? type;
 }
 
 export function cleanLength(ms: number | null): string | null {

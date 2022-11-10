@@ -7,14 +7,22 @@ import {
     MessageButton,
     MessageComponentInteraction,
 } from 'discord.js';
+import type { CleanHypixelData } from '../@types/Hypixel';
+import { Data } from '../core/Data';
 import { Time } from '../enums/Time';
+import { InteractionErrorHandler } from '../errors/InteractionErrorHandler';
+import type { MessageKeys } from '../locales/locales';
 import { BetterEmbed } from '../structures/BetterEmbed';
 import { Options } from '../utility/Options';
 import {
     awaitComponent,
+    capitolToNormal,
+    cleanGameMode,
+    cleanGameType,
     disableComponents,
     interactionLogContext,
     setPresence,
+    timestamp,
 } from '../utility/utility';
 
 export class DataCommand extends Command {
@@ -50,6 +58,11 @@ export class DataCommand extends Command {
                             type: Constants.ApplicationCommandOptionTypes.SUB_COMMAND,
                             description: 'Returns a file with all of your player data',
                         },
+                        {
+                            name: 'history',
+                            type: Constants.ApplicationCommandOptionTypes.SUB_COMMAND,
+                            description: 'Returns an interface that displays your player history',
+                        },
                     ],
                 },
             ],
@@ -67,6 +80,9 @@ export class DataCommand extends Command {
                 break;
             case 'delete':
                 await this.delete(interaction);
+                break;
+            case 'history':
+                await this.viewHistory(interaction);
                 break;
             default:
                 throw new RangeError();
@@ -229,5 +245,212 @@ export class DataCommand extends Command {
                 },
             ],
         });
+    }
+
+    private async viewHistory(interaction: CommandInteraction) {
+        let total = await this.container.database.activities.count({
+            where: {
+                id: interaction.user.id,
+            },
+        });
+
+        const reply = await interaction.editReply(
+            await this.generateHistoryPage(interaction, 0, total),
+        );
+
+        await interaction.client.channels.fetch(interaction.channelId);
+
+        // eslint-disable-next-line arrow-body-style
+        const filter = (i: MessageComponentInteraction) => {
+            return interaction.user.id === i.user.id && i.message.id === reply.id;
+        };
+
+        const collector = interaction.channel!.createMessageComponentCollector({
+            filter: filter,
+            idle: Time.Minute * 5,
+            time: Time.Minute * 30,
+        });
+
+        let index = 0;
+
+        collector.on('collect', async (i) => {
+            try {
+                switch (i.customId) {
+                    case 'fastBackward':
+                        index -= Options.dataHistoryFast;
+                        break;
+                    case 'backward':
+                        index -= Options.dataHistorySlow;
+                        break;
+                    case 'forward':
+                        index += Options.dataHistorySlow;
+                        break;
+                    case 'fastForward':
+                        index += Options.dataHistoryFast;
+                        break;
+                    default:
+                        throw new RangeError();
+                }
+
+                total = await this.container.database.activities.count({
+                    where: {
+                        id: interaction.user.id,
+                    },
+                });
+
+                await i.update(await this.generateHistoryPage(interaction, index, total));
+            } catch (error) {
+                new InteractionErrorHandler(error, interaction).init();
+            }
+        });
+
+        collector.on('end', async () => {
+            try {
+                const message = (await interaction.fetchReply()) as Message;
+                const disabledRows = disableComponents(message.components);
+
+                await interaction.editReply({
+                    components: disabledRows,
+                });
+            } catch (error) {
+                new InteractionErrorHandler(error, interaction).init();
+            }
+        });
+    }
+
+    private async generateHistoryPage(
+        interaction: CommandInteraction,
+        index: number,
+        total: number,
+    ) {
+        const activities = await this.container.database.activities.findMany({
+            select: {
+                timestamp: true,
+                firstLogin: true,
+                lastLogin: true,
+                lastLogout: true,
+                version: true,
+                language: true,
+                gameType: true,
+                gameMode: true,
+                gameMap: true,
+                lastClaimedReward: true,
+                rewardScore: true,
+                rewardHighScore: true,
+                totalDailyRewards: true,
+                totalRewards: true,
+            },
+            orderBy: {
+                index: 'desc',
+            },
+            skip: index,
+            take: Options.dataHistorySlow + 1,
+            where: {
+                id: interaction.user.id,
+            },
+        });
+
+        const { i18n } = interaction;
+
+        const embed = new BetterEmbed(interaction)
+            .setColor(Options.colorsNormal)
+            .setTitle(i18n.getMessage('commandsDataHistoryTitle'))
+            .setDescription(
+                i18n.getMessage('commandsDataHistoryDescription', [
+                    index ?? 0,
+                    (index ?? 0) + Options.dataHistorySlow,
+                    total,
+                ]),
+            );
+
+        for (let i = 0; i < Math.min(Options.dataHistorySlow, activities.length); i += 1) {
+            const { timestamp: time, ...activityNewer } = activities[i]!;
+            const possibleActivityOld = activities[i + 1];
+
+            let subject: Partial<CleanHypixelData> = activityNewer;
+
+            if (possibleActivityOld) {
+                // eslint-disable-next-line @typescript-eslint/naming-convention
+                const { timestamp: _, ...activityOlder } = possibleActivityOld;
+                subject = Data.changes(activityNewer, activityOlder).new;
+            }
+
+            embed.addFields({
+                name: `${timestamp(time, 'D')} ${timestamp(time, 'T')}`,
+                value: Object.entries(subject)
+                    .map(([key, value]) => this.formatValue(interaction, key, value))
+                    .join('\n'),
+                inline: true,
+            });
+        }
+
+        const base = new MessageButton().setStyle(Constants.MessageButtonStyles.PRIMARY);
+
+        const fastLeftButton = new MessageButton(base)
+            .setCustomId('fastBackward')
+            .setEmoji(Options.emojiFastBackward)
+            .setLabel('a')
+            .setDisabled(index - Options.dataHistoryFast < 0);
+
+        const leftButton = new MessageButton(base)
+            .setCustomId('backward')
+            .setEmoji(Options.emojiSlowBackward)
+            .setLabel('a')
+            .setDisabled(index - Options.dataHistorySlow < 0);
+
+        const rightButton = new MessageButton(base)
+            .setCustomId('forward')
+            .setEmoji(Options.emojiSlowForward)
+            .setLabel('a')
+            .setDisabled(index + Options.dataHistorySlow >= total);
+
+        const fastRightButton = new MessageButton(base)
+            .setCustomId('fastForward')
+            .setEmoji(Options.emojiFastForward)
+            .setLabel('a')
+            .setDisabled(index + Options.dataHistoryFast >= total);
+
+        const buttons = new MessageActionRow().setComponents(
+            fastLeftButton,
+            leftButton,
+            rightButton,
+            fastRightButton,
+        );
+
+        return {
+            components: [buttons],
+            embeds: [embed],
+        };
+    }
+
+    private formatValue(
+        interaction: CommandInteraction,
+        key: string,
+        value: number | string | null,
+    ) {
+        const epoch = /^\d{13,}$/;
+        const { i18n } = interaction;
+
+        if (String(value).match(epoch)) {
+            return i18n.getMessage(`commandsDataHistoryValues+${key}` as keyof MessageKeys, [
+                timestamp(value as number, 'T'),
+            ]);
+        }
+
+        if (key === 'gameType') {
+            return i18n.getMessage(`commandsDataHistoryValues+${key}` as keyof MessageKeys, [
+                cleanGameType(String(value) ?? i18n.getMessage('null')),
+            ]);
+        }
+
+        if (key === 'gameMode') {
+            return i18n.getMessage(`commandsDataHistoryValues+${key}` as keyof MessageKeys, [
+                cleanGameMode(String(value) ?? i18n.getMessage('null')),
+            ]);
+        }
+
+        return i18n.getMessage(`commandsDataHistoryValues+${key}` as keyof MessageKeys, [
+            capitolToNormal(String(value)) || i18n.getMessage('null'),
+        ]);
     }
 }

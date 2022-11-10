@@ -38,7 +38,7 @@ export class Data extends Base {
             },
         })) ?? {}) as CleanHypixelData;
 
-        const changes = this.changes(newData, oldData);
+        const changes = Data.changes(newData, oldData);
 
         this.container.logger.debug(`${this.constructor.name}:`, 'Parsed data:', changes);
 
@@ -55,7 +55,7 @@ export class Data extends Base {
         return changes;
     }
 
-    private changes(newData: CleanHypixelData, oldData: CleanHypixelData) {
+    public static changes(newData: CleanHypixelData, oldData: CleanHypixelData) {
         const newDataChanges: DataChanges = {};
         const oldDataChanges: DataChanges = {};
 

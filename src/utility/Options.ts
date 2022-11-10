@@ -25,7 +25,19 @@ export class Options {
 
     static readonly coreDisabledTimeout = Time.Second * 10;
 
+    static readonly dataHistoryFast = 27;
+
+    static readonly dataHistorySlow = 9;
+
     static readonly defaultLocale: keyof typeof locales = 'en-US';
+
+    static readonly emojiFastBackward: '<:fastBackward:928525727035441175>';
+
+    static readonly emojiFastForward: '<:fastForward:928525679509786665>';
+
+    static readonly emojiSlowBackward = '<:backward:928525709004111892>';
+
+    static readonly emojiSlowForward: '<:forward:928525657829412864>';
 
     static readonly modulesRewardsHypixelTimezone = 'EST5EDT';
 
