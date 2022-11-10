@@ -32,7 +32,7 @@ export async function awaitComponent<T extends MessageComponentTypeResolvable>(
     }
 }
 
-export function capitolToNormal(item: string | null) {
+export function capitolToNormal(item: string) {
     function containsLowerCase(string: string): boolean {
         let lowerCase = false;
 

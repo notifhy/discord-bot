@@ -389,25 +389,21 @@ export class DataCommand extends Command {
         const fastLeftButton = new MessageButton(base)
             .setCustomId('fastBackward')
             .setEmoji(Options.emojiFastBackward)
-            .setLabel('a')
             .setDisabled(index - Options.dataHistoryFast < 0);
 
         const leftButton = new MessageButton(base)
             .setCustomId('backward')
             .setEmoji(Options.emojiSlowBackward)
-            .setLabel('a')
             .setDisabled(index - Options.dataHistorySlow < 0);
 
         const rightButton = new MessageButton(base)
             .setCustomId('forward')
             .setEmoji(Options.emojiSlowForward)
-            .setLabel('a')
             .setDisabled(index + Options.dataHistorySlow >= total);
 
         const fastRightButton = new MessageButton(base)
             .setCustomId('fastForward')
             .setEmoji(Options.emojiFastForward)
-            .setLabel('a')
             .setDisabled(index + Options.dataHistoryFast >= total);
 
         const buttons = new MessageActionRow().setComponents(
@@ -439,18 +435,18 @@ export class DataCommand extends Command {
 
         if (key === 'gameType') {
             return i18n.getMessage(`commandsDataHistoryValues+${key}` as keyof MessageKeys, [
-                cleanGameType(String(value) ?? i18n.getMessage('null')),
+                cleanGameType(String(value ?? i18n.getMessage('none'))),
             ]);
         }
 
         if (key === 'gameMode') {
             return i18n.getMessage(`commandsDataHistoryValues+${key}` as keyof MessageKeys, [
-                cleanGameMode(String(value) ?? i18n.getMessage('null')),
+                cleanGameMode(String(value ?? i18n.getMessage('none'))),
             ]);
         }
 
         return i18n.getMessage(`commandsDataHistoryValues+${key}` as keyof MessageKeys, [
-            capitolToNormal(String(value)) || i18n.getMessage('null'),
+            capitolToNormal(String(value ?? i18n.getMessage('null'))),
         ]);
     }
 }
