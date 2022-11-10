@@ -9,7 +9,7 @@ import { Client } from './structures/Client';
 
 Sentry.init({
     dsn: process.env.SENTRY_DSN,
-    environment: process.env.SENTRY_ENVIRONMENT,
+    environment: process.env.ENVIRONMENT,
     integrations: [new ExtraErrorData()],
     tracesSampleRate: 1.0,
 });

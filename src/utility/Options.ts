@@ -1,3 +1,4 @@
+import process from 'node:process';
 import { type Command, container, RegisterBehavior } from '@sapphire/framework';
 import { PresenceUpdateStatus } from 'discord-api-types/v10';
 import { type ColorResolvable, Constants, type PresenceData } from 'discord.js';
@@ -17,6 +18,7 @@ export class Options {
 
     static readonly commandRegistry = (command: Command) => ({
         guildIds: command.options.preconditions?.find((condition) => condition === 'OwnerOnly')
+        && process.env.ENVIRONMENT === 'production'
             ? container.config.ownerGuilds
             : undefined,
         registerCommandIfMissing: true,
