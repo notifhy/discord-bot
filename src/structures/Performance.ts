@@ -34,32 +34,24 @@ export class Performance {
     public addDataPoint() {
         this.current.sort((firstValue, secondValue) => firstValue - secondValue);
 
-        if (this.current.size > 2) {
-            const end = Date.now();
-            const first = this.current.first()!;
-            const last = this.current.last()!;
-            const total = last - first;
+        const end = Date.now();
+        const start = this.current.first()!;
+        const total = end - start;
 
-            this.current.set('end', end);
+        Array.from(this.current).forEach(([key, value], index) => {
+            const nextData = this.current.at(index + 1) ?? end;
+            this.current.set(key, (nextData ?? end) - value);
+        });
 
-            Array.from(this.current).forEach(([key, value], index) => {
-                // Avoid doing this for the last item in the Collection
-                if (index + 1 !== this.current.size) {
-                    const nextData = this.current.at(index + 1)!;
-                    this.current.set(key, nextData - value);
-                }
-            });
+        this.current.set('end', end);
+        this.current.set('total', total);
 
-            this.current.set('start', end - total);
-            this.current.set('total', total);
-        }
+        // Add historic data
+        const latestTimestamp = this.dataPoints[0]?.get('end');
 
-        const latestTimestamp = this.dataPoints[0]?.get('_timestamp');
-
-        if (latestTimestamp && Date.now() > latestTimestamp + this.interval) {
-            this.current.set('_timestamp', Date.now());
-            this.dataPoints.push(this.current);
-            this.dataPoints.length = this.maxDataPoints;
+        if (Date.now() > (latestTimestamp ?? 0) + this.interval) {
+            this.dataPoints.push(this.current.clone());
+            this.dataPoints.length = Math.min(this.dataPoints.length, this.maxDataPoints);
         }
 
         this.latest = this.current.clone();
