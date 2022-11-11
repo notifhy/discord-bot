@@ -1,23 +1,26 @@
 import 'dotenv/config';
 import process from 'node:process';
 import { REST } from '@discordjs/rest';
+import { PrismaClient } from '@prisma/client';
 import { Routes } from 'discord-api-types/v10';
 
 (async () => {
     try {
         const clientId = process.env.DISCORD_CLIENT_ID!;
-        const rest = new REST({ version: '10' }).setToken(process.env.DISCORD_TOKEN!);
+        const token = process.env.DISCORD_TOKEN!;
+        const database = new PrismaClient();
+        const guildIds = (await database.config.findFirstOrThrow()).ownerGuilds;
 
-        const guildIds = ['873000534955667496'];
+        const rest = new REST({ version: '10' }).setToken(token);
+
+        const body = {
+            body: [],
+        };
 
         await Promise.all([
-            rest.put(Routes.applicationCommands(process.env.DISCORD_CLIENT_ID!), {
-                body: [],
-            }),
+            rest.put(Routes.applicationCommands(clientId), body),
             ...guildIds.map(
-                (guildId) => rest.put(Routes.applicationGuildCommands(clientId, guildId), {
-                    body: [],
-                }),
+                (guildId) => rest.put(Routes.applicationGuildCommands(clientId, guildId), body),
             ),
         ]);
 
