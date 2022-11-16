@@ -17,6 +17,13 @@ export class RewardsModule extends Module {
     }
 
     public async run(user: User, data: CleanHypixelData, changes: Changes) {
+        /**
+         * Friends module will:
+         * - Will operate on an interval (30 minutes) and check for reminders to send out
+         *   - Add logic for ± a few (seconds/minutes) for tolerance
+         *   - Fetch from API on these intervals
+         */
+
         const config = await this.container.database.rewards.findUniqueOrThrow({
             where: {
                 id: user.id,

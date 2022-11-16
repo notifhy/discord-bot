@@ -13,5 +13,11 @@ export class FriendsModule extends Module {
         });
     }
 
-    public async run(_user: User, _data: CleanHypixelData, _changes: Changes) {}
+    public async run(_user: User, _data: CleanHypixelData, _changes: Changes) {
+        /**
+         * Friends module will:
+         * - Will operate on the upcoming mod
+         * - Will PROBABLY not operate on an internal (30 minutes?) to detect crashes
+         */
+    }
 }
