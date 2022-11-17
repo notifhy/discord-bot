@@ -243,13 +243,13 @@
         "message": "About"
     },
     "commandsHelpInformationMenuAboutValue": {
-        "message": "Hypixel News is a project that sends you the latest news from the Hypixel Network. When new posts are made by the admins on the forums, you can choose which ones you want to receive as a neat message in a selected Discord channel.\n\nLearn more at https://attituding.github.io/hypixel-news/."
+        "message": "A notification bot for Hypixel. Share logins with friends, get reminders to claim daily rewards, and get alerts on suspicious activity.\n\nLearn more at https://notifhy.github.io/bot/."
     },
     "commandsHelpInformationMenuLegalName": {
         "message": "Legal Stuff"
     },
     "commandsHelpInformationMenuLegalValue": {
-        "message": "By using this service, you agree to our [Privacy Policy](https://attituding.github.io/Hypixel-News/legal/privacy-policy/ \"Privacy Policy\") and our [Terms of Service](https://attituding.github.io/Hypixel-News/legal/terms-of-service/ \"Terms of Service\")."
+        "message": "TODO"
     },
     "commandsHelpInformationMenuTitle": {
         "message": "Information"
