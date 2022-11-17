@@ -243,7 +243,7 @@
         "message": "About"
     },
     "commandsHelpInformationMenuAboutValue": {
-        "message": "A notification bot for Hypixel. Share logins with friends, get reminders to claim daily rewards, and get alerts on suspicious activity.\n\nLearn more at https://notifhy.github.io/bot/."
+        "message": "A notification bot for Hypixel. Share logins with friends, get reminders to claim daily rewards, and get alerts on suspicious activity.\n\nLearn more at https://notifhy.github.io/frontend/."
     },
     "commandsHelpInformationMenuLegalName": {
         "message": "Legal Stuff"
