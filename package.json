@@ -1,5 +1,5 @@
 {
-    "name": "bot",
+    "name": "discord-bot",
     "license": "MIT",
     "author": "Attituding <attituding@outlook.com>",
     "main": "dist/index.js",
