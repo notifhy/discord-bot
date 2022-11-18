@@ -15,7 +15,7 @@
         - When a cron function is called, users could be fetched then to determine whose modules should be called
 
 ## Planning
-### [ ] Core Separation
+### Core Separation
 #### Backend
 - [X] Use @sapphire/pieces to build API/Modules
 - [ ] Two separate i18n files?????
