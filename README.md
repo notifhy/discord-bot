@@ -1,4 +1,9 @@
 ## Under Construction
+### TODO
+- Add options to modules
+- Stagger with setTimeout
+    - Array of non-promised setTimeouts to manage disabling
+
 ### Mod Integration
 - Use Cloudflare Tunnels to expose localhost server
 - Use @sapphire/pieces to build an API
@@ -6,7 +11,7 @@
     - /logout
 - Modules
     - Activation
-        - Mod
+        - API
         - Cron
         - Cron with Hypixel API data
     - Continuity
