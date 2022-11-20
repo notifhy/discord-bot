@@ -38,64 +38,12 @@ export class Modules extends Base {
                     `Running ${module.name}.`,
                 );
 
-                await module.run(user, newData, changes);
+                await module.cronWithData?.(user, newData, changes);
             } catch (error) {
                 await new ModuleErrorHandler(error, module, user).init();
             }
         }
 
         await this.handleAPIChanges(changes, enabledModulesStore, user);
-    }
-
-    public async handleAPIChanges(
-        changes: Changes,
-        modules: Collection<string, Module<ModuleOptions>>,
-        user: User,
-    ) {
-        const embeds: BetterEmbed[] = [];
-
-        const requiresOnlineAPI = modules.find((module) => module.requireOnlineStatusAPI);
-
-        if (requiresOnlineAPI) {
-            if (Data.onlineAPIMissing(changes)) {
-                const i18n = new Internationalization(user.locale);
-
-                embeds.push(
-                    new BetterEmbed({ text: i18n.getMessage('coreDataMissingAPIFooter') })
-                        .setColor(Options.colorsNormal)
-                        .setTitle(i18n.getMessage('coreDataMissingOnlineStatusAPITitle'))
-                        .setDescription(i18n.getMessage('coreDataMissingOnlineStatusAPIDescription')),
-                );
-
-                this.container.logger.info(
-                    `User ${user.id}`,
-                    `${this.constructor.name}:`,
-                    'Missing Online Status API data.',
-                );
-            } else if (Data.onlineAPIReceived(changes)) {
-                const i18n = new Internationalization(user.locale);
-
-                embeds.push(
-                    new BetterEmbed({ text: i18n.getMessage('coreDataMissingAPIFooter') })
-                        .setColor(Options.colorsNormal)
-                        .setTitle(i18n.getMessage('coreDataReceivedOnlineStatusAPITitle'))
-                        .setDescription(i18n.getMessage('coreDataReceivedOnlineStatusAPIDescription')),
-                );
-
-                this.container.logger.info(
-                    `User ${user.id}`,
-                    `${this.constructor.name}:`,
-                    'Received Online Status API data.',
-                );
-            }
-        }
-
-        if (embeds.length > 0) {
-            const discordUser = await this.container.client.users.fetch(user.id);
-
-            await discordUser.send({
-                embeds: embeds,
-            });
-        }
     }
 }

@@ -1,6 +1,4 @@
 import type { users as User } from '@prisma/client';
-import type { CleanHypixelData } from '../@types/Hypixel';
-import type { Changes } from '../core/Data';
 import { Module } from '../structures/Module';
 
 export class FriendsModule extends Module {
@@ -9,15 +7,14 @@ export class FriendsModule extends Module {
             ...options,
             name: 'friends',
             localization: 'modulesFriendsName',
-            requireOnlineStatusAPI: true,
+            cronIncludeAPIData: false,
         });
     }
 
-    public async run(_user: User, _data: CleanHypixelData, _changes: Changes) {
+    public override async cron(_user: User) {
         /**
          * Friends module will:
          * - Will operate on the upcoming mod
-         * - Will PROBABLY not operate on an internal (30 minutes?) to detect crashes
          */
     }
 }

@@ -1,6 +1,4 @@
 import type { users as User } from '@prisma/client';
-import type { CleanHypixelData } from '../@types/Hypixel';
-import type { Changes } from '../core/Data';
 import { Module } from '../structures/Module';
 
 export class DefenderModule extends Module {
@@ -9,11 +7,12 @@ export class DefenderModule extends Module {
             ...options,
             name: 'defender',
             localization: 'modulesDefenderName',
-            requireOnlineStatusAPI: true,
+            cronIncludeAPIData: true,
+            cronRequireOnlineStatusAPI: true,
         });
     }
 
-    public async run(_user: User, _data: CleanHypixelData, _changes: Changes) {
+    public override async cron(_user: User) {
         /**
          * Defender module will:
          * - Will operate on the upcoming mod

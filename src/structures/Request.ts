@@ -85,8 +85,4 @@ export class Request extends Base {
             clearTimeout(abortTimeout);
         }
     }
-
-    static async tryParse<Type>(response: Response): Promise<Type | null> {
-        return response.json().catch(() => null) as Promise<Type | null>;
-    }
 }

@@ -1,6 +1,4 @@
 import type { users as User } from '@prisma/client';
-import type { CleanHypixelData } from '../@types/Hypixel';
-import type { Changes } from '../core/Data';
 import { i18n as Internationalization } from '../locales/i18n';
 import { BetterEmbed } from '../structures/BetterEmbed';
 import { Module } from '../structures/Module';
@@ -12,11 +10,11 @@ export class RewardsModule extends Module {
             ...options,
             name: 'rewards',
             localization: 'modulesRewardsName',
-            requireOnlineStatusAPI: true,
+            cronIncludeAPIData: false,
         });
     }
 
-    public async run(user: User, data: CleanHypixelData, changes: Changes) {
+    public override async cron(user: User) {
         /**
          * Friends module will:
          * - Will operate on an interval (30 minutes) and check for reminders to send out
