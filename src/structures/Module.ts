@@ -1,6 +1,8 @@
 import type { users as User } from '@prisma/client';
 import { Piece } from '@sapphire/framework';
+import type { CleanHypixelData } from '../@types/Hypixel';
 import type { MessageKeys } from '../locales/locales';
+import type { Changes } from './Hypixel';
 
 export class Module<O extends Module.Options = Module.Options> extends Piece<O> {
     public override name: 'defender' | 'friends' | 'rewards';
@@ -19,6 +21,8 @@ export class Module<O extends Module.Options = Module.Options> extends Piece<O> 
         this.cronIncludeAPIData = options.cronIncludeAPIData;
         this.cronRequireOnlineStatusAPI = options.cronRequireOnlineStatusAPI ?? false;
     }
+
+    public cron?(user: User, data: CleanHypixelData, changes: Changes): Promise<void>;
 
     public cron?(user: User): Promise<void>;
 

@@ -28,6 +28,19 @@ export class ConfigCommand extends Command {
                     description: 'Toggle the core',
                 },
                 {
+                    name: 'corecron',
+                    type: Constants.ApplicationCommandOptionTypes.SUB_COMMAND,
+                    description: 'Set the cron for the core',
+                    options: [
+                        {
+                            name: 'cron',
+                            type: Constants.ApplicationCommandOptionTypes.STRING,
+                            description: 'The string of the cron',
+                            required: true,
+                        },
+                    ],
+                },
+                {
                     name: 'devmode',
                     type: Constants.ApplicationCommandOptionTypes.SUB_COMMAND,
                     description: 'Toggle Developer Mode',
@@ -76,7 +89,7 @@ export class ConfigCommand extends Command {
                     ],
                 },
                 {
-                    name: 'requestbucket',
+                    name: 'hypixelrequestbucket',
                     description: 'Set how many requests should be made per minute',
                     type: Constants.ApplicationCommandOptionTypes.SUB_COMMAND,
                     options: [
@@ -87,36 +100,6 @@ export class ConfigCommand extends Command {
                             required: true,
                             minValue: 1,
                             maxValue: 240,
-                        },
-                    ],
-                },
-                {
-                    name: 'restrequesttimeout',
-                    description: 'Set the request timeout before an abort error is thrown',
-                    type: Constants.ApplicationCommandOptionTypes.SUB_COMMAND,
-                    options: [
-                        {
-                            name: 'milliseconds',
-                            type: Constants.ApplicationCommandOptionTypes.INTEGER,
-                            description: 'The timeout in milliseconds',
-                            required: true,
-                            minValue: 0,
-                            maxValue: 100000,
-                        },
-                    ],
-                },
-                {
-                    name: 'retrylimit',
-                    description: 'Set the number of request retries before throwing',
-                    type: Constants.ApplicationCommandOptionTypes.SUB_COMMAND,
-                    options: [
-                        {
-                            name: 'limit',
-                            type: Constants.ApplicationCommandOptionTypes.INTEGER,
-                            description: 'The number of retries',
-                            required: true,
-                            minValue: 0,
-                            maxValue: 100,
                         },
                     ],
                 },
@@ -147,6 +130,36 @@ export class ConfigCommand extends Command {
                     ],
                 },
                 {
+                    name: 'requesttimeout',
+                    description: 'Set the request timeout before an abort error is thrown',
+                    type: Constants.ApplicationCommandOptionTypes.SUB_COMMAND,
+                    options: [
+                        {
+                            name: 'milliseconds',
+                            type: Constants.ApplicationCommandOptionTypes.INTEGER,
+                            description: 'The timeout in milliseconds',
+                            required: true,
+                            minValue: 0,
+                            maxValue: 100000,
+                        },
+                    ],
+                },
+                {
+                    name: 'requestretrylimit',
+                    description: 'Set the number of request retries before throwing',
+                    type: Constants.ApplicationCommandOptionTypes.SUB_COMMAND,
+                    options: [
+                        {
+                            name: 'limit',
+                            type: Constants.ApplicationCommandOptionTypes.INTEGER,
+                            description: 'The number of retries',
+                            required: true,
+                            minValue: 0,
+                            maxValue: 100,
+                        },
+                    ],
+                },
+                {
                     name: 'view',
                     description: 'View the current configuration',
                     type: Constants.ApplicationCommandOptionTypes.SUB_COMMAND,
@@ -164,26 +177,29 @@ export class ConfigCommand extends Command {
             case 'core':
                 await this.core(interaction);
                 break;
+            case 'corecron':
+                await this.coreCron(interaction);
+                break;
             case 'devmode':
                 await this.devMode(interaction);
                 break;
             case 'loglevel':
                 await this.logLevel(interaction);
                 break;
-            case 'requestbucket':
-                await this.requestBucket(interaction);
-                break;
-            case 'restrequesttimeout':
-                await this.restRequestTimeout(interaction);
-                break;
-            case 'retrylimit':
-                await this.retryLimit(interaction);
+            case 'hypixelrequestbucket':
+                await this.hypixelRequestBucket(interaction);
                 break;
             case 'ownerguilds':
                 await this.ownerGuilds(interaction);
                 break;
             case 'owners':
                 await this.owners(interaction);
+                break;
+            case 'requesttimeout':
+                await this.requestTimeout(interaction);
+                break;
+            case 'requestretrylimit':
+                await this.requestRetryLimit(interaction);
                 break;
             case 'view':
                 await this.view(interaction);
@@ -193,10 +209,12 @@ export class ConfigCommand extends Command {
         }
     }
 
-    public async core(interaction: CommandInteraction) {
+    private async core(interaction: CommandInteraction) {
         const { i18n } = interaction;
 
         this.container.config.core = !this.container.config.core;
+
+        this.container.core[this.container.config.core ? 'cronStart' : 'cronStop']();
 
         await this.container.database.config.update({
             data: {
@@ -229,7 +247,43 @@ export class ConfigCommand extends Command {
         );
     }
 
-    public async devMode(interaction: CommandInteraction) {
+    private async coreCron(interaction: CommandInteraction) {
+        const { i18n } = interaction;
+
+        const cron = interaction.options.getString('cron', true);
+
+        this.container.config.coreCron = cron;
+
+        await this.container.database.config.update({
+            data: {
+                coreCron: this.container.config.coreCron,
+            },
+            where: {
+                index: 0,
+            },
+        });
+
+        const coreCronEmbed = new BetterEmbed(interaction)
+            .setColor(Options.colorsNormal)
+            .setTitle(i18n.getMessage('commandsConfigCoreCronTitle'))
+            .setDescription(
+                i18n.getMessage('commandsConfigCoreCronDescription', [
+                    this.container.config.coreCron,
+                ]),
+            );
+
+        await interaction.editReply({
+            embeds: [coreCronEmbed],
+        });
+
+        this.container.logger.info(
+            interactionLogContext(interaction),
+            `${this.constructor.name}:`,
+            `The core cron is now ${cron}.`,
+        );
+    }
+
+    private async devMode(interaction: CommandInteraction) {
         const { i18n } = interaction;
 
         this.container.config.devMode = !this.container.config.devMode;
@@ -263,7 +317,7 @@ export class ConfigCommand extends Command {
         );
     }
 
-    public async logLevel(interaction: CommandInteraction) {
+    private async logLevel(interaction: CommandInteraction) {
         const { i18n } = interaction;
 
         const level = interaction.options.getInteger('level', true);
@@ -296,101 +350,41 @@ export class ConfigCommand extends Command {
         );
     }
 
-    public async requestBucket(interaction: CommandInteraction) {
+    private async hypixelRequestBucket(interaction: CommandInteraction) {
         const { i18n } = interaction;
 
         const amount = interaction.options.getInteger('amount', true);
 
-        this.container.config.requestBucket = amount;
+        this.container.config.hypixelRequestBucket = amount;
+
+        this.container.hypixel.updateBucket();
 
         await this.container.database.config.update({
             data: {
-                requestBucket: this.container.config.requestBucket,
+                hypixelRequestBucket: this.container.config.hypixelRequestBucket,
             },
             where: {
                 index: 0,
             },
         });
 
-        const requestBucketEmbed = new BetterEmbed(interaction)
+        const hypixelRequestBucketEmbed = new BetterEmbed(interaction)
             .setColor(Options.colorsNormal)
-            .setTitle(i18n.getMessage('commandsConfigRequestBucketTitle'))
-            .setDescription(i18n.getMessage('commandsConfigRequestBucketDescription', [amount]));
-
-        await interaction.editReply({ embeds: [requestBucketEmbed] });
-
-        this.container.logger.info(
-            interactionLogContext(interaction),
-            `${this.constructor.name}:`,
-            `The request bucket is now ${amount}ms.`,
-        );
-    }
-
-    public async restRequestTimeout(interaction: CommandInteraction) {
-        const { i18n } = interaction;
-
-        const milliseconds = interaction.options.getInteger('milliseconds', true);
-
-        this.container.config.restRequestTimeout = milliseconds;
-
-        await this.container.database.config.update({
-            data: {
-                restRequestTimeout: this.container.config.restRequestTimeout,
-            },
-            where: {
-                index: 0,
-            },
-        });
-
-        const restRequestTimeoutEmbed = new BetterEmbed(interaction)
-            .setColor(Options.colorsNormal)
-            .setTitle(i18n.getMessage('commandsConfigRestRequestTimeoutTitle'))
+            .setTitle(i18n.getMessage('commandsConfigHypixelRequestBucketTitle'))
             .setDescription(
-                i18n.getMessage('commandsConfigRestRequestTimeoutDescription', [milliseconds]),
+                i18n.getMessage('commandsConfigHypixelRequestBucketDescription', [amount]),
             );
 
-        await interaction.editReply({
-            embeds: [restRequestTimeoutEmbed],
-        });
+        await interaction.editReply({ embeds: [hypixelRequestBucketEmbed] });
 
         this.container.logger.info(
             interactionLogContext(interaction),
             `${this.constructor.name}:`,
-            `The rest request timeout is now ${milliseconds}ms.`,
+            `The Hypixel request bucket is now ${amount}ms.`,
         );
     }
 
-    public async retryLimit(interaction: CommandInteraction) {
-        const { i18n } = interaction;
-
-        const limit = interaction.options.getInteger('limit', true);
-
-        this.container.config.retryLimit = limit;
-
-        await this.container.database.config.update({
-            data: {
-                retryLimit: this.container.config.retryLimit,
-            },
-            where: {
-                index: 0,
-            },
-        });
-
-        const retryLimitEmbed = new BetterEmbed(interaction)
-            .setColor(Options.colorsNormal)
-            .setTitle(i18n.getMessage('commandsConfigRetryLimitTitle'))
-            .setDescription(i18n.getMessage('commandsConfigRetryLimitDescription', [limit]));
-
-        await interaction.editReply({ embeds: [retryLimitEmbed] });
-
-        this.container.logger.info(
-            interactionLogContext(interaction),
-            `${this.constructor.name}:`,
-            `The retry limit is now ${limit}.`,
-        );
-    }
-
-    public async ownerGuilds(interaction: CommandInteraction) {
+    private async ownerGuilds(interaction: CommandInteraction) {
         const { i18n } = interaction;
 
         const guilds = interaction.options.getString('guilds', true).split(',');
@@ -422,7 +416,7 @@ export class ConfigCommand extends Command {
         );
     }
 
-    public async owners(interaction: CommandInteraction) {
+    private async owners(interaction: CommandInteraction) {
         const { i18n } = interaction;
 
         const owners = interaction.options.getString('owners', true).split(',');
@@ -454,21 +448,88 @@ export class ConfigCommand extends Command {
         );
     }
 
-    public async view(interaction: CommandInteraction) {
+    private async requestTimeout(interaction: CommandInteraction) {
         const { i18n } = interaction;
+
+        const milliseconds = interaction.options.getInteger('milliseconds', true);
+
+        this.container.config.requestTimeout = milliseconds;
+
+        await this.container.database.config.update({
+            data: {
+                requestTimeout: this.container.config.requestTimeout,
+            },
+            where: {
+                index: 0,
+            },
+        });
+
+        const requestTimeoutEmbed = new BetterEmbed(interaction)
+            .setColor(Options.colorsNormal)
+            .setTitle(i18n.getMessage('commandsConfigRequestTimeoutTitle'))
+            .setDescription(
+                i18n.getMessage('commandsConfigRequestTimeoutDescription', [milliseconds]),
+            );
+
+        await interaction.editReply({
+            embeds: [requestTimeoutEmbed],
+        });
+
+        this.container.logger.info(
+            interactionLogContext(interaction),
+            `${this.constructor.name}:`,
+            `The request timeout is now ${milliseconds}ms.`,
+        );
+    }
+
+    private async requestRetryLimit(interaction: CommandInteraction) {
+        const { i18n } = interaction;
+
+        const limit = interaction.options.getInteger('limit', true);
+
+        this.container.config.requestRetryLimit = limit;
+
+        await this.container.database.config.update({
+            data: {
+                requestRetryLimit: this.container.config.requestRetryLimit,
+            },
+            where: {
+                index: 0,
+            },
+        });
+
+        const retryLimitEmbed = new BetterEmbed(interaction)
+            .setColor(Options.colorsNormal)
+            .setTitle(i18n.getMessage('commandsConfigRequestRetryLimitTitle'))
+            .setDescription(i18n.getMessage('commandsConfigRequestRetryLimitDescription', [limit]));
+
+        await interaction.editReply({ embeds: [retryLimitEmbed] });
+
+        this.container.logger.info(
+            interactionLogContext(interaction),
+            `${this.constructor.name}:`,
+            `The request retry limit is now ${limit}.`,
+        );
+    }
+
+    private async view(interaction: CommandInteraction) {
+        const { i18n } = interaction;
+
+        const { config } = this.container;
 
         const viewEmbed = new BetterEmbed(interaction)
             .setColor(Options.colorsNormal)
             .setTitle(i18n.getMessage('commandsConfigViewTitle'))
             .setDescription(
                 i18n.getMessage('commandsConfigViewDescription', [
-                    this.container.config.core ? i18n.getMessage('on') : i18n.getMessage('off'),
-                    this.container.config.devMode ? i18n.getMessage('on') : i18n.getMessage('off'),
-                    this.container.config.requestBucket,
-                    this.container.config.restRequestTimeout,
-                    this.container.config.retryLimit,
-                    this.container.config.ownerGuilds.join(', '),
-                    this.container.config.owners.join(', '),
+                    config.core ? i18n.getMessage('on') : i18n.getMessage('off'),
+                    config.coreCron,
+                    config.devMode ? i18n.getMessage('on') : i18n.getMessage('off'),
+                    config.hypixelRequestBucket,
+                    config.ownerGuilds.join(', '),
+                    config.owners.join(', '),
+                    config.requestTimeout,
+                    config.requestRetryLimit,
                 ]),
             );
 

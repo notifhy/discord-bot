@@ -11,7 +11,7 @@ export class FriendsModule extends Module {
         });
     }
 
-    public override async cron(_user: User) {
+    public override async event(_user: User) {
         /**
          * Friends module will:
          * - Will operate on the upcoming mod

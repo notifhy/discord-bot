@@ -94,7 +94,7 @@ export class RegisterCommand extends Command {
         let response;
 
         try {
-            response = await new Request().request(url);
+            response = await Request.request(url);
         } catch (error) {
             if (error instanceof HTTPError && error.response?.status === 404) {
                 const notFoundEmbed = new BetterEmbed(interaction)

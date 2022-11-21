@@ -142,7 +142,7 @@ export class APICommand extends Command {
 
         const { abort, generic, http, getTimeout } = this.container.core.errors;
 
-        const { fetches } = this.container.core.requests;
+        const fetches = this.container.hypixel.getFetches();
 
         const statsEmbed = new BetterEmbed(interaction)
             .setColor(Options.colorsNormal)

@@ -1,54 +1,84 @@
 import { setTimeout } from 'node:timers/promises';
 import type { users as User } from '@prisma/client';
-import { Data } from './Data';
+import type { Collection } from 'discord.js';
+import cron, { ScheduledTask } from 'node-cron';
 import { Time } from '../enums/Time';
 import { Errors } from './Errors';
 import { CoreRequestErrorHandler } from '../errors/CoreRequestErrorHandler';
 import { ErrorHandler } from '../errors/ErrorHandler';
 import { HTTPError } from '../errors/HTTPError';
-import { Modules } from './Modules';
-import { Requests } from './Requests';
 import { Base } from '../structures/Base';
+import type { Module, ModuleOptions } from '../structures/Module';
+import { Modules } from '../structures/Modules';
 import { Performance } from '../structures/Performance';
-import { Options } from '../utility/Options';
 
 /* eslint-disable no-await-in-loop */
 
 export class Core extends Base {
-    public readonly data: Data;
-
-    public readonly errors: Errors;
+    private cron: ScheduledTask;
 
     public readonly modules: Modules;
 
-    public readonly performance: Performance;
+    public readonly errors: Errors;
 
-    public readonly requests: Requests;
+    public readonly performance: Performance;
 
     constructor() {
         super();
 
-        this.data = new Data();
+        this.cron = cron.schedule(
+            this.container.config.coreCron,
+            async () => {
+                await this.preconditions();
+            },
+            {
+                scheduled: false,
+            },
+        );
+
         this.errors = new Errors();
         this.modules = new Modules();
         this.performance = new Performance();
-        this.requests = new Requests();
+
+        this.container.logger.debug(
+            `${this.constructor.name}:`,
+            `Cron scheduled with ${this.container.config.coreCron}.`,
+        );
     }
 
     public async init() {
-        // eslint-disable-next-line no-constant-condition
-        while (true) {
-            try {
-                if (this.errors.isTimeout()) {
-                    await setTimeout(this.errors.getTimeout());
-                } else if (this.container.config.core === false) {
-                    await setTimeout(Options.coreDisabledTimeout);
-                } else {
-                    await this.refresh();
-                }
-            } catch (error) {
-                new ErrorHandler(error).init();
+        this.cron = cron.schedule(
+            this.container.config.coreCron,
+            async () => {
+                await this.preconditions();
+            },
+            {
+                scheduled: false,
+            },
+        );
+
+        if (this.container.config.core) {
+            this.cron.start();
+        }
+    }
+
+    public cronStart() {
+        this.cron.start();
+    }
+
+    public cronStop() {
+        this.cron.stop();
+    }
+
+    private async preconditions() {
+        try {
+            if (this.errors.isTimeout()) {
+                return;
             }
+
+            await this.refresh();
+        } catch (error) {
+            new ErrorHandler(error).init();
         }
     }
 
@@ -61,10 +91,7 @@ export class Core extends Base {
 
         const users = allUsers.filter((user) => Object.values(user.modules).includes(true));
 
-        if (users.length === 0) {
-            await setTimeout(Time.Second * 10);
-            return;
-        }
+        const moduleStore = this.container.stores.get('modules');
 
         // eslint-disable-next-line no-restricted-syntax
         for (const user of users) {
@@ -72,27 +99,35 @@ export class Core extends Base {
                 return;
             }
 
-            await this.refreshUser(user);
+            const enabledModules = moduleStore.filter((module) => user.modules[module.name]);
+
+            await this.refreshUser(user, enabledModules);
         }
     }
 
-    private async refreshUser(user: User) {
+    private async refreshUser(
+        user: User,
+        enabledModules: Collection<string, Module<ModuleOptions>>,
+    ) {
         try {
-            this.performance.set('fetch');
-            const cleanHypixelData = await this.requests.request(user);
+            const shouldFetch = Modules.shouldFetch(enabledModules);
 
-            this.performance.set('data');
-            const changes = await this.data.parse(user, cleanHypixelData);
+            if (shouldFetch) {
+                this.performance.set('fetch');
+                const { data, changes } = await this.modules.fetch(user);
 
-            this.performance.set('modules');
-            await this.modules.execute(user, cleanHypixelData, changes);
+                this.performance.set('modules');
+                await Modules.executeModulesWithData(user, enabledModules, data, changes);
+            } else {
+                this.performance.set('modules');
+                await Modules.executeModules(user, enabledModules);
+            }
 
             this.performance.addDataPoint();
 
-            await setTimeout(
-                (Time.Minute / this.container.config.requestBucket)
-                * this.requests.lastUserFetches,
-            );
+            const timeoutPer = Time.Minute / this.container.config.hypixelRequestBucket;
+
+            await setTimeout(timeoutPer * this.modules.lastUserFetches);
         } catch (error) {
             if (error instanceof HTTPError) {
                 new CoreRequestErrorHandler(error, this).init();

@@ -28,15 +28,16 @@ model activities {
 }
 
 model config {
-  index              Int      @id @default(0)
-  core               Boolean  @default(true)
-  devMode            Boolean  @default(false)
-  logLevel           Int      @default(30)
-  requestBucket      Int      @default(10)
-  restRequestTimeout Int      @default(5000)
-  retryLimit         Int      @default(3)
-  ownerGuilds        String[] @default([]) @db.VarChar(20)
-  owners             String[] @default([]) @db.VarChar(20)
+  index                Int      @id @default(0)
+  core                 Boolean  @default(true)
+  coreCron             String   @default("*/30 * * * *") @db.VarChar(20)
+  devMode              Boolean  @default(false)
+  hypixelRequestBucket Int      @default(10)
+  logLevel             Int      @default(30)
+  ownerGuilds          String[] @default([]) @db.VarChar(20)
+  owners               String[] @default([]) @db.VarChar(20)
+  requestTimeout       Int      @default(5000)
+  requestRetryLimit    Int      @default(3)
 }
 
 model defender {

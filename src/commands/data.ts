@@ -8,11 +8,11 @@ import {
     MessageComponentInteraction,
 } from 'discord.js';
 import type { CleanHypixelData } from '../@types/Hypixel';
-import { Data } from '../core/Data';
 import { Time } from '../enums/Time';
 import { InteractionErrorHandler } from '../errors/InteractionErrorHandler';
 import type { MessageKeys } from '../locales/locales';
 import { BetterEmbed } from '../structures/BetterEmbed';
+import { Hypixel } from '../structures/Hypixel';
 import { Options } from '../utility/Options';
 import {
     awaitComponent,
@@ -372,7 +372,7 @@ export class DataCommand extends Command {
             if (possibleActivityOld) {
                 // eslint-disable-next-line @typescript-eslint/naming-convention
                 const { timestamp: _, ...activityOlder } = possibleActivityOld;
-                subject = Data.changes(activityNewer, activityOlder).new;
+                subject = Hypixel.changes(activityNewer, activityOlder).new;
             }
 
             embed.addFields({

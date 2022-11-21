@@ -62,6 +62,12 @@
     "commandsConfigCoreTitle": {
         "message": "Core State Updated"
     },
+    "commandsConfigCoreCronDescription": {
+        "message": "The core cron is now `$1`."
+    },
+    "commandsConfigCoreCronTitle": {
+        "message": "Core Cron Updated"
+    },
     "commandsConfigDevModeDescription": {
         "message": "Developer Mode is now **$1**."
     },
@@ -74,11 +80,11 @@
     "commandsConfigLogLevelTitle": {
         "message": "Log Level Updated"
     },
-    "commandsConfigRequestBucketDescription": {
-        "message": "The request bucket is now **$1** per minute."
+    "commandsConfigHypixelRequestBucketDescription": {
+        "message": "The Hypixel request bucket is now **$1** per minute."
     },
-    "commandsConfigRequestBucketTitle": {
-        "message": "Request Bucket Updated"
+    "commandsConfigHypixelRequestBucketTitle": {
+        "message": "Hypixel Request Bucket Updated"
     },
     "commandsConfigOwnerGuildsDescription": {
         "message": "The owner guilds are now **$1**."
@@ -92,20 +98,20 @@
     "commandsConfigOwnersTitle": {
         "message": "Owners Updated"
     },
-    "commandsConfigRestRequestTimeoutDescription": {
-        "message": "The rest request timeout is now **$1**."
+    "commandsConfigRequestTimeoutDescription": {
+        "message": "The request timeout is now **$1**."
     },
-    "commandsConfigRestRequestTimeoutTitle": {
-        "message": "Rest Request Timeout Updated"
+    "commandsConfigRequestTimeoutTitle": {
+        "message": "Request Timeout Updated"
     },
-    "commandsConfigRetryLimitDescription": {
-        "message": "The retry limit is now **$1**."
+    "commandsConfigRequestRetryLimitDescription": {
+        "message": "The request retry limit is now **$1**."
     },
-    "commandsConfigRetryLimitTitle": {
-        "message": "Retry Limit Updated"
+    "commandsConfigRequestRetryLimitTitle": {
+        "message": "Request Retry Limit Updated"
     },
     "commandsConfigViewDescription": {
-        "message": "Core: **$1**\nDeveloper Mode: **$2**\nRequest Bucket: **$3** per minute\nRest Request Timeout: **$4**ms\nRetry Limit: **$5**\nOwner Guilds: **$6**\nOwners: **$7**"
+        "message": "Core: **$1**\nCore Cron: `$2`\nDeveloper Mode: **$3**\nHypixel Request Bucket: **$4** per minute\nOwner Guilds: **$5**\nOwners: **$6**\nRequest Timeout: **$7**ms\nRequest Retry Limit: **$8**"
     },
     "commandsConfigViewTitle": {
         "message": "Current Configuration"

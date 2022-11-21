@@ -114,7 +114,6 @@ export class Sentry {
             nextTimeoutAbort: core.errors.abort.getTimeout(),
             nextTimeoutGeneric: core.errors.generic.getTimeout(),
             nextTimeoutHTTP: core.errors.http.getTimeout(),
-            fetches: core.requests.fetches,
         });
 
         return this;

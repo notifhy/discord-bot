@@ -17,8 +17,7 @@ export class DefenderModule extends Module {
          * Defender module will:
          * - Will operate on the upcoming mod
          * - Will operate on an interval (x minutes) to detect unknown logins
-         *   - 5 minutes is probably too close to being "heavy continuous polling of data"
-         *   - 15?
+         *  - Aiming for 30 minute interval
          */
     }
 }

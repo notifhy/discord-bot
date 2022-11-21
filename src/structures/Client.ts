@@ -1,9 +1,10 @@
+import { join } from 'node:path';
 import { config as Config, PrismaClient } from '@prisma/client';
 import { container, SapphireClient } from '@sapphire/framework';
 import { Intents, Options, type PresenceData, Sweepers } from 'discord.js';
-import { join } from 'node:path';
 import { Core } from '../core/Core';
 import { i18n } from '../locales/i18n';
+import { Hypixel } from './Hypixel';
 import { ModuleStore } from './ModuleStore';
 
 export class Client extends SapphireClient {
@@ -78,6 +79,7 @@ export class Client extends SapphireClient {
         container.config = (await container.database.config.findFirst()) as Config;
         container.core = new Core();
         container.customPresence = null;
+        container.hypixel = new Hypixel();
         container.i18n = new i18n();
 
         const client = new Client(container.config);
@@ -90,7 +92,7 @@ export class Client extends SapphireClient {
         await client.login();
 
         container.logger.info(
-            `${this.constructor.name}:`,
+            `${this.name}:`,
             `Initialized container after ${Date.now() - startTime}ms.`,
         );
     }
@@ -102,6 +104,7 @@ declare module '@sapphire/pieces' {
         core: Core;
         customPresence: PresenceData | null;
         database: PrismaClient;
+        hypixel: Hypixel;
         i18n: i18n;
     }
 

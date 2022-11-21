@@ -1,36 +1,22 @@
 import { URL } from 'node:url';
 import type { users as User } from '@prisma/client';
 import type { Collection } from 'discord.js';
-import type {
-    CleanHypixelData,
-    CleanHypixelPlayer,
-    CleanHypixelStatus,
-    HypixelAPIOk,
-    RawHypixelPlayer,
-    RawHypixelStatus,
-} from '../@types/Hypixel';
+import type { CleanHypixelData, RawHypixelPlayer, RawHypixelStatus } from '../@types/Hypixel';
 import { Base } from './Base';
 import { BetterEmbed } from './BetterEmbed';
+import { ModuleErrorHandler } from '../errors/ModuleErrorHandler';
+import { Changes, Hypixel } from './Hypixel';
 import { i18n as Internationalization } from '../locales/i18n';
 import type { Module, ModuleOptions } from './Module';
-import { Request } from './Request';
 import { Options } from '../utility/Options';
 
-type PartialCleanHypixelData = Partial<CleanHypixelData>;
+/* eslint-disable no-await-in-loop */
 
-export type Changes = {
-    new: PartialCleanHypixelData;
-    old: PartialCleanHypixelData;
-};
-
-export class ModuleData extends Base {
-    public fetches: number;
-
+export class Modules extends Base {
     public lastUserFetches: number;
 
     public constructor() {
         super();
-        this.fetches = 0;
         this.lastUserFetches = 0;
     }
 
@@ -40,7 +26,9 @@ export class ModuleData extends Base {
         const playerURL = new URL(Options.urlHypixelPlayer);
         playerURL.searchParams.append('uuid', user.uuid);
 
-        const rawPlayerData = (await this.request(playerURL)) as RawHypixelPlayer;
+        const rawPlayerData = (await this.container.hypixel.request(
+            playerURL.toString(),
+        )) as RawHypixelPlayer;
 
         this.lastUserFetches += 1;
 
@@ -54,19 +42,71 @@ export class ModuleData extends Base {
             const statusURL = new URL(Options.urlHypixelStatus);
             statusURL.search = playerURL.search;
 
-            rawStatusData = (await this.request(statusURL)) as RawHypixelStatus;
+            rawStatusData = (await this.container.hypixel.request(
+                statusURL.toString(),
+            )) as RawHypixelStatus;
 
             this.lastUserFetches += 1;
         }
 
         const data = {
-            ...ModuleData.cleanPlayerData(rawPlayerData),
-            ...ModuleData.cleanStatusData(rawStatusData),
+            ...Hypixel.cleanPlayerData(rawPlayerData),
+            ...Hypixel.cleanStatusData(rawStatusData),
         };
 
-        const changes = await ModuleData.parse(user, data);
+        const changes = await Modules.parse(user, data);
 
         return { changes: changes, data: data };
+    }
+
+    public static async executeModulesWithData(
+        user: User,
+        enabledModules: Collection<string, Module<ModuleOptions>>,
+        newData: CleanHypixelData,
+        changes: Changes,
+    ) {
+        const onlineStatusAPIEnabled = newData.lastLogin !== null && newData.lastLogout !== null;
+
+        const availableModules = enabledModules.filter(
+            (module) => onlineStatusAPIEnabled || module.cronRequireOnlineStatusAPI === false,
+        );
+
+        // eslint-disable-next-line no-restricted-syntax
+        for (const module of availableModules.values()) {
+            try {
+                this.container.logger.debug(
+                    `User ${user.id}`,
+                    `${this.name}:`,
+                    `Running ${module.name} cron with data.`,
+                );
+
+                await module.cron!(user, newData, changes);
+            } catch (error) {
+                await new ModuleErrorHandler(error, module, user).init();
+            }
+        }
+
+        await Modules.handleDataChanges(changes, availableModules, user);
+    }
+
+    public static async executeModules(
+        user: User,
+        availableModules: Collection<string, Module<ModuleOptions>>,
+    ) {
+        // eslint-disable-next-line no-restricted-syntax
+        for (const module of availableModules.values()) {
+            try {
+                this.container.logger.debug(
+                    `User ${user.id}`,
+                    `${this.name}:`,
+                    `Running ${module.name} cron without data.`,
+                );
+
+                await module.cron?.(user);
+            } catch (error) {
+                await new ModuleErrorHandler(error, module, user).init();
+            }
+        }
     }
 
     public static async handleDataChanges(
@@ -76,10 +116,10 @@ export class ModuleData extends Base {
     ) {
         const embeds: BetterEmbed[] = [];
 
-        const requiresOnlineAPI = modules.find((module) => module.requireOnlineStatusAPI);
+        const requiresOnlineAPI = modules.find((module) => module.cronRequireOnlineStatusAPI);
 
         if (requiresOnlineAPI) {
-            if (ModuleData.isOnlineAPIMissing(changes)) {
+            if (Modules.isOnlineAPIMissing(changes)) {
                 const i18n = new Internationalization(user.locale);
 
                 embeds.push(
@@ -93,10 +133,10 @@ export class ModuleData extends Base {
 
                 this.container.logger.info(
                     `User ${user.id}`,
-                    `${this.constructor.name}:`,
+                    `${this.name}:`,
                     'Missing Online Status API data.',
                 );
-            } else if (ModuleData.isOnlineAPIReceived(changes)) {
+            } else if (Modules.isOnlineAPIReceived(changes)) {
                 const i18n = new Internationalization(user.locale);
 
                 embeds.push(
@@ -110,7 +150,7 @@ export class ModuleData extends Base {
 
                 this.container.logger.info(
                     `User ${user.id}`,
-                    `${this.constructor.name}:`,
+                    `${this.name}:`,
                     'Received Online Status API data.',
                 );
             }
@@ -143,83 +183,10 @@ export class ModuleData extends Base {
         );
     }
 
-    private async request(url: URL) {
-        const response = await new Request({
-            restRequestTimeout: this.container.config.restRequestTimeout,
-            retryLimit: this.container.config.retryLimit,
-        }).request(url.toString(), {
-            headers: { 'API-Key': process.env.HYPIXEL_API_KEY! },
-        });
+    public static shouldFetch(enabledModules: Collection<string, Module<ModuleOptions>>) {
+        const modulesRequireData = enabledModules.filter((module) => module.cronIncludeAPIData);
 
-        this.fetches += 1;
-
-        return response.json() as Promise<HypixelAPIOk>;
-    }
-
-    private static changes(newData: CleanHypixelData, oldData: CleanHypixelData) {
-        const newDataChanges: PartialCleanHypixelData = {};
-        const oldDataChanges: PartialCleanHypixelData = {};
-
-        const combined = { ...newData, ...oldData };
-
-        Object.keys(combined).forEach((rawKey) => {
-            const key = rawKey as keyof CleanHypixelData;
-            const newValue = newData[key];
-            const oldValue = oldData[key];
-
-            if (newValue !== oldValue) {
-                // Typescript cannot understand that the same key will yield the same type
-                // This seems to be the alternative to get good typings on the output
-
-                // @ts-ignore
-                newDataChanges[key] = newValue;
-                // @ts-ignore
-                oldDataChanges[key] = oldValue;
-            }
-        });
-
-        return {
-            new: newDataChanges,
-            old: oldDataChanges,
-        };
-    }
-
-    private static cleanPlayerData({
-        player: {
-            firstLogin = null,
-            lastLogin = null,
-            lastLogout = null,
-            mcVersionRp = null,
-            userLanguage = 'ENGLISH',
-            lastClaimedReward = null,
-            rewardScore = null,
-            rewardHighScore = null,
-            totalDailyRewards = null,
-            totalRewards = null,
-        },
-    }: RawHypixelPlayer): CleanHypixelPlayer {
-        return {
-            firstLogin: firstLogin,
-            lastLogin: lastLogin,
-            lastLogout: lastLogout,
-            version: mcVersionRp,
-            language: userLanguage,
-            lastClaimedReward: lastClaimedReward,
-            rewardScore: rewardScore,
-            rewardHighScore: rewardHighScore,
-            totalDailyRewards: totalDailyRewards,
-            totalRewards: totalRewards,
-        };
-    }
-
-    private static cleanStatusData(rawHypixelStatus?: RawHypixelStatus) {
-        const { gameType = null, mode = null, map = null } = rawHypixelStatus?.session ?? {};
-
-        return {
-            gameType: gameType,
-            gameMode: mode,
-            gameMap: map,
-        } as CleanHypixelStatus;
+        return modulesRequireData.size > 0;
     }
 
     private static async parse(user: User, newData: CleanHypixelData) {
@@ -250,9 +217,9 @@ export class ModuleData extends Base {
             },
         })) ?? {}) as CleanHypixelData;
 
-        const changes = ModuleData.changes(newData, oldData);
+        const changes = Hypixel.changes(newData, oldData);
 
-        this.container.logger.debug(`${this.constructor.name}:`, 'Parsed data:', changes);
+        this.container.logger.debug(`${this.name}:`, 'Parsed data:', changes);
 
         if (Object.keys(changes.new).length > 0) {
             await this.container.database.activities.create({
