@@ -45,8 +45,10 @@ export class RewardsModule extends Module {
         this.container.logger.debug(
             `User ${user.id}`,
             `${this.constructor.name}:`,
-            now,
-            new Date(now).toLocaleString(),
+            `Reset Time: ${lastResetTime}`,
+            `Now: ${now} ${new Date(now).toLocaleString()}`,
+            now + bounds,
+            now - bounds,
         );
 
         if (isAtResetTime) {

@@ -75,19 +75,17 @@ export class Client extends SapphireClient {
         const startTime = Date.now();
 
         container.database = new PrismaClient();
-
         container.config = (await container.database.config.findFirst()) as Config;
+
+        const client = new Client(container.config);
+
         container.core = new Core();
         container.customPresence = null;
         container.hypixel = new Hypixel();
         container.i18n = new i18n();
 
-        const client = new Client(container.config);
-
         // Must register stores before logging in
-        container.stores.register(
-            new ModuleStore().registerPath(join(__dirname, '..', 'modules')),
-        );
+        container.stores.register(new ModuleStore().registerPath(join(__dirname, '..', 'modules')));
 
         await client.login();
 
