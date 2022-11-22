@@ -526,6 +526,7 @@ export class ConfigCommand extends Command {
                     config.coreCron,
                     config.devMode ? i18n.getMessage('on') : i18n.getMessage('off'),
                     config.hypixelRequestBucket,
+                    config.logLevel,
                     config.ownerGuilds.join(', '),
                     config.owners.join(', '),
                     config.requestTimeout,
