@@ -1,3 +1,4 @@
+import type { config as Config } from '@prisma/client';
 import { type ApplicationCommandRegistry, BucketScope, Command } from '@sapphire/framework';
 import { type CommandInteraction, Constants } from 'discord.js';
 import { BetterEmbed } from '../structures/BetterEmbed';
@@ -212,39 +213,17 @@ export class ConfigCommand extends Command {
     private async core(interaction: CommandInteraction) {
         const { i18n } = interaction;
 
-        this.container.config.core = !this.container.config.core;
+        await this.handleConfigUpdate(
+            interaction,
+            'core',
+            this.container.config.core === false,
+            i18n.getMessage('commandsConfigCoreTitle'),
+            i18n.getMessage('commandsConfigCoreDescription', [
+                this.container.config.core === false ? i18n.getMessage('on') : i18n.getMessage('off'),
+            ]),
+        );
 
         this.container.core[this.container.config.core ? 'cronStart' : 'cronStop']();
-
-        await this.container.database.config.update({
-            data: {
-                core: this.container.config.core,
-            },
-            where: {
-                index: 0,
-            },
-        });
-
-        const coreEmbed = new BetterEmbed(interaction)
-            .setColor(Options.colorsNormal)
-            .setTitle(i18n.getMessage('commandsConfigCoreTitle'))
-            .setDescription(
-                i18n.getMessage('commandsConfigCoreDescription', [
-                    this.container.config.core ? i18n.getMessage('on') : i18n.getMessage('off'),
-                ]),
-            );
-
-        await interaction.editReply({
-            embeds: [coreEmbed],
-        });
-
-        const state = this.container.config.core ? 'on' : 'off';
-
-        this.container.logger.info(
-            interactionLogContext(interaction),
-            `${this.constructor.name}:`,
-            `The core is now ${state}.`,
-        );
     }
 
     private async coreCron(interaction: CommandInteraction) {
@@ -252,68 +231,28 @@ export class ConfigCommand extends Command {
 
         const cron = interaction.options.getString('cron', true);
 
-        this.container.config.coreCron = cron;
-
-        await this.container.database.config.update({
-            data: {
-                coreCron: this.container.config.coreCron,
-            },
-            where: {
-                index: 0,
-            },
-        });
-
-        const coreCronEmbed = new BetterEmbed(interaction)
-            .setColor(Options.colorsNormal)
-            .setTitle(i18n.getMessage('commandsConfigCoreCronTitle'))
-            .setDescription(
-                i18n.getMessage('commandsConfigCoreCronDescription', [
-                    this.container.config.coreCron,
-                ]),
-            );
-
-        await interaction.editReply({
-            embeds: [coreCronEmbed],
-        });
-
-        this.container.logger.info(
-            interactionLogContext(interaction),
-            `${this.constructor.name}:`,
-            `The core cron is now ${cron}.`,
+        await this.handleConfigUpdate(
+            interaction,
+            'coreCron',
+            cron,
+            i18n.getMessage('commandsConfigCoreCronTitle'),
+            i18n.getMessage('commandsConfigCoreCronDescription', [
+                cron,
+            ]),
         );
     }
 
     private async devMode(interaction: CommandInteraction) {
         const { i18n } = interaction;
 
-        this.container.config.devMode = !this.container.config.devMode;
-
-        await this.container.database.config.update({
-            data: {
-                devMode: this.container.config.devMode,
-            },
-            where: {
-                index: 0,
-            },
-        });
-
-        const devModeEmbed = new BetterEmbed(interaction)
-            .setColor(Options.colorsNormal)
-            .setTitle(i18n.getMessage('commandsConfigDevModeTitle'))
-            .setDescription(
-                i18n.getMessage('commandsConfigDevModeDescription', [
-                    this.container.config.devMode ? i18n.getMessage('on') : i18n.getMessage('off'),
-                ]),
-            );
-
-        await interaction.editReply({ embeds: [devModeEmbed] });
-
-        const state = this.container.config.devMode ? 'on' : 'off';
-
-        this.container.logger.info(
-            interactionLogContext(interaction),
-            `${this.constructor.name}:`,
-            `Developer Mode is now ${state}.`,
+        await this.handleConfigUpdate(
+            interaction,
+            'devMode',
+            this.container.config.devMode === false,
+            i18n.getMessage('commandsConfigDevModeTitle'),
+            i18n.getMessage('commandsConfigDevModeDescription', [
+                this.container.config.devMode === false ? i18n.getMessage('on') : i18n.getMessage('off'),
+            ]),
         );
     }
 
@@ -322,32 +261,16 @@ export class ConfigCommand extends Command {
 
         const level = interaction.options.getInteger('level', true);
 
-        this.container.config.logLevel = level;
+        await this.handleConfigUpdate(
+            interaction,
+            'logLevel',
+            level,
+            i18n.getMessage('commandsConfigLogLevelTitle'),
+            i18n.getMessage('commandsConfigLogLevelDescription', [level]),
+        );
 
         // @ts-ignore
         this.container.logger.level = this.container.config.logLevel;
-
-        await this.container.database.config.update({
-            data: {
-                logLevel: this.container.config.logLevel,
-            },
-            where: {
-                index: 0,
-            },
-        });
-
-        const logLevelEmbed = new BetterEmbed(interaction)
-            .setColor(Options.colorsNormal)
-            .setTitle(i18n.getMessage('commandsConfigLogLevelTitle'))
-            .setDescription(i18n.getMessage('commandsConfigLogLevelDescription', [level]));
-
-        await interaction.editReply({ embeds: [logLevelEmbed] });
-
-        this.container.logger.info(
-            interactionLogContext(interaction),
-            `${this.constructor.name}:`,
-            `The minimum log level for logs to appear is now ${level}.`,
-        );
     }
 
     private async hypixelRequestBucket(interaction: CommandInteraction) {
@@ -355,33 +278,15 @@ export class ConfigCommand extends Command {
 
         const amount = interaction.options.getInteger('amount', true);
 
-        this.container.config.hypixelRequestBucket = amount;
+        await this.handleConfigUpdate(
+            interaction,
+            'hypixelRequestBucket',
+            amount,
+            i18n.getMessage('commandsConfigHypixelRequestBucketTitle'),
+            i18n.getMessage('commandsConfigHypixelRequestBucketDescription', [amount]),
+        );
 
         this.container.hypixel.updateBucket();
-
-        await this.container.database.config.update({
-            data: {
-                hypixelRequestBucket: this.container.config.hypixelRequestBucket,
-            },
-            where: {
-                index: 0,
-            },
-        });
-
-        const hypixelRequestBucketEmbed = new BetterEmbed(interaction)
-            .setColor(Options.colorsNormal)
-            .setTitle(i18n.getMessage('commandsConfigHypixelRequestBucketTitle'))
-            .setDescription(
-                i18n.getMessage('commandsConfigHypixelRequestBucketDescription', [amount]),
-            );
-
-        await interaction.editReply({ embeds: [hypixelRequestBucketEmbed] });
-
-        this.container.logger.info(
-            interactionLogContext(interaction),
-            `${this.constructor.name}:`,
-            `The Hypixel request bucket is now ${amount}ms.`,
-        );
     }
 
     private async ownerGuilds(interaction: CommandInteraction) {
@@ -389,30 +294,12 @@ export class ConfigCommand extends Command {
 
         const guilds = interaction.options.getString('guilds', true).split(',');
 
-        this.container.config.ownerGuilds = guilds;
-
-        await this.container.database.config.update({
-            data: {
-                ownerGuilds: this.container.config.ownerGuilds,
-            },
-            where: {
-                index: 0,
-            },
-        });
-
-        const ownerGuildsEmbed = new BetterEmbed(interaction)
-            .setColor(Options.colorsNormal)
-            .setTitle(i18n.getMessage('commandsConfigOwnerGuildsTitle'))
-            .setDescription(
-                i18n.getMessage('commandsConfigOwnerGuildsDescription', [guilds.join(', ')]),
-            );
-
-        await interaction.editReply({ embeds: [ownerGuildsEmbed] });
-
-        this.container.logger.info(
-            interactionLogContext(interaction),
-            `${this.constructor.name}:`,
-            `The owner guilds are now ${guilds.join(', ')}.`,
+        await this.handleConfigUpdate(
+            interaction,
+            'ownerGuilds',
+            guilds,
+            i18n.getMessage('commandsConfigOwnerGuildsTitle'),
+            i18n.getMessage('commandsConfigOwnerGuildsDescription', [guilds.join(', ')]),
         );
     }
 
@@ -421,30 +308,12 @@ export class ConfigCommand extends Command {
 
         const owners = interaction.options.getString('owners', true).split(',');
 
-        this.container.config.owners = owners;
-
-        await this.container.database.config.update({
-            data: {
-                owners: this.container.config.owners,
-            },
-            where: {
-                index: 0,
-            },
-        });
-
-        const ownersEmbed = new BetterEmbed(interaction)
-            .setColor(Options.colorsNormal)
-            .setTitle(i18n.getMessage('commandsConfigOwnersTitle'))
-            .setDescription(
-                i18n.getMessage('commandsConfigOwnersDescription', [owners.join(', ')]),
-            );
-
-        await interaction.editReply({ embeds: [ownersEmbed] });
-
-        this.container.logger.info(
-            interactionLogContext(interaction),
-            `${this.constructor.name}:`,
-            `The owners are now ${owners.join(', ')}.`,
+        await this.handleConfigUpdate(
+            interaction,
+            'owners',
+            owners,
+            i18n.getMessage('commandsConfigOwnersTitle'),
+            i18n.getMessage('commandsConfigOwnersDescription', [owners.join(', ')]),
         );
     }
 
@@ -453,32 +322,12 @@ export class ConfigCommand extends Command {
 
         const milliseconds = interaction.options.getInteger('milliseconds', true);
 
-        this.container.config.requestTimeout = milliseconds;
-
-        await this.container.database.config.update({
-            data: {
-                requestTimeout: this.container.config.requestTimeout,
-            },
-            where: {
-                index: 0,
-            },
-        });
-
-        const requestTimeoutEmbed = new BetterEmbed(interaction)
-            .setColor(Options.colorsNormal)
-            .setTitle(i18n.getMessage('commandsConfigRequestTimeoutTitle'))
-            .setDescription(
-                i18n.getMessage('commandsConfigRequestTimeoutDescription', [milliseconds]),
-            );
-
-        await interaction.editReply({
-            embeds: [requestTimeoutEmbed],
-        });
-
-        this.container.logger.info(
-            interactionLogContext(interaction),
-            `${this.constructor.name}:`,
-            `The request timeout is now ${milliseconds}ms.`,
+        await this.handleConfigUpdate(
+            interaction,
+            'requestTimeout',
+            milliseconds,
+            i18n.getMessage('commandsConfigRequestTimeoutTitle'),
+            i18n.getMessage('commandsConfigRequestTimeoutDescription', [milliseconds]),
         );
     }
 
@@ -487,28 +336,12 @@ export class ConfigCommand extends Command {
 
         const limit = interaction.options.getInteger('limit', true);
 
-        this.container.config.requestRetryLimit = limit;
-
-        await this.container.database.config.update({
-            data: {
-                requestRetryLimit: this.container.config.requestRetryLimit,
-            },
-            where: {
-                index: 0,
-            },
-        });
-
-        const retryLimitEmbed = new BetterEmbed(interaction)
-            .setColor(Options.colorsNormal)
-            .setTitle(i18n.getMessage('commandsConfigRequestRetryLimitTitle'))
-            .setDescription(i18n.getMessage('commandsConfigRequestRetryLimitDescription', [limit]));
-
-        await interaction.editReply({ embeds: [retryLimitEmbed] });
-
-        this.container.logger.info(
-            interactionLogContext(interaction),
-            `${this.constructor.name}:`,
-            `The request retry limit is now ${limit}.`,
+        await this.handleConfigUpdate(
+            interaction,
+            'requestRetryLimit',
+            limit,
+            i18n.getMessage('commandsConfigRequestRetryLimitTitle'),
+            i18n.getMessage('commandsConfigRequestRetryLimitDescription', [limit]),
         );
     }
 
@@ -535,5 +368,38 @@ export class ConfigCommand extends Command {
             );
 
         await interaction.editReply({ embeds: [viewEmbed] });
+    }
+
+    private async handleConfigUpdate(
+        interaction: CommandInteraction,
+        key: keyof Config,
+        value: typeof this.container.config[typeof key],
+        title: string,
+        description: string,
+    ) {
+        // @ts-ignore
+        this.container.config[key] = value;
+
+        await this.container.database.config.update({
+            data: {
+                [key]: this.container.config[key],
+            },
+            where: {
+                index: 0,
+            },
+        });
+
+        const configEmbed = new BetterEmbed(interaction)
+            .setColor(Options.colorsNormal)
+            .setTitle(title)
+            .setDescription(description);
+
+        await interaction.editReply({ embeds: [configEmbed] });
+
+        this.container.logger.info(
+            interactionLogContext(interaction),
+            `${this.constructor.name}:`,
+            `${key} is now ${this.container.config[key]}.`,
+        );
     }
 }

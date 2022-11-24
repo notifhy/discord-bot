@@ -111,7 +111,7 @@
         "message": "Request Retry Limit Updated"
     },
     "commandsConfigViewDescription": {
-        "message": "Core: **$1**\nCore Cron: `$2`\nDeveloper Mode: **$3**\nHypixel Request Bucket: **$4** per minute\nLog Level **$5**\nOwner Guilds: **$6**\nOwners: **$7**\nRequest Timeout: **$8**ms\nRequest Retry Limit: **$9**"
+        "message": "Core: **$1**\nCore Cron: `$2`\nDeveloper Mode: **$3**\nHypixel Request Bucket: **$4** per minute\nLog Level: **$5**\nOwner Guilds: **$6**\nOwners: **$7**\nRequest Timeout: **$8**ms\nRequest Retry Limit: **$9**"
     },
     "commandsConfigViewTitle": {
         "message": "Current Configuration"
