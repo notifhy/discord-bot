@@ -1,5 +1,6 @@
 import { setTimeout } from 'node:timers/promises';
 import { RateLimitManager } from '@sapphire/ratelimits';
+import type { users as User } from '@prisma/client';
 import type {
     CleanHypixelData,
     CleanHypixelPlayer,
@@ -11,6 +12,7 @@ import type {
 import { Base } from './Base';
 import { Time } from '../enums/Time';
 import { Request } from './Request';
+import { Options } from '../utility/Options';
 
 type PartialCleanHypixelData = Partial<CleanHypixelData>;
 
@@ -34,8 +36,26 @@ export class Hypixel extends Base {
         );
     }
 
-    public async request(url: string): Promise<HypixelAPIOk> {
+    public async player(user: User): Promise<CleanHypixelPlayer> {
+        const url = new URL(Options.urlHypixelPlayer);
+        url.searchParams.append('uuid', user.uuid);
+
+        const rawData = (await this.container.hypixel.request(url)) as RawHypixelPlayer;
+        return Hypixel.cleanPlayerData(rawData);
+    }
+
+    public async status(user: User): Promise<CleanHypixelStatus> {
+        const url = new URL(Options.urlHypixelStatus);
+        url.searchParams.append('uuid', user.uuid);
+
+        const rawData = (await this.container.hypixel.request(url)) as RawHypixelStatus;
+        return Hypixel.cleanStatusData(rawData);
+    }
+
+    private async request(rawURL: URL): Promise<HypixelAPIOk> {
         const rateLimit = this.rateLimitManager.acquire('global');
+
+        const url = rawURL.toString();
 
         if (rateLimit.limited) {
             await setTimeout(rateLimit.remainingTime);
@@ -46,7 +66,7 @@ export class Hypixel extends Base {
             );
 
             // May be an infinite loop, room for improvement with a limit?
-            return this.request(url);
+            return this.request(rawURL);
         }
 
         this.container.logger.debug(

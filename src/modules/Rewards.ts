@@ -1,9 +1,18 @@
 import type { users as User } from '@prisma/client';
+import {
+    ButtonInteraction,
+    Constants,
+    MessageActionRow,
+    MessageButton,
+    MessageComponentInteraction,
+} from 'discord.js';
 import { Time } from '../enums/Time';
+import { ModuleErrorHandler } from '../errors/ModuleErrorHandler';
 import { i18n as Internationalization } from '../locales/i18n';
 import { BetterEmbed } from '../structures/BetterEmbed';
 import { Module } from '../structures/Module';
 import { Options } from '../utility/Options';
+import { disableComponents } from '../utility/utility';
 
 export class RewardsModule extends Module {
     public constructor(context: Module.Context, options: Module.Options) {
@@ -30,7 +39,7 @@ export class RewardsModule extends Module {
 
         const hypixelTime = new Date(
             new Date(now).toLocaleString('en-US', {
-                timeZone: 'EST5EDT',
+                timeZone: Options.modulesRewardsHypixelTimezone,
             }),
         ).getTime();
 
@@ -51,12 +60,11 @@ export class RewardsModule extends Module {
             now - bounds,
         );
 
-        if (isAtResetTime) {
+        if (isAtResetTime || true) {
             const discordUser = await this.container.client.users.fetch(user.id);
             const descriptionArray = i18n.getList('modulesRewardsReminderDescription');
-            const description = descriptionArray[
-                Math.floor(Math.random() * descriptionArray.length)
-            ]!;
+            const random = Math.floor(Math.random() * descriptionArray.length);
+            const description = descriptionArray[random]!;
 
             const rewardNotification = new BetterEmbed({
                 text: i18n.getMessage('modulesRewardsFooter'),
@@ -65,8 +73,16 @@ export class RewardsModule extends Module {
                 .setTitle(i18n.getMessage('modulesRewardsReminderTitle'))
                 .setDescription(description);
 
-            await discordUser.send({
+            const message = await discordUser.send({
                 embeds: [rewardNotification],
+                components: [
+                    new MessageActionRow().setComponents(
+                        new MessageButton()
+                            .setCustomId('a')
+                            .setLabel('why')
+                            .setStyle(Constants.MessageButtonStyles.PRIMARY),
+                    ),
+                ],
             });
 
             await this.container.database.rewards.update({
@@ -83,6 +99,40 @@ export class RewardsModule extends Module {
                 `${this.constructor.name}:`,
                 'Delivered reminder.',
             );
+
+            await this.container.client.channels.fetch(message.channelId);
+
+            // eslint-disable-next-line arrow-body-style
+            const componentFilter = (i: MessageComponentInteraction) => {
+                return user.id === i.user.id && i.message.id === message.id;
+            };
+
+            const collector = message.createMessageComponentCollector({
+                componentType: Constants.MessageComponentTypes.BUTTON,
+                filter: componentFilter,
+                max: 1,
+                time: lastResetTime + Time.Day - Date.now(),
+            });
+
+            const disabledRows = disableComponents(message.components);
+
+            collector.on('collect', async (_interaction: ButtonInteraction) => {
+                try {
+                    // handle interactions here
+                } catch (error) {
+                    await new ModuleErrorHandler(error, this, user).init();
+                }
+            });
+
+            collector.on('end', async () => {
+                try {
+                    await message.edit({
+                        components: disabledRows,
+                    })
+                } catch (error) {
+                    await new ModuleErrorHandler(error, this, user).init();
+                }
+            });
         }
     }
 }

@@ -1,7 +1,6 @@
-import { URL } from 'node:url';
 import type { users as User } from '@prisma/client';
 import type { Collection } from 'discord.js';
-import type { CleanHypixelData, RawHypixelPlayer, RawHypixelStatus } from '../@types/Hypixel';
+import type { CleanHypixelData } from '../@types/Hypixel';
 import { Base } from './Base';
 import { BetterEmbed } from './BetterEmbed';
 import { ModuleErrorHandler } from '../errors/ModuleErrorHandler';
@@ -23,36 +22,22 @@ export class Modules extends Base {
     public async fetch(user: User) {
         this.lastUserFetches = 0;
 
-        const playerURL = new URL(Options.urlHypixelPlayer);
-        playerURL.searchParams.append('uuid', user.uuid);
-
-        const rawPlayerData = (await this.container.hypixel.request(
-            playerURL.toString(),
-        )) as RawHypixelPlayer;
+        const data = {
+            ...await this.container.hypixel.player(user),
+            ...Hypixel.cleanStatusData(),
+        };
 
         this.lastUserFetches += 1;
 
-        let rawStatusData;
-
         if (
-            rawPlayerData.player.lastLogin
-            && rawPlayerData.player.lastLogout
-            && rawPlayerData.player.lastLogin > rawPlayerData.player.lastLogout
+            data.lastLogin
+            && data.lastLogout
+            && data.lastLogin > data.lastLogout
         ) {
-            const statusURL = new URL(Options.urlHypixelStatus);
-            statusURL.search = playerURL.search;
-
-            rawStatusData = (await this.container.hypixel.request(
-                statusURL.toString(),
-            )) as RawHypixelStatus;
+            Object.assign(await this.container.hypixel.status(user));
 
             this.lastUserFetches += 1;
         }
-
-        const data = {
-            ...Hypixel.cleanPlayerData(rawPlayerData),
-            ...Hypixel.cleanStatusData(rawStatusData),
-        };
 
         const changes = await Modules.parse(user, data);
 
@@ -86,6 +71,12 @@ export class Modules extends Base {
             }
         }
 
+        this.container.logger.debug(
+            `User ${user.id}`,
+            `${this.name}:`,
+            `Ran ${availableModules.size} modules without data.`,
+        );
+
         await Modules.handleDataChanges(changes, availableModules, user);
     }
 
@@ -107,6 +98,12 @@ export class Modules extends Base {
                 await new ModuleErrorHandler(error, module, user).init();
             }
         }
+
+        this.container.logger.debug(
+            `User ${user.id}`,
+            `${this.name}:`,
+            `Ran ${availableModules.size} modules without data.`,
+        );
     }
 
     public static async handleDataChanges(
