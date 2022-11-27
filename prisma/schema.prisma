@@ -70,9 +70,9 @@ model modules {
 
 model rewards {
   id                String  @id @db.VarChar(20)
-  claimNotification Boolean @default(true)
   delay             Int     @default(0)
   interval          Int     @default(1800000)
+  lastClaimedReward Float   @default(0)
   lastNotified      Float   @default(0)
   milestones        Boolean @default(true)
   users             users?

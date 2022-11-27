@@ -25,24 +25,26 @@ export class RewardsModule extends Module {
         });
     }
 
+    /**
+     * - Cron
+     * - Continues alerting until user presses the button
+     * - Button validates whether a user has actually claim their reward or not
+     * - TODO: Add "missedNotifications" to prevent inactive users from killing this system
+     */
     public override async cron(user: User) {
-        /**
-         * Rewards module will:
-         * - Will operate on an interval (30 minutes) and check for reminders to send out
-         * - WIll operate on interactions
-         *  - Actually validate if they actually claimed it OR
-         *  - Simply update database or whatever
-         */
+        const config = await this.container.database.rewards.findUniqueOrThrow({
+            where: {
+                id: user.id,
+            },
+        });
 
         const i18n = new Internationalization(user.locale);
-
         const now = Date.now();
-
         const lastResetTime = this.lastResetTime();
-
         const bounds = Time.Minute * 15;
 
-        const isAtResetTime = now + bounds > lastResetTime && now - bounds < lastResetTime;
+        const surpassedInterval = config.lastNotified < lastResetTime
+            || config.lastNotified + config.interval < Date.now();
 
         this.container.logger.debug(
             `User ${user.id}`,
@@ -53,8 +55,7 @@ export class RewardsModule extends Module {
             now - bounds,
         );
 
-        if (isAtResetTime) {
-            const discordUser = await this.container.client.users.fetch(user.id);
+        if (lastResetTime + config.delay < Date.now()) {
             const descriptionArray = i18n.getList('modulesRewardsReminderDescription');
             const random = Math.floor(Math.random() * descriptionArray.length);
             const description = descriptionArray[random]!;
@@ -66,131 +67,94 @@ export class RewardsModule extends Module {
                 .setTitle(i18n.getMessage('modulesRewardsReminderTitle'))
                 .setDescription(description);
 
-            const customId = String(Date.now());
+            if (config.lastNotified < lastResetTime) {
+                const discordUser = await this.container.client.users.fetch(user.id);
+                const customId = String(Date.now());
 
-            const message = await discordUser.send({
-                embeds: [rewardNotification],
-                components: [
-                    new MessageActionRow().setComponents(
-                        new MessageButton()
-                            .setCustomId(customId)
-                            .setLabel(i18n.getMessage('modulesRewardsCheckClaimStatusLabel'))
-                            .setStyle(Constants.MessageButtonStyles.PRIMARY),
-                    ),
-                ],
-            });
+                const message = await discordUser.send({
+                    embeds: [rewardNotification],
+                    components: [
+                        new MessageActionRow().setComponents(
+                            new MessageButton()
+                                .setCustomId(customId)
+                                .setLabel(i18n.getMessage('modulesRewardsCheckClaimStatusLabel'))
+                                .setStyle(Constants.MessageButtonStyles.PRIMARY),
+                        ),
+                    ],
+                });
 
-            await this.container.database.rewards.update({
-                data: {
-                    lastNotified: Date.now(),
-                },
-                where: {
-                    id: user.id,
-                },
-            });
+                await this.container.database.rewards.update({
+                    data: {
+                        lastNotified: Date.now(),
+                    },
+                    where: {
+                        id: user.id,
+                    },
+                });
 
-            this.container.logger.info(
-                `User ${user.id}`,
-                `${this.constructor.name}:`,
-                'Delivered reminder.',
-            );
-
-            await this.container.client.channels.fetch(message.channelId);
-
-            // eslint-disable-next-line arrow-body-style
-            const componentFilter = (i: MessageComponentInteraction) => {
-                return (
-                    user.id === i.user.id && i.message.id === message.id && i.customId === customId
+                this.container.logger.info(
+                    `User ${user.id}`,
+                    `${this.constructor.name}:`,
+                    'Delivered reminder.',
                 );
-            };
 
-            const collector = message.createMessageComponentCollector({
-                componentType: Constants.MessageComponentTypes.BUTTON,
-                filter: componentFilter,
-                time: lastResetTime + Time.Day - Date.now(),
-            });
+                await this.container.client.channels.fetch(message.channelId);
 
-            const disabledRows = disableComponents(message.components);
+                // eslint-disable-next-line arrow-body-style
+                const componentFilter = (i: MessageComponentInteraction) => {
+                    return (
+                        user.id === i.user.id
+                        && i.message.id === message.id
+                        && i.customId === customId
+                    );
+                };
 
-            collector.on('collect', async (interaction: ButtonInteraction) => {
-                try {
-                    await this.interaction(user, interaction);
-                } catch (error) {
-                    await new InteractionErrorHandler(error, interaction).init();
-                }
-            });
+                const collector = message.createMessageComponentCollector({
+                    componentType: Constants.MessageComponentTypes.BUTTON,
+                    filter: componentFilter,
+                    time: lastResetTime + Time.Day - Date.now(),
+                });
 
-            collector.on('end', async () => {
-                try {
-                    await message.edit({
-                        components: disabledRows,
-                    });
-                } catch (error) {
-                    new ErrorHandler(error).init();
-                }
-            });
-        } else {
-            const config = await this.container.database.rewards.findUniqueOrThrow({
-                where: {
-                    id: user.id,
-                },
-            });
+                const disabledRows = disableComponents(message.components);
 
-            const surpassedInterval = config.lastNotified < lastResetTime
-                || config.lastNotified + config.interval < Date.now();
+                collector.on('collect', async (interaction: ButtonInteraction) => {
+                    try {
+                        await this.interaction(user, interaction);
+                    } catch (error) {
+                        await new InteractionErrorHandler(error, interaction).init();
+                    }
+                });
 
-            if (surpassedInterval === false) {
-                return;
+                collector.on('end', async () => {
+                    try {
+                        await message.edit({
+                            components: disabledRows,
+                        });
+                    } catch (error) {
+                        new ErrorHandler(error).init();
+                    }
+                });
+            } else if (surpassedInterval && config.lastClaimedReward < lastResetTime) {
+                const discordUser = await this.container.client.users.fetch(user.id);
+                await discordUser.send({
+                    embeds: [rewardNotification],
+                });
+
+                await this.container.database.rewards.update({
+                    data: {
+                        lastNotified: Date.now(),
+                    },
+                    where: {
+                        id: user.id,
+                    },
+                });
+
+                this.container.logger.info(
+                    `User ${user.id}`,
+                    `${this.constructor.name}:`,
+                    'Delivered follow up reminder.',
+                );
             }
-
-            const player = await this.container.hypixel.player(user);
-
-            // Is the user's last claimed reward between the last midnight and the coming midnight
-            const normalizedLastClaimed = Math.ceil((player.lastClaimedReward ?? 0) / 1000) * 1000;
-            const hasClaimed = lastResetTime < normalizedLastClaimed;
-
-            if (hasClaimed) {
-                return;
-            }
-
-            const discordUser = await this.container.client.users.fetch(user.id);
-            const descriptionArray = i18n.getList('modulesRewardsReminderDescription');
-            const random = Math.floor(Math.random() * descriptionArray.length);
-            const description = descriptionArray[random]!;
-
-            const rewardNotification = new BetterEmbed({
-                text: i18n.getMessage('modulesRewardsFooter'),
-            })
-                .setColor(Options.colorsNormal)
-                .setTitle(i18n.getMessage('modulesRewardsReminderTitle'))
-                .setDescription(description);
-
-            await discordUser.send({
-                embeds: [rewardNotification],
-                components: [
-                    new MessageActionRow().setComponents(
-                        new MessageButton()
-                            .setCustomId('a')
-                            .setLabel('why')
-                            .setStyle(Constants.MessageButtonStyles.PRIMARY),
-                    ),
-                ],
-            });
-
-            await this.container.database.rewards.update({
-                data: {
-                    lastNotified: Date.now(),
-                },
-                where: {
-                    id: user.id,
-                },
-            });
-
-            this.container.logger.info(
-                `User ${user.id}`,
-                `${this.constructor.name}:`,
-                'Delivered follow up reminder.',
-            );
         }
     }
 
@@ -203,13 +167,22 @@ export class RewardsModule extends Module {
         });
 
         const i18n = new Internationalization(user.locale);
-
         const lastResetTime = this.lastResetTime();
 
         // Is the user's last claimed reward between the last midnight and the coming midnight
-        const hasClaimed = lastResetTime < Math.ceil((player.lastClaimedReward ?? 0) / 1000) * 1000;
+        const normalizedLastClaimed = Math.ceil((player.lastClaimedReward ?? 0) / 1000) * 1000;
+        const hasClaimed = lastResetTime < normalizedLastClaimed;
 
         if (hasClaimed) {
+            await this.container.database.rewards.update({
+                data: {
+                    lastClaimedReward: player.lastClaimedReward ?? Date.now(),
+                },
+                where: {
+                    id: user.id,
+                },
+            });
+
             const milestone = Options.modulesRewardsMilestones.find(
                 (item) => item === player.rewardScore,
             );
