@@ -554,23 +554,32 @@
     "modulesFriendsName": {
         "message": "Friends"
     },
-    "modulesRewardsClaimNotificationDescription": {
+    "modulesRewardsCheckClaimStatusLabel": {
+        "message": "Check Claim Status"
+    },
+    "modulesRewardsClaimedNotificationDescription": {
         "message": "You now have a daily streak of $1 with $2 total daily rewards!"
     },
-    "modulesRewardsClaimNotificationTitle": {
+    "modulesRewardsClaimedNotificationTitle": {
         "message": "Daily Reward Claimed"
     },
     "modulesRewardsFooter": {
         "message": "Notification"
-    },
-    "modulesRewardsName": {
-        "message": "Rewards"
     },
     "modulesRewardsMilestoneDescription": {
         "message": "🎉 You have reached a daily streak of $1!"
     },
     "modulesRewardsMilestoneTitle": {
         "message": "Congratulations"
+    },
+    "modulesRewardsName": {
+        "message": "Rewards"
+    },
+    "modulesRewardsNotClaimedNotificationDescription": {
+        "message": "You haven't claimed your daily reward yet!"
+    },
+    "modulesRewardsNotClaimedNotificationTitle": {
+        "message": "Daily Reward Not Claimed"
     },
     "modulesRewardsReminderDescription": {
         "list": [
