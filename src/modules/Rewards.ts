@@ -30,6 +30,8 @@ export class RewardsModule extends Module {
      * - Continues alerting until user presses the button
      * - Button validates whether a user has actually claim their reward or not
      * - TODO: Add "missedNotifications" to prevent inactive users from killing this system
+     * - TODO: Proper interaction listeners that don't get wiped on restart
+     * - TODO: Button cooldown?
      */
     public override async cron(user: User) {
         const config = await this.container.database.rewards.findUniqueOrThrow({
@@ -41,7 +43,6 @@ export class RewardsModule extends Module {
         const i18n = new Internationalization(user.locale);
         const now = Date.now();
         const lastResetTime = this.lastResetTime();
-        const bounds = Time.Minute * 15;
 
         const surpassedInterval = config.lastNotified < lastResetTime
             || config.lastNotified + config.interval < Date.now();
@@ -51,8 +52,6 @@ export class RewardsModule extends Module {
             `${this.constructor.name}:`,
             `Reset Time: ${lastResetTime}`,
             `Now: ${now} ${new Date(now).toLocaleString()}`,
-            now + bounds,
-            now - bounds,
         );
 
         if (lastResetTime + config.delay < Date.now()) {
@@ -154,7 +153,19 @@ export class RewardsModule extends Module {
                     `${this.constructor.name}:`,
                     'Delivered follow up reminder.',
                 );
+            } else {
+                this.container.logger.debug(
+                    `User ${user.id}`,
+                    `${this.constructor.name}:`,
+                    'No appropriate notification.',
+                );
             }
+        } else {
+            this.container.logger.debug(
+                `User ${user.id}`,
+                `${this.constructor.name}:`,
+                'Delay not surpassed.',
+            );
         }
     }
 
@@ -213,7 +224,10 @@ export class RewardsModule extends Module {
                     .setColor(Options.colorsNormal)
                     .setTitle(i18n.getMessage('modulesRewardsClaimedNotificationTitle'))
                     .setDescription(
-                        i18n.getMessage('modulesRewardsNotClaimedNotificationDescription'),
+                        i18n.getMessage('modulesRewardsClaimedNotificationDescription', [
+                            player.rewardScore ?? -1,
+                            player.totalDailyRewards ?? -1,
+                        ]),
                     );
 
                 await interaction.reply({
@@ -238,7 +252,7 @@ export class RewardsModule extends Module {
             const notClaimedNotification = new BetterEmbed({
                 text: i18n.getMessage('modulesRewardsFooter'),
             })
-                .setColor(Options.colorsNormal)
+                .setColor(Options.colorsWarning)
                 .setTitle(i18n.getMessage('modulesRewardsNotClaimedNotificationTitle'))
                 .setDescription(i18n.getMessage('modulesRewardsNotClaimedNotificationDescription'));
 
