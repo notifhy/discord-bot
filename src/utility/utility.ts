@@ -1,4 +1,5 @@
 import { container } from '@sapphire/framework';
+import type { APIActionRowComponent, APIMessageActionRowComponent } from 'discord-api-types/v10';
 import {
     type AwaitMessageCollectorOptionsParams,
     type CommandInteraction,
@@ -112,17 +113,19 @@ export function cleanGameMode(mode: string) {
         return 'Lobby';
     }
 
-    const gameMode = modes.find(
-        ({ key }) => (Array.isArray(key) ? key.includes(mode) : key === mode),
-    );
+    const gameMode = modes.find(({ key }) => {
+        if (Array.isArray(key)) {
+            return key.includes(mode);
+        }
+
+        return key === mode;
+    });
 
     return gameMode?.name ?? mode;
 }
 
 export function cleanGameType(type: string) {
-    const gameType = gameTypes[
-        type as keyof typeof gameTypes
-    ];
+    const gameType = gameTypes[type as keyof typeof gameTypes];
 
     return gameType ?? type;
 }
@@ -188,7 +191,9 @@ export function createOffset(date = new Date()): string {
     return `${sign + hours}:${minutes}`;
 }
 
-export function disableComponents(messageActionRows: MessageActionRow[]) {
+export function disableComponents(
+    messageActionRows: APIActionRowComponent<APIMessageActionRowComponent>[] | MessageActionRow[],
+) {
     const actionRows = messageActionRows.map((row) => new MessageActionRow(row));
 
     actionRows.forEach((actionRow) => {

@@ -1,19 +1,14 @@
 import type { users as User } from '@prisma/client';
-import {
-    ButtonInteraction,
-    Constants,
-    MessageActionRow,
-    MessageButton,
-    MessageComponentInteraction,
-} from 'discord.js';
+import { ButtonInteraction, Constants, Message, MessageActionRow, MessageButton } from 'discord.js';
+import { CustomIdType } from '../enums/CustomIdType';
 import { Time } from '../enums/Time';
 import { ErrorHandler } from '../errors/ErrorHandler';
-import { InteractionErrorHandler } from '../errors/InteractionErrorHandler';
 import { i18n as Internationalization } from '../locales/i18n';
 import { BetterEmbed } from '../structures/BetterEmbed';
+import { CustomId } from '../structures/CustomId';
 import { Module } from '../structures/Module';
 import { Options } from '../utility/Options';
-import { disableComponents } from '../utility/utility';
+import { cleanLength, disableComponents } from '../utility/utility';
 
 export class RewardsModule extends Module {
     public constructor(context: Module.Context, options: Module.Options) {
@@ -30,7 +25,6 @@ export class RewardsModule extends Module {
      * - Continues alerting until user presses the button
      * - Button validates whether a user has actually claim their reward or not
      * - TODO: Add "missedNotifications" to prevent inactive users from killing this system
-     * - TODO: Proper interaction listeners that don't get wiped on restart
      * - TODO: Button cooldown?
      */
     public override async cron(user: User) {
@@ -42,10 +36,10 @@ export class RewardsModule extends Module {
 
         const i18n = new Internationalization(user.locale);
         const now = Date.now();
-        const lastResetTime = this.lastResetTime();
+        const lastResetTime = this.lastResetTime(now);
 
         const surpassedInterval = config.lastNotified < lastResetTime
-            || config.lastNotified + config.interval < Date.now();
+            || config.lastNotified + config.interval < now;
 
         this.container.logger.debug(
             `User ${user.id}`,
@@ -54,7 +48,7 @@ export class RewardsModule extends Module {
             `Now: ${now} ${new Date(now).toLocaleString()}`,
         );
 
-        if (lastResetTime + config.delay < Date.now()) {
+        if (lastResetTime + config.delay <= now) {
             const descriptionArray = i18n.getList('modulesRewardsReminderDescription');
             const random = Math.floor(Math.random() * descriptionArray.length);
             const description = descriptionArray[random]!;
@@ -68,7 +62,10 @@ export class RewardsModule extends Module {
 
             if (config.lastNotified < lastResetTime) {
                 const discordUser = await this.container.client.users.fetch(user.id);
-                const customId = String(Date.now());
+                const customId = CustomId.create({
+                    module: this.name,
+                    type: CustomIdType.Module,
+                });
 
                 const message = await discordUser.send({
                     embeds: [rewardNotification],
@@ -84,7 +81,7 @@ export class RewardsModule extends Module {
 
                 await this.container.database.rewards.update({
                     data: {
-                        lastNotified: Date.now(),
+                        lastNotified: now,
                     },
                     where: {
                         id: user.id,
@@ -99,40 +96,25 @@ export class RewardsModule extends Module {
 
                 await this.container.client.channels.fetch(message.channelId);
 
-                // eslint-disable-next-line arrow-body-style
-                const componentFilter = (i: MessageComponentInteraction) => {
-                    return (
-                        user.id === i.user.id
-                        && i.message.id === message.id
-                        && i.customId === customId
-                    );
-                };
-
-                const collector = message.createMessageComponentCollector({
-                    componentType: Constants.MessageComponentTypes.BUTTON,
-                    filter: componentFilter,
-                    time: lastResetTime + Time.Day - Date.now(),
-                });
-
                 const disabledRows = disableComponents(message.components);
 
-                collector.on('collect', async (interaction: ButtonInteraction) => {
-                    try {
-                        await this.interaction(user, interaction);
-                    } catch (error) {
-                        await new InteractionErrorHandler(error, interaction).init();
-                    }
-                });
+                const endBoundary = now - lastResetTime + Time.Day;
 
-                collector.on('end', async () => {
+                setTimeout(async () => {
                     try {
                         await message.edit({
                             components: disabledRows,
                         });
+
+                        this.container.logger.debug(
+                            `User ${user.id}`,
+                            `${this.constructor.name}:`,
+                            `Disabled button after no activity for ${cleanLength(endBoundary)}.`,
+                        );
                     } catch (error) {
                         new ErrorHandler(error).init();
                     }
-                });
+                }, endBoundary);
             } else if (surpassedInterval && config.lastClaimedReward < lastResetTime) {
                 const discordUser = await this.container.client.users.fetch(user.id);
                 await discordUser.send({
@@ -169,7 +151,7 @@ export class RewardsModule extends Module {
         }
     }
 
-    private async interaction(user: User, interaction: ButtonInteraction) {
+    public override async interaction(user: User, interaction: ButtonInteraction) {
         const player = await this.container.hypixel.player(user);
         const config = await this.container.database.rewards.findUniqueOrThrow({
             where: {
@@ -241,13 +223,22 @@ export class RewardsModule extends Module {
                 );
             }
 
-            const message = await interaction.channel!.messages.fetch(interaction.message.id);
+            const { message } = interaction;
 
-            const disabledRows = disableComponents(message.components);
+            const disabledRows = disableComponents(message.components ?? []);
 
-            await message.edit({
-                components: disabledRows,
-            });
+            if (message instanceof Message) {
+                await message.edit({
+                    components: disabledRows,
+                });
+            } else {
+                // maybe works
+                const dm = await (await this.container.client.users.fetch(user.id)).createDM();
+                const newMessage = await dm.messages.fetch(message.id);
+                await newMessage.edit({
+                    components: disabledRows,
+                });
+            }
         } else {
             const notClaimedNotification = new BetterEmbed({
                 text: i18n.getMessage('modulesRewardsFooter'),
@@ -263,8 +254,8 @@ export class RewardsModule extends Module {
         }
     }
 
-    private lastResetTime() {
-        const now = Date.now();
+    private lastResetTime(nowParam?: number) {
+        const now = nowParam ?? Date.now();
 
         const hypixelTime = new Date(
             new Date(now).toLocaleString('en-US', {
