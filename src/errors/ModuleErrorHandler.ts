@@ -72,13 +72,13 @@ export class ModuleErrorHandler<E> extends BaseErrorHandler<E> {
 
                     await user.send({ embeds: [alertEmbed] });
                 } catch (error3) {
-                    this.log(`${this.constructor.name}:`, 'Failed to send DM alert', error3);
+                    this.log('Failed to send DM alert', error3);
                 }
             // fall through - only send message if remotely possible
             case RESTJSONErrorCodes.UnknownUser:
             case RESTJSONErrorCodes.CannotSendMessagesToThisUser:
                 try {
-                    this.log(`${this.constructor.name}:`, 'Attempting to disable module');
+                    this.log('Attempting to disable module');
 
                     const modules = await this.disableModule();
 
@@ -94,7 +94,6 @@ export class ModuleErrorHandler<E> extends BaseErrorHandler<E> {
                     });
 
                     this.log(
-                        `${this.constructor.name}:`,
                         'New modules:',
                         modules,
                         'Handled Discord API error:',
@@ -102,7 +101,6 @@ export class ModuleErrorHandler<E> extends BaseErrorHandler<E> {
                     );
                 } catch (error3) {
                     this.log(
-                        `${this.constructor.name}:`,
                         'Failed to disable module and send system message',
                         error3,
                     );
@@ -111,7 +109,6 @@ export class ModuleErrorHandler<E> extends BaseErrorHandler<E> {
                 break;
             default:
                 this.log(
-                    `${this.constructor.name}:`,
                     'Could not handle Discord API error:',
                     error.code,
                 );
@@ -143,14 +140,13 @@ export class ModuleErrorHandler<E> extends BaseErrorHandler<E> {
             for (const promise of settledPromises) {
                 if (promise.status === 'rejected') {
                     this.log(
-                        `${this.constructor.name}:`,
                         'Failed to handle part of the HTTPError:',
                         promise.reason,
                     );
                 }
             }
         } catch (error) {
-            this.log(`${this.constructor.name}:`, 'Failed to send DM alert');
+            this.log('Failed to send DM alert');
 
             new ErrorHandler(error, this.incidentId).init();
         }

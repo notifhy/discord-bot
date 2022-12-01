@@ -61,7 +61,7 @@ export class Hypixel extends Base {
             await setTimeout(rateLimit.remainingTime);
 
             this.container.logger.warn(
-                `${this.constructor.name}:`,
+                this,
                 `Rate limited for ${rateLimit.remainingTime}ms on route ${url}.`,
             );
 
@@ -70,8 +70,8 @@ export class Hypixel extends Base {
         }
 
         this.container.logger.debug(
-            `${this.constructor.name}:`,
-            `Request to Hypixel on route ${url}.`,
+            this,
+            `Request on route ${url}.`,
         );
 
         const response = await Request.request(url, {

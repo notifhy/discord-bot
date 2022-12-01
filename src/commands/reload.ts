@@ -7,9 +7,9 @@ import {
 } from '@sapphire/framework';
 import { type CommandInteraction, Constants } from 'discord.js';
 import { BetterEmbed } from '../structures/BetterEmbed';
+import { Logger } from '../structures/Logger';
 import type { Module } from '../structures/Module';
 import { Options } from '../utility/Options';
-import { interactionLogContext } from '../utility/utility';
 
 export class ReloadCommand extends Command {
     public constructor(context: Command.Context, options: Command.Options) {
@@ -120,8 +120,8 @@ export class ReloadCommand extends Command {
         const timeTaken = Date.now() - now;
 
         this.container.logger.info(
-            interactionLogContext(interaction),
-            `${this.constructor.name}:`,
+            this,
+            Logger.interactionLogContext(interaction),
             `All imports have been reloaded after ${timeTaken} milliseconds.`,
         );
 
@@ -147,8 +147,8 @@ export class ReloadCommand extends Command {
                 );
 
             this.container.logger.warn(
-                interactionLogContext(interaction),
-                `${this.constructor.name}:`,
+                this,
+                Logger.interactionLogContext(interaction),
                 `Unknown item: ${typeName}.${item}.`,
             );
 
@@ -172,8 +172,8 @@ export class ReloadCommand extends Command {
         const timeTaken = Date.now() - now;
 
         this.container.logger.info(
-            interactionLogContext(interaction),
-            `${this.constructor.name}:`,
+            this,
+            Logger.interactionLogContext(interaction),
             `${typeName}.${item} was successfully reloaded after ${timeTaken} milliseconds.`,
         );
 

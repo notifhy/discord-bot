@@ -2,8 +2,8 @@ import { EmbedLimits } from '@sapphire/discord-utilities';
 import { type ApplicationCommandRegistry, BucketScope, Command } from '@sapphire/framework';
 import { type CommandInteraction, Constants, Formatters } from 'discord.js';
 import { BetterEmbed } from '../structures/BetterEmbed';
+import { Logger } from '../structures/Logger';
 import { Options } from '../utility/Options';
-import { interactionLogContext } from '../utility/utility';
 
 export class EvalCommand extends Command {
     public constructor(context: Command.Context, options: Command.Options) {
@@ -97,16 +97,16 @@ export class EvalCommand extends Command {
             }
 
             this.container.logger.info(
-                interactionLogContext(interaction),
-                `${this.constructor.name}:`,
+                this,
+                Logger.interactionLogContext(interaction),
                 output,
             );
 
             await interaction.editReply({ embeds: [evalEmbed] });
         } catch (error) {
             this.container.logger.warn(
-                interactionLogContext(interaction),
-                `${this.constructor.name}:`,
+                this,
+                Logger.interactionLogContext(interaction),
                 'Encountered error during eval.',
                 error,
             );

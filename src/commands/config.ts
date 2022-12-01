@@ -2,8 +2,8 @@ import type { config as Config } from '@prisma/client';
 import { type ApplicationCommandRegistry, BucketScope, Command } from '@sapphire/framework';
 import { type CommandInteraction, Constants } from 'discord.js';
 import { BetterEmbed } from '../structures/BetterEmbed';
+import { Logger } from '../structures/Logger';
 import { Options } from '../utility/Options';
-import { interactionLogContext } from '../utility/utility';
 
 export class ConfigCommand extends Command {
     public constructor(context: Command.Context, options: Command.Options) {
@@ -397,8 +397,8 @@ export class ConfigCommand extends Command {
         await interaction.editReply({ embeds: [configEmbed] });
 
         this.container.logger.info(
-            interactionLogContext(interaction),
-            `${this.constructor.name}:`,
+            this,
+            Logger.interactionLogContext(interaction),
             `${key} is now ${this.container.config[key]}.`,
         );
     }

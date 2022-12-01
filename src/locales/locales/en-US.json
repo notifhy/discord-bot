@@ -583,17 +583,17 @@
     },
     "modulesRewardsReminderDescription": {
         "list": [
-            "This is your reminder to claim your daily reward!\n\nUse the button below once you claim the daily reward.",
-            "This is 🎉 your 👈➡ reminder 🔔 to claim your daily 📆 reward 🏆🏆 🏆🙄\n\nUse the button ⏬ below ⏬ once you claim the daily reward. 👍",
-            "This here be yer reminder to claim yer daily reward!\n\nUse the button below once ye claim the daily reward.",
-            "Your daily reward is available to claim!\n\nUse the button below once you claim the daily reward.",
-            "You haven't claimed your daily reward yet!\n\nUse the button below once you claim the daily reward.",
-            "This is a reminder to claim your daily reward!\n\nUse the button below once you claim the daily reward.",
-            "You should go collect your daily reward!\n\nUse the button below once you claim the daily reward.",
-            "Go claim your daily reward!\n\nUse the button below once you claim the daily reward.",
-            "It is time to go claim your daily reward!\n\nUse the button below once you claim the daily reward.",
-            "Your daily reward awaits collection!\n\nUse the button below once you claim the daily reward.",
-            "Your daily reward is waiting!\n\nUse the button below once you claim the daily reward."
+            "This is your reminder to claim your daily reward!",
+            "This is 🎉 your 👈➡ reminder 🔔 to claim your daily 📆 reward 🏆🏆 🏆🙄",
+            "This here be yer reminder to claim yer daily reward!",
+            "Your daily reward is available to claim!",
+            "You haven't claimed your daily reward yet!",
+            "This is a reminder to claim your daily reward!",
+            "You should go collect your daily reward!",
+            "Go claim your daily reward!",
+            "It is time to go claim your daily reward!",
+            "Your daily reward awaits collection!",
+            "Your daily reward is waiting!"
         ]
     },
     "modulesRewardsReminderTitle": {

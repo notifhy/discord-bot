@@ -11,7 +11,7 @@ export class WarnListener extends Listener {
     }
 
     public run(info: string) {
-        this.container.logger.warn(`${this.constructor.name}:`, info);
+        this.container.logger.warn(this, info);
 
         new Sentry().setSeverity('warning').captureException(info);
     }

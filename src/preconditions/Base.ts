@@ -1,23 +1,23 @@
 import { Precondition } from '@sapphire/framework';
 import type { CommandInteraction, ContextMenuInteraction } from 'discord.js';
 import { i18n } from '../locales/i18n';
-import { interactionLogContext } from '../utility/utility';
+import { Logger } from '../structures/Logger';
 
 export class BasePrecondition extends Precondition {
     public override async chatInputRun(interaction: CommandInteraction) {
-        return this.interaction(interaction);
+        return this.command(interaction);
     }
 
     public override async contextMenuRun(interaction: ContextMenuInteraction) {
-        return this.interaction(interaction);
+        return this.command(interaction);
     }
 
-    private async interaction(action: CommandInteraction | ContextMenuInteraction) {
-        Object.defineProperty(action, 'i18n', {
-            value: new i18n(action.locale),
+    private async command(interaction: CommandInteraction | ContextMenuInteraction) {
+        Object.defineProperty(interaction, 'i18n', {
+            value: new i18n(interaction.locale),
         });
 
-        await action.deferReply({
+        await interaction.deferReply({
             ephemeral: true,
         });
 
@@ -26,24 +26,24 @@ export class BasePrecondition extends Precondition {
                 locale: true,
             },
             where: {
-                id: action.user.id,
+                id: interaction.user.id,
             },
         });
 
-        if (user && user.locale !== action.locale) {
+        if (user && user.locale !== interaction.locale) {
             await this.container.database.users.update({
                 data: {
-                    locale: action.locale,
+                    locale: interaction.locale,
                 },
                 where: {
-                    id: action.user.id,
+                    id: interaction.user.id,
                 },
             });
 
             this.container.logger.info(
-                interactionLogContext(action),
-                `${this.constructor.name}:`,
-                `Updated user locale to ${action.locale}`,
+                this,
+                Logger.interactionLogContext(interaction),
+                `Updated user locale to ${interaction.locale}.`,
             );
         }
 

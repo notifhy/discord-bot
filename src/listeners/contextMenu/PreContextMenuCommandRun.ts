@@ -3,7 +3,8 @@ import {
     Listener,
     type PreContextMenuCommandRunPayload,
 } from '@sapphire/framework';
-import { contextMenuResolver, interactionLogContext } from '../../utility/utility';
+import { Logger } from '../../structures/Logger';
+import { contextMenuResolver } from '../../utility/utility';
 
 export class PreContextMenuCommandRunListener extends Listener {
     public constructor(context: Listener.Context, options: Listener.Options) {
@@ -16,8 +17,8 @@ export class PreContextMenuCommandRunListener extends Listener {
 
     public async run(payload: PreContextMenuCommandRunPayload) {
         this.container.logger.info(
-            interactionLogContext(payload.interaction),
-            `${this.constructor.name}:`,
+            this,
+            Logger.interactionLogContext(payload.interaction),
             contextMenuResolver(payload.interaction),
         );
     }

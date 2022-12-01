@@ -27,7 +27,6 @@ export class InteractionPreconditionErrorHandler<
     public async init() {
         try {
             this.log(
-                `${this.constructor.name}:`,
                 `${this.interaction.user.id} failed ${this.error.identifier}.`,
             );
 

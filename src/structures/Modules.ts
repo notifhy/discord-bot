@@ -6,6 +6,7 @@ import { BetterEmbed } from './BetterEmbed';
 import { ModuleErrorHandler } from '../errors/ModuleErrorHandler';
 import { Changes, Hypixel } from './Hypixel';
 import { i18n as Internationalization } from '../locales/i18n';
+import { Logger } from './Logger';
 import type { Module, ModuleOptions } from './Module';
 import { Options } from '../utility/Options';
 
@@ -60,8 +61,8 @@ export class Modules extends Base {
         for (const module of availableModules.values()) {
             try {
                 this.container.logger.debug(
-                    `User ${user.id}`,
-                    `${this.name}:`,
+                    this,
+                    Logger.moduleContext(user),
                     `Running ${module.name} cron with data.`,
                 );
 
@@ -72,8 +73,8 @@ export class Modules extends Base {
         }
 
         this.container.logger.debug(
-            `User ${user.id}`,
-            `${this.name}:`,
+            this,
+            Logger.moduleContext(user),
             `Ran ${availableModules.size} modules without data.`,
         );
 
@@ -88,8 +89,8 @@ export class Modules extends Base {
         for (const module of availableModules.values()) {
             try {
                 this.container.logger.debug(
-                    `User ${user.id}`,
-                    `${this.name}:`,
+                    this,
+                    Logger.moduleContext(user),
                     `Running ${module.name} cron without data.`,
                 );
 
@@ -100,8 +101,8 @@ export class Modules extends Base {
         }
 
         this.container.logger.debug(
-            `User ${user.id}`,
-            `${this.name}:`,
+            this,
+            Logger.moduleContext(user),
             `Ran ${availableModules.size} modules without data.`,
         );
     }
@@ -129,8 +130,8 @@ export class Modules extends Base {
                 );
 
                 this.container.logger.info(
-                    `User ${user.id}`,
-                    `${this.name}:`,
+                    this,
+                    Logger.moduleContext(user),
                     'Missing Online Status API data.',
                 );
             } else if (Modules.isOnlineAPIReceived(changes)) {
@@ -146,8 +147,8 @@ export class Modules extends Base {
                 );
 
                 this.container.logger.info(
-                    `User ${user.id}`,
-                    `${this.name}:`,
+                    this,
+                    Logger.moduleContext(user),
                     'Received Online Status API data.',
                 );
             }
@@ -216,7 +217,7 @@ export class Modules extends Base {
 
         const changes = Hypixel.changes(newData, oldData);
 
-        this.container.logger.debug(`${this.name}:`, 'Parsed data:', changes);
+        this.container.logger.debug(this, 'Parsed data:', changes);
 
         if (Object.keys(changes.new).length > 0) {
             await this.container.database.activities.create({

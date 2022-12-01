@@ -13,6 +13,7 @@ import { InteractionErrorHandler } from '../errors/InteractionErrorHandler';
 import type { MessageKeys } from '../locales/locales';
 import { BetterEmbed } from '../structures/BetterEmbed';
 import { Hypixel } from '../structures/Hypixel';
+import { Logger } from '../structures/Logger';
 import { Options } from '../utility/Options';
 import {
     awaitComponent,
@@ -20,7 +21,6 @@ import {
     cleanGameMode,
     cleanGameType,
     disableComponents,
-    interactionLogContext,
     setPresence,
     timestamp,
 } from '../utility/utility';
@@ -131,8 +131,8 @@ export class DataCommand extends Command {
 
         if (button === null) {
             this.container.logger.info(
-                interactionLogContext(interaction),
-                `${this.constructor.name}:`,
+                this,
+                Logger.interactionLogContext(interaction),
                 'Ran out of time.',
             );
 
@@ -145,8 +145,8 @@ export class DataCommand extends Command {
 
         if (button.customId === noButton.customId) {
             this.container.logger.info(
-                interactionLogContext(interaction),
-                `${this.constructor.name}:`,
+                this,
+                Logger.interactionLogContext(interaction),
                 'Pressed no.',
             );
 
@@ -201,8 +201,8 @@ export class DataCommand extends Command {
             .setDescription(i18n.getMessage('commandsDataDeleteDeletedDescription'));
 
         this.container.logger.info(
-            interactionLogContext(interaction),
-            `${this.constructor.name}:`,
+            this,
+            Logger.interactionLogContext(interaction),
             'Accepted data deletion.',
         );
 

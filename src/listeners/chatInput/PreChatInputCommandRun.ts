@@ -3,7 +3,8 @@ import {
     Listener,
     type PreChatInputCommandRunPayload,
 } from '@sapphire/framework';
-import { chatInputResolver, interactionLogContext } from '../../utility/utility';
+import { Logger } from '../../structures/Logger';
+import { chatInputResolver } from '../../utility/utility';
 
 export class PreChatInputCommandRunListener extends Listener {
     public constructor(context: Listener.Context, options: Listener.Options) {
@@ -16,8 +17,8 @@ export class PreChatInputCommandRunListener extends Listener {
 
     public async run(payload: PreChatInputCommandRunPayload) {
         this.container.logger.info(
-            interactionLogContext(payload.interaction),
-            `${this.constructor.name}:`,
+            this,
+            Logger.interactionLogContext(payload.interaction),
             chatInputResolver(payload.interaction),
         );
     }

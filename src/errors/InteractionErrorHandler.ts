@@ -51,7 +51,6 @@ export class InteractionErrorHandler<
             }
         } catch (error) {
             this.log(
-                `${this.constructor.name}:`,
                 'An error has occurred and also failed to notify the user.',
                 error,
             );

@@ -22,6 +22,6 @@ export class BaseErrorHandler<E> extends Base {
     }
 
     public log(...text: unknown[]) {
-        this.container.logger.error(`Incident ${this.incidentId}`, ...text);
+        this.container.logger.error(this, `Incident ${this.incidentId}`, ...text);
     }
 }

@@ -3,7 +3,8 @@ import {
     Events,
     Listener,
 } from '@sapphire/framework';
-import { cleanRound, interactionLogContext } from '../../utility/utility';
+import { Logger } from '../../structures/Logger';
+import { cleanRound } from '../../utility/utility';
 
 export class ContextMenuCommandFinishListener extends Listener {
     public constructor(context: Listener.Context, options: Listener.Options) {
@@ -16,8 +17,8 @@ export class ContextMenuCommandFinishListener extends Listener {
 
     public async run(_: never, __: never, payload: ContextMenuCommandFinishPayload) {
         this.container.logger[payload.success ? 'debug' : 'error'](
-            interactionLogContext(payload.interaction),
-            `${this.constructor.name}:`,
+            this,
+            Logger.interactionLogContext(payload.interaction),
             `Took ${cleanRound(payload.duration, 0)}ms.`,
             `Success ${payload.success}.`,
         );

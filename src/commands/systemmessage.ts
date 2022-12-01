@@ -9,8 +9,9 @@ import {
 } from 'discord.js';
 import { Time } from '../enums/Time';
 import { Options } from '../utility/Options';
-import { awaitComponent, disableComponents, interactionLogContext } from '../utility/utility';
+import { awaitComponent, disableComponents } from '../utility/utility';
 import { BetterEmbed } from '../structures/BetterEmbed';
+import { Logger } from '../structures/Logger';
 
 export class SystemMessageCommand extends Command {
     public constructor(context: Command.Context, options: Command.Options) {
@@ -205,8 +206,8 @@ export class SystemMessageCommand extends Command {
 
         if (button === null) {
             this.container.logger.info(
-                interactionLogContext(interaction),
-                `${this.constructor.name}:`,
+                this,
+                Logger.interactionLogContext(interaction),
                 'Ran out of time.',
             );
 
@@ -219,8 +220,8 @@ export class SystemMessageCommand extends Command {
 
         if (button.customId === noButton.customId) {
             this.container.logger.info(
-                interactionLogContext(interaction),
-                `${this.constructor.name}:`,
+                this,
+                Logger.interactionLogContext(interaction),
                 'Pressed no.',
             );
 
@@ -232,8 +233,8 @@ export class SystemMessageCommand extends Command {
         }
 
         this.container.logger.info(
-            interactionLogContext(interaction),
-            `${this.constructor.name}:`,
+            this,
+            Logger.interactionLogContext(interaction),
             `Creating for ${ids.length} users.`,
             `Name: ${name}.`,
             `Value: ${value}.`,

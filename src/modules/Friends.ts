@@ -11,10 +11,10 @@ export class FriendsModule extends Module {
         });
     }
 
-    public override async event(_user: User) {
-        /**
-         * Friends module will:
-         * - Will operate on the upcoming mod
-         */
-    }
+    /**
+     * Friends module will:
+     * - Will operate on the upcoming mod
+     */
+
+    public override async event(_user: User) {}
 }

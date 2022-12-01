@@ -18,7 +18,7 @@ export class GuildCreateListener extends Listener {
         }
 
         this.container.logger.info(
-            `${this.constructor.name}:`,
+            this,
             `Guild's Id is ${guild.id}.`,
             `Guild owner's Id is ${guild.ownerId}.`,
             `New member count is ${guild.memberCount - 1}.`,

@@ -5,7 +5,6 @@ import {
     type CommandInteraction,
     type ContextMenuInteraction,
     Formatters,
-    type Interaction,
     MessageActionRow,
     type MessageComponentTypeResolvable,
     type TextBasedChannel,
@@ -226,10 +225,6 @@ export function formattedUnix({
     const dateString = date ? `, ${cleanDate(ms)}` : '';
 
     return `${utcString}${timeString}${dateString}`;
-}
-
-export function interactionLogContext(interaction: Interaction) {
-    return `Interaction ${interaction.id} User ${interaction.user.id}`;
 }
 
 export async function setPresence() {

@@ -4,9 +4,10 @@ import type { SlothpixelPlayer } from '../@types/Hypixel';
 import { HTTPError } from '../errors/HTTPError';
 import { RequestErrorHandler } from '../errors/RequestErrorHandler';
 import { BetterEmbed } from '../structures/BetterEmbed';
+import { Logger } from '../structures/Logger';
 import { Request } from '../structures/Request';
 import { Options } from '../utility/Options';
-import { interactionLogContext, setPresence } from '../utility/utility';
+import { setPresence } from '../utility/utility';
 
 export class RegisterCommand extends Command {
     public constructor(context: Command.Context, options: Command.Options) {
@@ -56,8 +57,8 @@ export class RegisterCommand extends Command {
                 .setDescription(i18n.getMessage('commandsRegisterAlreadyRegisteredDescription'));
 
             this.container.logger.warn(
-                interactionLogContext(interaction),
-                `${this.constructor.name}:`,
+                this,
+                Logger.interactionLogContext(interaction),
                 'Already registered.',
             );
 
@@ -79,8 +80,8 @@ export class RegisterCommand extends Command {
                 );
 
             this.container.logger.warn(
-                interactionLogContext(interaction),
-                `${this.constructor.name}:`,
+                this,
+                Logger.interactionLogContext(interaction),
                 'Invalid input:',
                 player,
             );
@@ -103,8 +104,8 @@ export class RegisterCommand extends Command {
                     .setDescription(i18n.getMessage('commandsRegisterInvalidPlayerDescription'));
 
                 this.container.logger.warn(
-                    interactionLogContext(interaction),
-                    `${this.constructor.name}:`,
+                    this,
+                    Logger.interactionLogContext(interaction),
                     'Invalid player:',
                     player,
                 );
@@ -119,8 +120,8 @@ export class RegisterCommand extends Command {
                 .setDescription(i18n.getMessage('commandsRegisterSlothpixelErrorDescription'));
 
             this.container.logger.error(
-                interactionLogContext(interaction),
-                `${this.constructor.name}:`,
+                this,
+                Logger.interactionLogContext(interaction),
                 'Slothpixel error.',
                 error,
             );
@@ -148,8 +149,8 @@ export class RegisterCommand extends Command {
                 .setDescription(i18n.getMessage('commandsRegisterAlreadyRegisteredDescription'));
 
             this.container.logger.warn(
-                interactionLogContext(interaction),
-                `${this.constructor.name}:`,
+                this,
+                Logger.interactionLogContext(interaction),
                 'UUID already registered.',
             );
 
@@ -165,8 +166,8 @@ export class RegisterCommand extends Command {
                 .setImage(Options.urlHypixelDiscord);
 
             this.container.logger.warn(
-                interactionLogContext(interaction),
-                `${this.constructor.name}:`,
+                this,
+                Logger.interactionLogContext(interaction),
                 'Discord not linked.',
             );
 
@@ -182,8 +183,8 @@ export class RegisterCommand extends Command {
                 .setImage(Options.urlHypixelDiscord);
 
             this.container.logger.warn(
-                interactionLogContext(interaction),
-                `${this.constructor.name}:`,
+                this,
+                Logger.interactionLogContext(interaction),
                 'Discord mismatch.',
             );
 
@@ -250,8 +251,8 @@ export class RegisterCommand extends Command {
         }
 
         this.container.logger.info(
-            interactionLogContext(interaction),
-            `${this.constructor.name}:`,
+            this,
+            Logger.interactionLogContext(interaction),
             'Registration success!',
         );
 

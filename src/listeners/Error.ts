@@ -11,7 +11,7 @@ export class ErrorListener extends Listener {
     }
 
     public run(error: Error) {
-        this.container.logger.error(`${this.constructor.name}:`, error);
+        this.container.logger.error(this, error);
 
         new Sentry().setSeverity('error').captureException(error);
     }

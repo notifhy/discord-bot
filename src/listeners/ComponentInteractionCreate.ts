@@ -4,7 +4,7 @@ import { CustomIdType } from '../enums/CustomIdType';
 import { InteractionErrorHandler } from '../errors/InteractionErrorHandler';
 import { i18n } from '../locales/i18n';
 import { CustomId } from '../structures/CustomId';
-import { interactionLogContext } from '../utility/utility';
+import { Logger } from '../structures/Logger';
 
 export class ComponentInteractionCreateListener extends Listener {
     public constructor(context: Listener.Context, options: Listener.Options) {
@@ -36,8 +36,8 @@ export class ComponentInteractionCreateListener extends Listener {
                 const customId = CustomId.parse(interaction.customId);
 
                 this.container.logger.info(
-                    interactionLogContext(interaction),
-                    `${this.constructor.name}:`,
+                    this,
+                    Logger.interactionLogContext(interaction),
                     `CustomId is ${interaction.customId}.`,
                 );
 
@@ -64,8 +64,8 @@ export class ComponentInteractionCreateListener extends Listener {
                         await module?.interaction?.(user, interaction);
                     } else {
                         this.container.logger.info(
-                            interactionLogContext(interaction),
-                            `${this.constructor.name}:`,
+                            this,
+                            Logger.interactionLogContext(interaction),
                             `Enabled modules: ${enabledModules.map((enabledModule) => enabledModule.name).join(', ')}.`,
                             `No enabled modules matching: ${customId.module}.`,
                         );

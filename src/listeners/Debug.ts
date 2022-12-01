@@ -10,9 +10,6 @@ export class DebugListener extends Listener {
     }
 
     public run(info: string) {
-        this.container.logger.debug(
-            `${this.constructor.name}:`,
-            info,
-        );
+        this.container.logger.debug(this, info);
     }
 }

@@ -2,8 +2,9 @@ import { EmbedLimits } from '@sapphire/discord-utilities';
 import { type ApplicationCommandRegistry, BucketScope, Command } from '@sapphire/framework';
 import { type CommandInteraction, Constants } from 'discord.js';
 import { BetterEmbed } from '../structures/BetterEmbed';
+import { Logger } from '../structures/Logger';
 import { Options } from '../utility/Options';
-import { cleanLength, interactionLogContext } from '../utility/utility';
+import { cleanLength } from '../utility/utility';
 
 type ErrorTypes = 'abort' | 'generic' | 'http' | 'rateLimit';
 
@@ -203,8 +204,8 @@ export class APICommand extends Command {
             .setDescription(i18n.getMessage('commandsAPISetDescription', [category, type, value]));
 
         this.container.logger.info(
-            interactionLogContext(interaction),
-            `${this.constructor.name}:`,
+            this,
+            Logger.interactionLogContext(interaction),
             `<Core>.errors.${category}.${type} is now ${value}.`,
         );
 
@@ -234,8 +235,8 @@ export class APICommand extends Command {
             .setDescription(i18n.getMessage('commandsAPICallDescription', [method]));
 
         this.container.logger.info(
-            interactionLogContext(interaction),
-            `${this.constructor.name}:`,
+            this,
+            Logger.interactionLogContext(interaction),
             `Executed <Core>.errors.${method}.`,
         );
 

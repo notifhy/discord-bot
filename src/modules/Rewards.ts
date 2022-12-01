@@ -6,6 +6,7 @@ import { ErrorHandler } from '../errors/ErrorHandler';
 import { i18n as Internationalization } from '../locales/i18n';
 import { BetterEmbed } from '../structures/BetterEmbed';
 import { CustomId } from '../structures/CustomId';
+import { Logger } from '../structures/Logger';
 import { Module } from '../structures/Module';
 import { Options } from '../utility/Options';
 import { cleanLength, disableComponents } from '../utility/utility';
@@ -27,6 +28,7 @@ export class RewardsModule extends Module {
      * - TODO: Add "missedNotifications" to prevent inactive users from killing this system
      * - TODO: Button cooldown?
      */
+
     public override async cron(user: User) {
         const config = await this.container.database.rewards.findUniqueOrThrow({
             where: {
@@ -42,8 +44,8 @@ export class RewardsModule extends Module {
             || config.lastNotified + config.interval < now;
 
         this.container.logger.debug(
-            `User ${user.id}`,
-            `${this.constructor.name}:`,
+            this,
+            Logger.moduleContext(user),
             `Reset Time: ${lastResetTime}`,
             `Now: ${now} ${new Date(now).toLocaleString()}`,
         );
@@ -89,8 +91,8 @@ export class RewardsModule extends Module {
                 });
 
                 this.container.logger.info(
-                    `User ${user.id}`,
-                    `${this.constructor.name}:`,
+                    this,
+                    Logger.moduleContext(user),
                     'Delivered reminder.',
                 );
 
@@ -107,8 +109,8 @@ export class RewardsModule extends Module {
                         });
 
                         this.container.logger.debug(
-                            `User ${user.id}`,
-                            `${this.constructor.name}:`,
+                            this,
+                            Logger.moduleContext(user),
                             `Disabled button after no activity for ${cleanLength(endBoundary)}.`,
                         );
                     } catch (error) {
@@ -131,21 +133,21 @@ export class RewardsModule extends Module {
                 });
 
                 this.container.logger.info(
-                    `User ${user.id}`,
-                    `${this.constructor.name}:`,
+                    this,
+                    Logger.moduleContext(user),
                     'Delivered follow up reminder.',
                 );
             } else {
                 this.container.logger.debug(
-                    `User ${user.id}`,
-                    `${this.constructor.name}:`,
+                    this,
+                    Logger.moduleContext(user),
                     'No appropriate notification.',
                 );
             }
         } else {
             this.container.logger.debug(
-                `User ${user.id}`,
-                `${this.constructor.name}:`,
+                this,
+                Logger.moduleContext(user),
                 'Delay not surpassed.',
             );
         }
@@ -195,8 +197,8 @@ export class RewardsModule extends Module {
                 });
 
                 this.container.logger.info(
-                    `User ${user.id}`,
-                    `${this.constructor.name}:`,
+                    this,
+                    Logger.moduleContext(user),
                     'Delivered milestone.',
                 );
             } else {
@@ -217,8 +219,8 @@ export class RewardsModule extends Module {
                 });
 
                 this.container.logger.info(
-                    `User ${user.id}`,
-                    `${this.constructor.name}:`,
+                    this,
+                    Logger.moduleContext(user),
                     'Delivered claimed notification.',
                 );
             }

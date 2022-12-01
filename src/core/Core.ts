@@ -41,7 +41,7 @@ export class Core extends Base {
         this.performance = new Performance();
 
         this.container.logger.debug(
-            `${this.constructor.name}:`,
+            this,
             `Cron scheduled with ${this.container.config.coreCron}.`,
         );
     }

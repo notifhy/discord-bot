@@ -3,8 +3,9 @@ import { type ChatInputCommandFinishPayload, Events, Listener } from '@sapphire/
 import type { CommandInteraction } from 'discord.js';
 import { ErrorHandler } from '../../errors/ErrorHandler';
 import { BetterEmbed } from '../../structures/BetterEmbed';
+import { Logger } from '../../structures/Logger';
 import { Options } from '../../utility/Options';
-import { cleanRound, interactionLogContext, timestamp } from '../../utility/utility';
+import { cleanRound, timestamp } from '../../utility/utility';
 
 export class ChatInputCommandFinishListener extends Listener {
     public constructor(context: Listener.Context, options: Listener.Options) {
@@ -17,8 +18,8 @@ export class ChatInputCommandFinishListener extends Listener {
 
     public async run(_: never, __: never, payload: ChatInputCommandFinishPayload) {
         this.container.logger[payload.success ? 'debug' : 'error'](
-            interactionLogContext(payload.interaction),
-            `${this.constructor.name}:`,
+            this,
+            Logger.interactionLogContext(payload.interaction),
             `Took ${cleanRound(payload.duration, 0)}ms.`,
             `Success ${payload.success}.`,
         );
@@ -69,8 +70,8 @@ export class ChatInputCommandFinishListener extends Listener {
                     sentDM = true;
                 } catch (error) {
                     this.container.logger.error(
-                        interactionLogContext(interaction),
-                        `${this.constructor.name}:`,
+                        this,
+                        Logger.interactionLogContext(interaction),
                         'Error while sending user system notifications.',
                     );
 
@@ -96,8 +97,8 @@ export class ChatInputCommandFinishListener extends Listener {
             });
 
             this.container.logger.info(
-                interactionLogContext(interaction),
-                `${this.constructor.name}:`,
+                this,
+                Logger.interactionLogContext(interaction),
                 `Sent ${systemMessages.length} system message(s).`,
             );
         }

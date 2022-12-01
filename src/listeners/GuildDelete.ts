@@ -24,7 +24,7 @@ export class GuildDeleteListener extends Listener {
         })!;
 
         this.container.logger.info(
-            `${this.constructor.name}:`,
+            this,
             `Originally joined ${joinedAt}.`,
             `Guild's Id is ${guild.id}.`,
             `Guild owner's Id is ${guild.ownerId}.`,

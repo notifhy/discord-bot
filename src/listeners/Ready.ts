@@ -14,10 +14,7 @@ export class ReadyListener extends Listener {
     }
 
     public async run(client: Client) {
-        this.container.logger.info(
-            `${this.constructor.name}:`,
-            `Logged in as ${client.user?.tag}.`,
-        );
+        this.container.logger.info(this, `Logged in as ${client.user?.tag}.`);
 
         await set();
 
