@@ -1,3 +1,3 @@
 export const enum CustomIdType {
-    Module = 'module',
+    Module = '0',
 }
