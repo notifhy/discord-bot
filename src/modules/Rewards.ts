@@ -48,6 +48,7 @@ export class RewardsModule extends Module {
             Logger.moduleContext(user),
             `Reset Time: ${lastResetTime}`,
             `Now: ${now} ${new Date(now).toLocaleString()}`,
+            `Last Notified: ${config.lastNotified}`,
         );
 
         if (lastResetTime + config.delay <= now) {
