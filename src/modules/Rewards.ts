@@ -258,13 +258,14 @@ export class RewardsModule extends Module {
     }
 
     private lastResetTime(nowParam?: number) {
-        const now = nowParam ?? Date.now();
+        const now = nowParam || Date.now();
+        const date = new Date(now);
 
         const hypixelTime = new Date(
-            new Date(now).toLocaleString('en-US', {
+            date.toLocaleString('en-US', {
                 timeZone: Options.modulesRewardsHypixelTimezone,
             }),
-        ).getTime();
+        ).getTime() + date.getMilliseconds();
 
         const hypixelToClientOffset = hypixelTime - now;
 
