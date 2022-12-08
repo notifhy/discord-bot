@@ -118,16 +118,20 @@ export class Core extends Base {
 
                 this.performance.set('modules');
                 await Modules.executeModulesWithData(user, enabledModules, data, changes);
+
+                this.performance.addDataPoint();
+
+                const timeoutPer = Time.Minute / this.container.config.hypixelRequestBucket;
+
+                await setTimeout(timeoutPer * this.modules.lastUserFetches);
             } else {
                 this.performance.set('modules');
                 await Modules.executeModules(user, enabledModules);
+
+                this.performance.addDataPoint();
+
+                // let discord.js handle rate limits
             }
-
-            this.performance.addDataPoint();
-
-            const timeoutPer = Time.Minute / this.container.config.hypixelRequestBucket;
-
-            await setTimeout(timeoutPer * this.modules.lastUserFetches);
         } catch (error) {
             if (error instanceof HTTPError) {
                 new CoreRequestErrorHandler(error, this).init();
