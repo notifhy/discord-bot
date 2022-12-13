@@ -1,7 +1,8 @@
+import { Time } from '../enums/Time';
 import { Base } from '../structures/Base';
 import { Timeout } from '../structures/Timeout';
 
-export class Errors extends Base {
+export class CoreErrors extends Base {
     public isGlobal: boolean;
 
     public readonly abort: Timeout;
@@ -17,10 +18,10 @@ export class Errors extends Base {
 
         this.isGlobal = false;
 
-        this.abort = new Timeout({ baseTimeout: 0 });
-        this.generic = new Timeout({ baseTimeout: 30_000 });
-        this.http = new Timeout({ baseTimeout: 180_000 });
-        this.rateLimit = new Timeout({ baseTimeout: 180_000 });
+        this.abort = new Timeout({ baseTimeout: 0, resetAfter: Time.Hour });
+        this.generic = new Timeout({ baseTimeout: Time.Second * 30, resetAfter: Time.Hour });
+        this.http = new Timeout({ baseTimeout: Time.Minute * 5, resetAfter: Time.Hour });
+        this.rateLimit = new Timeout({ baseTimeout: Time.Minute * 5, resetAfter: Time.Hour });
 
         this.addAbort = this.addAbort.bind(this);
         this.addGeneric = this.addGeneric.bind(this);

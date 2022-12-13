@@ -22,7 +22,7 @@ export class Timeout {
 
     private pauseFor: number;
 
-    private resetAfter: number;
+    private readonly resetAfter: number;
 
     private resumeAfter: number;
 
@@ -81,7 +81,7 @@ export class Timeout {
         this.clearTimeout = setTimeout(() => {
             this.pauseFor = 0;
             this.timeout = this.baseTimeout;
-        }, this.timeout * 1.25 + this.resetAfter) as unknown as number;
+        }, this.timeout + this.resetAfter) as unknown as number;
 
         this.lastHour += 1;
 

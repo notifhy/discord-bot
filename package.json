@@ -35,11 +35,11 @@
         "undici": "^5.13.0"
     },
     "scripts": {
-        "format": "prettier --write \"**/*.ts\" && eslint --fix \"**/*.ts\"",
         "build": "prisma generate && tsc -p .",
+        "docker": "node dist/index.js",
+        "format": "prettier --write \"**/*.ts\" && eslint --fix \"**/*.ts\"",
         "prerun": "npm run build",
-        "run": "node dist/index.js",
-        "docker": "node dist/index.js"
+        "run": "node dist/index.js"
     },
     "engines": {
         "node": ">=18.0.0"

@@ -3,7 +3,7 @@ import type { users as User } from '@prisma/client';
 import type { Collection } from 'discord.js';
 import cron, { ScheduledTask } from 'node-cron';
 import { Time } from '../enums/Time';
-import { Errors } from './Errors';
+import { CoreErrors } from './CoreErrors';
 import { CoreRequestErrorHandler } from '../errors/CoreRequestErrorHandler';
 import { ErrorHandler } from '../errors/ErrorHandler';
 import { HTTPError } from '../errors/HTTPError';
@@ -19,7 +19,7 @@ export class Core extends Base {
 
     public readonly modules: Modules;
 
-    public readonly errors: Errors;
+    public readonly errors: CoreErrors;
 
     public readonly performance: Performance;
 
@@ -36,7 +36,7 @@ export class Core extends Base {
             },
         );
 
-        this.errors = new Errors();
+        this.errors = new CoreErrors();
         this.modules = new Modules();
         this.performance = new Performance();
 
