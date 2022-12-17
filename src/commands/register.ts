@@ -217,6 +217,11 @@ export class RegisterCommand extends Command {
                         id: interaction.user.id,
                     },
                 },
+                playtime: {
+                    create: {
+                        id: interaction.user.id,
+                    },
+                },
                 rewards: {
                     create: {
                         id: interaction.user.id,

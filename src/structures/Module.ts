@@ -6,7 +6,7 @@ import type { MessageKeys } from '../locales/locales';
 import type { Changes } from './Hypixel';
 
 export class Module<O extends Module.Options = Module.Options> extends Piece<O> {
-    public override name: 'defender' | 'friends' | 'rewards';
+    public override name: 'defender' | 'friends' | 'playtime' | 'rewards';
 
     public readonly localization: keyof MessageKeys;
 
@@ -33,7 +33,7 @@ export class Module<O extends Module.Options = Module.Options> extends Piece<O> 
 }
 
 export interface ModuleOptions extends Piece.Options {
-    readonly name: 'defender' | 'friends' | 'rewards';
+    readonly name: 'defender' | 'friends' | 'playtime' | 'rewards';
     readonly localization: keyof MessageKeys;
     readonly cronIncludeAPIData: boolean;
     readonly cronRequireOnlineStatusAPI?: boolean;

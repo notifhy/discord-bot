@@ -64,8 +64,14 @@ model modules {
   id       String  @id @db.VarChar(20)
   defender Boolean @default(false)
   friends  Boolean @default(false)
+  playtime Boolean @default(false)
   rewards  Boolean @default(false)
   users    users?
+}
+
+model playtime {
+  id    String @id @db.VarChar(20)
+  users users?
 }
 
 model rewards {
@@ -92,10 +98,11 @@ model users {
   id              String            @id @db.VarChar(20)
   uuid            String            @unique(map: "uuid_ukey") @db.Uuid
   locale          String            @default("en-US") @db.VarChar(5)
+  activities      activities[]
+  system_messages system_messages[]
   defender        defender          @relation(fields: [id], references: [id], onDelete: Cascade, map: "defender")
   friends         friends           @relation(fields: [id], references: [id], onDelete: Cascade, map: "friends")
   modules         modules           @relation(fields: [id], references: [id], onDelete: Cascade, map: "modules")
+  playtime        playtime          @relation(fields: [id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "playtime")
   rewards         rewards           @relation(fields: [id], references: [id], onDelete: Cascade, map: "rewards")
-  activities      activities[]
-  system_messages system_messages[]
 }

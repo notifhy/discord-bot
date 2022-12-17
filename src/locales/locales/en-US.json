@@ -554,6 +554,9 @@
     "modulesFriendsName": {
         "message": "Friends"
     },
+    "modulesPlaytimesName": {
+        "message": "Playtime"
+    },
     "modulesRewardsCheckClaimStatusLabel": {
         "message": "Check Reward Claim Status"
     },
