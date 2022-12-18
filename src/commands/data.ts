@@ -188,6 +188,11 @@ export class DataCommand extends Command {
                     id: interaction.user.id,
                 },
             }),
+            this.container.database.playtime.delete({
+                where: {
+                    id: interaction.user.id,
+                },
+            }),
             this.container.database.rewards.delete({
                 where: {
                     id: interaction.user.id,
@@ -225,6 +230,7 @@ export class DataCommand extends Command {
                 defender: true,
                 friends: true,
                 modules: true,
+                playtime: true,
                 rewards: true,
                 system_messages: {
                     orderBy: {
