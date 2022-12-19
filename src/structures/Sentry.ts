@@ -8,6 +8,7 @@ import {
     type Interaction,
     TextChannel,
 } from 'discord.js';
+import type { FastifyError } from 'fastify';
 import type { Core } from '../core/Core';
 import { HTTPError } from '../errors/HTTPError';
 import type { Module } from './Module';
@@ -60,6 +61,14 @@ export class Sentry {
         return this;
     }
 
+    public baseInteractionPreconditionContext(precondition: string) {
+        this.scope.setTags({
+            precondition: precondition,
+        });
+
+        return this;
+    }
+
     public captureException(exception: unknown) {
         SentryClient.captureException(exception, this.scope);
 
@@ -74,9 +83,12 @@ export class Sentry {
         return this;
     }
 
-    public baseInteractionPreconditionContext(precondition: string) {
+    public fastifyContext(error: FastifyError) {
         this.scope.setTags({
-            precondition: precondition,
+            code: error.code,
+            statusCode: error.statusCode,
+            validation: error.validation?.join(', '),
+            validationContext: error.validationContext,
         });
 
         return this;
