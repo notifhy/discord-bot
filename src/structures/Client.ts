@@ -2,14 +2,13 @@ import { join } from 'node:path';
 import { config as Config, PrismaClient } from '@prisma/client';
 import { container, SapphireClient } from '@sapphire/framework';
 import { Intents, Options, type PresenceData, Sweepers } from 'discord.js';
-import fastifyClient from 'fastify';
 import { Core } from '../core/Core';
 import { i18n } from '../locales/i18n';
 import { Hypixel } from './Hypixel';
 import { ModuleStore } from './ModuleStore';
 import { Logger } from './Logger';
 import { RouteStore } from './RouteStore';
-import { FastifyErrorHandler } from '../errors/FastifyErrorHandler';
+import { Fastify } from './Fastify';
 
 export class Client extends SapphireClient {
     public constructor(config: Config) {
@@ -96,19 +95,7 @@ export class Client extends SapphireClient {
 
         await client.login();
 
-        const fastify = fastifyClient();
-
-        fastify.setErrorHandler((error, _request, reply) => {
-            // Log error
-            new FastifyErrorHandler(error).init();
-            reply.status(500).send({ statusCode: 500, error: error.message, message: '' });
-        });
-
-        container.stores.get('routes').forEach((route) => {
-            fastify.register(route.routes);
-        });
-
-        await fastify.listen({ port: 3000 });
+        await Fastify.init();
 
         container.logger.info(this, `Initialized container after ${Date.now() - startTime}ms.`);
     }

@@ -11,6 +11,7 @@ import { Base } from '../structures/Base';
 import type { Module, ModuleOptions } from '../structures/Module';
 import { Modules } from '../structures/Modules';
 import { Performance } from '../structures/Performance';
+import { Logger } from '../structures/Logger';
 
 /* eslint-disable no-await-in-loop */
 
@@ -40,10 +41,7 @@ export class Core extends Base {
         this.modules = new Modules();
         this.performance = new Performance();
 
-        this.container.logger.debug(
-            this,
-            `Cron scheduled with ${this.container.config.coreCron}.`,
-        );
+        this.container.logger.debug(this, `Cron scheduled with ${this.container.config.coreCron}.`);
     }
 
     public async init() {
@@ -83,13 +81,13 @@ export class Core extends Base {
     }
 
     private async refresh() {
-        const allUsers = await this.container.database.users.findMany({
+        const users = await this.container.database.users.findMany({
             include: {
                 modules: true,
             },
         });
 
-        const users = allUsers.filter((user) => Object.values(user.modules).includes(true));
+        // const users = allUsers.filter((user) => Object.values(user.modules).includes(true));
 
         const moduleStore = this.container.stores.get('modules');
 
@@ -99,9 +97,17 @@ export class Core extends Base {
                 return;
             }
 
-            const enabledModules = moduleStore.filter((module) => user.modules[module.name]);
+            if (Object.values(user.modules).includes(true)) {
+                const enabledModules = moduleStore.filter((module) => user.modules[module.name]);
 
-            await this.refreshUser(user, enabledModules);
+                await this.refreshUser(user, enabledModules);
+            } else {
+                this.container.logger.debug(
+                    this,
+                    Logger.moduleContext(user),
+                    'User has no enabled modules.',
+                );
+            }
         }
     }
 
