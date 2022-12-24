@@ -1,39 +1,60 @@
 import type { FastifyInstance, FastifyReply, FastifyRequest } from 'fastify';
 import { Route } from '../../structures/Route';
 
+interface IBodyPost {
+    domain: string;
+    joined?: boolean;
+}
+
 export class EventRoute extends Route {
     public constructor(context: Route.Context, options: Route.Options) {
         super(context, {
             ...options,
+            name: 'event',
             route: '/v1/event',
         });
-
-        console.log(context.path, context.root);
 
         this.routes = this.routes.bind(this);
     }
 
     public override async routes(fastify: FastifyInstance) {
-        fastify.get(
+        fastify.get(this.route, this.getMethod);
+        fastify.post(
             this.route,
             {
+                preHandler: fastify.basicAuth,
                 schema: {
-                    headers: {
+                    body: {
                         type: 'object',
                         properties: {
-                            AUTHORIZATION: { type: 'string' },
+                            domain: { type: 'string' },
+                            joined: { type: 'boolean' },
                         },
-                        required: ['AUTHORIZATION'],
+                        required: ['domain'],
+                    },
+                    response: {
+                        '2xx': {
+                            type: 'object',
+                            properties: {
+                                message: { type: 'string' },
+                            },
+                        },
                     },
                 },
             },
-            this.getMethod,
+            (request, reply) => this.postMethod(request as FastifyRequest<{
+                Body: IBodyPost;
+            }>, reply),
         );
     }
 
-    protected override async getMethod(_request: FastifyRequest, reply: FastifyReply) {
-        // throw new TypeError();
-        // return { hello: 'world' };
-        return reply.status(500).send({ ok: false });
+    protected override async getMethod(_request: FastifyRequest, _reply: FastifyReply) {
+        throw new TypeError('bazinga');
+    }
+
+    protected override async postMethod(_request: FastifyRequest<{
+        Body: IBodyPost;
+    }>, reply: FastifyReply) {
+        return reply.send({ message: 'hi' });
     }
 }
