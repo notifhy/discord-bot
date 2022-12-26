@@ -9,6 +9,7 @@ import {
     type MessageComponentTypeResolvable,
     type TextBasedChannel,
 } from 'discord.js';
+import { pbkdf2Sync, randomBytes, webcrypto } from 'node:crypto';
 import gameTypes from '../assets/gameTypes.json';
 import modes from '../assets/modes.json';
 import { Time } from '../enums/Time';
@@ -204,6 +205,13 @@ export function disableComponents(
     return actionRows;
 }
 
+export function filterNullBytes(content: string) {
+    return content
+        .split('')
+        .filter((char) => char.codePointAt(0))
+        .join('');
+}
+
 export function formattedUnix({
     ms = Date.now(),
     date = false,
@@ -225,6 +233,31 @@ export function formattedUnix({
     const dateString = date ? `, ${cleanDate(ms)}` : '';
 
     return `${utcString}${timeString}${dateString}`;
+}
+
+export function generateHash(password: string, salt: string) {
+    const buffer = pbkdf2Sync(
+        password.normalize(),
+        salt,
+        Options.hashIterations,
+        Options.hashKeylen,
+        Options.hashDigest,
+    );
+
+    // Certain databases *cough* PostgreSQL *cough* can't take null bytes (0x00)
+    return filterNullBytes(buffer.toString('utf8'));
+}
+
+export function generateSalt(length: number) {
+    return filterNullBytes(randomBytes(length).toString('utf8'));
+}
+
+export function generatePassword(length: number) {
+    const chars = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz!@#$%^&*()-_=+[{]}\\|;:\'",<.>/?';
+
+    return [...webcrypto.getRandomValues(new Uint32Array(length))]
+        .map((value) => chars[value % chars.length]!)
+        .join('');
 }
 
 export async function setPresence() {

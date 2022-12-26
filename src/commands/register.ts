@@ -7,7 +7,7 @@ import { BetterEmbed } from '../structures/BetterEmbed';
 import { Logger } from '../structures/Logger';
 import { Request } from '../structures/Request';
 import { Options } from '../utility/Options';
-import { setPresence } from '../utility/utility';
+import { generateHash, generatePassword, generateSalt, setPresence } from '../utility/utility';
 
 export class RegisterCommand extends Command {
     public constructor(context: Command.Context, options: Command.Options) {
@@ -192,10 +192,23 @@ export class RegisterCommand extends Command {
             return;
         }
 
+        const salt = generateSalt(Options.authenticationSaltLength);
+        const token = generatePassword(Options.authenticationPasswordLength);
+
         await this.container.database.users.create({
             data: {
                 locale: interaction.locale,
                 uuid: data.uuid,
+                authentication: {
+                    create: {
+                        id: interaction.user.id,
+                        hash: generateHash(
+                            token,
+                            salt,
+                        ),
+                        salt: salt,
+                    },
+                },
                 defender: {
                     create: {
                         id: interaction.user.id,

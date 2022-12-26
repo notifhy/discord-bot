@@ -27,6 +27,13 @@ model activities {
   users             users   @relation(fields: [id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "users")
 }
 
+model authentication {
+  id    String @id @db.VarChar(20)
+  hash  String @db.VarChar(64)
+  salt  String @db.VarChar(16)
+  users users?
+}
+
 model config {
   index                Int      @id @default(0)
   core                 Boolean  @default(true)
@@ -100,9 +107,10 @@ model users {
   locale          String            @default("en-US") @db.VarChar(5)
   activities      activities[]
   system_messages system_messages[]
+  authentication  authentication    @relation(fields: [id], references: [id], onDelete: Cascade, map: "authentication")
   defender        defender          @relation(fields: [id], references: [id], onDelete: Cascade, map: "defender")
   friends         friends           @relation(fields: [id], references: [id], onDelete: Cascade, map: "friends")
   modules         modules           @relation(fields: [id], references: [id], onDelete: Cascade, map: "modules")
-  playtime        playtime          @relation(fields: [id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "playtime")
+  playtime        playtime          @relation(fields: [id], references: [id], onDelete: Cascade, map: "playtime")
   rewards         rewards           @relation(fields: [id], references: [id], onDelete: Cascade, map: "rewards")
 }

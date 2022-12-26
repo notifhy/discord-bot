@@ -1,9 +1,12 @@
 import { container } from '@sapphire/framework';
 import fastifyClient from 'fastify';
-import { STATUS_CODES } from 'http';
+import { STATUS_CODES } from 'node:http';
+import process from 'node:process';
 import { FastifyErrorHandler } from '../errors/FastifyErrorHandler';
+import { generateHash } from '../utility/utility';
+import { Base } from './Base';
 
-export class Fastify {
+export class Fastify extends Base {
     public static async init() {
         const fastify = fastifyClient({
             caseSensitive: false,
@@ -16,11 +19,23 @@ export class Fastify {
 
         await fastify.register(import('@fastify/basic-auth'), {
             authenticate: true,
-            validate: (username, password, _req, _reply, done) => {
-                if (username === 'test' && password === 'frick') {
-                    done();
-                } else {
-                    done(new Error('Invalid username or password'));
+            // @ts-ignore return paths
+            // eslint-disable-next-line consistent-return
+            validate: async (username, password) => {
+                const user = await this.container.database.users.findUnique({
+                    include: {
+                        authentication: true,
+                    },
+                    where: {
+                        uuid: username,
+                    },
+                });
+
+                if (
+                    user === null
+                    || generateHash(password, user.authentication.salt) !== user.authentication.hash
+                ) {
+                    return new Error('Invalid username or password');
                 }
             },
         });
@@ -78,6 +93,6 @@ export class Fastify {
             fastify.register(route.routes);
         });
 
-        await fastify.listen({ port: 3000 });
+        await fastify.listen({ port: Number(process.env.FASTIFY_PORT!) });
     }
 }

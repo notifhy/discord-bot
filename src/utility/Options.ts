@@ -7,6 +7,10 @@ import type { locales } from '../locales/locales';
 import { Base } from '../structures/Base';
 
 export class Options extends Base {
+    static readonly authenticationSaltLength = 16;
+
+    static readonly authenticationPasswordLength = 32;
+
     static readonly colorsError: ColorResolvable = 0xaa0000;
 
     static readonly colorsWarning: ColorResolvable = 0xff5555;
@@ -41,6 +45,12 @@ export class Options extends Base {
     static readonly emojiSlowBackward = '<:backward:928525709004111892>';
 
     static readonly emojiSlowForward = '<:forward:928525657829412864>';
+
+    static readonly hashIterations = 100000;
+
+    static readonly hashKeylen = 64;
+
+    static readonly hashDigest = 'sha256';
 
     static readonly modulesRewardsHypixelTimezone = 'EST5EDT';
 

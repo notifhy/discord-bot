@@ -1,27 +1,22 @@
 ## Under Construction
 ### TODO
-- Add options to modules
-- Stagger with setTimeout
-    - Array of non-promised setTimeouts to manage disabling
+Monolith structure for now
 
 ### Mod Integration
 - Use Cloudflare Tunnels to expose localhost server
 - Use @sapphire/pieces to build an API
-    - /login
-    - /logout
+    - /event
 - Modules
     - Activation
         - API
         - Cron
-        - Cron with Hypixel API data
-    - Continuity
-        - How can this be designed that users that /module [active] will be put into the next cron cycle?
-        - How can this be designed that users that /module [deactivate] will be taken out of the next cron cycle?
-        - When a cron function is called, users could be fetched then to determine whose modules should be called
+        - Cron with Hypixel API data? (removal planned)
+            - This is going to be difficult
+            - Defender module must be removed
 
 ## Planning
-### Core Separation
-#### Backend
+### Microservices
+#### Backend - Not until interaction-kit is stable?
 - [X] Use @sapphire/pieces to build API/Modules
 - [ ] Two separate i18n files?????
 - [ ] Access DAPI via REST

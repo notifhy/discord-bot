@@ -1,6 +1,7 @@
 import { type ApplicationCommandRegistry, BucketScope, Command } from '@sapphire/framework';
 import { type CommandInteraction, Constants } from 'discord.js';
 import { Options } from '../utility/Options';
+import { generateHash, generatePassword, generateSalt } from '../utility/utility';
 
 export class TestCommand extends Command {
     public constructor(context: Command.Context, options: Command.Options) {
@@ -54,6 +55,25 @@ export class TestCommand extends Command {
             content: 'e',
         });
 
-        throw new TypeError();
+        const password = generatePassword(Options.authenticationPasswordLength);
+
+        const salt = generateSalt(Options.authenticationSaltLength);
+
+        const hash = generateHash(
+            password,
+            salt,
+        );
+
+        this.container.logger.info(this, password);
+
+        await this.container.database.authentication.update({
+            data: {
+                hash: hash,
+                salt: salt,
+            },
+            where: {
+                id: interaction.user.id,
+            },
+        });
     }
 }
