@@ -22,7 +22,7 @@ export class EventRoute extends Route {
         fastify.post(
             this.route,
             {
-                preHandler: fastify.basicAuth,
+                onRequest: fastify.basicAuth,
                 schema: {
                     body: {
                         type: 'object',
