@@ -101,7 +101,7 @@ export class Fastify extends Base {
             fastify.register(route.routes);
         });
 
-        await fastify.listen({ port: Number(process.env.FASTIFY_PORT!) });
+        await fastify.listen({ port: Number(process.env.FASTIFY_PORT!), host: '0.0.0.0' });
     }
 }
 

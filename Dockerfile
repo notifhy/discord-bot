@@ -1,5 +1,7 @@
 FROM node:latest
 
+EXPOSE 3000
+
 WORKDIR /usr/src/app
 
 ADD . /usr/src/app
