@@ -9,7 +9,7 @@ import {
     TextChannel,
 } from 'discord.js';
 import type { FastifyError } from 'fastify';
-import type { Core } from '../core/Core';
+// import type { Core } from '../core/Core';
 import { HTTPError } from '../errors/HTTPError';
 import type { Module } from './Module';
 import { chatInputResolver, contextMenuResolver } from '../utility/utility';
@@ -83,6 +83,22 @@ export class Sentry {
         return this;
     }
 
+    /*
+    public coreErrorsContext(core: Core) {
+        this.scope.setTags({
+            resumingIn: core.errors.getTimeout(),
+            lastHourAbort: core.errors.abort.getLastHour(),
+            lastHourGeneric: core.errors.generic.getLastHour(),
+            lastHourHTTP: core.errors.http.getLastHour(),
+            nextTimeoutAbort: core.errors.abort.getTimeout(),
+            nextTimeoutGeneric: core.errors.generic.getTimeout(),
+            nextTimeoutHTTP: core.errors.http.getTimeout(),
+        });
+
+        return this;
+    }
+    */
+
     public fastifyContext(error: FastifyError) {
         this.scope.setTags({
             code: error.code,
@@ -112,20 +128,6 @@ export class Sentry {
             type: error instanceof Error ? error.name : null,
             status: error instanceof HTTPError ? error.status : null,
             statusText: error instanceof HTTPError ? error.statusText : null,
-        });
-
-        return this;
-    }
-
-    public requestContextCore(core: Core) {
-        this.scope.setTags({
-            resumingIn: core.errors.getTimeout(),
-            lastHourAbort: core.errors.abort.getLastHour(),
-            lastHourGeneric: core.errors.generic.getLastHour(),
-            lastHourHTTP: core.errors.http.getLastHour(),
-            nextTimeoutAbort: core.errors.abort.getTimeout(),
-            nextTimeoutGeneric: core.errors.generic.getTimeout(),
-            nextTimeoutHTTP: core.errors.http.getTimeout(),
         });
 
         return this;

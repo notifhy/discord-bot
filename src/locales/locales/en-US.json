@@ -17,39 +17,6 @@
     "none": {
         "message": "None"
     },
-    "commandsAPICallDescription": {
-        "message": "Executed <Core>.errors.$1."
-    },
-    "commandsAPICallTitle": {
-        "message": "Executed"
-    },
-    "commandsAPISetDescription": {
-        "message": "<Core>.errors.$1.$2 is now $3."
-    },
-    "commandsAPISetTitle": {
-        "message": "Updated Value"
-    },
-    "commandsAPIStatsEnabledName": {
-        "message": "Enabled"
-    },
-    "commandsAPIStatsLastHourName": {
-        "message": "Last Hour Statistic"
-    },
-    "commandsAPIStatsLastHourValue": {
-        "message": "Aborts: $1\nGeneric Errors: $2\nHTTP: $3"
-    },
-    "commandsAPIStatsNextTimeoutsName": {
-        "message": "Next Timeout Lengths"
-    },
-    "commandsAPIStatsNextTimeoutsValue": {
-        "message": "May not be accurate\nAbort Errors: $1\nGeneric Errors: $2\nHTTP Errors: $3"
-    },
-    "commandsAPIStatsResumeName": {
-        "message": "Resuming In"
-    },
-    "commandsAPIStatsFetchesName": {
-        "message": "Fetches"
-    },
     "commandsAnnouncementsAddDescription": {
         "message": "$1 will be sent to $2!"
     },
@@ -269,15 +236,6 @@
     "commandsHelpTitle": {
         "message": "Help"
     },
-    "commandsPerformanceLatestName": {
-        "message": "Latest Performance - $1"
-    },
-    "commandsPerformanceLatestValue": {
-        "message": "Fetch Data: $1ms\nProcess Data: $2ms\nCall Modules: $3ms\nTotal: $4ms"
-    },
-    "commandsPerformanceTitle": {
-        "message": "Performance"
-    },
     "commandsPingDescription": {
         "message": "Websocket heartbeat is $1ms. Roundtrip latency is $2ms."
     },
@@ -479,8 +437,11 @@
     "errorsModuleDisabledTitle": {
         "message": "$1 Module Disabled"
     },
-    "errorsModuleNormalTitle": {
+    "errorsModuleAlertTitle": {
         "message": "Module Alert"
+    },
+    "errorsModuleGenericTitle": {
+        "message": "Failed to Deliver Alert"
     },
     "errorsModuleRequestDescription": {
         "message": "This bot failed to deliver an alert after retrying multiple times. This type of error should be extremely rare. Sorry."

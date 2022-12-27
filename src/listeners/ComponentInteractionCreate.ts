@@ -60,8 +60,8 @@ export class ComponentInteractionCreateListener extends Listener {
                     const enabledModules = modules.filter((module) => user.modules[module.name]);
                     const module = enabledModules.get(customId.module);
 
-                    if (module) {
-                        await module?.interaction?.(user, interaction);
+                    if (module && module.interaction) {
+                        await module.interaction(user, interaction);
                     } else {
                         this.container.logger.info(
                             this,

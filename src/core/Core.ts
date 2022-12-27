@@ -1,14 +1,11 @@
-import type { users as User } from '@prisma/client';
+import type { modules as ModulesType, users as User } from '@prisma/client';
 import type { Collection } from 'discord.js';
 import cron, { ScheduledTask } from 'node-cron';
 import { CoreErrors } from './CoreErrors';
-import { CoreRequestErrorHandler } from '../errors/CoreRequestErrorHandler';
 import { ErrorHandler } from '../errors/ErrorHandler';
-import { HTTPError } from '../errors/HTTPError';
 import { Base } from '../structures/Base';
 import type { Module, ModuleOptions } from '../structures/Module';
 import { Modules } from '../structures/Modules';
-import { Performance } from '../structures/Performance';
 import { Logger } from '../structures/Logger';
 
 /* eslint-disable no-await-in-loop */
@@ -19,8 +16,6 @@ export class Core extends Base {
     public readonly modules: Modules;
 
     public readonly errors: CoreErrors;
-
-    public readonly performance: Performance;
 
     constructor() {
         super();
@@ -37,7 +32,6 @@ export class Core extends Base {
 
         this.errors = new CoreErrors();
         this.modules = new Modules();
-        this.performance = new Performance();
 
         this.container.logger.debug(this, `Cron scheduled with ${this.container.config.coreCron}.`);
     }
@@ -90,14 +84,25 @@ export class Core extends Base {
 
         // eslint-disable-next-line no-restricted-syntax
         for (const user of users) {
-            if (this.errors.isTimeout() || this.container.config.core === false) {
-                return;
-            }
+            await this.refreshUser(user, modulesWithCron);
+        }
+    }
 
+    private async refreshUser(
+        user: User & {
+            modules: ModulesType;
+        },
+        modulesWithCron: Collection<string, Module<ModuleOptions>>,
+    ) {
+        if (this.errors.isTimeout() || this.container.config.core === false) {
+            return;
+        }
+
+        try {
             const enabledModules = modulesWithCron.filter((module) => user.modules[module.name]);
 
             if (enabledModules.size > 0) {
-                await this.refreshUser(user, enabledModules);
+                await Modules.executeModules(user, enabledModules);
             } else {
                 this.container.logger.debug(
                     this,
@@ -105,25 +110,9 @@ export class Core extends Base {
                     'User has no enabled modules.',
                 );
             }
-        }
-    }
-
-    private async refreshUser(
-        user: User,
-        enabledModules: Collection<string, Module<ModuleOptions>>,
-    ) {
-        try {
-            this.performance.set('modules');
-            await Modules.executeModules(user, enabledModules);
-
-            this.performance.addDataPoint();
         } catch (error) {
-            if (error instanceof HTTPError) {
-                new CoreRequestErrorHandler(error, this).init();
-            } else {
-                this.errors.addGeneric();
-                new ErrorHandler(error).init();
-            }
+            this.errors.addGeneric();
+            new ErrorHandler(error).init();
         }
     }
 }

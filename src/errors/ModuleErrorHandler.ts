@@ -22,20 +22,22 @@ export class ModuleErrorHandler<E> extends BaseErrorHandler<E> {
     }
 
     public async init() {
-        try {
-            this.errorLog();
+        if (this.error instanceof DiscordAPIError || this.error instanceof HTTPError) {
+            try {
+                this.errorLog();
 
-            if (this.error instanceof DiscordAPIError) {
-                await this.handleDiscordAPIError(this.error);
-            } else if (this.error instanceof HTTPError) {
-                await this.handleRequestError();
-            } else {
-                // Have generic error handler handle other issues
-                this.log('Error is not relevant to handler, passing to generic handler.');
-                new ErrorHandler(this.error, this.incidentId).init();
+                if (this.error instanceof DiscordAPIError) {
+                    await this.handleDiscordAPIError(this.error);
+                } else {
+                    await this.handleRequestError();
+                }
+            } catch (error2) {
+                new ErrorHandler(error2, this.incidentId).init();
             }
-        } catch (error2) {
-            new ErrorHandler(error2, this.incidentId).init();
+        } else {
+            this.log('Error is not relevant to handler, passing to generic handler.');
+            // eslint-disable-next-line @typescript-eslint/no-throw-literal
+            throw this.error;
         }
     }
 
@@ -71,7 +73,7 @@ export class ModuleErrorHandler<E> extends BaseErrorHandler<E> {
                     const user = await this.container.client.users.fetch(this.user.id);
 
                     const alertEmbed = new BetterEmbed()
-                        .setTitle(this.i18n.getMessage('errorsModuleNormalTitle'))
+                        .setTitle(this.i18n.getMessage('errorsModuleAlertTitle'))
                         .setDescription(this.i18n.getMessage(`errorsModule${error.code}`));
 
                     await user.send({ embeds: [alertEmbed] });
@@ -97,25 +99,14 @@ export class ModuleErrorHandler<E> extends BaseErrorHandler<E> {
                         },
                     });
 
-                    this.log(
-                        'New modules:',
-                        modules,
-                        'Handled Discord API error:',
-                        error.code,
-                    );
+                    this.log('New modules:', modules, 'Handled Discord API error:', error.code);
                 } catch (error3) {
-                    this.log(
-                        'Failed to disable module and send system message',
-                        error3,
-                    );
+                    this.log('Failed to disable module and send system message', error3);
                 }
 
                 break;
             default:
-                this.log(
-                    'Could not handle Discord API error:',
-                    error.code,
-                );
+                this.log('Could not handle Discord API error:', error.code);
         }
     }
 
@@ -143,10 +134,7 @@ export class ModuleErrorHandler<E> extends BaseErrorHandler<E> {
             // eslint-disable-next-line no-restricted-syntax
             for (const promise of settledPromises) {
                 if (promise.status === 'rejected') {
-                    this.log(
-                        'Failed to handle part of the HTTPError:',
-                        promise.reason,
-                    );
+                    this.log('Failed to handle part of the HTTPError:', promise.reason);
                 }
             }
         } catch (error) {
