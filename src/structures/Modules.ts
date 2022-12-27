@@ -1,12 +1,9 @@
 import type { users as User } from '@prisma/client';
-import type { Collection } from 'discord.js';
 import { Base } from './Base';
 import { BetterEmbed } from './BetterEmbed';
-import { ModuleErrorHandler } from '../errors/ModuleErrorHandler';
 import { Changes, Hypixel } from './Hypixel';
 import { i18n as Internationalization } from '../locales/i18n';
 import { Logger } from './Logger';
-import type { Module, ModuleOptions } from './Module';
 import { Options } from '../utility/Options';
 
 /* eslint-disable no-await-in-loop */
@@ -23,32 +20,6 @@ export class Modules extends Base {
         const data = await this.container.hypixel.fetch(user);
         Modules.handleDataChanges(data.changes, user);
         return data;
-    }
-
-    public static async executeModules(
-        user: User,
-        availableModules: Collection<string, Module<ModuleOptions>>,
-    ) {
-        // eslint-disable-next-line no-restricted-syntax
-        for (const module of availableModules.values()) {
-            try {
-                this.container.logger.debug(
-                    this,
-                    Logger.moduleContext(user),
-                    `Running ${module.name} cron.`,
-                );
-
-                await module.cron!(user);
-            } catch (error) {
-                await new ModuleErrorHandler(error, module, user).init();
-            }
-        }
-
-        this.container.logger.debug(
-            this,
-            Logger.moduleContext(user),
-            `Ran ${availableModules.size} modules.`,
-        );
     }
 
     private static async handleDataChanges(changes: Changes, user: User) {

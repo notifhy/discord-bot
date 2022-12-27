@@ -5,7 +5,6 @@ import { BaseErrorHandler } from './BaseErrorHandler';
 import { ErrorHandler } from './ErrorHandler';
 import type { Module } from '../structures/Module';
 import { BetterEmbed } from '../structures/BetterEmbed';
-import { HTTPError } from './HTTPError';
 
 export class ModuleErrorHandler<E> extends BaseErrorHandler<E> {
     private readonly module: Module;
@@ -22,22 +21,16 @@ export class ModuleErrorHandler<E> extends BaseErrorHandler<E> {
     }
 
     public async init() {
-        if (this.error instanceof DiscordAPIError || this.error instanceof HTTPError) {
-            try {
-                this.errorLog();
+        try {
+            this.errorLog();
 
-                if (this.error instanceof DiscordAPIError) {
-                    await this.handleDiscordAPIError(this.error);
-                } else {
-                    await this.handleRequestError();
-                }
-            } catch (error2) {
-                new ErrorHandler(error2, this.incidentId).init();
+            if (this.error instanceof DiscordAPIError) {
+                await this.handleDiscordAPIError();
+            } else {
+                await this.handleGenericError();
             }
-        } else {
-            this.log('Error is not relevant to handler, passing to generic handler.');
-            // eslint-disable-next-line @typescript-eslint/no-throw-literal
-            throw this.error;
+        } catch (error2) {
+            new ErrorHandler(error2, this.incidentId).init();
         }
     }
 
@@ -63,7 +56,8 @@ export class ModuleErrorHandler<E> extends BaseErrorHandler<E> {
         });
     }
 
-    private async handleDiscordAPIError(error: DiscordAPIError) {
+    private async handleDiscordAPIError() {
+        const error = this.error as DiscordAPIError;
         switch (error.code) {
             case RESTJSONErrorCodes.UnknownChannel:
             case RESTJSONErrorCodes.MissingAccess:
@@ -73,8 +67,8 @@ export class ModuleErrorHandler<E> extends BaseErrorHandler<E> {
                     const user = await this.container.client.users.fetch(this.user.id);
 
                     const alertEmbed = new BetterEmbed()
-                        .setTitle(this.i18n.getMessage('errorsModuleAlertTitle'))
-                        .setDescription(this.i18n.getMessage(`errorsModule${error.code}`));
+                        .setTitle(this.i18n.getMessage('errorsModuleDiscordAPIErrorTitle'))
+                        .setDescription(this.i18n.getMessage(`errorsModuleDiscordAPIError${error.code}`));
 
                     await user.send({ embeds: [alertEmbed] });
                 } catch (error3) {
@@ -95,7 +89,7 @@ export class ModuleErrorHandler<E> extends BaseErrorHandler<E> {
                             name: this.i18n.getMessage('errorsModuleDisabledTitle', [
                                 this.i18n.getMessage(this.module.localization),
                             ]),
-                            value: this.i18n.getMessage(`errorsModule${error.code}`),
+                            value: this.i18n.getMessage(`errorsModuleDiscordAPIError${error.code}`),
                         },
                     });
 
@@ -110,12 +104,12 @@ export class ModuleErrorHandler<E> extends BaseErrorHandler<E> {
         }
     }
 
-    private async handleRequestError() {
+    private async handleGenericError() {
         try {
             const user = await this.container.client.users.fetch(this.user.id);
 
-            const title = this.i18n.getMessage('errorsModuleRequestTitle');
-            const description = this.i18n.getMessage('errorsModuleRequestDescription');
+            const title = this.i18n.getMessage('errorsModuleGenericTitle');
+            const description = this.i18n.getMessage('errorsModuleGenericDescription');
 
             const alertEmbed = new BetterEmbed().setTitle(title).setDescription(description);
 
@@ -134,11 +128,11 @@ export class ModuleErrorHandler<E> extends BaseErrorHandler<E> {
             // eslint-disable-next-line no-restricted-syntax
             for (const promise of settledPromises) {
                 if (promise.status === 'rejected') {
-                    this.log('Failed to handle part of the HTTPError:', promise.reason);
+                    this.log('Failed to handle part of the error:', promise.reason);
                 }
             }
         } catch (error) {
-            this.log('Failed to send DM alert.');
+            this.log('Failed to handle generic error.');
 
             new ErrorHandler(error, this.incidentId).init();
         }

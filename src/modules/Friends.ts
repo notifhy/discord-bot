@@ -16,5 +16,7 @@ export class FriendsModule extends Module {
      * - Will operate on the upcoming mod
      */
 
-    public override async event(_user: User) {}
+    public override async event(user: User) {
+        this.container.logger.debug(this, 'User:', user);
+    }
 }
