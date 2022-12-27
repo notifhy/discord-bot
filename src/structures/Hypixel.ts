@@ -36,7 +36,22 @@ export class Hypixel extends Base {
         );
     }
 
-    public async player(user: User): Promise<CleanHypixelPlayer> {
+    public async fetch(user: User) {
+        const data = {
+            ...(await this.player(user)),
+            ...Hypixel.cleanStatusData(),
+        };
+
+        if (data.lastLogin && data.lastLogout && data.lastLogin > data.lastLogout) {
+            Object.assign(data, await this.status(user));
+        }
+
+        const changes = await Hypixel.parse(user, data);
+
+        return { changes: changes, data: data };
+    }
+
+    private async player(user: User): Promise<CleanHypixelPlayer> {
         const url = new URL(Options.urlHypixelPlayer);
         url.searchParams.append('uuid', user.uuid);
 
@@ -44,7 +59,7 @@ export class Hypixel extends Base {
         return Hypixel.cleanPlayerData(rawData);
     }
 
-    public async status(user: User): Promise<CleanHypixelStatus> {
+    private async status(user: User): Promise<CleanHypixelStatus> {
         const url = new URL(Options.urlHypixelStatus);
         url.searchParams.append('uuid', user.uuid);
 
@@ -122,7 +137,7 @@ export class Hypixel extends Base {
         };
     }
 
-    public static cleanPlayerData({
+    private static cleanPlayerData({
         player: {
             firstLogin = null,
             lastLogin = null,
@@ -150,7 +165,7 @@ export class Hypixel extends Base {
         };
     }
 
-    public static cleanStatusData(rawHypixelStatus?: RawHypixelStatus) {
+    private static cleanStatusData(rawHypixelStatus?: RawHypixelStatus) {
         const { gameType = null, mode = null, map = null } = rawHypixelStatus?.session ?? {};
 
         return {
@@ -158,5 +173,68 @@ export class Hypixel extends Base {
             gameMode: mode,
             gameMap: map,
         } as CleanHypixelStatus;
+    }
+
+    public static isOnlineAPIMissing(changes: Changes) {
+        return (
+            changes.new.lastLogin === null
+            && changes.old.lastLogin !== null
+            && changes.new.lastLogout === null
+            && changes.old.lastLogout !== null
+        );
+    }
+
+    public static isOnlineAPIReceived(changes: Changes) {
+        return (
+            changes.new.lastLogin !== null
+            && changes.old.lastLogin === null
+            && changes.new.lastLogout !== null
+            && changes.old.lastLogout === null
+        );
+    }
+
+    private static async parse(user: User, newData: CleanHypixelData) {
+        // https://github.com/prisma/prisma/issues/5042
+        const oldData = ((await this.container.database.activities.findFirst({
+            orderBy: {
+                index: 'desc',
+            },
+            select: {
+                firstLogin: true,
+                lastLogin: true,
+                lastLogout: true,
+                version: true,
+                language: true,
+                gameType: true,
+                gameMode: true,
+                gameMap: true,
+                lastClaimedReward: true,
+                rewardScore: true,
+                rewardHighScore: true,
+                totalDailyRewards: true,
+                totalRewards: true,
+            },
+            where: {
+                id: {
+                    equals: user.id,
+                },
+            },
+        })) ?? {}) as CleanHypixelData;
+
+        const changes = Hypixel.changes(newData, oldData);
+
+        this.container.logger.debug(this, 'Parsed data:', changes);
+
+        if (Object.keys(changes.new).length > 0) {
+            await this.container.database.activities.create({
+                data: {
+                    id: user.id,
+                    timestamp: Date.now(),
+                    ...newData,
+                },
+            });
+        }
+
+        return changes;
     }
 }

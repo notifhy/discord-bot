@@ -202,22 +202,8 @@ export class RegisterCommand extends Command {
                 authentication: {
                     create: {
                         id: interaction.user.id,
-                        hash: generateHash(
-                            token,
-                            salt,
-                        ),
+                        hash: generateHash(token, salt),
                         salt: salt,
-                    },
-                },
-                defender: {
-                    create: {
-                        id: interaction.user.id,
-                        ...(data.language && {
-                            languages: [data.language],
-                        }),
-                        ...(data.mc_version && {
-                            versions: [data.mc_version],
-                        }),
                     },
                 },
                 friends: {

@@ -1,29 +1,22 @@
 import type { users as User } from '@prisma/client';
 import { Piece } from '@sapphire/framework';
 import type { MessageComponentInteraction } from 'discord.js';
-import type { CleanHypixelData } from '../@types/Hypixel';
 import type { MessageKeys } from '../locales/locales';
-import type { Changes } from './Hypixel';
 
 export class Module<O extends Module.Options = Module.Options> extends Piece<O> {
-    public override name: 'defender' | 'friends' | 'playtime' | 'rewards';
+    public override name: 'friends' | 'playtime' | 'rewards';
 
     public readonly localization: keyof MessageKeys;
 
-    public readonly cronIncludeAPIData: boolean;
-
-    public readonly cronRequireOnlineStatusAPI: boolean;
+    public readonly requireOnlineStatusAPI: boolean;
 
     public constructor(context: Module.Context, options: O) {
         super(context, options);
 
         this.name = options.name;
         this.localization = options.localization;
-        this.cronIncludeAPIData = options.cronIncludeAPIData;
-        this.cronRequireOnlineStatusAPI = options.cronRequireOnlineStatusAPI ?? false;
+        this.requireOnlineStatusAPI = options.requireOnlineStatusAPI ?? false;
     }
-
-    public cron?(user: User, data: CleanHypixelData, changes: Changes): Promise<void>;
 
     public cron?(user: User): Promise<void>;
 
@@ -33,10 +26,9 @@ export class Module<O extends Module.Options = Module.Options> extends Piece<O> 
 }
 
 export interface ModuleOptions extends Piece.Options {
-    readonly name: 'defender' | 'friends' | 'playtime' | 'rewards';
+    readonly name: 'friends' | 'playtime' | 'rewards';
     readonly localization: keyof MessageKeys;
-    readonly cronIncludeAPIData: boolean;
-    readonly cronRequireOnlineStatusAPI?: boolean;
+    readonly requireOnlineStatusAPI?: boolean;
 }
 
 export namespace Module {

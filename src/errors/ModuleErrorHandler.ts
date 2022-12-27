@@ -29,6 +29,10 @@ export class ModuleErrorHandler<E> extends BaseErrorHandler<E> {
                 await this.handleDiscordAPIError(this.error);
             } else if (this.error instanceof HTTPError) {
                 await this.handleRequestError();
+            } else {
+                // Have generic error handler handle other issues
+                this.log('Error is not relevant to handler, passing to generic handler.');
+                new ErrorHandler(this.error, this.incidentId).init();
             }
         } catch (error2) {
             new ErrorHandler(error2, this.incidentId).init();
@@ -78,7 +82,7 @@ export class ModuleErrorHandler<E> extends BaseErrorHandler<E> {
             case RESTJSONErrorCodes.UnknownUser:
             case RESTJSONErrorCodes.CannotSendMessagesToThisUser:
                 try {
-                    this.log('Attempting to disable module');
+                    this.log('Attempting to disable module.');
 
                     const modules = await this.disableModule();
 
@@ -146,7 +150,7 @@ export class ModuleErrorHandler<E> extends BaseErrorHandler<E> {
                 }
             }
         } catch (error) {
-            this.log('Failed to send DM alert');
+            this.log('Failed to send DM alert.');
 
             new ErrorHandler(error, this.incidentId).init();
         }

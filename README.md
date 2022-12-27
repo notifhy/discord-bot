@@ -1,6 +1,6 @@
 ## Under Construction
 ### TODO
-Monolith structure for now
+Monolith structure for now ("temporary")
 
 ### Mod Integration
 - Use Cloudflare Tunnels to expose localhost server
@@ -8,11 +8,8 @@ Monolith structure for now
     - /event
 - Modules
     - Activation
-        - API
+        - Events
         - Cron
-        - Cron with Hypixel API data? (removal planned)
-            - This is going to be difficult
-            - Defender module must be removed
 
 ## Planning
 ### Microservices

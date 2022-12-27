@@ -24,13 +24,13 @@ export class ModuleCommand extends Command {
             description: this.description,
             options: [
                 {
-                    name: 'defender',
-                    type: Constants.ApplicationCommandOptionTypes.SUB_COMMAND,
-                    description: 'Get notified on logins, logouts, version changes, and more',
-                },
-                {
                     name: 'friends',
                     description: 'Know when your friends are online by sharing logins and logouts with each other',
+                    type: Constants.ApplicationCommandOptionTypes.SUB_COMMAND,
+                },
+                {
+                    name: 'playtime',
+                    description: 'TODO',
                     type: Constants.ApplicationCommandOptionTypes.SUB_COMMAND,
                 },
                 {

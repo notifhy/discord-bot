@@ -7,7 +7,7 @@ export class PlaytimeModule extends Module {
             ...options,
             name: 'playtime',
             localization: 'modulesPlaytimesName',
-            cronIncludeAPIData: false,
+            requireOnlineStatusAPI: false,
         });
     }
 

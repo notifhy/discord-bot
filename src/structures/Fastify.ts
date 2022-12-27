@@ -1,3 +1,4 @@
+import type { users as User } from '@prisma/client';
 import { container } from '@sapphire/framework';
 import fastifyClient from 'fastify';
 import { STATUS_CODES } from 'node:http';
@@ -21,7 +22,7 @@ export class Fastify extends Base {
             authenticate: true,
             // @ts-ignore return paths
             // eslint-disable-next-line consistent-return
-            validate: async (username, password) => {
+            validate: async (username, password, request) => {
                 const user = await this.container.database.users.findUnique({
                     include: {
                         authentication: true,
@@ -37,7 +38,14 @@ export class Fastify extends Base {
                 ) {
                     return new Error('Invalid username or password');
                 }
+
+                request.user = user;
             },
+        });
+
+        fastify.addHook('onRequest', (request, _reply, done) => {
+            request.user = null;
+            done();
         });
 
         fastify.addHook('onRequest', fastify.rateLimit());
@@ -94,5 +102,11 @@ export class Fastify extends Base {
         });
 
         await fastify.listen({ port: Number(process.env.FASTIFY_PORT!) });
+    }
+}
+
+declare module 'fastify' {
+    export interface FastifyRequest {
+        user: User | null;
     }
 }

@@ -17,7 +17,7 @@ export class RewardsModule extends Module {
             ...options,
             name: 'rewards',
             localization: 'modulesRewardsName',
-            cronIncludeAPIData: false,
+            requireOnlineStatusAPI: false,
         });
     }
 
@@ -155,7 +155,7 @@ export class RewardsModule extends Module {
     }
 
     public override async interaction(user: User, interaction: ButtonInteraction) {
-        const player = await this.container.hypixel.player(user);
+        const player = (await this.container.hypixel.fetch(user)).data;
         const config = await this.container.database.rewards.findUniqueOrThrow({
             where: {
                 id: user.id,

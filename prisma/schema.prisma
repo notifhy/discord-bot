@@ -47,20 +47,6 @@ model config {
   requestRetryLimit    Int      @default(3)
 }
 
-model defender {
-  id            String   @id @db.VarChar(20)
-  channel       String?  @db.VarChar(20)
-  loginAlert    Boolean  @default(true)
-  logoutAlert   Boolean  @default(true)
-  versionAlert  Boolean  @default(true)
-  gameTypeAlert Boolean  @default(true)
-  languageAlert Boolean  @default(true)
-  gameTypes     String[] @default([]) @db.VarChar(25)
-  languages     String[] @default([]) @db.VarChar(15)
-  versions      String[] @default([]) @db.VarChar(10)
-  users         users?
-}
-
 model friends {
   id      String  @id @db.VarChar(20)
   channel String? @db.VarChar(20)
@@ -69,7 +55,6 @@ model friends {
 
 model modules {
   id       String  @id @db.VarChar(20)
-  defender Boolean @default(false)
   friends  Boolean @default(false)
   playtime Boolean @default(false)
   rewards  Boolean @default(false)
@@ -108,7 +93,6 @@ model users {
   activities      activities[]
   system_messages system_messages[]
   authentication  authentication    @relation(fields: [id], references: [id], onDelete: Cascade, map: "authentication")
-  defender        defender          @relation(fields: [id], references: [id], onDelete: Cascade, map: "defender")
   friends         friends           @relation(fields: [id], references: [id], onDelete: Cascade, map: "friends")
   modules         modules           @relation(fields: [id], references: [id], onDelete: Cascade, map: "modules")
   playtime        playtime          @relation(fields: [id], references: [id], onDelete: Cascade, map: "playtime")

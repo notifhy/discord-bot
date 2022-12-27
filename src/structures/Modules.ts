@@ -1,6 +1,5 @@
 import type { users as User } from '@prisma/client';
 import type { Collection } from 'discord.js';
-import type { CleanHypixelData } from '../@types/Hypixel';
 import { Base } from './Base';
 import { BetterEmbed } from './BetterEmbed';
 import { ModuleErrorHandler } from '../errors/ModuleErrorHandler';
@@ -21,64 +20,9 @@ export class Modules extends Base {
     }
 
     public async fetch(user: User) {
-        this.lastUserFetches = 0;
-
-        const data = {
-            ...await this.container.hypixel.player(user),
-            ...Hypixel.cleanStatusData(),
-        };
-
-        this.lastUserFetches += 1;
-
-        if (
-            data.lastLogin
-            && data.lastLogout
-            && data.lastLogin > data.lastLogout
-        ) {
-            Object.assign(await this.container.hypixel.status(user));
-
-            this.lastUserFetches += 1;
-        }
-
-        const changes = await Modules.parse(user, data);
-
-        return { changes: changes, data: data };
-    }
-
-    public static async executeModulesWithData(
-        user: User,
-        enabledModules: Collection<string, Module<ModuleOptions>>,
-        newData: CleanHypixelData,
-        changes: Changes,
-    ) {
-        const onlineStatusAPIEnabled = newData.lastLogin !== null && newData.lastLogout !== null;
-
-        const availableModules = enabledModules.filter(
-            (module) => onlineStatusAPIEnabled || module.cronRequireOnlineStatusAPI === false,
-        );
-
-        // eslint-disable-next-line no-restricted-syntax
-        for (const module of availableModules.values()) {
-            try {
-                this.container.logger.debug(
-                    this,
-                    Logger.moduleContext(user),
-                    `Running ${module.name} cron with data.`,
-                );
-
-                await module.cron!(user, newData, changes);
-            } catch (error) {
-                await new ModuleErrorHandler(error, module, user).init();
-            }
-        }
-
-        this.container.logger.debug(
-            this,
-            Logger.moduleContext(user),
-            `Ran ${availableModules.size} modules without data.`,
-        );
-
-        await Modules.handleDataChanges(changes, availableModules, user);
+        const data = await this.container.hypixel.fetch(user);
+        Modules.handleDataChanges(data.changes, user);
+        return data;
     }
 
     public static async executeModules(
@@ -91,10 +35,10 @@ export class Modules extends Base {
                 this.container.logger.debug(
                     this,
                     Logger.moduleContext(user),
-                    `Running ${module.name} cron without data.`,
+                    `Running ${module.name} cron.`,
                 );
 
-                await module.cron?.(user);
+                await module.cron!(user);
             } catch (error) {
                 await new ModuleErrorHandler(error, module, user).init();
             }
@@ -103,29 +47,35 @@ export class Modules extends Base {
         this.container.logger.debug(
             this,
             Logger.moduleContext(user),
-            `Ran ${availableModules.size} modules without data.`,
+            `Ran ${availableModules.size} modules.`,
         );
     }
 
-    public static async handleDataChanges(
-        changes: Changes,
-        modules: Collection<string, Module<ModuleOptions>>,
-        user: User,
-    ) {
+    private static async handleDataChanges(changes: Changes, user: User) {
         const embeds: BetterEmbed[] = [];
 
-        const requiresOnlineAPI = modules.find((module) => module.cronRequireOnlineStatusAPI);
+        const userModules = await this.container.database.modules.findUniqueOrThrow({
+            where: {
+                id: user.id,
+            },
+        });
+
+        const enabledModules = this.container.stores
+            .get('modules')
+            .filter((module) => userModules[module.name]);
+
+        const requiresOnlineAPI = enabledModules.find((module) => module.requireOnlineStatusAPI);
 
         if (requiresOnlineAPI) {
-            if (Modules.isOnlineAPIMissing(changes)) {
+            if (Hypixel.isOnlineAPIMissing(changes)) {
                 const i18n = new Internationalization(user.locale);
 
                 embeds.push(
-                    new BetterEmbed({ text: i18n.getMessage('coreDataMissingAPIFooter') })
+                    new BetterEmbed({ text: i18n.getMessage('hypixelDataMissingAPIFooter') })
                         .setColor(Options.colorsNormal)
-                        .setTitle(i18n.getMessage('coreDataMissingOnlineStatusAPITitle'))
+                        .setTitle(i18n.getMessage('hypixelDataMissingOnlineStatusAPITitle'))
                         .setDescription(
-                            i18n.getMessage('coreDataMissingOnlineStatusAPIDescription'),
+                            i18n.getMessage('hypixelDataMissingOnlineStatusAPIDescription'),
                         ),
                 );
 
@@ -134,15 +84,15 @@ export class Modules extends Base {
                     Logger.moduleContext(user),
                     'Missing Online Status API data.',
                 );
-            } else if (Modules.isOnlineAPIReceived(changes)) {
+            } else if (Hypixel.isOnlineAPIReceived(changes)) {
                 const i18n = new Internationalization(user.locale);
 
                 embeds.push(
-                    new BetterEmbed({ text: i18n.getMessage('coreDataMissingAPIFooter') })
+                    new BetterEmbed({ text: i18n.getMessage('hypixelDataMissingAPIFooter') })
                         .setColor(Options.colorsNormal)
-                        .setTitle(i18n.getMessage('coreDataReceivedOnlineStatusAPITitle'))
+                        .setTitle(i18n.getMessage('hypixelDataReceivedOnlineStatusAPITitle'))
                         .setDescription(
-                            i18n.getMessage('coreDataReceivedOnlineStatusAPIDescription'),
+                            i18n.getMessage('hypixelDataReceivedOnlineStatusAPIDescription'),
                         ),
                 );
 
@@ -161,74 +111,5 @@ export class Modules extends Base {
                 embeds: embeds,
             });
         }
-    }
-
-    public static isOnlineAPIMissing(changes: Changes) {
-        return (
-            changes.new.lastLogin === null
-            && changes.old.lastLogin !== null
-            && changes.new.lastLogout === null
-            && changes.old.lastLogout !== null
-        );
-    }
-
-    public static isOnlineAPIReceived(changes: Changes) {
-        return (
-            changes.new.lastLogin !== null
-            && changes.old.lastLogin === null
-            && changes.new.lastLogout !== null
-            && changes.old.lastLogout === null
-        );
-    }
-
-    public static shouldFetch(enabledModules: Collection<string, Module<ModuleOptions>>) {
-        const modulesRequireData = enabledModules.filter((module) => module.cronIncludeAPIData);
-
-        return modulesRequireData.size > 0;
-    }
-
-    private static async parse(user: User, newData: CleanHypixelData) {
-        // https://github.com/prisma/prisma/issues/5042
-        const oldData = ((await this.container.database.activities.findFirst({
-            orderBy: {
-                index: 'desc',
-            },
-            select: {
-                firstLogin: true,
-                lastLogin: true,
-                lastLogout: true,
-                version: true,
-                language: true,
-                gameType: true,
-                gameMode: true,
-                gameMap: true,
-                lastClaimedReward: true,
-                rewardScore: true,
-                rewardHighScore: true,
-                totalDailyRewards: true,
-                totalRewards: true,
-            },
-            where: {
-                id: {
-                    equals: user.id,
-                },
-            },
-        })) ?? {}) as CleanHypixelData;
-
-        const changes = Hypixel.changes(newData, oldData);
-
-        this.container.logger.debug(this, 'Parsed data:', changes);
-
-        if (Object.keys(changes.new).length > 0) {
-            await this.container.database.activities.create({
-                data: {
-                    id: user.id,
-                    timestamp: Date.now(),
-                    ...newData,
-                },
-            });
-        }
-
-        return changes;
     }
 }

@@ -7,7 +7,7 @@ export class FriendsModule extends Module {
             ...options,
             name: 'friends',
             localization: 'modulesFriendsName',
-            cronIncludeAPIData: false,
+            requireOnlineStatusAPI: false,
         });
     }
 

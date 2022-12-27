@@ -1,8 +1,6 @@
-import { setTimeout } from 'node:timers/promises';
 import type { users as User } from '@prisma/client';
 import type { Collection } from 'discord.js';
 import cron, { ScheduledTask } from 'node-cron';
-import { Time } from '../enums/Time';
 import { CoreErrors } from './CoreErrors';
 import { CoreRequestErrorHandler } from '../errors/CoreRequestErrorHandler';
 import { ErrorHandler } from '../errors/ErrorHandler';
@@ -87,9 +85,8 @@ export class Core extends Base {
             },
         });
 
-        // const users = allUsers.filter((user) => Object.values(user.modules).includes(true));
-
         const moduleStore = this.container.stores.get('modules');
+        const modulesWithCron = moduleStore.filter((module) => module.cron);
 
         // eslint-disable-next-line no-restricted-syntax
         for (const user of users) {
@@ -97,9 +94,9 @@ export class Core extends Base {
                 return;
             }
 
-            if (Object.values(user.modules).includes(true)) {
-                const enabledModules = moduleStore.filter((module) => user.modules[module.name]);
+            const enabledModules = modulesWithCron.filter((module) => user.modules[module.name]);
 
+            if (enabledModules.size > 0) {
                 await this.refreshUser(user, enabledModules);
             } else {
                 this.container.logger.debug(
@@ -116,28 +113,10 @@ export class Core extends Base {
         enabledModules: Collection<string, Module<ModuleOptions>>,
     ) {
         try {
-            const shouldFetch = Modules.shouldFetch(enabledModules);
+            this.performance.set('modules');
+            await Modules.executeModules(user, enabledModules);
 
-            if (shouldFetch) {
-                this.performance.set('fetch');
-                const { data, changes } = await this.modules.fetch(user);
-
-                this.performance.set('modules');
-                await Modules.executeModulesWithData(user, enabledModules, data, changes);
-
-                this.performance.addDataPoint();
-
-                const timeoutPer = Time.Minute / this.container.config.hypixelRequestBucket;
-
-                await setTimeout(timeoutPer * this.modules.lastUserFetches);
-            } else {
-                this.performance.set('modules');
-                await Modules.executeModules(user, enabledModules);
-
-                this.performance.addDataPoint();
-
-                // let discord.js handle rate limits
-            }
+            this.performance.addDataPoint();
         } catch (error) {
             if (error instanceof HTTPError) {
                 new CoreRequestErrorHandler(error, this).init();

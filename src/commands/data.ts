@@ -178,11 +178,6 @@ export class DataCommand extends Command {
                     id: interaction.user.id,
                 },
             }),
-            this.container.database.defender.delete({
-                where: {
-                    id: interaction.user.id,
-                },
-            }),
             this.container.database.friends.delete({
                 where: {
                     id: interaction.user.id,
@@ -233,7 +228,6 @@ export class DataCommand extends Command {
                     },
                 },
                 authentication: true,
-                defender: true,
                 friends: true,
                 modules: true,
                 playtime: true,
