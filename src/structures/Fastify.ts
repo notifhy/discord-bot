@@ -3,6 +3,7 @@ import { container } from '@sapphire/framework';
 import fastifyClient from 'fastify';
 import { STATUS_CODES } from 'node:http';
 import process from 'node:process';
+import { Time } from '../enums/Time';
 import { FastifyErrorHandler } from '../errors/FastifyErrorHandler';
 import { generateHash } from '../utility/utility';
 import { Base } from './Base';
@@ -14,8 +15,8 @@ export class Fastify extends Base {
         });
 
         await fastify.register(import('@fastify/rate-limit'), {
-            max: 5,
-            timeWindow: '1 minute',
+            max: 25,
+            timeWindow: Time.Hour,
         });
 
         await fastify.register(import('@fastify/basic-auth'), {

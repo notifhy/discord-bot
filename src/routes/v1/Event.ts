@@ -1,9 +1,7 @@
-import type { users as User } from '@prisma/client';
-import { type Collection, DiscordAPIError } from 'discord.js';
+import { DiscordAPIError } from 'discord.js';
 import type { FastifyInstance, FastifyReply, FastifyRequest } from 'fastify';
 import { ModuleErrorHandler } from '../../errors/ModuleErrorHandler';
 import { Logger } from '../../structures/Logger';
-import type { Module, ModuleOptions } from '../../structures/Module';
 import { Route } from '../../structures/Route';
 
 /* eslint-disable no-await-in-loop */
@@ -25,7 +23,6 @@ export class EventRoute extends Route {
     }
 
     public override async routes(fastify: FastifyInstance) {
-        fastify.get(this.route, this.getMethod);
         fastify.post(
             this.route,
             {
@@ -55,20 +52,17 @@ export class EventRoute extends Route {
         );
     }
 
-    protected override async getMethod(_request: FastifyRequest, _reply: FastifyReply) {
-        throw new TypeError('bazinga');
-    }
-
     protected override async postMethod(request: FastifyRequest<{
         Body: IBodyPost;
     }>, reply: FastifyReply) {
+        const user = request.user!;
         const moduleStore = this.container.stores.get('modules');
         const modulesWithEvent = moduleStore.filter((module) => module.event);
 
         // check if module enabled
         const modules = await this.container.database.modules.findUniqueOrThrow({
             where: {
-                id: request.user!.id,
+                id: user.id,
             },
         });
 
@@ -77,39 +71,29 @@ export class EventRoute extends Route {
         if (activeModules.size === 0) {
             this.container.logger.debug(
                 this,
-                Logger.moduleContext(request.user!),
+                Logger.moduleContext(user),
                 'User has no enabled modules.',
             );
         } else {
-            this.executeModules(request.user!, activeModules);
-        }
+            // eslint-disable-next-line no-restricted-syntax
+            for (const module of activeModules.values()) {
+                try {
+                    await module.event!(user);
 
-        return reply.code(204).send();
-    }
-
-    public async executeModules(user: User, modules: Collection<string, Module<ModuleOptions>>) {
-        // eslint-disable-next-line no-restricted-syntax
-        for (const module of modules.values()) {
-            try {
-                this.container.logger.debug(
-                    this,
-                    Logger.moduleContext(user),
-                    `Running ${module.name} event.`,
-                );
-
-                await module.event!(user);
-            } catch (error) {
-                await new ModuleErrorHandler(error, module, user).init();
-                if (!(error instanceof DiscordAPIError)) {
-                    return;
+                    this.container.logger.debug(
+                        this,
+                        Logger.moduleContext(user),
+                        `Ran ${module.name}.`,
+                    );
+                } catch (error) {
+                    await new ModuleErrorHandler(error, module, user).init();
+                    if (!(error instanceof DiscordAPIError)) {
+                        break;
+                    }
                 }
             }
         }
 
-        this.container.logger.debug(
-            this,
-            Logger.moduleContext(user),
-            `Ran ${modules.size} modules.`,
-        );
+        return reply.code(204).send();
     }
 }

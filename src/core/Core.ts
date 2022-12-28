@@ -74,6 +74,7 @@ export class Core extends Base {
     }
 
     private async refresh() {
+        // shuffle array?
         const users = await this.container.database.users.findMany({
             include: {
                 modules: true,
@@ -107,34 +108,24 @@ export class Core extends Base {
                 'User has no enabled modules.',
             );
         } else {
-            await this.executeModules(user, activeModules);
-        }
-    }
+            // eslint-disable-next-line no-restricted-syntax
+            for (const module of activeModules.values()) {
+                try {
+                    await module.cron!(user);
 
-    public async executeModules(user: User, modules: Collection<string, Module<ModuleOptions>>) {
-        // eslint-disable-next-line no-restricted-syntax
-        for (const module of modules.values()) {
-            try {
-                this.container.logger.debug(
-                    this,
-                    Logger.moduleContext(user),
-                    `Running ${module.name} cron.`,
-                );
-
-                await module.cron!(user);
-            } catch (error) {
-                await new ModuleErrorHandler(error, module, user).init();
-                if (!(error instanceof DiscordAPIError)) {
-                    this.errors.addGeneric();
-                    return;
+                    this.container.logger.debug(
+                        this,
+                        Logger.moduleContext(user),
+                        `Ran ${module.name}.`,
+                    );
+                } catch (error) {
+                    await new ModuleErrorHandler(error, module, user).init();
+                    if (!(error instanceof DiscordAPIError)) {
+                        this.errors.addGeneric();
+                        break;
+                    }
                 }
             }
         }
-
-        this.container.logger.debug(
-            this,
-            Logger.moduleContext(user),
-            `Ran ${modules.size} modules.`,
-        );
     }
 }
