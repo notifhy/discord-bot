@@ -1,5 +1,6 @@
 import 'dotenv/config';
 import '@sentry/tracing';
+import './metrics';
 import process from 'node:process';
 import { ExtraErrorData } from '@sentry/integrations';
 import * as Sentry from '@sentry/node';

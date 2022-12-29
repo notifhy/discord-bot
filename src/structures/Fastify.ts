@@ -15,6 +15,7 @@ export class Fastify extends Base {
         });
 
         await fastify.register(import('@fastify/rate-limit'), {
+            allowList: (request) => request.url === '/metrics',
             max: 25,
             timeWindow: Time.Hour,
         });
@@ -54,7 +55,6 @@ export class Fastify extends Base {
         fastify.addHook('onSend', (request, reply, payload, done) => {
             reply.headers({
                 'Content-Security-Policy': "default-src 'none'",
-                'Content-Type': 'application/json',
                 'Strict-Transport-Security': 'max-age=31536000',
                 'X-Frame-Options': 'DENY',
             });
