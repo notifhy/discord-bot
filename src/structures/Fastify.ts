@@ -3,6 +3,7 @@ import { container } from '@sapphire/framework';
 import fastifyClient from 'fastify';
 import { STATUS_CODES } from 'node:http';
 import process from 'node:process';
+import { Counter, Histogram } from 'prom-client';
 import { Time } from '../enums/Time';
 import { FastifyErrorHandler } from '../errors/FastifyErrorHandler';
 import { generateHash } from '../utility/utility';
@@ -10,6 +11,18 @@ import { Base } from './Base';
 
 export class Fastify extends Base {
     public static async init() {
+        const requestCountCounter = new Counter({
+            name: 'http_requests_total',
+            help: 'Total number of requests',
+            labelNames: ['method', 'route'] as const,
+        });
+
+        const requestDurationHistogram = new Histogram({
+            name: 'http_requests_duration_seconds',
+            help: 'Duration of each request',
+            labelNames: ['method', 'route'] as const,
+        });
+
         const fastify = fastifyClient({
             caseSensitive: false,
         });
@@ -45,8 +58,10 @@ export class Fastify extends Base {
             },
         });
 
-        fastify.addHook('onRequest', (request, _reply, done) => {
+        fastify.addHook('onRequest', (request, reply, done) => {
+            requestCountCounter.labels({ method: request.method, route: request.url }).inc();
             request.user = null;
+            reply.start = Date.now();
             done();
         });
 
@@ -62,6 +77,10 @@ export class Fastify extends Base {
             if (typeof request.headers.origin !== 'undefined') {
                 reply.header('Access-Control-Allow-Origin', 'http://127.0.0.1:3000');
             }
+
+            requestDurationHistogram
+                .labels({ method: request.method, route: request.url })
+                .observe((Date.now() - reply.start) / 1000);
 
             done(null, payload);
         });
@@ -107,6 +126,10 @@ export class Fastify extends Base {
 }
 
 declare module 'fastify' {
+    export interface FastifyReply {
+        start: number;
+    }
+
     export interface FastifyRequest {
         user: User | null;
     }
