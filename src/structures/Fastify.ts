@@ -3,7 +3,7 @@ import { container } from '@sapphire/framework';
 import fastifyClient from 'fastify';
 import { STATUS_CODES } from 'node:http';
 import process from 'node:process';
-import { Counter, Histogram } from 'prom-client';
+import { Counter, Gauge } from 'prom-client';
 import { Time } from '../enums/Time';
 import { FastifyErrorHandler } from '../errors/FastifyErrorHandler';
 import { generateHash } from '../utility/utility';
@@ -17,7 +17,7 @@ export class Fastify extends Base {
             labelNames: ['method', 'route'] as const,
         });
 
-        const requestDurationHistogram = new Histogram({
+        const requestDurationHistogram = new Gauge({
             name: 'http_requests_duration_seconds',
             help: 'Duration of each request',
             labelNames: ['method', 'route'] as const,
@@ -80,7 +80,7 @@ export class Fastify extends Base {
 
             requestDurationHistogram
                 .labels({ method: request.method, route: request.url })
-                .observe((Date.now() - reply.start) / 1000);
+                .set((Date.now() - reply.start) / 1000);
 
             done(null, payload);
         });
