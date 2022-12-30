@@ -2,6 +2,7 @@ import type { config as Config } from '@prisma/client';
 import { type ApplicationCommandRegistry, BucketScope, Command } from '@sapphire/framework';
 import { type CommandInteraction, Constants } from 'discord.js';
 import { BetterEmbed } from '../structures/BetterEmbed';
+import { Hypixel } from '../structures/Hypixel';
 import { Logger } from '../structures/Logger';
 import { Options } from '../utility/Options';
 
@@ -286,7 +287,7 @@ export class ConfigCommand extends Command {
             i18n.getMessage('commandsConfigHypixelRequestBucketDescription', [amount]),
         );
 
-        this.container.hypixel.updateBucket();
+        Hypixel.updateBucket();
     }
 
     private async ownerGuilds(interaction: CommandInteraction) {

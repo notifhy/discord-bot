@@ -1,22 +1,32 @@
 import type { modules as ModulesType, users as User } from '@prisma/client';
 import { Collection, DiscordAPIError } from 'discord.js';
 import cron, { ScheduledTask } from 'node-cron';
-import { CoreErrors } from './CoreErrors';
+import { Counter, Gauge } from 'prom-client';
 import { ErrorHandler } from '../errors/ErrorHandler';
 import { Base } from '../structures/Base';
 import type { Module, ModuleOptions } from '../structures/Module';
-import { Modules } from '../structures/Modules';
 import { Logger } from '../structures/Logger';
 import { ModuleErrorHandler } from '../errors/ModuleErrorHandler';
+import { Timeout } from '../structures/Timeout';
+import { Time } from '../enums/Time';
 
 /* eslint-disable no-await-in-loop */
 
 export class Core extends Base {
     private cron: ScheduledTask;
 
-    public readonly modules: Modules;
+    private readonly timeout: Timeout;
 
-    public readonly errors: CoreErrors;
+    private static cronErrorsCounter = new Counter({
+        name: 'notifhy_cron_errors_total',
+        help: 'Total number of errors',
+    });
+
+    private static cronDurationGauge = new Gauge({
+        name: 'notifhy_cron_duration_seconds',
+        help: 'Duration of each cron by user',
+        labelNames: ['uuid'] as const,
+    });
 
     constructor() {
         super();
@@ -31,9 +41,7 @@ export class Core extends Base {
             },
         );
 
-        this.errors = new CoreErrors();
-        this.modules = new Modules();
-
+        this.timeout = new Timeout({ baseTimeout: Time.Second * 30, resetAfter: Time.Hour });
         this.container.logger.debug(this, `Cron scheduled with ${this.container.config.coreCron}.`);
     }
 
@@ -63,13 +71,15 @@ export class Core extends Base {
 
     private async preconditions() {
         try {
-            if (this.errors.isTimeout() || this.container.config.core === false) {
+            if (this.timeout.hasTimeout() || this.container.config.core === false) {
                 return;
             }
 
             await this.refresh();
         } catch (error) {
+            this.timeout.add();
             new ErrorHandler(error).init();
+            Core.cronErrorsCounter.inc();
         }
     }
 
@@ -86,11 +96,15 @@ export class Core extends Base {
 
         // eslint-disable-next-line no-restricted-syntax
         for (const user of users) {
-            if (this.errors.isTimeout() || this.container.config.core === false) {
+            if (this.timeout.hasTimeout() || this.container.config.core === false) {
                 return;
             }
 
+            const end = Core.cronDurationGauge.startTimer({ uuid: user.uuid });
+
             await this.refreshUser(user, user.modules, modulesWithCron);
+
+            end();
         }
     }
 
@@ -121,7 +135,9 @@ export class Core extends Base {
                 } catch (error) {
                     await new ModuleErrorHandler(error, module, user).init();
                     if (!(error instanceof DiscordAPIError)) {
-                        this.errors.addGeneric();
+                        this.timeout.add();
+                        new ErrorHandler(error).init();
+                        Core.cronErrorsCounter.inc();
                         break;
                     }
                 }

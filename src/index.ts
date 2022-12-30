@@ -1,7 +1,7 @@
 import 'dotenv/config';
 import '@sentry/tracing';
-import './metrics';
 import process from 'node:process';
+import { collectDefaultMetrics } from 'prom-client';
 import { ExtraErrorData } from '@sentry/integrations';
 import * as Sentry from '@sentry/node';
 import { ErrorHandler } from './errors/ErrorHandler';
@@ -23,5 +23,7 @@ process.on('uncaughtException', (error) => {
     new ErrorHandler(error, 'uncaughtException').init('fatal');
     process.exit(1);
 });
+
+collectDefaultMetrics();
 
 Client.init();

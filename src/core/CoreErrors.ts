@@ -32,27 +32,27 @@ export class CoreErrors extends Base {
     }
 
     public addAbort() {
-        this.abort.addError();
+        this.abort.add();
     }
 
     public addGeneric() {
-        this.generic.addError();
+        this.generic.add();
     }
 
     public addHTTP() {
-        this.http.addError();
+        this.http.add();
     }
 
     public addRateLimit() {
-        this.rateLimit.addError();
+        this.rateLimit.add();
     }
 
     public isTimeout() {
         return (
-            this.abort.isTimeout()
-            || this.generic.isTimeout()
-            || this.http.isTimeout()
-            || this.rateLimit.isTimeout()
+            this.abort.hasTimeout()
+            || this.generic.hasTimeout()
+            || this.http.hasTimeout()
+            || this.rateLimit.hasTimeout()
         );
     }
 

@@ -9,15 +9,8 @@ import { Options } from '../utility/Options';
 /* eslint-disable no-await-in-loop */
 
 export class Modules extends Base {
-    public lastUserFetches: number;
-
-    public constructor() {
-        super();
-        this.lastUserFetches = 0;
-    }
-
-    public async fetch(user: User) {
-        const data = await this.container.hypixel.fetch(user);
+    public static async fetch(user: User) {
+        const data = await Hypixel.fetch(user);
         Modules.handleDataChanges(data.changes, user);
         return data;
     }

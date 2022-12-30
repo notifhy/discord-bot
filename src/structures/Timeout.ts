@@ -59,13 +59,13 @@ export class Timeout {
         this.increment = options?.increment;
 
         // Bindings
-        this.addError = this.addError.bind(this);
-        this.isTimeout = this.isTimeout.bind(this);
+        this.add = this.add.bind(this);
+        this.hasTimeout = this.hasTimeout.bind(this);
         this.getPauseFor = this.getPauseFor.bind(this);
         this.getTimeout = this.getTimeout.bind(this);
     }
 
-    public addError() {
+    public add() {
         this.pauseFor = this.timeout;
         this.resumeAfter = this.timeout + Date.now();
 
@@ -110,7 +110,7 @@ export class Timeout {
         return this.timeout;
     }
 
-    public isTimeout() {
+    public hasTimeout() {
         return this.resumeAfter > Date.now();
     }
 

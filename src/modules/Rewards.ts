@@ -8,6 +8,7 @@ import { BetterEmbed } from '../structures/BetterEmbed';
 import { CustomId } from '../structures/CustomId';
 import { Logger } from '../structures/Logger';
 import { Module } from '../structures/Module';
+import { Modules } from '../structures/Modules';
 import { Options } from '../utility/Options';
 import { cleanLength, disableComponents } from '../utility/utility';
 
@@ -155,7 +156,7 @@ export class RewardsModule extends Module {
     }
 
     public override async interaction(user: User, interaction: ButtonInteraction) {
-        const player = (await this.container.hypixel.fetch(user)).data;
+        const player = (await Modules.fetch(user)).data;
         const config = await this.container.database.rewards.findUniqueOrThrow({
             where: {
                 id: user.id,

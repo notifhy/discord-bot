@@ -1,6 +1,7 @@
 import { setTimeout } from 'node:timers/promises';
 import { RateLimitManager } from '@sapphire/ratelimits';
 import type { users as User } from '@prisma/client';
+import { Counter } from 'prom-client';
 import type {
     CleanHypixelData,
     CleanHypixelPlayer,
@@ -22,28 +23,32 @@ export type Changes = {
 };
 
 export class Hypixel extends Base {
-    private rateLimitManager: RateLimitManager;
+    private static rateLimitManager = new RateLimitManager(
+        Time.Minute,
+        this.container.config.hypixelRequestBucket,
+    );
 
-    private fetches: number;
+    private static fetches = 0;
 
-    public constructor() {
-        super();
+    private static requestCountCounter = new Counter({
+        name: 'hypixel_requests_total',
+        help: 'Total number of requests to Hypixel',
+        labelNames: ['route', 'uuid'] as const,
+    });
 
-        this.fetches = 0;
-        this.rateLimitManager = new RateLimitManager(
-            Time.Minute,
-            this.container.config.hypixelRequestBucket,
-        );
-    }
+    private static requestRateLimitCountCounter = new Counter({
+        name: 'hypixel_requests_ratelimit_total',
+        help: 'Total number of requests to Hypixel',
+    });
 
-    public async fetch(user: User) {
+    public static async fetch(user: User) {
         const data = {
             ...(await this.player(user)),
             ...Hypixel.cleanStatusData(),
         };
 
         if (data.lastLogin && data.lastLogout && data.lastLogin > data.lastLogout) {
-            Object.assign(data, await this.status(user));
+            Object.assign(data, await Hypixel.status(user));
         }
 
         const changes = await Hypixel.parse(user, data);
@@ -51,28 +56,41 @@ export class Hypixel extends Base {
         return { changes: changes, data: data };
     }
 
-    private async player(user: User): Promise<CleanHypixelPlayer> {
-        const url = new URL(Options.urlHypixelPlayer);
-        url.searchParams.append('uuid', user.uuid);
+    private static async player(user: User): Promise<CleanHypixelPlayer> {
+        const rawData = (await Hypixel.preRequest(
+            Options.urlHypixelPlayer,
+            user.uuid,
+        )) as RawHypixelPlayer;
 
-        const rawData = (await this.container.hypixel.request(url)) as RawHypixelPlayer;
         return Hypixel.cleanPlayerData(rawData);
     }
 
-    private async status(user: User): Promise<CleanHypixelStatus> {
-        const url = new URL(Options.urlHypixelStatus);
-        url.searchParams.append('uuid', user.uuid);
+    private static async status(user: User): Promise<CleanHypixelStatus> {
+        const rawData = (await Hypixel.preRequest(
+            Options.urlHypixelStatus,
+            user.uuid,
+        )) as RawHypixelStatus;
 
-        const rawData = (await this.container.hypixel.request(url)) as RawHypixelStatus;
         return Hypixel.cleanStatusData(rawData);
     }
 
-    private async request(rawURL: URL): Promise<HypixelAPIOk> {
-        const rateLimit = this.rateLimitManager.acquire('global');
+    private static async preRequest(route: string, uuid: string) {
+        const url = new URL(route);
+        url.searchParams.append('uuid', uuid);
+
+        Hypixel.requestCountCounter.labels({ route: route, uuid: uuid }).inc();
+
+        return Hypixel.request(url);
+    }
+
+    private static async request(rawURL: URL): Promise<HypixelAPIOk> {
+        const rateLimit = Hypixel.rateLimitManager.acquire('global');
 
         const url = rawURL.toString();
 
         if (rateLimit.limited) {
+            Hypixel.requestRateLimitCountCounter.inc();
+
             await setTimeout(rateLimit.remainingTime);
 
             this.container.logger.warn(
@@ -84,26 +102,23 @@ export class Hypixel extends Base {
             return this.request(rawURL);
         }
 
-        this.container.logger.debug(
-            this,
-            `Request on route ${url}.`,
-        );
+        this.container.logger.debug(this, `Request on route ${url}.`);
 
         const response = await Request.request(url, {
             headers: { 'API-Key': process.env.HYPIXEL_API_KEY! },
         });
 
-        this.fetches += 1;
+        Hypixel.fetches += 1;
 
         return response.json() as Promise<HypixelAPIOk>;
     }
 
-    public getFetches() {
-        return this.fetches;
+    public static getFetches() {
+        return Hypixel.fetches;
     }
 
-    public updateBucket() {
-        this.rateLimitManager = new RateLimitManager(
+    public static updateBucket() {
+        Hypixel.rateLimitManager = new RateLimitManager(
             Time.Minute,
             this.container.config.hypixelRequestBucket,
         );

@@ -4,7 +4,6 @@ import { container, SapphireClient } from '@sapphire/framework';
 import { Intents, Options, type PresenceData, Sweepers } from 'discord.js';
 import { Core } from '../core/Core';
 import { i18n } from '../locales/i18n';
-import { Hypixel } from './Hypixel';
 import { ModuleStore } from './ModuleStore';
 import { Logger } from './Logger';
 import { RouteStore } from './RouteStore';
@@ -86,7 +85,6 @@ export class Client extends SapphireClient {
 
         container.core = new Core();
         container.customPresence = null;
-        container.hypixel = new Hypixel();
         container.i18n = new i18n();
 
         // Must register stores before logging in
@@ -107,7 +105,6 @@ declare module '@sapphire/pieces' {
         core: Core;
         customPresence: PresenceData | null;
         database: PrismaClient;
-        hypixel: Hypixel;
         i18n: i18n;
     }
 
