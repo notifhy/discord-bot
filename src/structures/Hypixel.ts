@@ -1,7 +1,6 @@
 import { setTimeout } from 'node:timers/promises';
 import { RateLimitManager } from '@sapphire/ratelimits';
 import type { users as User } from '@prisma/client';
-import { Counter } from 'prom-client';
 import type {
     CleanHypixelData,
     CleanHypixelPlayer,
@@ -29,17 +28,6 @@ export class Hypixel extends Base {
     );
 
     private static fetches = 0;
-
-    private static requestCountCounter = new Counter({
-        name: 'notifhy_hypixel_requests_total',
-        help: 'Total number of requests to Hypixel',
-        labelNames: ['route', 'uuid'] as const,
-    });
-
-    private static requestRateLimitCountCounter = new Counter({
-        name: 'notifhy_hypixel_requests_ratelimit_total',
-        help: 'Total number of ratelimited attempted requests to Hypixel',
-    });
 
     public static async fetch(user: User) {
         const data = {
@@ -78,8 +66,6 @@ export class Hypixel extends Base {
         const url = new URL(route);
         url.searchParams.append('uuid', uuid);
 
-        Hypixel.requestCountCounter.labels({ route: route, uuid: uuid }).inc();
-
         return Hypixel.request(url);
     }
 
@@ -89,8 +75,6 @@ export class Hypixel extends Base {
         const url = rawURL.toString();
 
         if (rateLimit.limited) {
-            Hypixel.requestRateLimitCountCounter.inc();
-
             await setTimeout(rateLimit.remainingTime);
 
             this.container.logger.warn(

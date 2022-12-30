@@ -11,16 +11,16 @@ import { Base } from './Base';
 
 export class Fastify extends Base {
     public static async init() {
-        const requestsCountCounter = new Counter({
+        const requestsCounter = new Counter({
             name: 'http_requests_total',
             help: 'Total number of requests',
-            labelNames: ['method', 'route'] as const,
+            labelNames: ['method', 'route', 'status'] as const,
         });
 
         const requestsDurationGauge = new Gauge({
             name: 'http_requests_duration_seconds',
             help: 'Duration of each request',
-            labelNames: ['method', 'route'] as const,
+            labelNames: ['method', 'route', 'status'] as const,
         });
 
         const fastify = fastifyClient({
@@ -59,7 +59,6 @@ export class Fastify extends Base {
         });
 
         fastify.addHook('onRequest', (request, reply, done) => {
-            requestsCountCounter.labels({ method: request.method, route: request.url }).inc();
             request.user = null;
             reply.start = Date.now();
             done();
@@ -78,9 +77,9 @@ export class Fastify extends Base {
                 reply.header('Access-Control-Allow-Origin', 'http://127.0.0.1:3000');
             }
 
-            requestsDurationGauge
-                .labels({ method: request.method, route: request.url })
-                .set((Date.now() - reply.start) / 1000);
+            const labels = { method: request.method, route: request.url, status: reply.statusCode };
+            requestsCounter.labels(labels).inc();
+            requestsDurationGauge.labels(labels).set((Date.now() - reply.start) / 1000);
 
             done(null, payload);
         });
