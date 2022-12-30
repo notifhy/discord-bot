@@ -31,14 +31,14 @@ export class Hypixel extends Base {
     private static fetches = 0;
 
     private static requestCountCounter = new Counter({
-        name: 'hypixel_requests_total',
+        name: 'notifhy_hypixel_requests_total',
         help: 'Total number of requests to Hypixel',
         labelNames: ['route', 'uuid'] as const,
     });
 
     private static requestRateLimitCountCounter = new Counter({
-        name: 'hypixel_requests_ratelimit_total',
-        help: 'Total number of requests to Hypixel',
+        name: 'notifhy_hypixel_requests_ratelimit_total',
+        help: 'Total number of ratelimited attempted requests to Hypixel',
     });
 
     public static async fetch(user: User) {
