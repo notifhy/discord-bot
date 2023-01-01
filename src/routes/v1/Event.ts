@@ -1,15 +1,13 @@
 import { DiscordAPIError } from 'discord.js';
 import type { FastifyInstance, FastifyReply, FastifyRequest } from 'fastify';
+import type { EventPayload } from '../../@types/EventPayload';
 import { ModuleErrorHandler } from '../../errors/ModuleErrorHandler';
 import { Logger } from '../../structures/Logger';
 import { Route } from '../../structures/Route';
 
 /* eslint-disable no-await-in-loop */
 
-interface IBodyPost {
-    domain: string;
-    joined?: boolean;
-}
+type IBodyPost = EventPayload;
 
 export class EventRoute extends Route {
     public constructor(context: Route.Context, options: Route.Options) {
@@ -59,7 +57,6 @@ export class EventRoute extends Route {
         const moduleStore = this.container.stores.get('modules');
         const modulesWithEvent = moduleStore.filter((module) => module.event);
 
-        // check if module enabled
         const modules = await this.container.database.modules.findUniqueOrThrow({
             where: {
                 id: user.id,
@@ -72,13 +69,13 @@ export class EventRoute extends Route {
             this.container.logger.debug(
                 this,
                 Logger.moduleContext(user),
-                'User has no enabled modules.',
+                'User has no enabled modules for <Module>.event.',
             );
         } else {
             // eslint-disable-next-line no-restricted-syntax
             for (const module of activeModules.values()) {
                 try {
-                    await module.event!(user);
+                    await module.event!(user, request.body);
 
                     this.container.logger.debug(
                         this,

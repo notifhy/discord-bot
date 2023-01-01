@@ -119,7 +119,7 @@ export class Core extends Base {
             this.container.logger.debug(
                 this,
                 Logger.moduleContext(user),
-                'User has no enabled modules.',
+                'User has no enabled modules for <Module>.cron.',
             );
         } else {
             // eslint-disable-next-line no-restricted-syntax
@@ -136,7 +136,6 @@ export class Core extends Base {
                     await new ModuleErrorHandler(error, module, user).init();
                     if (!(error instanceof DiscordAPIError)) {
                         this.timeout.add();
-                        new ErrorHandler(error).init();
                         Core.cronErrorsCounter.inc();
                         break;
                     }

@@ -17,6 +17,8 @@ export class Options extends Base {
 
     static readonly colorsNormal: ColorResolvable = 0x2f3136;
 
+    static readonly colorsOff: ColorResolvable = 0x555555;
+
     static readonly colorsOk: ColorResolvable = 0xffaa00;
 
     static readonly colorsOn: ColorResolvable = 0x00aa00;

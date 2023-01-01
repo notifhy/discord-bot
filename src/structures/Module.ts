@@ -1,6 +1,7 @@
 import type { users as User } from '@prisma/client';
 import { Piece } from '@sapphire/framework';
 import type { MessageComponentInteraction } from 'discord.js';
+import type { EventPayload } from '../@types/EventPayload';
 import type { MessageKeys } from '../locales/locales';
 
 export class Module<O extends Module.Options = Module.Options> extends Piece<O> {
@@ -20,7 +21,7 @@ export class Module<O extends Module.Options = Module.Options> extends Piece<O> 
 
     public cron?(user: User): Promise<void>;
 
-    public event?(user: User): Promise<void>;
+    public event?(user: User, payload: EventPayload): Promise<void>;
 
     public interaction?(user: User, interaction: MessageComponentInteraction): Promise<void>;
 }

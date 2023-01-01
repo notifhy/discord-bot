@@ -17,12 +17,6 @@
     "none": {
         "message": "None"
     },
-    "commandsAnnouncementsAddDescription": {
-        "message": "$1 will be sent to $2!"
-    },
-    "commandsAnnouncementsAddTitle": {
-        "message": "Added $1"
-    },
     "commandsConfigCoreDescription": {
         "message": "The core is now **$1**."
     },
@@ -506,8 +500,20 @@
     "errorsPreconditionUserLocalPermissionsTitle": {
         "message": "Missing Permission(s)"
     },
+    "modulesFriendsLoggedIn": {
+        "message": "$1 logged in $2 at $3"
+    },
+    "modulesFriendsLoggedOut": {
+        "message": "$1 logged out $2 at $3"
+    },
     "modulesFriendsName": {
         "message": "Friends"
+    },
+    "modulesFriendsMissingPermissionDescription": {
+        "message": "The set channel for the Friends module is not accessible. Please check the bot's permission settings."
+    },
+    "modulesFriendsMissingPermissionName": {
+        "message": "Missing Permission(s)"
     },
     "modulesPlaytimesName": {
         "message": "Playtime"
