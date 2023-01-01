@@ -60,6 +60,7 @@ export class Fastify extends Base {
 
         fastify.addHook('onRequest', (request, reply, done) => {
             request.user = null;
+            // eslint-disable-next-line no-param-reassign
             reply.start = Date.now();
             done();
         });

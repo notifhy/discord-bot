@@ -35,11 +35,11 @@ export class Modules extends Base {
                 const i18n = new Internationalization(user.locale);
 
                 embeds.push(
-                    new BetterEmbed({ text: i18n.getMessage('hypixelDataMissingAPIFooter') })
+                    new BetterEmbed({ text: i18n.getMessage('modulesHypixelDataMissingAPIFooter') })
                         .setColor(Options.colorsNormal)
-                        .setTitle(i18n.getMessage('hypixelDataMissingOnlineStatusAPITitle'))
+                        .setTitle(i18n.getMessage('modulesHypixelDataMissingOnlineStatusAPITitle'))
                         .setDescription(
-                            i18n.getMessage('hypixelDataMissingOnlineStatusAPIDescription'),
+                            i18n.getMessage('modulesHypixelDataMissingOnlineStatusAPIDescription'),
                         ),
                 );
 
@@ -52,11 +52,11 @@ export class Modules extends Base {
                 const i18n = new Internationalization(user.locale);
 
                 embeds.push(
-                    new BetterEmbed({ text: i18n.getMessage('hypixelDataMissingAPIFooter') })
+                    new BetterEmbed({ text: i18n.getMessage('modulesHypixelDataMissingAPIFooter') })
                         .setColor(Options.colorsNormal)
-                        .setTitle(i18n.getMessage('hypixelDataReceivedOnlineStatusAPITitle'))
+                        .setTitle(i18n.getMessage('modulesHypixelDataReceivedOnlineStatusAPITitle'))
                         .setDescription(
-                            i18n.getMessage('hypixelDataReceivedOnlineStatusAPIDescription'),
+                            i18n.getMessage('modulesHypixelDataReceivedOnlineStatusAPIDescription'),
                         ),
                 );
 

@@ -22,7 +22,7 @@ export abstract class Route<O extends Route.Options = Route.Options> extends Pie
     public route: string;
 
     public constructor(context: Route.Context, options: O) {
-        super(context, options);
+        super(context, { ...options, name: options.route });
 
         this.route = options.route;
     }

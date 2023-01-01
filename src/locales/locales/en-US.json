@@ -383,21 +383,6 @@
     "commandsSystemMessageSuccessDescription": {
         "message": "Your system message was created successfully."
     },
-    "hypixelDataMissingAPIFooter": {
-        "message": "Alert"
-    },
-    "hypixelDataMissingOnlineStatusAPIDescription": {
-        "message": "Your Online Status API data is missing. This may be a result of disabling the Online Status API option on Hypixel or setting your social status to offline.\n\nOne or more of your enabled module(s) will not work while this data is missing. Once resolved, the affected module(s) will automatically resume operation and you will receive another DM."
-    },
-    "hypixelDataMissingOnlineStatusAPITitle": {
-        "message": "Missing API Data"
-    },
-    "hypixelDataReceivedOnlineStatusAPIDescription": {
-        "message": "Your Online Status API data was received. Any affected modules will now resume operation."
-    },
-    "hypixelDataReceivedOnlineStatusAPITitle": {
-        "message": "Received API Data"
-    },
     "errorsGeneralError": {
         "message": "Error"
     },
@@ -414,10 +399,10 @@
         "message": "Oops"
     },
     "errorsModuleDiscordAPIError10003": {
-        "message": "The set channel was not fetchable. [Code 10003](https://discord.com/developers/docs/topics/opcodes-and-status-codes#json-json-error-codes \"Opcodes and Status codes\")"
+        "message": "The set channel was not reachable. [Code 10003](https://discord.com/developers/docs/topics/opcodes-and-status-codes#json-json-error-codes \"Opcodes and Status codes\")"
     },
     "errorsModuleDiscordAPIError10013": {
-        "message": "Your account was not fetchable. [Code 10013](https://discord.com/developers/docs/topics/opcodes-and-status-codes#json-json-error-codes \"Opcodes and Status codes\")"
+        "message": "Your account was not reachable. [Code 10013](https://discord.com/developers/docs/topics/opcodes-and-status-codes#json-json-error-codes \"Opcodes and Status codes\")"
     },
     "errorsModuleDiscordAPIError50001": {
         "message": "The set channel, server, or user was not reachable. Please check to see if this bot can access the set channel. [Code 50001](https://discord.com/developers/docs/topics/opcodes-and-status-codes#json-json-error-codes \"Opcodes and Status codes\")"
@@ -514,6 +499,21 @@
     },
     "modulesFriendsMissingPermissionName": {
         "message": "Missing Permission(s)"
+    },
+    "modulesHypixelDataMissingAPIFooter": {
+        "message": "Alert"
+    },
+    "modulesHypixelDataMissingOnlineStatusAPIDescription": {
+        "message": "Your Online Status API data is missing. This may be a result of disabling the Online Status API option on Hypixel or setting your social status to offline.\n\nOne or more of your enabled module(s) will not work while this data is missing. Once resolved, the affected module(s) will automatically resume operation and you will receive another DM."
+    },
+    "modulesHypixelDataMissingOnlineStatusAPITitle": {
+        "message": "Missing API Data"
+    },
+    "modulesHypixelDataReceivedOnlineStatusAPIDescription": {
+        "message": "Your Online Status API data was received. Any affected modules will now resume operation."
+    },
+    "modulesHypixelDataReceivedOnlineStatusAPITitle": {
+        "message": "Received API Data"
     },
     "modulesPlaytimesName": {
         "message": "Playtime"

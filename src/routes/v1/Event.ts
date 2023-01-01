@@ -13,7 +13,6 @@ export class EventRoute extends Route {
     public constructor(context: Route.Context, options: Route.Options) {
         super(context, {
             ...options,
-            name: 'event',
             route: '/v1/event',
         });
 
