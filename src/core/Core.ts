@@ -28,7 +28,7 @@ export class Core extends Base {
         labelNames: ['uuid'] as const,
     });
 
-    constructor() {
+    public constructor() {
         super();
 
         this.cron = cron.schedule(
@@ -46,16 +46,6 @@ export class Core extends Base {
     }
 
     public async init() {
-        this.cron = cron.schedule(
-            this.container.config.coreCron,
-            async () => {
-                await this.preconditions();
-            },
-            {
-                scheduled: false,
-            },
-        );
-
         if (this.container.config.core) {
             this.cron.start();
         }
@@ -67,6 +57,20 @@ export class Core extends Base {
 
     public cronStop() {
         this.cron.stop();
+    }
+
+    public cronUpdate() {
+        this.cronStop();
+
+        this.cron = cron.schedule(
+            this.container.config.coreCron,
+            async () => {
+                await this.preconditions();
+            },
+            {
+                scheduled: this.container.config.core,
+            },
+        );
     }
 
     private async preconditions() {

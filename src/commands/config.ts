@@ -1,6 +1,7 @@
 import type { config as Config } from '@prisma/client';
 import { type ApplicationCommandRegistry, BucketScope, Command } from '@sapphire/framework';
 import { type CommandInteraction, Constants } from 'discord.js';
+import * as nodeCron from 'node-cron';
 import { BetterEmbed } from '../structures/BetterEmbed';
 import { Hypixel } from '../structures/Hypixel';
 import { Logger } from '../structures/Logger';
@@ -232,6 +233,10 @@ export class ConfigCommand extends Command {
 
         const cron = interaction.options.getString('cron', true);
 
+        if (nodeCron.validate(cron) === false) {
+            throw new RangeError(`Invalid cron: ${cron}`);
+        }
+
         await this.handleConfigUpdate(
             interaction,
             'coreCron',
@@ -241,6 +246,8 @@ export class ConfigCommand extends Command {
                 cron,
             ]),
         );
+
+        this.container.core.cronUpdate();
     }
 
     private async devMode(interaction: CommandInteraction) {
