@@ -59,10 +59,7 @@ export class TestCommand extends Command {
 
         const salt = generateSalt(Options.authenticationSaltLength);
 
-        const hash = generateHash(
-            password,
-            salt,
-        );
+        const hash = generateHash(password, salt);
 
         this.container.logger.info(this, password);
 

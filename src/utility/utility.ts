@@ -205,13 +205,6 @@ export function disableComponents(
     return actionRows;
 }
 
-export function filterNullBytes(content: string) {
-    return content
-        .split('')
-        .filter((char) => char.codePointAt(0))
-        .join('');
-}
-
 export function formattedUnix({
     ms = Date.now(),
     date = false,
@@ -239,17 +232,16 @@ export function generateHash(password: string, salt: string) {
     const buffer = pbkdf2Sync(
         password.normalize(),
         salt,
-        Options.hashIterations,
-        Options.hashKeylen,
-        Options.hashDigest,
+        Options.cryptoHashIterations,
+        Options.cryptoHashKeylen,
+        Options.cryptoHashDigest,
     );
 
-    // Certain databases *cough* PostgreSQL *cough* can't take null bytes (0x00)
-    return filterNullBytes(buffer.toString('utf8'));
+    return buffer.toString('hex');
 }
 
 export function generateSalt(length: number) {
-    return filterNullBytes(randomBytes(length).toString('utf8'));
+    return randomBytes(length).toString('hex');
 }
 
 export function generatePassword(length: number) {

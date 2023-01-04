@@ -34,6 +34,12 @@ export class Options extends Base {
 
     static readonly coreDisabledTimeout = Time.Second * 10;
 
+    static readonly cryptoHashIterations = 100000;
+
+    static readonly cryptoHashKeylen = 64;
+
+    static readonly cryptoHashDigest = 'sha256';
+
     static readonly dataHistoryFast = 27;
 
     static readonly dataHistorySlow = 9;
@@ -47,12 +53,6 @@ export class Options extends Base {
     static readonly emojiSlowBackward = '<:backward:928525709004111892>';
 
     static readonly emojiSlowForward = '<:forward:928525657829412864>';
-
-    static readonly hashIterations = 100000;
-
-    static readonly hashKeylen = 64;
-
-    static readonly hashDigest = 'sha256';
 
     static readonly modulesRewardsHypixelTimezone = 'EST5EDT';
 
@@ -82,7 +82,7 @@ export class Options extends Base {
 
     static readonly regexUsername = /^[a-zA-Z0-9_-]{1,24}$/;
 
-    static readonly regexUUID = /^[0-9a-f]{8}(-?)[0-9a-f]{4}(-?)[1-5][0-9a-f]{3}(-?)[89AB][0-9a-f]{3}(-?)[0-9a-f]{12}$/i;
+    static readonly regexUUID = /^([0-9a-f]{8}[0-9a-f]{4}[1-5][0-9a-f]{3}[89AB][0-9a-f]{3}[0-9a-f]{12})|([0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89AB][0-9a-f]{3}-[0-9a-f]{12})$/i;
 
     static readonly restRequestTimeout = Time.Second * 5;
 

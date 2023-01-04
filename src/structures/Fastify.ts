@@ -6,6 +6,7 @@ import process from 'node:process';
 import { Counter, Gauge } from 'prom-client';
 import { Time } from '../enums/Time';
 import { FastifyErrorHandler } from '../errors/FastifyErrorHandler';
+import { Options } from '../utility/Options';
 import { generateHash } from '../utility/utility';
 import { Base } from './Base';
 
@@ -38,6 +39,10 @@ export class Fastify extends Base {
             // @ts-ignore return paths
             // eslint-disable-next-line consistent-return
             validate: async (username, password, request) => {
+                if (Options.regexUUID.test(username) === false) {
+                    return new Error('Invalid username or password');
+                }
+
                 const user = await this.container.database.users.findUnique({
                     include: {
                         authentication: true,
