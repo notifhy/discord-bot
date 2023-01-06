@@ -42,7 +42,8 @@ export class RewardsModule extends Module {
         const lastResetTime = this.lastResetTime(now);
 
         const surpassedInterval = config.lastNotified < lastResetTime
-            || config.lastNotified + config.interval < now;
+        // Time.Minute is for a bit of tolerance between notifications
+            || config.lastNotified + config.interval - Time.Minute < now;
 
         this.container.logger.debug(
             this,
