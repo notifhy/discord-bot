@@ -1,13 +1,13 @@
 import { Precondition } from '@sapphire/framework';
-import type { CommandInteraction, ContextMenuInteraction } from 'discord.js';
+import type { ChatInputCommandInteraction, ContextMenuCommandInteraction } from 'discord.js';
 import { Identifier } from '../enums/Identifier';
 
 export class RegistrationPrecondition extends Precondition {
-    public override chatInputRun(interaction: CommandInteraction) {
+    public override chatInputRun(interaction: ChatInputCommandInteraction) {
         return this.checkRegistration(interaction.user.id);
     }
 
-    public override contextMenuRun(interaction: ContextMenuInteraction) {
+    public override contextMenuRun(interaction: ContextMenuCommandInteraction) {
         return this.checkRegistration(interaction.user.id);
     }
 

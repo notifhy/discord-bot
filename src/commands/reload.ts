@@ -4,7 +4,7 @@ import {
     Command,
     type Piece,
 } from '@sapphire/framework';
-import { type CommandInteraction, Constants } from 'discord.js';
+import { ApplicationCommandOptionType, type ChatInputCommandInteraction } from 'discord.js';
 import { BetterEmbed } from '../structures/BetterEmbed';
 import { Logger } from '../structures/Logger';
 import { Options } from '../utility/Options';
@@ -29,17 +29,17 @@ export class ReloadCommand extends Command {
             options: [
                 {
                     name: 'all',
-                    type: Constants.ApplicationCommandOptionTypes.SUB_COMMAND,
+                    type: ApplicationCommandOptionType.Subcommand,
                     description: 'Refreshes all imports',
                 },
                 {
                     name: 'single',
-                    type: Constants.ApplicationCommandOptionTypes.SUB_COMMAND,
+                    type: ApplicationCommandOptionType.Subcommand,
                     description: 'Refresh a single item',
                     options: [
                         {
                             name: 'type',
-                            type: Constants.ApplicationCommandOptionTypes.STRING,
+                            type: ApplicationCommandOptionType.String,
                             description: 'The category to refresh',
                             required: true,
                             choices: [
@@ -63,7 +63,7 @@ export class ReloadCommand extends Command {
                         },
                         {
                             name: 'item',
-                            type: Constants.ApplicationCommandOptionTypes.STRING,
+                            type: ApplicationCommandOptionType.String,
                             description: 'The item to refresh',
                             required: true,
                         },
@@ -77,7 +77,7 @@ export class ReloadCommand extends Command {
         registry.registerChatInputCommand(this.chatInputStructure, Options.commandRegistry(this));
     }
 
-    public override async chatInputRun(interaction: CommandInteraction) {
+    public override async chatInputRun(interaction: ChatInputCommandInteraction) {
         switch (interaction.options.getSubcommand()) {
             case 'all':
                 await this.all(interaction);
@@ -90,7 +90,7 @@ export class ReloadCommand extends Command {
         }
     }
 
-    private async all(interaction: CommandInteraction) {
+    private async all(interaction: ChatInputCommandInteraction) {
         const { i18n } = interaction;
 
         const now = Date.now();
@@ -135,7 +135,7 @@ export class ReloadCommand extends Command {
         await interaction.editReply({ embeds: [reloadedEmbed] });
     }
 
-    private async single(interaction: CommandInteraction) {
+    private async single(interaction: ChatInputCommandInteraction) {
         const { i18n } = interaction;
 
         const now = Date.now();

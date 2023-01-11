@@ -1,6 +1,6 @@
 import { EmbedLimits } from '@sapphire/discord-utilities';
 import { type ApplicationCommandRegistry, BucketScope, Command } from '@sapphire/framework';
-import { type CommandInteraction, Constants, Formatters } from 'discord.js';
+import { ApplicationCommandOptionType, type ChatInputCommandInteraction, codeBlock } from 'discord.js';
 import { BetterEmbed } from '../structures/BetterEmbed';
 import { Logger } from '../structures/Logger';
 import { Options } from '../utility/Options';
@@ -25,7 +25,7 @@ export class EvalCommand extends Command {
             options: [
                 {
                     name: 'string',
-                    type: Constants.ApplicationCommandOptionTypes.STRING,
+                    type: ApplicationCommandOptionType.String,
                     description: 'Code',
                     required: true,
                 },
@@ -37,14 +37,14 @@ export class EvalCommand extends Command {
         registry.registerChatInputCommand(this.chatInputStructure, Options.commandRegistry(this));
     }
 
-    public override async chatInputRun(interaction: CommandInteraction) {
+    public override async chatInputRun(interaction: ChatInputCommandInteraction) {
         const { i18n } = interaction;
 
         const input = interaction.options.getString('string', true);
 
         const evalEmbed = new BetterEmbed(interaction).addFields({
             name: i18n.getMessage('commandsEvalInputName'),
-            value: Formatters.codeBlock('javascript', input),
+            value: codeBlock('javascript', input),
         });
 
         const start = Date.now();
@@ -65,25 +65,25 @@ export class EvalCommand extends Command {
             evalEmbed.setColor(Options.colorsNormal).addFields(
                 {
                     name: i18n.getMessage('commandsEvalOutputName'),
-                    value: Formatters.codeBlock(
+                    value: codeBlock(
                         'javascript',
                         output?.toString()?.slice(0, EmbedLimits.MaximumFieldValueLength),
                     ),
                 },
                 {
                     name: i18n.getMessage('commandsEvalStringifiedJSONOutputName'),
-                    value: Formatters.codeBlock(
+                    value: codeBlock(
                         'json',
                         String(jsonStringified).slice(0, EmbedLimits.MaximumFieldValueLength),
                     ),
                 },
                 {
                     name: i18n.getMessage('commandsEvalTypeName'),
-                    value: Formatters.codeBlock(typeof output),
+                    value: codeBlock(typeof output),
                 },
                 {
                     name: i18n.getMessage('commandsEvalTimeTakenName'),
-                    value: Formatters.codeBlock(
+                    value: codeBlock(
                         i18n.getMessage('commandsEvalTimeTakenValue', [timeTaken]),
                     ),
                 },
@@ -120,7 +120,7 @@ export class EvalCommand extends Command {
 
             evalEmbed.setColor(Options.colorsNormal).addFields({
                 name: i18n.getMessage('commandsEvalTimeTakenName'),
-                value: Formatters.codeBlock(
+                value: codeBlock(
                     i18n.getMessage('commandsEvalTimeTakenValue', [timeTaken]),
                 ),
             });

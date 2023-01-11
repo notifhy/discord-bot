@@ -1,6 +1,6 @@
 import { EmbedLimits } from '@sapphire/discord-utilities';
 import { type ChatInputCommandFinishPayload, Events, Listener } from '@sapphire/framework';
-import type { CommandInteraction } from 'discord.js';
+import type { ChatInputCommandInteraction } from 'discord.js';
 import { ErrorHandler } from '../../errors/ErrorHandler';
 import { BetterEmbed } from '../../structures/BetterEmbed';
 import { Logger } from '../../structures/Logger';
@@ -31,7 +31,7 @@ export class ChatInputCommandFinishListener extends Listener {
         }
     }
 
-    private async dispatchSystemMessages(interaction: CommandInteraction) {
+    private async dispatchSystemMessages(interaction: ChatInputCommandInteraction) {
         const systemMessages = await this.container.database.system_messages.findMany({
             take: EmbedLimits.MaximumFields,
             where: {

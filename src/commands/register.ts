@@ -1,5 +1,5 @@
 import { type ApplicationCommandRegistry, BucketScope, Command } from '@sapphire/framework';
-import { type CommandInteraction, Constants, DiscordAPIError } from 'discord.js';
+import { ApplicationCommandOptionType, type ChatInputCommandInteraction, DiscordAPIError } from 'discord.js';
 import type { SlothpixelPlayer } from '../@types/Hypixel';
 import { HTTPError } from '../errors/HTTPError';
 import { RequestErrorHandler } from '../errors/RequestErrorHandler';
@@ -29,7 +29,7 @@ export class RegisterCommand extends Command {
             options: [
                 {
                     name: 'player',
-                    type: Constants.ApplicationCommandOptionTypes.STRING,
+                    type: ApplicationCommandOptionType.String,
                     description: 'Your username or UUID',
                     required: true,
                 },
@@ -41,7 +41,7 @@ export class RegisterCommand extends Command {
         registry.registerChatInputCommand(this.chatInputStructure, Options.commandRegistry(this));
     }
 
-    public override async chatInputRun(interaction: CommandInteraction) {
+    public override async chatInputRun(interaction: ChatInputCommandInteraction) {
         const { i18n } = interaction;
 
         const exists = await this.container.database.users.findUnique({

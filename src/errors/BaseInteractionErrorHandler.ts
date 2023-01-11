@@ -1,7 +1,7 @@
-import type { Interaction } from 'discord.js';
+import type { BaseInteraction } from 'discord.js';
 import { BaseErrorHandler } from './BaseErrorHandler';
 
-export class BaseInteractionErrorHandler<E, I extends Interaction> extends BaseErrorHandler<E> {
+export class BaseInteractionErrorHandler<E, I extends BaseInteraction> extends BaseErrorHandler<E> {
     public readonly interaction: I;
 
     public constructor(error: E, interaction: I) {

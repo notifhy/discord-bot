@@ -17,7 +17,7 @@ export class BaseErrorHandler<E> extends Base {
 
         this.error = error;
         this.i18n = new i18n();
-        this.incidentId = SnowflakeUtil.generate();
+        this.incidentId = SnowflakeUtil.generate().toString();
         this.sentry = new Sentry().baseErrorContext(this.incidentId);
     }
 

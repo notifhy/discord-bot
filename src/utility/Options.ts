@@ -1,7 +1,7 @@
 import process from 'node:process';
 import { type Command, RegisterBehavior } from '@sapphire/framework';
-import { PresenceUpdateStatus } from 'discord-api-types/v10';
-import { type ColorResolvable, Constants, type PresenceData } from 'discord.js';
+import { ActivityType, PresenceUpdateStatus } from 'discord-api-types/v10';
+import type { ColorResolvable, PresenceData } from 'discord.js';
 import { Time } from '../enums/Time';
 import type { locales } from '../locales/locales';
 import { Base } from '../structures/Base';
@@ -29,7 +29,7 @@ export class Options extends Base {
             ? this.container.config.ownerGuilds
             : undefined,
         registerCommandIfMissing: true,
-        behaviorWhenNotIdentical: RegisterBehavior.Overwrite,
+        behaviorWhenNotIdentical: RegisterBehavior.Overwrite as const,
     });
 
     static readonly coreDisabledTimeout = Time.Second * 10;
@@ -74,7 +74,7 @@ export class Options extends Base {
         activities: [
             {
                 name: `${userCount} accounts in ${guildCOunt} servers | /register /help`,
-                type: Constants.ActivityTypes.WATCHING,
+                type: ActivityType.Watching,
             },
         ],
         status: PresenceUpdateStatus.Online,

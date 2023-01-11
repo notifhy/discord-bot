@@ -1,5 +1,5 @@
 import type { users as User } from '@prisma/client';
-import { ButtonInteraction, Constants, Message, MessageActionRow, MessageButton } from 'discord.js';
+import { ActionRowBuilder, ButtonBuilder, ButtonInteraction, ButtonStyle } from 'discord.js';
 import { CustomIdType } from '../enums/CustomIdType';
 import { Time } from '../enums/Time';
 import { ErrorHandler } from '../errors/ErrorHandler';
@@ -75,11 +75,11 @@ export class RewardsModule extends Module {
                 const message = await discordUser.send({
                     embeds: [rewardNotification],
                     components: [
-                        new MessageActionRow().setComponents(
-                            new MessageButton()
+                        new ActionRowBuilder<ButtonBuilder>().setComponents(
+                            new ButtonBuilder()
                                 .setCustomId(customId)
                                 .setLabel(i18n.getMessage('modulesRewardsCheckClaimStatusLabel'))
-                                .setStyle(Constants.MessageButtonStyles.PRIMARY),
+                                .setStyle(ButtonStyle.Primary),
                         ),
                     ],
                 });
@@ -232,18 +232,9 @@ export class RewardsModule extends Module {
 
             const disabledRows = disableComponents(message.components ?? []);
 
-            if (message instanceof Message) {
-                await message.edit({
-                    components: disabledRows,
-                });
-            } else {
-                // maybe works
-                const dm = await (await this.container.client.users.fetch(user.id)).createDM();
-                const newMessage = await dm.messages.fetch(message.id);
-                await newMessage.edit({
-                    components: disabledRows,
-                });
-            }
+            await message.edit({
+                components: disabledRows,
+            });
         } else {
             const notClaimedNotification = new BetterEmbed({
                 text: i18n.getMessage('modulesRewardsFooter'),

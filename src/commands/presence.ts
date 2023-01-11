@@ -1,8 +1,8 @@
 import { type ApplicationCommandRegistry, BucketScope, Command } from '@sapphire/framework';
 import {
-    type CommandInteraction,
-    Constants,
-    type ExcludeEnum,
+    ActivityType,
+    ApplicationCommandOptionType,
+    type ChatInputCommandInteraction,
     type PresenceStatusData,
 } from 'discord.js';
 import { BetterEmbed } from '../structures/BetterEmbed';
@@ -29,17 +29,17 @@ export class PresenceCommand extends Command {
             options: [
                 {
                     name: 'clear',
-                    type: Constants.ApplicationCommandOptionTypes.SUB_COMMAND,
+                    type: ApplicationCommandOptionType.Subcommand,
                     description: 'Clear the custom presence',
                 },
                 {
                     name: 'set',
                     description: 'Set a custom presence',
-                    type: Constants.ApplicationCommandOptionTypes.SUB_COMMAND,
+                    type: ApplicationCommandOptionType.Subcommand,
                     options: [
                         {
                             name: 'status',
-                            type: Constants.ApplicationCommandOptionTypes.STRING,
+                            type: ApplicationCommandOptionType.String,
                             description: 'The status to use',
                             required: false,
                             choices: [
@@ -63,7 +63,7 @@ export class PresenceCommand extends Command {
                         },
                         {
                             name: 'type',
-                            type: Constants.ApplicationCommandOptionTypes.STRING,
+                            type: ApplicationCommandOptionType.String,
                             description: 'The type to display',
                             required: false,
                             choices: [
@@ -91,13 +91,13 @@ export class PresenceCommand extends Command {
                         },
                         {
                             name: 'name',
-                            type: Constants.ApplicationCommandOptionTypes.STRING,
+                            type: ApplicationCommandOptionType.String,
                             description: 'The message/name to display',
                             required: false,
                         },
                         {
                             name: 'url',
-                            type: Constants.ApplicationCommandOptionTypes.STRING,
+                            type: ApplicationCommandOptionType.String,
                             description: 'The url to stream at',
                             required: false,
                         },
@@ -111,7 +111,7 @@ export class PresenceCommand extends Command {
         registry.registerChatInputCommand(this.chatInputStructure, Options.commandRegistry(this));
     }
 
-    public override async chatInputRun(interaction: CommandInteraction) {
+    public override async chatInputRun(interaction: ChatInputCommandInteraction) {
         const { i18n } = interaction;
 
         const responseEmbed = new BetterEmbed(interaction).setColor(Options.colorsNormal);
@@ -128,9 +128,9 @@ export class PresenceCommand extends Command {
             this.container.customPresence = {
                 activities: [
                     {
-                        type: (type ?? currentActivity?.type) as ExcludeEnum<
-                            typeof Constants.ActivityTypes,
-                        'CUSTOM'
+                        type: (type ?? currentActivity?.type) as Exclude<
+                        ActivityType,
+                        ActivityType.Custom
                         >,
                         name: name ?? currentActivity?.name,
                         // eslint-disable-next-line no-undefined
@@ -140,14 +140,14 @@ export class PresenceCommand extends Command {
                 status: (status ?? currentPresence.status) as PresenceStatusData,
             };
 
-            responseEmbed.setTitle(i18n.getMessage('commandsPresenceSetTitle')).addFields([
+            responseEmbed.setTitle(i18n.getMessage('commandsPresenceSetTitle')).addFields(
                 {
                     name: i18n.getMessage('commandsPresenceSetStatusName'),
                     value: status ?? currentPresence.status ?? i18n.getMessage('null'),
                 },
                 {
                     name: i18n.getMessage('commandsPresenceSetTypeName'),
-                    value: type ?? currentActivity?.type ?? i18n.getMessage('null'),
+                    value: type ?? String(currentActivity?.type) ?? i18n.getMessage('null'),
                 },
                 {
                     name: i18n.getMessage('commandsPresenceSetNameName'),
@@ -157,7 +157,7 @@ export class PresenceCommand extends Command {
                     name: i18n.getMessage('commandsPresenceSetURLName'),
                     value: url ?? currentActivity?.url ?? i18n.getMessage('null'),
                 },
-            ]);
+            );
         } else {
             responseEmbed
                 .setTitle(i18n.getMessage('commandsPresenceClearTitle'))

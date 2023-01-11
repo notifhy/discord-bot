@@ -1,8 +1,8 @@
 import {
-    type CommandInteraction,
-    type ContextMenuInteraction,
-    type MessageComponentInteraction,
-    MessageEmbed,
+    ChatInputCommandInteraction,
+    ContextMenuCommandInteraction,
+    EmbedBuilder,
+    MessageComponentInteraction,
 } from 'discord.js';
 import { BaseInteractionErrorHandler } from './BaseInteractionErrorHandler';
 import { ErrorHandler } from './ErrorHandler';
@@ -10,7 +10,10 @@ import { Options } from '../utility/Options';
 
 export class InteractionErrorHandler<
     E,
-    I extends CommandInteraction | ContextMenuInteraction | MessageComponentInteraction,
+    I extends
+    | ChatInputCommandInteraction
+    | ContextMenuCommandInteraction
+    | MessageComponentInteraction,
 > extends BaseInteractionErrorHandler<E, I> {
     public constructor(error: E, interaction: I) {
         super(error, interaction);
@@ -29,7 +32,7 @@ export class InteractionErrorHandler<
     }
 
     private async userNotify() {
-        const embed = new MessageEmbed()
+        const embed = new EmbedBuilder()
             .setColor(Options.colorsError)
             .setTitle(this.i18n.getMessage('errorsInteractionReplyTitle'))
             .setDescription(this.i18n.getMessage('errorsInteractionReplyDescription'))
@@ -50,10 +53,7 @@ export class InteractionErrorHandler<
                 await this.interaction.reply(payLoad);
             }
         } catch (error) {
-            this.log(
-                'An error has occurred and also failed to notify the user.',
-                error,
-            );
+            this.log('An error has occurred and also failed to notify the user.', error);
 
             this.sentry.setSeverity('error').captureException(error);
         }

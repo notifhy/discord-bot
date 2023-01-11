@@ -1,22 +1,20 @@
-import { BaseCommandInteraction, type EmbedFieldData, MessageEmbed } from 'discord.js';
+import { APIEmbedField, CommandInteraction, EmbedBuilder, normalizeArray, RestOrArray } from 'discord.js';
 
 type Footer =
     | {
         text: string;
         iconURL?: string;
     }
-    | BaseCommandInteraction;
+    | CommandInteraction;
 
-export class BetterEmbed extends MessageEmbed {
+export class BetterEmbed extends EmbedBuilder {
     public constructor(footer?: Footer) {
         super();
         this.setTimestamp();
 
-        if (footer instanceof BaseCommandInteraction) {
+        if (footer instanceof CommandInteraction) {
             const interaction = footer;
-            const avatar = interaction.user.displayAvatarURL({
-                dynamic: true,
-            });
+            const avatar = interaction.user.displayAvatarURL();
 
             this.setFooter({
                 text: `/${interaction.commandName}`,
@@ -30,28 +28,8 @@ export class BetterEmbed extends MessageEmbed {
         }
     }
 
-    public setField(name: string, value: string, inline?: boolean) {
-        this.setFields({
-            name: name,
-            value: value,
-            inline: inline,
-        });
-
-        return this;
-    }
-
-    public unshiftField(name: string, value: string, inline?: boolean | undefined): this {
-        this.unshiftFields({
-            name: name,
-            value: value,
-            inline: inline,
-        });
-
-        return this;
-    }
-
-    public unshiftFields(...fields: EmbedFieldData[] | EmbedFieldData[][]) {
-        this.fields.unshift(...MessageEmbed.normalizeFields(...fields));
+    public unshiftFields(...fields: RestOrArray<APIEmbedField>) {
+        this.data.fields?.unshift(...normalizeArray(fields));
 
         return this;
     }

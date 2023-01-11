@@ -1,5 +1,5 @@
 import type { users as User } from '@prisma/client';
-import { Formatters, MessageEmbed, Permissions, TextChannel } from 'discord.js';
+import { EmbedBuilder, PermissionsBitField, TextChannel, userMention } from 'discord.js';
 import type { FriendsEventPayload } from '../@types/EventPayload';
 import { i18n as Internationalization } from '../locales/i18n';
 import { Module } from '../structures/Module';
@@ -38,9 +38,9 @@ export class FriendsModule extends Module {
         const missingPermissions = channel
             .permissionsFor(me)
             .missing([
-                Permissions.FLAGS.EMBED_LINKS,
-                Permissions.FLAGS.SEND_MESSAGES,
-                Permissions.FLAGS.VIEW_CHANNEL,
+                PermissionsBitField.Flags.EmbedLinks,
+                PermissionsBitField.Flags.SendMessages,
+                PermissionsBitField.Flags.ViewChannel,
             ]);
 
         const i18n = new Internationalization(user.locale);
@@ -62,14 +62,14 @@ export class FriendsModule extends Module {
         const lastLogin = data.data.lastLogin ?? Date.now();
         const lastLogout = data.data.lastLogout ?? Date.now();
 
-        const embed = new MessageEmbed();
+        const embed = new EmbedBuilder();
 
         if (payload.joined === true) {
             embed
                 .setColor(Options.colorsOn)
                 .setDescription(
                     i18n.getMessage('modulesFriendsLoggedIn', [
-                        Formatters.userMention(user.id),
+                        userMention(user.id),
                         timestamp(lastLogin!, 'R')!,
                         timestamp(lastLogin!, 'T')!,
                     ]),
@@ -79,7 +79,7 @@ export class FriendsModule extends Module {
                 .setColor(Options.colorsOff)
                 .setDescription(
                     i18n.getMessage('modulesFriendsLoggedOut', [
-                        Formatters.userMention(user.id),
+                        userMention(user.id),
                         timestamp(lastLogout!, 'R')!,
                         timestamp(lastLogout!, 'T')!,
                     ]),

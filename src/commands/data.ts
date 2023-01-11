@@ -1,10 +1,13 @@
 import { type ApplicationCommandRegistry, BucketScope, Command } from '@sapphire/framework';
 import {
-    type CommandInteraction,
-    Constants,
+    ActionRowBuilder,
+    APIButtonComponentWithCustomId,
+    ApplicationCommandOptionType,
+    ButtonBuilder,
+    ButtonStyle,
+    type ChatInputCommandInteraction,
+    ComponentType,
     type Message,
-    MessageActionRow,
-    MessageButton,
     MessageComponentInteraction,
 } from 'discord.js';
 import type { CleanHypixelData } from '../@types/Hypixel';
@@ -45,22 +48,22 @@ export class DataCommand extends Command {
             options: [
                 {
                     name: 'delete',
-                    type: Constants.ApplicationCommandOptionTypes.SUB_COMMAND,
+                    type: ApplicationCommandOptionType.Subcommand,
                     description: 'Delete your data',
                 },
                 {
                     name: 'view',
                     description: 'View your data',
-                    type: Constants.ApplicationCommandOptionTypes.SUB_COMMAND_GROUP,
+                    type: ApplicationCommandOptionType.SubcommandGroup,
                     options: [
                         {
                             name: 'all',
-                            type: Constants.ApplicationCommandOptionTypes.SUB_COMMAND,
+                            type: ApplicationCommandOptionType.Subcommand,
                             description: 'Returns a file with all of your player data',
                         },
                         {
                             name: 'history',
-                            type: Constants.ApplicationCommandOptionTypes.SUB_COMMAND,
+                            type: ApplicationCommandOptionType.Subcommand,
                             description: 'Returns an interface that displays your player history',
                         },
                     ],
@@ -73,7 +76,7 @@ export class DataCommand extends Command {
         registry.registerChatInputCommand(this.chatInputStructure, Options.commandRegistry(this));
     }
 
-    public override async chatInputRun(interaction: CommandInteraction) {
+    public override async chatInputRun(interaction: ChatInputCommandInteraction) {
         switch (interaction.options.getSubcommand()) {
             case 'all':
                 await this.viewAll(interaction);
@@ -89,7 +92,7 @@ export class DataCommand extends Command {
         }
     }
 
-    private async delete(interaction: CommandInteraction) {
+    private async delete(interaction: ChatInputCommandInteraction) {
         const { i18n } = interaction;
 
         const confirmEmbed = new BetterEmbed(interaction)
@@ -97,17 +100,17 @@ export class DataCommand extends Command {
             .setTitle(i18n.getMessage('commandsDataDeleteConfirmTitle'))
             .setDescription(i18n.getMessage('commandsDataDeleteConfirmDescription'));
 
-        const yesButton = new MessageButton()
+        const yesButton = new ButtonBuilder()
             .setCustomId('true')
             .setLabel(i18n.getMessage('yes'))
-            .setStyle(Constants.MessageButtonStyles.SUCCESS);
+            .setStyle(ButtonStyle.Success);
 
-        const noButton = new MessageButton()
+        const noButton = new ButtonBuilder()
             .setCustomId('false')
             .setLabel(i18n.getMessage('no'))
-            .setStyle(Constants.MessageButtonStyles.DANGER);
+            .setStyle(ButtonStyle.Danger);
 
-        const buttons = new MessageActionRow().addComponents(yesButton, noButton);
+        const buttons = new ActionRowBuilder<ButtonBuilder>().addComponents(yesButton, noButton);
 
         const message = (await interaction.editReply({
             embeds: [confirmEmbed],
@@ -124,7 +127,7 @@ export class DataCommand extends Command {
         };
 
         const button = await awaitComponent(interaction.channel!, {
-            componentType: Constants.MessageComponentTypes.BUTTON,
+            componentType: ComponentType.Button,
             filter: componentFilter,
             idle: Time.Second * 30,
         });
@@ -143,7 +146,7 @@ export class DataCommand extends Command {
             return;
         }
 
-        if (button.customId === noButton.customId) {
+        if (button.customId === (noButton.data as APIButtonComponentWithCustomId).custom_id) {
             this.container.logger.info(
                 this,
                 Logger.interactionLogContext(interaction),
@@ -219,7 +222,7 @@ export class DataCommand extends Command {
         await setPresence();
     }
 
-    private async viewAll(interaction: CommandInteraction) {
+    private async viewAll(interaction: ChatInputCommandInteraction) {
         const data = await this.container.database.users.findUnique({
             include: {
                 activities: {
@@ -253,7 +256,7 @@ export class DataCommand extends Command {
         });
     }
 
-    private async viewHistory(interaction: CommandInteraction) {
+    private async viewHistory(interaction: ChatInputCommandInteraction) {
         let total = await this.container.database.activities.count({
             where: {
                 id: interaction.user.id,
@@ -325,7 +328,7 @@ export class DataCommand extends Command {
     }
 
     private async generateHistoryPage(
-        interaction: CommandInteraction,
+        interaction: ChatInputCommandInteraction,
         index: number,
         total: number,
     ) {
@@ -390,29 +393,29 @@ export class DataCommand extends Command {
             });
         }
 
-        const base = new MessageButton().setStyle(Constants.MessageButtonStyles.PRIMARY);
+        const base = new ButtonBuilder().setStyle(ButtonStyle.Primary).data;
 
-        const fastLeftButton = new MessageButton(base)
+        const fastLeftButton = new ButtonBuilder(base)
             .setCustomId('fastBackward')
             .setEmoji(Options.emojiFastBackward)
             .setDisabled(index - Options.dataHistoryFast < 0);
 
-        const leftButton = new MessageButton(base)
+        const leftButton = new ButtonBuilder(base)
             .setCustomId('backward')
             .setEmoji(Options.emojiSlowBackward)
             .setDisabled(index - Options.dataHistorySlow < 0);
 
-        const rightButton = new MessageButton(base)
+        const rightButton = new ButtonBuilder(base)
             .setCustomId('forward')
             .setEmoji(Options.emojiSlowForward)
             .setDisabled(index + Options.dataHistorySlow >= total);
 
-        const fastRightButton = new MessageButton(base)
+        const fastRightButton = new ButtonBuilder(base)
             .setCustomId('fastForward')
             .setEmoji(Options.emojiFastForward)
             .setDisabled(index + Options.dataHistoryFast >= total);
 
-        const buttons = new MessageActionRow().setComponents(
+        const buttons = new ActionRowBuilder<ButtonBuilder>().setComponents(
             fastLeftButton,
             leftButton,
             rightButton,
@@ -426,7 +429,7 @@ export class DataCommand extends Command {
     }
 
     private formatValue(
-        interaction: CommandInteraction,
+        interaction: ChatInputCommandInteraction,
         key: string,
         value: number | string | null,
     ) {

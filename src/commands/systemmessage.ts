@@ -1,10 +1,13 @@
 import { ApplicationCommandRegistry, BucketScope, Command } from '@sapphire/framework';
 import {
-    CommandInteraction,
-    Constants,
+    ActionRowBuilder,
+    APIButtonComponentWithCustomId,
+    ApplicationCommandOptionType,
+    ButtonBuilder,
+    ButtonStyle,
+    ChatInputCommandInteraction,
+    ComponentType,
     Message,
-    MessageActionRow,
-    MessageButton,
     MessageComponentInteraction,
 } from 'discord.js';
 import { Time } from '../enums/Time';
@@ -34,7 +37,7 @@ export class SystemMessageCommand extends Command {
                 {
                     name: 'all',
                     description: 'Create a system message for all users',
-                    type: Constants.ApplicationCommandOptionTypes.SUB_COMMAND,
+                    type: ApplicationCommandOptionType.Subcommand,
                     options: [
                         {
                             name: 'name',
@@ -53,7 +56,7 @@ export class SystemMessageCommand extends Command {
                 {
                     name: 'single',
                     description: 'Create a system message for a single user',
-                    type: Constants.ApplicationCommandOptionTypes.SUB_COMMAND,
+                    type: ApplicationCommandOptionType.Subcommand,
                     options: [
                         {
                             name: 'id',
@@ -83,7 +86,7 @@ export class SystemMessageCommand extends Command {
         registry.registerChatInputCommand(this.chatInputStructure, Options.commandRegistry(this));
     }
 
-    public override async chatInputRun(interaction: CommandInteraction) {
+    public override async chatInputRun(interaction: ChatInputCommandInteraction) {
         switch (interaction.options.getSubcommand()) {
             case 'all':
                 await this.all(interaction);
@@ -95,7 +98,7 @@ export class SystemMessageCommand extends Command {
         }
     }
 
-    private async all(interaction: CommandInteraction) {
+    private async all(interaction: ChatInputCommandInteraction) {
         const { i18n } = interaction;
 
         const users = await this.container.database.users.findMany({
@@ -122,7 +125,7 @@ export class SystemMessageCommand extends Command {
         await this.create(interaction, ids);
     }
 
-    private async single(interaction: CommandInteraction) {
+    private async single(interaction: ChatInputCommandInteraction) {
         const { i18n } = interaction;
 
         const id = interaction.options.getString('id', true);
@@ -151,23 +154,23 @@ export class SystemMessageCommand extends Command {
         await this.create(interaction, [id]);
     }
 
-    private async create(interaction: CommandInteraction, ids: string[]) {
+    private async create(interaction: ChatInputCommandInteraction, ids: string[]) {
         const { i18n } = interaction;
 
         const name = interaction.options.getString('name', true);
         const value = interaction.options.getString('value', true);
 
-        const yesButton = new MessageButton()
+        const yesButton = new ButtonBuilder()
             .setCustomId('true')
             .setLabel(i18n.getMessage('yes'))
-            .setStyle(Constants.MessageButtonStyles.SUCCESS);
+            .setStyle(ButtonStyle.Success);
 
-        const noButton = new MessageButton()
+        const noButton = new ButtonBuilder()
             .setCustomId('false')
             .setLabel(i18n.getMessage('no'))
-            .setStyle(Constants.MessageButtonStyles.DANGER);
+            .setStyle(ButtonStyle.Danger);
 
-        const buttons = new MessageActionRow().addComponents(yesButton, noButton);
+        const buttons = new ActionRowBuilder<ButtonBuilder>().addComponents(yesButton, noButton);
 
         const previewEmbed = new BetterEmbed()
             .setColor(Options.colorsNormal)
@@ -199,7 +202,7 @@ export class SystemMessageCommand extends Command {
         const disabledRows = disableComponents(message.components);
 
         const button = await awaitComponent(interaction.channel!, {
-            componentType: Constants.MessageComponentTypes.BUTTON,
+            componentType: ComponentType.Button,
             filter: componentFilter,
             idle: Time.Second * 30,
         });
@@ -218,7 +221,7 @@ export class SystemMessageCommand extends Command {
             return;
         }
 
-        if (button.customId === noButton.customId) {
+        if (button.customId === (noButton.data as APIButtonComponentWithCustomId).custom_id) {
             this.container.logger.info(
                 this,
                 Logger.interactionLogContext(interaction),

@@ -1,13 +1,20 @@
 import { container } from '@sapphire/framework';
-import type { APIActionRowComponent, APIMessageActionRowComponent } from 'discord-api-types/v10';
 import {
-    type AwaitMessageCollectorOptionsParams,
-    type CommandInteraction,
-    type ContextMenuInteraction,
-    Formatters,
-    MessageActionRow,
-    type MessageComponentTypeResolvable,
-    type TextBasedChannel,
+    APIActionRowComponent,
+    APIMessageActionRowComponent,
+    ApplicationCommandOptionType,
+} from 'discord-api-types/v10';
+import {
+    ActionRow,
+    ActionRowBuilder,
+    AwaitMessageCollectorOptionsParams,
+    ChatInputCommandInteraction,
+    ContextMenuCommandInteraction,
+    MessageActionRowComponent,
+    MessageComponentType,
+    TextBasedChannel,
+    time,
+    TimestampStylesString,
 } from 'discord.js';
 import { pbkdf2Sync, randomBytes, webcrypto } from 'node:crypto';
 import gameTypes from '../assets/gameTypes.json';
@@ -15,7 +22,7 @@ import modes from '../assets/modes.json';
 import { Time } from '../enums/Time';
 import { Options } from './Options';
 
-export async function awaitComponent<T extends MessageComponentTypeResolvable>(
+export async function awaitComponent<T extends MessageComponentType>(
     channel: TextBasedChannel,
     options: AwaitMessageCollectorOptionsParams<T, true>,
 ) {
@@ -64,7 +71,7 @@ export function capitolToNormal(item: string) {
         : item;
 }
 
-export function chatInputResolver(interaction: CommandInteraction) {
+export function chatInputResolver(interaction: ChatInputCommandInteraction) {
     const commandOptions: (string | number | boolean)[] = [`/${interaction.commandName}`];
 
     interaction.options.data.forEach((value) => {
@@ -74,12 +81,12 @@ export function chatInputResolver(interaction: CommandInteraction) {
             commandOptions.push(`${option.name}: ${option.value}`);
         }
 
-        if (option.type === 'SUB_COMMAND_GROUP') {
+        if (option.type === ApplicationCommandOptionType.SubcommandGroup) {
             commandOptions.push(option.name);
             option = option.options![0]!;
         }
 
-        if (option.type === 'SUB_COMMAND') {
+        if (option.type === ApplicationCommandOptionType.Subcommand) {
             commandOptions.push(value.name);
         }
 
@@ -165,12 +172,12 @@ export function cleanRound(number: number, decimals?: number) {
     return Math.round(number * decimalsFactor) / decimalsFactor;
 }
 
-export function contextMenuResolver(interaction: ContextMenuInteraction) {
+export function contextMenuResolver(interaction: ContextMenuCommandInteraction) {
     const command = [interaction.commandName];
 
-    if (interaction.isUserContextMenu()) {
+    if (interaction.isUserContextMenuCommand()) {
         command.push(interaction.targetUser.id);
-    } else if (interaction.isMessageContextMenu()) {
+    } else if (interaction.isMessageContextMenuCommand()) {
         command.push(interaction.targetMessage.id);
     }
 
@@ -192,17 +199,27 @@ export function createOffset(date = new Date()): string {
 }
 
 export function disableComponents(
-    messageActionRows: APIActionRowComponent<APIMessageActionRowComponent>[] | MessageActionRow[],
+    rawRow:
+    | ActionRow<MessageActionRowComponent>[]
+    | APIActionRowComponent<APIMessageActionRowComponent>[],
 ) {
-    const actionRows = messageActionRows.map((row) => new MessageActionRow(row));
+    const actionRows = rawRow.map((actionRow) => ActionRowBuilder.from(actionRow));
 
-    actionRows.forEach((actionRow) => {
-        actionRow.components.forEach((component) => {
-            component.setDisabled();
-        });
-    });
+    // eslint-disable-next-line no-restricted-syntax
+    for (const actionRow of actionRows) {
+        const { components } = actionRow;
 
-    return actionRows;
+        // eslint-disable-next-line no-restricted-syntax
+        for (const component of components) {
+            if ('setDisabled' in component) {
+                component.setDisabled();
+            }
+        }
+    }
+
+    return actionRows.map(
+        (actionRow) => actionRow.toJSON(),
+    ) as APIActionRowComponent<APIMessageActionRowComponent>[];
 }
 
 export function formattedUnix({
@@ -264,8 +281,8 @@ export async function setPresence() {
     container.client.user?.setPresence(presence!);
 }
 
-export function timestamp(ms: number, style?: typeof Formatters.TimestampStylesString) {
-    return Formatters.time(Math.round(ms / 1000), style ?? 'f');
+export function timestamp(ms: number, style?: TimestampStylesString) {
+    return time(Math.round(ms / 1000), style ?? 'f');
 }
 
 function isDate(value: unknown): value is Date {

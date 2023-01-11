@@ -1,7 +1,7 @@
 import { join } from 'node:path';
 import { config as Config, PrismaClient } from '@prisma/client';
 import { container, SapphireClient } from '@sapphire/framework';
-import { Intents, Options, type PresenceData, Sweepers } from 'discord.js';
+import { GatewayIntentBits, Options, type PresenceData, Sweepers } from 'discord.js';
 import { Core } from '../core/Core';
 import { i18n } from '../locales/i18n';
 import { ModuleStore } from './ModuleStore';
@@ -17,7 +17,7 @@ export class Client extends SapphireClient {
                 repliedUser: true,
             },
             failIfNotExists: false,
-            intents: [Intents.FLAGS.GUILDS],
+            intents: [GatewayIntentBits.Guilds],
             loadDefaultErrorListeners: false,
             logger: {
                 instance: new Logger({

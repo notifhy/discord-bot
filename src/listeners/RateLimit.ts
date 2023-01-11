@@ -1,12 +1,14 @@
-import { Events, Listener } from '@sapphire/framework';
+import { container, Listener } from '@sapphire/framework';
+import { RESTEvents } from 'discord.js';
 import { Sentry } from '../structures/Sentry';
 
 export class RateLimitListener extends Listener {
     public constructor(context: Listener.Context, options: Listener.Options) {
         super(context, {
             ...options,
+            emitter: container.client.rest,
             once: false,
-            event: Events.RateLimit,
+            event: RESTEvents.RateLimited,
         });
     }
 

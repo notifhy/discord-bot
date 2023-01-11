@@ -1,5 +1,5 @@
 import { type ApplicationCommandRegistry, BucketScope, Command } from '@sapphire/framework';
-import { type ColorResolvable, type CommandInteraction, Message } from 'discord.js';
+import type { ChatInputCommandInteraction, ColorResolvable } from 'discord.js';
 import { BetterEmbed } from '../structures/BetterEmbed';
 import { Logger } from '../structures/Logger';
 import { Options } from '../utility/Options';
@@ -28,7 +28,7 @@ export class PingCommand extends Command {
         registry.registerChatInputCommand(this.chatInputStructure, Options.commandRegistry(this));
     }
 
-    public override async chatInputRun(interaction: CommandInteraction) {
+    public override async chatInputRun(interaction: ChatInputCommandInteraction) {
         const { i18n } = interaction;
 
         const initialPingEmbed = new BetterEmbed(interaction)
@@ -39,9 +39,7 @@ export class PingCommand extends Command {
             embeds: [initialPingEmbed],
         });
 
-        const roundTripDelay = (sentReply instanceof Message
-            ? sentReply.createdTimestamp
-            : Date.parse(sentReply.timestamp)) - interaction.createdTimestamp;
+        const roundTripDelay = sentReply.createdTimestamp;
 
         const mixedPing = (interaction.client.ws.ping + roundTripDelay) / 2;
 

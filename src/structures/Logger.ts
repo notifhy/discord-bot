@@ -1,7 +1,7 @@
 import type { users as User } from '@prisma/client';
 import { LogLevel } from '@sapphire/framework';
 import { Logger as LoggerPlugin } from '@sapphire/plugin-logger';
-import type { Interaction } from 'discord.js';
+import type { BaseInteraction, Interaction } from 'discord.js';
 
 type Context = Object;
 
@@ -30,7 +30,7 @@ export class Logger extends LoggerPlugin {
         this.write(LogLevel.Fatal, this.className(context), ...values);
     }
 
-    public static interactionLogContext(interaction: Interaction) {
+    public static interactionLogContext(interaction: Interaction | BaseInteraction) {
         return `Interaction: ${interaction.id}. User: ${interaction.user.id}.`;
     }
 

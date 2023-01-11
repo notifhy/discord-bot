@@ -1,10 +1,9 @@
 import { setTimeout } from 'node:timers/promises';
 import type { Command, UserError } from '@sapphire/framework';
 import type {
-    BaseCommandInteraction,
+    ChatInputCommandInteraction,
     ColorResolvable,
-    CommandInteraction,
-    ContextMenuInteraction,
+    ContextMenuCommandInteraction,
 } from 'discord.js';
 import { BaseInteractionErrorHandler } from './BaseInteractionErrorHandler';
 import { Identifier } from '../enums/Identifier';
@@ -15,7 +14,7 @@ import { cleanRound } from '../utility/utility';
 import { Options } from '../utility/Options';
 
 export class InteractionPreconditionErrorHandler<
-    I extends CommandInteraction | ContextMenuInteraction,
+    I extends ChatInputCommandInteraction | ContextMenuCommandInteraction,
 > extends BaseInteractionErrorHandler<UserError, I> {
     public readonly command: Command;
 
@@ -121,7 +120,7 @@ export class InteractionPreconditionErrorHandler<
     }
 
     private async resolvePrecondition(
-        interaction: BaseCommandInteraction,
+        interaction: ChatInputCommandInteraction | ContextMenuCommandInteraction,
         title: string,
         description: string,
         color: ColorResolvable,

@@ -2,10 +2,10 @@ import { DiscordAPIError } from '@discordjs/rest';
 import type { users as User } from '@prisma/client';
 import * as SentryClient from '@sentry/node';
 import {
-    CommandInteraction,
-    ContextMenuInteraction,
+    BaseInteraction,
+    ChatInputCommandInteraction,
+    ContextMenuCommandInteraction,
     GuildChannel,
-    type Interaction,
     TextChannel,
 } from 'discord.js';
 import type { FastifyError } from 'fastify';
@@ -29,15 +29,15 @@ export class Sentry {
         return this;
     }
 
-    public baseInteractionContext(interaction: Interaction) {
+    public baseInteractionContext(interaction: BaseInteraction) {
         const { user, guild, channel, client } = interaction;
 
         this.scope.setTags({
             interactionCommand:
                 // eslint-disable-next-line no-nested-ternary
-                interaction instanceof CommandInteraction
+                interaction instanceof ChatInputCommandInteraction
                     ? chatInputResolver(interaction).slice(0, 200)
-                    : interaction instanceof ContextMenuInteraction
+                    : interaction instanceof ContextMenuCommandInteraction
                         ? contextMenuResolver(interaction)
                         : null,
             interactionCreatedTimestamp: interaction.createdTimestamp,
@@ -47,13 +47,13 @@ export class Sentry {
             guildName: guild?.name,
             guildOwnerId: guild?.ownerId,
             guildMemberCount: guild?.memberCount,
-            guildPermissions: guild?.me?.permissions.bitfield.toString(),
+            guildPermissions: guild?.members?.me?.permissions.bitfield.toString(),
             channelId: channel?.id,
             channelType: channel?.type,
             channelName: channel instanceof TextChannel ? channel.name : null,
             channelPermissions:
                 channel instanceof GuildChannel
-                    ? guild?.me?.permissionsIn(channel).bitfield.toString()
+                    ? guild?.members?.me?.permissionsIn(channel).bitfield.toString()
                     : null,
             ping: client.ws.ping,
         });

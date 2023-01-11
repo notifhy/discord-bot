@@ -1,8 +1,5 @@
 import { type ApplicationCommandRegistry, BucketScope, Command } from '@sapphire/framework';
-import {
-    type CommandInteraction,
-    Constants,
-} from 'discord.js';
+import { ApplicationCommandOptionType, type ChatInputCommandInteraction } from 'discord.js';
 import { Options } from '../utility/Options';
 
 export class ModuleCommand extends Command {
@@ -25,18 +22,20 @@ export class ModuleCommand extends Command {
             options: [
                 {
                     name: 'friends',
-                    description: 'Know when your friends are online by sharing logins and logouts with each other',
-                    type: Constants.ApplicationCommandOptionTypes.SUB_COMMAND,
+                    description:
+                        'Know when your friends are online by sharing logins and logouts with each other',
+                    type: ApplicationCommandOptionType.Subcommand,
                 },
                 {
                     name: 'playtime',
                     description: 'TODO',
-                    type: Constants.ApplicationCommandOptionTypes.SUB_COMMAND,
+                    type: ApplicationCommandOptionType.Subcommand,
                 },
                 {
                     name: 'rewards',
-                    description: 'Never miss a daily reward again - get notifications to claim your daily reward at your convenience',
-                    type: Constants.ApplicationCommandOptionTypes.SUB_COMMAND,
+                    description:
+                        'Never miss a daily reward again - get notifications to claim your daily reward at your convenience',
+                    type: ApplicationCommandOptionType.Subcommand,
                 },
             ],
         };
@@ -46,7 +45,7 @@ export class ModuleCommand extends Command {
         registry.registerChatInputCommand(this.chatInputStructure, Options.commandRegistry(this));
     }
 
-    public override async chatInputRun(_interaction: CommandInteraction) {
+    public override async chatInputRun(_interaction: ChatInputCommandInteraction) {
         // wip
     }
 }

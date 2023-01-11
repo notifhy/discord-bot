@@ -1,12 +1,16 @@
 import { type ApplicationCommandRegistry, BucketScope, Command } from '@sapphire/framework';
 import {
+    ActionRow,
+    ActionRowBuilder,
+    ButtonBuilder,
     type ButtonInteraction,
-    type CommandInteraction,
-    MessageActionRow,
-    MessageButton,
+    ButtonStyle,
+    type ChatInputCommandInteraction,
+    ComponentType,
+    MessageActionRowComponent,
     type MessageComponentInteraction,
-    MessageSelectMenu,
     SnowflakeUtil,
+    StringSelectMenuBuilder,
 } from 'discord.js';
 import { Time } from '../enums/Time';
 import { BetterEmbed } from '../structures/BetterEmbed';
@@ -37,7 +41,7 @@ export class HelpCommand extends Command {
         registry.registerChatInputCommand(this.chatInputStructure, Options.commandRegistry(this));
     }
 
-    public override async chatInputRun(interaction: CommandInteraction) {
+    public override async chatInputRun(interaction: ChatInputCommandInteraction) {
         const { i18n } = interaction;
 
         const helpEmbed = new BetterEmbed(interaction)
@@ -54,20 +58,23 @@ export class HelpCommand extends Command {
                 },
             );
 
-        const informationSnowflake = SnowflakeUtil.generate();
-        const commandsSnowflake = SnowflakeUtil.generate();
+        const informationSnowflake = SnowflakeUtil.generate().toString();
+        const commandsSnowflake = SnowflakeUtil.generate().toString();
 
-        const informationButton = new MessageButton()
+        const informationButton = new ButtonBuilder()
             .setCustomId(informationSnowflake)
-            .setStyle('PRIMARY')
+            .setStyle(ButtonStyle.Primary)
             .setLabel(i18n.getMessage('commandsHelpInformationLabel'));
 
-        const commandsButton = new MessageButton()
+        const commandsButton = new ButtonBuilder()
             .setCustomId(commandsSnowflake)
-            .setStyle('PRIMARY')
+            .setStyle(ButtonStyle.Primary)
             .setLabel(i18n.getMessage('commandsHelpCommandsLabel'));
 
-        const row = new MessageActionRow().setComponents(informationButton, commandsButton);
+        const row = new ActionRowBuilder<ButtonBuilder>().setComponents(
+            informationButton,
+            commandsButton,
+        );
 
         const reply = await interaction.editReply({
             embeds: [helpEmbed],
@@ -82,13 +89,13 @@ export class HelpCommand extends Command {
         };
 
         const selectMenuInteraction = await awaitComponent(interaction.channel!, {
-            componentType: 'BUTTON',
+            componentType: ComponentType.Button,
             filter: componentFilter,
             idle: Time.Minute,
         });
 
         if (selectMenuInteraction === null) {
-            const disabledRows = disableComponents([row]);
+            const disabledRows = disableComponents(reply.components);
 
             await interaction.editReply({
                 components: disabledRows,
@@ -109,7 +116,10 @@ export class HelpCommand extends Command {
         }
     }
 
-    public async informationMenu(interaction: CommandInteraction, component: ButtonInteraction) {
+    public async informationMenu(
+        interaction: ChatInputCommandInteraction,
+        component: ButtonInteraction,
+    ) {
         const { i18n } = interaction;
 
         const informationMenuEmbed = new BetterEmbed(interaction)
@@ -132,7 +142,10 @@ export class HelpCommand extends Command {
         });
     }
 
-    public async commandsMenu(interaction: CommandInteraction, component: ButtonInteraction) {
+    public async commandsMenu(
+        interaction: ChatInputCommandInteraction,
+        component: ButtonInteraction,
+    ) {
         const { i18n } = interaction;
 
         const commands = this.container.stores
@@ -143,22 +156,24 @@ export class HelpCommand extends Command {
                 ) === 'undefined',
             );
 
-        const snowflake = SnowflakeUtil.generate();
+        const snowflake = SnowflakeUtil.generate().toString();
 
         let selectedCommand = commands.first()!;
 
-        const commandsSelectMenu = () => new MessageSelectMenu().setCustomId(snowflake).setOptions(
-            ...commands.map((command) => ({
-                label: i18n.getMessage('commandsHelpCommandsMenuLabel', [
-                    i18n.getChatInputName(command),
-                ]),
-                description: i18n.getChatInputDescription(command),
-                value: i18n.getChatInputName(command),
-                default: command.name === selectedCommand.name,
-            })),
-        );
+        const commandsSelectMenu = () => new StringSelectMenuBuilder()
+            .setCustomId(snowflake).setOptions(
+                ...commands.map((command) => ({
+                    label: i18n.getMessage('commandsHelpCommandsMenuLabel', [
+                        i18n.getChatInputName(command),
+                    ]),
+                    description: i18n.getChatInputDescription(command),
+                    value: i18n.getChatInputName(command),
+                    default: command.name === selectedCommand.name,
+                })),
+            );
 
-        const row = () => new MessageActionRow().setComponents(commandsSelectMenu());
+        const row = () => new ActionRowBuilder<StringSelectMenuBuilder>()
+            .setComponents(commandsSelectMenu());
 
         const reply = await component.update({
             embeds: [this.generateCommandResponse(interaction, selectedCommand)],
@@ -176,7 +191,7 @@ export class HelpCommand extends Command {
         };
 
         const collector = interaction.channel!.createMessageComponentCollector({
-            componentType: 'SELECT_MENU',
+            componentType: ComponentType.StringSelect,
             filter: componentFilter,
             idle: Time.Minute,
             time: Time.Minute * 30,
@@ -192,7 +207,9 @@ export class HelpCommand extends Command {
         });
 
         collector.on('end', async () => {
-            const disabledRows = disableComponents([row()]);
+            const disabledRows = disableComponents([
+                row().data as ActionRow<MessageActionRowComponent>,
+            ]);
 
             await interaction.editReply({
                 components: disabledRows,
@@ -200,7 +217,7 @@ export class HelpCommand extends Command {
         });
     }
 
-    public generateCommandResponse(interaction: CommandInteraction, command: Command) {
+    public generateCommandResponse(interaction: ChatInputCommandInteraction, command: Command) {
         const { i18n } = interaction;
 
         const commandEmbed = new BetterEmbed(interaction).setColor(Options.colorsNormal);
