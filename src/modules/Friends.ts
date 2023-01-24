@@ -12,7 +12,8 @@ export class FriendsModule extends Module {
         super(context, {
             ...options,
             name: 'friends',
-            localization: 'modulesFriendsName',
+            localizationFooter: 'modulesFriendsFooter',
+            localizationName: 'modulesFriendsName',
             requireOnlineStatusAPI: false,
         });
     }
@@ -73,7 +74,10 @@ export class FriendsModule extends Module {
                         timestamp(lastLogin!, 'R')!,
                         timestamp(lastLogin!, 'T')!,
                     ]),
-                );
+                )
+                .setFooter({
+                    text: i18n.getMessage(this.localizationFooter),
+                });
         } else {
             embed
                 .setColor(Options.colorsOff)
@@ -83,7 +87,10 @@ export class FriendsModule extends Module {
                         timestamp(lastLogout!, 'R')!,
                         timestamp(lastLogout!, 'T')!,
                     ]),
-                );
+                )
+                .setFooter({
+                    text: i18n.getMessage(this.localizationFooter),
+                });
         }
 
         await channel.send({

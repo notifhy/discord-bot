@@ -6,7 +6,8 @@ export class PlaytimeModule extends Module {
         super(context, {
             ...options,
             name: 'playtime',
-            localization: 'modulesPlaytimesName',
+            localizationFooter: 'modulesPlaytimeFooter',
+            localizationName: 'modulesPlaytimeName',
             requireOnlineStatusAPI: false,
         });
     }

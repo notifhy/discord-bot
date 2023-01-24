@@ -17,7 +17,8 @@ export class RewardsModule extends Module {
         super(context, {
             ...options,
             name: 'rewards',
-            localization: 'modulesRewardsName',
+            localizationFooter: 'modulesRewardsFooter',
+            localizationName: 'modulesRewardsName',
             requireOnlineStatusAPI: false,
         });
     }
@@ -63,7 +64,7 @@ export class RewardsModule extends Module {
                 .setTitle(i18n.getMessage('modulesRewardsReminderTitle'))
                 .setDescription(description)
                 .setFooter({
-                    text: i18n.getMessage('modulesRewardsFooter'),
+                    text: i18n.getMessage(this.localizationFooter),
                 });
 
             if (config.lastNotified < lastResetTime) {
@@ -186,7 +187,7 @@ export class RewardsModule extends Module {
                         i18n.getMessage('modulesRewardsMilestoneDescription', [milestone]),
                     )
                     .setFooter({
-                        text: i18n.getMessage('modulesRewardsFooter'),
+                        text: i18n.getMessage(this.localizationFooter),
                     });
 
                 await interaction.reply({
@@ -209,7 +210,7 @@ export class RewardsModule extends Module {
                         ]),
                     )
                     .setFooter({
-                        text: i18n.getMessage('modulesRewardsFooter'),
+                        text: i18n.getMessage(this.localizationFooter),
                     });
 
                 await interaction.reply({
@@ -236,7 +237,7 @@ export class RewardsModule extends Module {
                 .setTitle(i18n.getMessage('modulesRewardsNotClaimedNotificationTitle'))
                 .setDescription(i18n.getMessage('modulesRewardsNotClaimedNotificationDescription'))
                 .setFooter({
-                    text: i18n.getMessage('modulesRewardsFooter'),
+                    text: i18n.getMessage(this.localizationFooter),
                 });
 
             await interaction.reply({

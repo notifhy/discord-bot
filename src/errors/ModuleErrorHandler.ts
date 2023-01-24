@@ -68,7 +68,10 @@ export class ModuleErrorHandler<E> extends BaseErrorHandler<E> {
 
                     const alertEmbed = new BetterEmbed()
                         .setTitle(this.i18n.getMessage('errorsModuleDiscordAPIErrorTitle'))
-                        .setDescription(this.i18n.getMessage(`errorsModuleDiscordAPIError${error.code}`));
+                        .setDescription(
+                            this.i18n.getMessage(`errorsModuleDiscordAPIError${error.code}`),
+                        )
+                        .setFooter({ text: this.i18n.getMessage(this.module.localizationFooter) });
 
                     await user.send({ embeds: [alertEmbed] });
                 } catch (error3) {
@@ -87,7 +90,7 @@ export class ModuleErrorHandler<E> extends BaseErrorHandler<E> {
                             id: this.user.id,
                             timestamp: Date.now(),
                             name: this.i18n.getMessage('errorsModuleDisabledTitle', [
-                                this.i18n.getMessage(this.module.localization),
+                                this.i18n.getMessage(this.module.localizationName),
                             ]),
                             value: this.i18n.getMessage(`errorsModuleDiscordAPIError${error.code}`),
                         },
@@ -111,7 +114,10 @@ export class ModuleErrorHandler<E> extends BaseErrorHandler<E> {
             const title = this.i18n.getMessage('errorsModuleGenericTitle');
             const description = this.i18n.getMessage('errorsModuleGenericDescription');
 
-            const alertEmbed = new BetterEmbed().setTitle(title).setDescription(description);
+            const alertEmbed = new BetterEmbed()
+                .setTitle(title)
+                .setDescription(description)
+                .setFooter({ text: this.i18n.getMessage(this.module.localizationFooter) });
 
             const settledPromises = await Promise.allSettled([
                 user.send({ embeds: [alertEmbed] }),

@@ -485,6 +485,9 @@
     "errorsPreconditionUserLocalPermissionsTitle": {
         "message": "Missing Permission(s)"
     },
+    "modulesFriendsFooter": {
+        "message": "Friends Module"
+    },
     "modulesFriendsLoggedIn": {
         "message": "$1 logged in $2 at $3"
     },
@@ -513,7 +516,10 @@
     "modulesHypixelDataReceivedOnlineStatusAPITitle": {
         "message": "Received API Data"
     },
-    "modulesPlaytimesName": {
+    "modulesPlaytimeFooter": {
+        "message": "Playtime Module"
+    },
+    "modulesPlaytimeName": {
         "message": "Playtime"
     },
     "modulesRewardsCheckClaimStatusLabel": {

@@ -7,7 +7,9 @@ import type { MessageKeys } from '../locales/locales';
 export class Module<O extends Module.Options = Module.Options> extends Piece<O> {
     public override name: 'friends' | 'playtime' | 'rewards';
 
-    public readonly localization: keyof MessageKeys;
+    public readonly localizationFooter: keyof MessageKeys;
+
+    public readonly localizationName: keyof MessageKeys;
 
     public readonly requireOnlineStatusAPI: boolean;
 
@@ -15,7 +17,8 @@ export class Module<O extends Module.Options = Module.Options> extends Piece<O> 
         super(context, options);
 
         this.name = options.name;
-        this.localization = options.localization;
+        this.localizationFooter = options.localizationFooter;
+        this.localizationName = options.localizationName;
         this.requireOnlineStatusAPI = options.requireOnlineStatusAPI ?? false;
     }
 
@@ -28,7 +31,8 @@ export class Module<O extends Module.Options = Module.Options> extends Piece<O> 
 
 export interface ModuleOptions extends Piece.Options {
     readonly name: 'friends' | 'playtime' | 'rewards';
-    readonly localization: keyof MessageKeys;
+    readonly localizationFooter: keyof MessageKeys;
+    readonly localizationName: keyof MessageKeys;
     readonly requireOnlineStatusAPI?: boolean;
 }
 
