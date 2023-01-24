@@ -42,7 +42,7 @@ export class RewardsModule extends Module {
         const lastResetTime = this.lastResetTime(now);
 
         const surpassedInterval = config.lastNotified < lastResetTime
-        // Time.Minute is for a bit of tolerance between notifications
+            // Time.Minute is for a bit of tolerance between notifications
             || config.lastNotified + config.interval - Time.Minute < now;
 
         this.container.logger.debug(
@@ -58,12 +58,13 @@ export class RewardsModule extends Module {
             const random = Math.floor(Math.random() * descriptionArray.length);
             const description = descriptionArray[random]!;
 
-            const rewardNotification = new BetterEmbed({
-                text: i18n.getMessage('modulesRewardsFooter'),
-            })
+            const rewardNotification = new BetterEmbed()
                 .setColor(Options.colorsNormal)
                 .setTitle(i18n.getMessage('modulesRewardsReminderTitle'))
-                .setDescription(description);
+                .setDescription(description)
+                .setFooter({
+                    text: i18n.getMessage('modulesRewardsFooter'),
+                });
 
             if (config.lastNotified < lastResetTime) {
                 const discordUser = await this.container.client.users.fetch(user.id);
@@ -93,11 +94,7 @@ export class RewardsModule extends Module {
                     },
                 });
 
-                this.container.logger.info(
-                    this,
-                    Logger.moduleContext(user),
-                    'Delivered reminder.',
-                );
+                this.container.logger.info(this, Logger.moduleContext(user), 'Delivered reminder.');
 
                 await this.container.client.channels.fetch(message.channelId);
 
@@ -148,11 +145,7 @@ export class RewardsModule extends Module {
                 );
             }
         } else {
-            this.container.logger.debug(
-                this,
-                Logger.moduleContext(user),
-                'Delay not surpassed.',
-            );
+            this.container.logger.debug(this, Logger.moduleContext(user), 'Delay not surpassed.');
         }
     }
 
@@ -186,14 +179,15 @@ export class RewardsModule extends Module {
             );
 
             if (config.milestones === true && milestone) {
-                const milestoneNotification = new BetterEmbed({
-                    text: i18n.getMessage('modulesRewardsFooter'),
-                })
+                const milestoneNotification = new BetterEmbed()
                     .setColor(Options.colorsNormal)
                     .setTitle(i18n.getMessage('modulesRewardsMilestoneTitle'))
                     .setDescription(
                         i18n.getMessage('modulesRewardsMilestoneDescription', [milestone]),
-                    );
+                    )
+                    .setFooter({
+                        text: i18n.getMessage('modulesRewardsFooter'),
+                    });
 
                 await interaction.reply({
                     embeds: [milestoneNotification],
@@ -205,9 +199,7 @@ export class RewardsModule extends Module {
                     'Delivered milestone.',
                 );
             } else {
-                const claimedNotification = new BetterEmbed({
-                    text: i18n.getMessage('modulesRewardsFooter'),
-                })
+                const claimedNotification = new BetterEmbed()
                     .setColor(Options.colorsNormal)
                     .setTitle(i18n.getMessage('modulesRewardsClaimedNotificationTitle'))
                     .setDescription(
@@ -215,7 +207,10 @@ export class RewardsModule extends Module {
                             player.rewardScore ?? -1,
                             player.totalDailyRewards ?? -1,
                         ]),
-                    );
+                    )
+                    .setFooter({
+                        text: i18n.getMessage('modulesRewardsFooter'),
+                    });
 
                 await interaction.reply({
                     embeds: [claimedNotification],
@@ -236,12 +231,13 @@ export class RewardsModule extends Module {
                 components: disabledRows,
             });
         } else {
-            const notClaimedNotification = new BetterEmbed({
-                text: i18n.getMessage('modulesRewardsFooter'),
-            })
+            const notClaimedNotification = new BetterEmbed()
                 .setColor(Options.colorsWarning)
                 .setTitle(i18n.getMessage('modulesRewardsNotClaimedNotificationTitle'))
-                .setDescription(i18n.getMessage('modulesRewardsNotClaimedNotificationDescription'));
+                .setDescription(i18n.getMessage('modulesRewardsNotClaimedNotificationDescription'))
+                .setFooter({
+                    text: i18n.getMessage('modulesRewardsFooter'),
+                });
 
             await interaction.reply({
                 embeds: [notClaimedNotification],

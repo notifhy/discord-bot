@@ -35,7 +35,7 @@ export class Modules extends Base {
                 const i18n = new Internationalization(user.locale);
 
                 embeds.push(
-                    new BetterEmbed({ text: i18n.getMessage('modulesHypixelDataMissingAPIFooter') })
+                    new BetterEmbed()
                         .setColor(Options.colorsNormal)
                         .setTitle(i18n.getMessage('modulesHypixelDataMissingOnlineStatusAPITitle'))
                         .setDescription(
@@ -52,7 +52,7 @@ export class Modules extends Base {
                 const i18n = new Internationalization(user.locale);
 
                 embeds.push(
-                    new BetterEmbed({ text: i18n.getMessage('modulesHypixelDataMissingAPIFooter') })
+                    new BetterEmbed()
                         .setColor(Options.colorsNormal)
                         .setTitle(i18n.getMessage('modulesHypixelDataReceivedOnlineStatusAPITitle'))
                         .setDescription(

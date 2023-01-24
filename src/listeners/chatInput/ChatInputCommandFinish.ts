@@ -45,9 +45,7 @@ export class ChatInputCommandFinishListener extends Listener {
         if (systemMessages.length > 0) {
             const { i18n } = interaction;
 
-            const systemMessagesEmbed = new BetterEmbed({
-                text: i18n.getMessage('systemMessagesFooter'),
-            })
+            const systemMessagesEmbed = new BetterEmbed()
                 .setColor(Options.colorsNormal)
                 .setTitle(i18n.getMessage('systemMessagesTitle'))
                 .setDescription(i18n.getMessage('systemMessagesDescription'))
