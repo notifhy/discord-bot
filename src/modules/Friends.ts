@@ -2,6 +2,7 @@ import type { users as User } from '@prisma/client';
 import { EmbedBuilder, PermissionsBitField, TextChannel, userMention } from 'discord.js';
 import type { FriendsEventPayload } from '../@types/EventPayload';
 import { i18n as Internationalization } from '../locales/i18n';
+import { Logger } from '../structures/Logger';
 import { Module } from '../structures/Module';
 import { Modules } from '../structures/Modules';
 import { Options } from '../utility/Options';
@@ -47,12 +48,20 @@ export class FriendsModule extends Module {
         const i18n = new Internationalization(user.locale);
 
         if (missingPermissions.length !== 0) {
+            this.container.logger.debug(
+                this,
+                Logger.moduleContext(user),
+                `Missing permissions: ${missingPermissions.join(', ')}`,
+            );
+
             await this.container.database.system_messages.create({
                 data: {
                     id: user.id,
                     timestamp: Date.now(),
                     name: i18n.getMessage('modulesFriendsMissingPermissionName'),
-                    value: i18n.getMessage('modulesFriendsMissingPermissionDescription'),
+                    value: i18n.getMessage('modulesFriendsMissingPermissionDescription', [
+                        missingPermissions.join(', '),
+                    ]),
                 },
             });
 

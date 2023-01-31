@@ -29,8 +29,8 @@ model activities {
 
 model authentication {
   id    String @id @db.VarChar(20)
-  hash  String @db.VarChar(64)
-  salt  String @db.VarChar(16)
+  hash  String @db.VarChar(128)
+  salt  String @db.VarChar(32)
   users users?
 }
 
@@ -62,8 +62,9 @@ model modules {
 }
 
 model playtime {
-  id    String @id @db.VarChar(20)
-  users users?
+  id      String  @id @db.VarChar(20)
+  channel String? @db.VarChar(20)
+  users   users?
 }
 
 model rewards {

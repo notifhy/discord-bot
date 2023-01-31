@@ -44,7 +44,7 @@ export class Hypixel extends Base {
         return { changes: changes, data: data };
     }
 
-    private static async player(user: User): Promise<CleanHypixelPlayer> {
+    public static async player(user: User): Promise<CleanHypixelPlayer> {
         const rawData = (await Hypixel.preRequest(
             Options.urlHypixelPlayer,
             user.uuid,
@@ -53,7 +53,7 @@ export class Hypixel extends Base {
         return Hypixel.cleanPlayerData(rawData);
     }
 
-    private static async status(user: User): Promise<CleanHypixelStatus> {
+    public static async status(user: User): Promise<CleanHypixelStatus> {
         const rawData = (await Hypixel.preRequest(
             Options.urlHypixelStatus,
             user.uuid,

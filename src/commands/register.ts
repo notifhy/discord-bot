@@ -1,5 +1,9 @@
 import { type ApplicationCommandRegistry, BucketScope, Command } from '@sapphire/framework';
-import { ApplicationCommandOptionType, type ChatInputCommandInteraction, DiscordAPIError } from 'discord.js';
+import {
+    ApplicationCommandOptionType,
+    type ChatInputCommandInteraction,
+    DiscordAPIError,
+} from 'discord.js';
 import type { SlothpixelPlayer } from '../@types/Hypixel';
 import { HTTPError } from '../errors/HTTPError';
 import { RequestErrorHandler } from '../errors/RequestErrorHandler';
@@ -232,11 +236,19 @@ export class RegisterCommand extends Command {
         const registeredEmbed = new BetterEmbed(interaction)
             .setColor(Options.colorsNormal)
             .setTitle(i18n.getMessage('commandsRegisterSuccessTitle'))
-            .setDescription(i18n.getMessage('commandsRegisterSuccessDescription'))
-            .setFields({
-                name: i18n.getMessage('commandsRegisterSuccessFieldName'),
-                value: i18n.getMessage('commandsRegisterSuccessFieldValue'),
+            .setDescription(i18n.getMessage('commandsRegisterSuccessDescription'));
+
+        if (data.last_login === null || data.last_logout === null) {
+            registeredEmbed.addFields({
+                name: i18n.getMessage('commandsRegisterSuccessAPIWarningFieldName'),
+                value: i18n.getMessage('commandsRegisterSuccessAPIWarningFieldValue'),
             });
+        }
+
+        registeredEmbed.addFields({
+            name: i18n.getMessage('commandsRegisterSuccessNextFieldName'),
+            value: i18n.getMessage('commandsRegisterSuccessNextFieldValue'),
+        });
 
         try {
             const testEmbed = new BetterEmbed(interaction)

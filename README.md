@@ -18,7 +18,6 @@ Monolith structure for now ("temporary")
 - [ ] Two separate i18n files?????
 - [ ] Access DAPI via REST
 - API
-    - /api, stats, errors, logic
     - /config core, general config
     - /data, all data, history
     - /module, module config
