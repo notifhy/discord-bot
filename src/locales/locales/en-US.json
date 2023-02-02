@@ -389,6 +389,12 @@
     "commandsSystemMessageSuccessDescription": {
         "message": "Your system message was created successfully."
     },
+    "commandsTokenDescription": {
+        "message": "Any previously generated tokens are now invalid. Please keep this token safe and do not share it with anyone.\n\nYour token is:\n```\n$1\n```"
+    },
+    "commandsTokenTitle": {
+        "message": "Generated Token"
+    },
     "errorsGeneralError": {
         "message": "Error"
     },
