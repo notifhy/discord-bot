@@ -23,6 +23,7 @@ export class Request extends Base {
         const urlObject = new URL(url);
         const base = { method: fetchOptions?.method ?? 'GET', url: urlObject.hostname + urlObject.pathname };
         const end = Request.requestsDurationGauge.startTimer();
+        const start1 = Date.now();
 
         let response;
 
@@ -30,7 +31,8 @@ export class Request extends Base {
             response = await Request.requestHelper(0, url, fetchOptions);
             return response;
         } finally {
-            end({ ...base, status: response?.status ?? 500 });
+            const time = end({ ...base, status: response?.status ?? 500 });
+            this.container.logger.debug(this, `Time taken: ${time} / ${Date.now() - start1}`);
             Request.requestsCounter.inc({ ...base, status: response?.status ?? 500 });
         }
     }
