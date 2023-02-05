@@ -1,5 +1,4 @@
 import type { users as User } from '@prisma/client';
-import { container } from '@sapphire/framework';
 import fastifyClient from 'fastify';
 import { STATUS_CODES } from 'node:http';
 import process from 'node:process';
@@ -40,6 +39,11 @@ export class Fastify extends Base {
             // eslint-disable-next-line consistent-return
             validate: async (username, password, request) => {
                 if (Options.regexUUID.test(username) === false) {
+                    this.container.logger.warn(
+                        this,
+                        `Invalid username: ${username}`,
+                    );
+
                     return new Error('Invalid username or password');
                 }
 
@@ -52,10 +56,21 @@ export class Fastify extends Base {
                     },
                 });
 
-                if (
-                    user === null
-                    || generateHash(password, user.authentication.salt) !== user.authentication.hash
-                ) {
+                if (user === null) {
+                    this.container.logger.warn(
+                        this,
+                        `Invalid user: ${username}`,
+                    );
+
+                    return new Error('Invalid username or password');
+                }
+
+                if (generateHash(password, user.authentication.salt) !== user.authentication.hash) {
+                    this.container.logger.warn(
+                        this,
+                        `Invalid password for username: ${username}, ${password}`,
+                    );
+
                     return new Error('Invalid username or password');
                 }
 
@@ -110,7 +125,7 @@ export class Fastify extends Base {
             if (statusCode >= 500) {
                 new FastifyErrorHandler(error).init();
             } else {
-                container.logger.warn(
+                this.container.logger.warn(
                     this,
                     `Status ${statusCode} on route ${request.method}:${request.url} by ${request.ip}`,
                 );
@@ -122,7 +137,7 @@ export class Fastify extends Base {
             });
         });
 
-        container.stores.get('routes').forEach((route) => {
+        this.container.stores.get('routes').forEach((route) => {
             fastify.register(route.routes);
         });
 

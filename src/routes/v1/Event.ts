@@ -52,6 +52,13 @@ export class EventRoute extends Route {
     protected override async postMethod(request: FastifyRequest<{
         Body: IBodyPost;
     }>, reply: FastifyReply) {
+        if (request.body.domain.endsWith('hypixel.net') === false) {
+            this.container.logger.debug(
+                this,
+                `Domain is not Hypixel: ${request.body.domain}`,
+            );
+        }
+
         const user = request.user!;
         const moduleStore = this.container.stores.get('modules');
         const modulesWithEvent = moduleStore.filter((module) => module.event);
