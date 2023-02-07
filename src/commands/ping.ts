@@ -39,7 +39,7 @@ export class PingCommand extends Command {
             embeds: [initialPingEmbed],
         });
 
-        const roundTripDelay = sentReply.createdTimestamp;
+        const roundTripDelay = sentReply.createdTimestamp - interaction.createdTimestamp;
 
         const mixedPing = (interaction.client.ws.ping + roundTripDelay) / 2;
 
