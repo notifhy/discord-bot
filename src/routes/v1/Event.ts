@@ -28,10 +28,10 @@ export class EventRoute extends Route {
                     body: {
                         type: 'object',
                         properties: {
-                            domain: { type: 'string' },
+                            host: { type: 'string' },
                             joined: { type: 'boolean' },
                         },
-                        required: ['domain'],
+                        required: ['host'],
                     },
                     response: {
                         '2xx': {
@@ -52,10 +52,10 @@ export class EventRoute extends Route {
     protected override async postMethod(request: FastifyRequest<{
         Body: IBodyPost;
     }>, reply: FastifyReply) {
-        if (request.body.domain.endsWith('hypixel.net') === false) {
+        if (request.body.host.endsWith('hypixel.net') === false) {
             this.container.logger.debug(
                 this,
-                `Domain is not Hypixel: ${request.body.domain}`,
+                `Host is not Hypixel: ${request.body.host}`,
             );
         }
 

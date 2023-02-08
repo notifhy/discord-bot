@@ -1,5 +1,5 @@
 export interface EventPayload {
-    domain: string;
+    host: string;
     joined?: boolean;
 }
 
