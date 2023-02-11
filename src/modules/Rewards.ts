@@ -100,20 +100,24 @@ export class RewardsModule extends Module {
                 await this.container.client.channels.fetch(message.channelId);
 
                 const disabledRows = disableComponents(message.components);
-
                 const endBoundary = now - lastResetTime + Time.Day;
 
                 setTimeout(async () => {
                     try {
-                        await message.edit({
-                            components: disabledRows,
-                        });
+                        const updatedMessage = await message.fetch(true);
+                        const button = updatedMessage.components[0]?.components[0];
 
-                        this.container.logger.debug(
-                            this,
-                            Logger.moduleContext(user),
-                            `Disabled button after no activity for ${cleanLength(endBoundary)}.`,
-                        );
+                        if (button && button.disabled === false) {
+                            await message.edit({
+                                components: disabledRows,
+                            });
+
+                            this.container.logger.debug(
+                                this,
+                                Logger.moduleContext(user),
+                                `Disabled button after no activity for ${cleanLength(endBoundary)}.`,
+                            );
+                        }
                     } catch (error) {
                         new ErrorHandler(error).init();
                     }

@@ -108,7 +108,9 @@ export class Core extends Base {
 
             await this.refreshUser(user, user.modules, modulesWithCron);
 
-            end();
+            const time = end();
+
+            this.container.logger.debug(this, `Time taken: ${time * 1000}ms`);
         }
     }
 
