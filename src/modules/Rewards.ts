@@ -245,7 +245,7 @@ export class RewardsModule extends Module {
             reply,
         );
 
-        const message = await interaction.fetchReply();
+        const message = await interaction.message.fetch(true);
         const disabledRows = disableComponents(message.components ?? []);
 
         await message.edit({
