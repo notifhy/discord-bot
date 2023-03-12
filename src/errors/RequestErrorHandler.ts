@@ -15,8 +15,8 @@ export class RequestErrorHandler<E> extends BaseErrorHandler<E> {
     public init() {
         try {
             if (this.error instanceof AbortError) {
-                this.log(this.error);
-                this.sentry.captureException(this.error.name);
+                this.log(this.error.name);
+                this.sentry.captureException(this.error);
             } else {
                 this.report();
             }
