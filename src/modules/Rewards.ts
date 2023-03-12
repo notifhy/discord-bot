@@ -115,7 +115,9 @@ export class RewardsModule extends Module {
                             this.container.logger.debug(
                                 this,
                                 Logger.moduleContext(user),
-                                `Disabled button after no activity for ${cleanLength(endBoundary)}.`,
+                                `Disabled button after no activity for ${cleanLength(
+                                    endBoundary,
+                                )}.`,
                             );
                         }
                     } catch (error) {
@@ -169,73 +171,7 @@ export class RewardsModule extends Module {
         const normalizedLastClaimed = Math.ceil((player.lastClaimedReward ?? 0) / 1000) * 1000;
         const hasClaimed = lastResetTime < normalizedLastClaimed;
 
-        if (hasClaimed) {
-            await this.container.database.rewards.update({
-                data: {
-                    lastClaimedReward: player.lastClaimedReward ?? Date.now(),
-                },
-                where: {
-                    id: user.id,
-                },
-            });
-
-            const milestone = Options.modulesRewardsMilestones.find(
-                (item) => item === player.rewardScore,
-            );
-
-            if (config.milestones === true && milestone) {
-                const milestoneNotification = new BetterEmbed()
-                    .setColor(Options.colorsNormal)
-                    .setTitle(i18n.getMessage('modulesRewardsMilestoneTitle'))
-                    .setDescription(
-                        i18n.getMessage('modulesRewardsMilestoneDescription', [milestone]),
-                    )
-                    .setFooter({
-                        text: i18n.getMessage(this.localizationFooter),
-                    });
-
-                await interaction.reply({
-                    embeds: [milestoneNotification],
-                });
-
-                this.container.logger.info(
-                    this,
-                    Logger.moduleContext(user),
-                    'Delivered milestone.',
-                );
-            } else {
-                const claimedNotification = new BetterEmbed()
-                    .setColor(Options.colorsNormal)
-                    .setTitle(i18n.getMessage('modulesRewardsClaimedNotificationTitle'))
-                    .setDescription(
-                        i18n.getMessage('modulesRewardsClaimedNotificationDescription', [
-                            player.rewardScore ?? -1,
-                            player.totalDailyRewards ?? -1,
-                        ]),
-                    )
-                    .setFooter({
-                        text: i18n.getMessage(this.localizationFooter),
-                    });
-
-                await interaction.reply({
-                    embeds: [claimedNotification],
-                });
-
-                this.container.logger.info(
-                    this,
-                    Logger.moduleContext(user),
-                    'Delivered claimed notification.',
-                );
-            }
-
-            const { message } = interaction;
-
-            const disabledRows = disableComponents(message.components ?? []);
-
-            await message.edit({
-                components: disabledRows,
-            });
-        } else {
+        if (!hasClaimed) {
             const notClaimedNotification = new BetterEmbed()
                 .setColor(Options.colorsWarning)
                 .setTitle(i18n.getMessage('modulesRewardsNotClaimedNotificationTitle'))
@@ -248,7 +184,73 @@ export class RewardsModule extends Module {
                 embeds: [notClaimedNotification],
                 ephemeral: true,
             });
+
+            return;
         }
+
+        await this.container.database.rewards.update({
+            data: {
+                lastClaimedReward: player.lastClaimedReward ?? Date.now(),
+            },
+            where: {
+                id: user.id,
+            },
+        });
+
+        const milestone = Options.modulesRewardsMilestones.find(
+            (item) => item === player.rewardScore,
+        );
+
+        const notificationEmbed = new BetterEmbed();
+
+        if (config.milestones === true && milestone) {
+            notificationEmbed
+                .setColor(Options.colorsNormal)
+                .setTitle(i18n.getMessage('modulesRewardsMilestoneTitle'))
+                .setDescription(i18n.getMessage('modulesRewardsMilestoneDescription', [milestone]))
+                .setFooter({
+                    text: i18n.getMessage(this.localizationFooter),
+                });
+        } else {
+            notificationEmbed
+                .setColor(Options.colorsNormal)
+                .setTitle(i18n.getMessage('modulesRewardsClaimedNotificationTitle'))
+                .setDescription(
+                    i18n.getMessage('modulesRewardsClaimedNotificationDescription', [
+                        player.rewardScore ?? -1,
+                        player.totalDailyRewards ?? -1,
+                    ]),
+                )
+                .setFooter({
+                    text: i18n.getMessage(this.localizationFooter),
+                });
+        }
+
+        const reply = await interaction.reply({
+            embeds: [notificationEmbed],
+        });
+
+        this.container.logger.info(
+            this,
+            Logger.moduleContext(user),
+            (config.milestones === true && milestone)
+                ? 'Delivered milestone.'
+                : 'Delivered claimed notification.',
+        );
+
+        this.container.logger.info(
+            this,
+            Logger.moduleContext(user),
+            'DEBUG',
+            reply,
+        );
+
+        const message = await interaction.fetchReply();
+        const disabledRows = disableComponents(message.components ?? []);
+
+        await message.edit({
+            components: disabledRows,
+        });
     }
 
     private lastResetTime(nowParam?: number) {
