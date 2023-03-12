@@ -1,5 +1,5 @@
 import type { users as User } from '@prisma/client';
-import { ActionRowBuilder, ButtonBuilder, ButtonInteraction, ButtonStyle, DMChannel, TextBasedChannel } from 'discord.js';
+import { ActionRowBuilder, ButtonBuilder, ButtonInteraction, ButtonStyle, DMChannel } from 'discord.js';
 import { CustomIdType } from '../enums/CustomIdType';
 import { Time } from '../enums/Time';
 import { ErrorHandler } from '../errors/ErrorHandler';
