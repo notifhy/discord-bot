@@ -226,7 +226,7 @@ export class RewardsModule extends Module {
                 });
         }
 
-        const reply = await interaction.reply({
+        await interaction.reply({
             embeds: [notificationEmbed],
         });
 
