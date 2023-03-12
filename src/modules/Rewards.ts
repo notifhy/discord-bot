@@ -238,13 +238,6 @@ export class RewardsModule extends Module {
                 : 'Delivered claimed notification.',
         );
 
-        this.container.logger.info(
-            this,
-            Logger.moduleContext(user),
-            'DEBUG',
-            reply,
-        );
-
         const channel = await interaction.client.channels.fetch(interaction.channelId) as DMChannel;
         const message = await channel.messages.fetch(interaction.message.id);
         const disabledRows = disableComponents(message.components ?? []);
