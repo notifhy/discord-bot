@@ -1,5 +1,5 @@
 import type { users as User } from '@prisma/client';
-import { ActionRowBuilder, ButtonBuilder, ButtonInteraction, ButtonStyle } from 'discord.js';
+import { ActionRowBuilder, ButtonBuilder, ButtonInteraction, ButtonStyle, DMChannel, TextBasedChannel } from 'discord.js';
 import { CustomIdType } from '../enums/CustomIdType';
 import { Time } from '../enums/Time';
 import { ErrorHandler } from '../errors/ErrorHandler';
@@ -245,7 +245,8 @@ export class RewardsModule extends Module {
             reply,
         );
 
-        const message = await interaction.message.fetch(true);
+        const channel = await interaction.client.channels.fetch(interaction.channelId) as DMChannel;
+        const message = await channel.messages.fetch(interaction.message.id);
         const disabledRows = disableComponents(message.components ?? []);
 
         await message.edit({
