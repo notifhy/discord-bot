@@ -65,7 +65,7 @@ export class RewardsModuleButtonHandler extends InteractionHandler {
         });
 
         const modules = this.container.stores.get('modules');
-        const rewards = modules.find((module) => (module.name as string) === customId.type) as
+        const rewards = modules.find((module) => (module.name as string) === customId.module) as
             | RewardsModule
             | undefined;
 
