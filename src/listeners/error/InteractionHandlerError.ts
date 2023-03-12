@@ -1,5 +1,5 @@
 import { Events, type InteractionHandlerError, Listener } from '@sapphire/framework';
-import { ErrorHandler } from '../../errors/ErrorHandler';
+import { InteractionErrorHandler } from '../../errors/InteractionErrorHandler';
 
 export class InteractionHandlerErrorListener extends Listener {
     public constructor(context: Listener.Context) {
@@ -8,6 +8,6 @@ export class InteractionHandlerErrorListener extends Listener {
 
     public run(error: unknown, context: InteractionHandlerError) {
         const { name, location } = context.handler;
-        new ErrorHandler(error, name, location.full).init();
+        new InteractionErrorHandler(error, context.interaction, name, location.full).init();
     }
 }

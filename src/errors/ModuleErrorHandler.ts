@@ -22,7 +22,8 @@ export class ModuleErrorHandler<E> extends BaseErrorHandler<E> {
 
     public async init() {
         try {
-            this.errorLog();
+            this.sentry.moduleContext(this.error, this.module, this.user);
+            this.report();
 
             if (this.error instanceof DiscordAPIError) {
                 await this.handleDiscordAPIError();
@@ -32,15 +33,6 @@ export class ModuleErrorHandler<E> extends BaseErrorHandler<E> {
         } catch (error2) {
             new ErrorHandler(error2, this.incidentId).init();
         }
-    }
-
-    private errorLog() {
-        this.log(this.error);
-
-        this.sentry
-            .setSeverity('error')
-            .moduleContext(this.error, this.module, this.user)
-            .captureException(this.error);
     }
 
     private async disableModule() {

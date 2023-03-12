@@ -3,7 +3,7 @@ import {
     type InteractionHandlerParseError as InteractionHandlerParseErrorPayload,
     Listener,
 } from '@sapphire/framework';
-import { ErrorHandler } from '../../errors/ErrorHandler';
+import { InteractionErrorHandler } from '../../errors/InteractionErrorHandler';
 
 export class InteractionHandlerParseErrorListener extends Listener {
     public constructor(context: Listener.Context) {
@@ -12,6 +12,6 @@ export class InteractionHandlerParseErrorListener extends Listener {
 
     public run(error: unknown, context: InteractionHandlerParseErrorPayload) {
         const { name, location } = context.handler;
-        new ErrorHandler(error, name, location.full).init();
+        new InteractionErrorHandler(error, context.interaction, name, location.full).init();
     }
 }

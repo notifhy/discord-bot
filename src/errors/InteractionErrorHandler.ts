@@ -1,29 +1,19 @@
-import {
-    ChatInputCommandInteraction,
-    ContextMenuCommandInteraction,
-    EmbedBuilder,
-    MessageComponentInteraction,
-} from 'discord.js';
+import { BaseInteraction, EmbedBuilder } from 'discord.js';
 import { BaseInteractionErrorHandler } from './BaseInteractionErrorHandler';
 import { ErrorHandler } from './ErrorHandler';
 import { Options } from '../utility/Options';
 
 export class InteractionErrorHandler<
     E,
-    I extends
-    | ChatInputCommandInteraction
-    | ContextMenuCommandInteraction
-    | MessageComponentInteraction,
+    I extends BaseInteraction,
 > extends BaseInteractionErrorHandler<E, I> {
-    public constructor(error: E, interaction: I) {
-        super(error, interaction);
+    public constructor(error: E, interaction: I, ...data: string[]) {
+        super(error, interaction, ...data);
     }
 
     public async init() {
         try {
-            this.log(this.error);
-
-            this.sentry.setSeverity('error').captureException(this.error);
+            this.report();
 
             await this.userNotify();
         } catch (error2) {
@@ -32,6 +22,11 @@ export class InteractionErrorHandler<
     }
 
     private async userNotify() {
+        if (!this.interaction.isRepliable()) {
+            this.log('Interaction is not repliable.');
+            return;
+        }
+
         const embed = new EmbedBuilder()
             .setColor(Options.colorsError)
             .setTitle(this.i18n.getMessage('errorsInteractionReplyTitle'))
@@ -53,9 +48,11 @@ export class InteractionErrorHandler<
                 await this.interaction.reply(payLoad);
             }
         } catch (error) {
-            this.log('An error has occurred and also failed to notify the user.', error);
-
-            this.sentry.setSeverity('error').captureException(error);
+            new ErrorHandler(
+                error,
+                this.incidentId,
+                'An error has occurred and also failed to notify the user.',
+            ).init();
         }
     }
 }

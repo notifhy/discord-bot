@@ -4,8 +4,8 @@ import { BaseErrorHandler } from './BaseErrorHandler';
 export class BaseInteractionErrorHandler<E, I extends BaseInteraction> extends BaseErrorHandler<E> {
     public readonly interaction: I;
 
-    public constructor(error: E, interaction: I) {
-        super(error);
+    public constructor(error: E, interaction: I, ...data: string[]) {
+        super(error, ...data);
         this.interaction = interaction;
         this.i18n.setLocale(this.interaction.locale);
 

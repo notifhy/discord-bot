@@ -7,10 +7,7 @@ export class FastifyErrorHandler extends BaseErrorHandler<FastifyError> {
     }
 
     public init() {
-        this.log(this.error);
-
-        this.sentry
-            .fastifyContext(this.error)
-            .captureException(this.error);
+        this.sentry.fastifyContext(this.error);
+        this.report();
     }
 }
