@@ -39,7 +39,7 @@ export class ModuleErrorHandler<E> extends BaseErrorHandler<E> {
         return this.container.database.modules.update({
             data: {
                 [this.module.name]: {
-                    enabled: false,
+                    set: false,
                 },
             },
             where: {
