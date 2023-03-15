@@ -1,5 +1,11 @@
 import type { users as User } from '@prisma/client';
-import { ActionRowBuilder, ButtonBuilder, ButtonInteraction, ButtonStyle, DMChannel } from 'discord.js';
+import {
+    ActionRowBuilder,
+    ButtonBuilder,
+    ButtonInteraction,
+    ButtonStyle,
+    DMChannel,
+} from 'discord.js';
 import { CustomIdType } from '../enums/CustomIdType';
 import { Time } from '../enums/Time';
 import { ErrorHandler } from '../errors/ErrorHandler';
@@ -180,6 +186,12 @@ export class RewardsModule extends Module {
                     text: i18n.getMessage(this.localizationFooter),
                 });
 
+            this.container.logger.warn(
+                this,
+                Logger.moduleContext(user),
+                'User has not claimed their reward.',
+            );
+
             await interaction.reply({
                 embeds: [notClaimedNotification],
                 ephemeral: true,
@@ -233,12 +245,14 @@ export class RewardsModule extends Module {
         this.container.logger.info(
             this,
             Logger.moduleContext(user),
-            (config.milestones === true && milestone)
+            config.milestones === true && milestone
                 ? 'Delivered milestone.'
                 : 'Delivered claimed notification.',
         );
 
-        const channel = await interaction.client.channels.fetch(interaction.channelId) as DMChannel;
+        const channel = (await interaction.client.channels.fetch(
+            interaction.channelId,
+        )) as DMChannel;
         const message = await channel.messages.fetch(interaction.message.id);
         const disabledRows = disableComponents(message.components ?? []);
 

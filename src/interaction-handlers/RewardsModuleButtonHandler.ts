@@ -81,7 +81,7 @@ export class RewardsModuleButtonHandler extends InteractionHandler {
 
         await rewards.interaction(user, interaction);
 
-        this.container.logger.warn(
+        this.container.logger.info(
             this,
             Logger.interactionLogContext(interaction),
             'Ran interaction.',
