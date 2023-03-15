@@ -66,8 +66,8 @@ export class ModuleErrorHandler<E> extends BaseErrorHandler<E> {
                         .setFooter({ text: this.i18n.getMessage(this.module.localizationFooter) });
 
                     await user.send({ embeds: [alertEmbed] });
-                } catch (error3) {
-                    this.log('Failed to send DM alert', error3);
+                } catch (error2) {
+                    this.log('Failed to send DM alert', error2);
                 }
             // fall through - only send message if remotely possible
             case RESTJSONErrorCodes.UnknownUser:
@@ -88,8 +88,12 @@ export class ModuleErrorHandler<E> extends BaseErrorHandler<E> {
                     });
 
                     this.log('New modules:', modules, 'Handled Discord API error:', error.code);
-                } catch (error3) {
-                    this.log('Failed to disable module and send system message', error3);
+                } catch (error2) {
+                    new ErrorHandler(
+                        error2,
+                        this.incidentId,
+                        'Failed to disable module and send system message',
+                    ).init();
                 }
 
                 break;
@@ -129,9 +133,7 @@ export class ModuleErrorHandler<E> extends BaseErrorHandler<E> {
                 }
             }
         } catch (error) {
-            this.log('Failed to handle generic error.');
-
-            new ErrorHandler(error, this.incidentId).init();
+            new ErrorHandler(error, this.incidentId, 'Failed to handle generic error.').init();
         }
     }
 }

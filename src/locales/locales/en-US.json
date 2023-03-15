@@ -423,7 +423,7 @@
         "message": "The set channel, server, or user was not reachable. Please check to see if this bot can access the set channel. [Code 50001](https://discord.com/developers/docs/topics/opcodes-and-status-codes#json-json-error-codes \"Opcodes and Status codes\")"
     },
     "errorsModuleDiscordAPIError50007": {
-        "message": "This bot was unable to DM you. Please check your privacy settings and enable direct messages. Then, reenable this/these modules with **/modules**. [Code 50007](https://discord.com/developers/docs/topics/opcodes-and-status-codes#json-json-error-codes \"Opcodes and Status codes\")"
+        "message": "This bot was unable to DM you. Please check your privacy settings and enable direct messages. Then, reenable this module with **/modules**. [Code 50007](https://discord.com/developers/docs/topics/opcodes-and-status-codes#json-json-error-codes \"Opcodes and Status codes\")"
     },
     "errorsModuleDiscordAPIError50013": {
         "message": "This bot lacked permission(s) to perform an action. Discord does not specify the missing permission(s), so this is all we know. [Code 50013](https://discord.com/developers/docs/topics/opcodes-and-status-codes#json-json-error-codes \"Opcodes and Status codes\")"
