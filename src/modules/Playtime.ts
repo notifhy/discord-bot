@@ -45,8 +45,6 @@ export class PlaytimeModule extends Module {
                     PermissionsBitField.Flags.ViewChannel,
                 ]);
 
-            const i18n = new Internationalization(user.locale);
-
             if (missingPermissions.length !== 0) {
                 this.container.logger.debug(
                     this,
@@ -58,10 +56,11 @@ export class PlaytimeModule extends Module {
                     data: {
                         id: user.id,
                         timestamp: Date.now(),
-                        name: i18n.getMessage('modulesPlaytimeMissingPermissionName'),
-                        value: i18n.getMessage('modulesPlaytimeMissingPermissionDescription', [
+                        name_key: 'modulesPlaytimeMissingPermissionName',
+                        value_key: 'modulesPlaytimeMissingPermissionValue',
+                        value_variables: [
                             missingPermissions.join(', '),
-                        ]),
+                        ],
                     },
                 });
 

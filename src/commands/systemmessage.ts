@@ -247,9 +247,11 @@ export class SystemMessageCommand extends Command {
         await this.container.database.system_messages.createMany({
             data: ids.map((id) => ({
                 id: id,
-                name: name,
                 timestamp: Date.now(),
-                value: value,
+                name_key: 'blank',
+                name_variables: [name],
+                value_key: 'blank',
+                value_variables: [value],
             })),
         });
 

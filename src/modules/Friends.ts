@@ -58,10 +58,11 @@ export class FriendsModule extends Module {
                 data: {
                     id: user.id,
                     timestamp: Date.now(),
-                    name: i18n.getMessage('modulesFriendsMissingPermissionName'),
-                    value: i18n.getMessage('modulesFriendsMissingPermissionDescription', [
+                    name_key: 'modulesFriendsMissingPermissionName',
+                    value_key: 'modulesFriendsMissingPermissionValue',
+                    value_variables: [
                         missingPermissions.join(', '),
-                    ]),
+                    ],
                 },
             });
 

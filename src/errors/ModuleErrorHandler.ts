@@ -81,10 +81,9 @@ export class ModuleErrorHandler<E> extends BaseErrorHandler<E> {
                         data: {
                             id: this.user.id,
                             timestamp: Date.now(),
-                            name: this.i18n.getMessage('errorsModuleDisabledTitle', [
-                                this.i18n.getMessage(this.module.localizationName),
-                            ]),
-                            value: this.i18n.getMessage(`errorsModuleDiscordAPIError${error.code}`),
+                            name_key: 'errorsModuleDisabledTitle',
+                            name_variables: [this.i18n.getMessage(this.module.localizationName)],
+                            value_key: `errorsModuleDiscordAPIError${error.code}`,
                         },
                     });
 
@@ -103,12 +102,12 @@ export class ModuleErrorHandler<E> extends BaseErrorHandler<E> {
         try {
             const user = await this.container.client.users.fetch(this.user.id);
 
-            const title = this.i18n.getMessage('errorsModuleGenericTitle');
-            const description = this.i18n.getMessage('errorsModuleGenericDescription');
+            const title = 'errorsModuleGenericTitle';
+            const description = 'errorsModuleGenericDescription';
 
             const alertEmbed = new BetterEmbed()
-                .setTitle(title)
-                .setDescription(description)
+                .setTitle(this.i18n.getMessage(title))
+                .setDescription(this.i18n.getMessage(description))
                 .setFooter({ text: this.i18n.getMessage(this.module.localizationFooter) });
 
             const settledPromises = await Promise.allSettled([
@@ -117,8 +116,8 @@ export class ModuleErrorHandler<E> extends BaseErrorHandler<E> {
                     data: {
                         id: this.user.id,
                         timestamp: Date.now(),
-                        name: title,
-                        value: description,
+                        name_key: title,
+                        value_key: description,
                     },
                 }),
             ]);

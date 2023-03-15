@@ -78,13 +78,15 @@ model rewards {
 }
 
 model system_messages {
-  index     Int     @id @default(autoincrement())
-  id        String  @db.VarChar(20)
-  timestamp Float
-  name      String  @db.VarChar(256)
-  value     String  @db.VarChar(1024)
-  read      Boolean @default(false)
-  users     users   @relation(fields: [id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  index           Int      @id @default(autoincrement())
+  id              String   @db.VarChar(20)
+  timestamp       Float
+  name_key        String   @db.VarChar(256)
+  name_variables  String[] @default([]) @db.VarChar(256)
+  value_key       String   @db.VarChar(256)
+  value_variables String[] @default([]) @db.VarChar(256)
+  read            Boolean  @default(false)
+  users           users    @relation(fields: [id], references: [id], onDelete: NoAction, onUpdate: NoAction)
 }
 
 model users {

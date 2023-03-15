@@ -1,4 +1,7 @@
 {
+    "blank": {
+        "message": "$1"
+    },
     "null": {
         "message": "Unknown"
     },
@@ -509,11 +512,11 @@
     "modulesFriendsName": {
         "message": "Friends"
     },
-    "modulesFriendsMissingPermissionDescription": {
-        "message": "The set channel for the Friends module is not accessible because of the following missing permissions: $1. Please check the bot's permission settings."
-    },
     "modulesFriendsMissingPermissionName": {
         "message": "Missing Permission(s)"
+    },
+    "modulesFriendsMissingPermissionValue": {
+        "message": "The set channel for the Friends module is not accessible because of the following missing permissions: $1. Please check the bot's permission settings."
     },
     "modulesHypixelDataMissingOnlineStatusAPIDescription": {
         "message": "Your Online Status API data is missing. This may be a result of disabling the Online Status API option on Hypixel or setting your social status to offline.\n\nOne or more of your enabled module(s) will not work while this data is missing. Once resolved, the affected module(s) will automatically resume operation and you will receive another DM."
@@ -530,11 +533,11 @@
     "modulesPlaytimeFooter": {
         "message": "Playtime Module"
     },
-    "modulesPlaytimeMissingPermissionDescription": {
-        "message": "The set channel for the Playtime module is not accessible because of the following missing permissions: $1. Please check the bot's permission settings."
-    },
     "modulesPlaytimeMissingPermissionName": {
         "message": "Missing Permission(s)"
+    },
+    "modulesPlaytimeMissingPermissionValue": {
+        "message": "The set channel for the Playtime module is not accessible because of the following missing permissions: $1. Please check the bot's permission settings."
     },
     "modulesPlaytimeName": {
         "message": "Playtime"
