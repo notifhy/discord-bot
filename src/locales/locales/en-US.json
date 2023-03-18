@@ -516,7 +516,7 @@
         "message": "Missing Permission(s)"
     },
     "modulesFriendsMissingPermissionValue": {
-        "message": "The set channel for the Friends module is not accessible because of the following missing permissions: $1. Please check the bot's permission settings."
+        "message": "The set channel for the Friends module is not accessible because of the following missing permissions: $1. Please check the bot's permission settings. The Friends module has been disabled as a result. To use this module again, simply reenable it in the **/modules** menu."
     },
     "modulesHypixelDataMissingOnlineStatusAPIDescription": {
         "message": "Your Online Status API data is missing. This may be a result of disabling the Online Status API option on Hypixel or setting your social status to offline.\n\nOne or more of your enabled module(s) will not work while this data is missing. Once resolved, the affected module(s) will automatically resume operation and you will receive another DM."
@@ -537,7 +537,7 @@
         "message": "Missing Permission(s)"
     },
     "modulesPlaytimeMissingPermissionValue": {
-        "message": "The set channel for the Playtime module is not accessible because of the following missing permissions: $1. Please check the bot's permission settings."
+        "message": "The set channel for the Playtime module is not accessible because of the following missing permissions: $1. Please check the bot's permission settings. The Playtime module has been disabled as a result. To use this module again, simply reenable it in the **/modules** menu."
     },
     "modulesPlaytimeName": {
         "message": "Playtime"
@@ -579,7 +579,7 @@
         "message": "Missed Notifications Limit"
     },
     "modulesRewardsMissedNotificationsLimitValue": {
-        "message": "We've noticed that you haven't claimed any daily rewards recently. To protect our system, the Rewards module has been disabled. If you want to use the Rewards module again, simply enable it in the **/modules** menu."
+        "message": "We've noticed that you haven't claimed any daily rewards recently. To protect our system, the Rewards module has been disabled. If you want to use the Rewards module again, simply reenable it in the **/modules** menu."
     },
     "modulesRewardsReminderDescription": {
         "list": [

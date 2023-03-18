@@ -2,6 +2,7 @@ import type { users as User } from '@prisma/client';
 import { EmbedBuilder, PermissionsBitField, TextChannel, userMention } from 'discord.js';
 import type { FriendsEventPayload } from '../@types/EventPayload';
 import { i18n as Internationalization } from '../locales/i18n';
+import { BetterEmbed } from '../structures/BetterEmbed';
 import { Logger } from '../structures/Logger';
 import { Module } from '../structures/Module';
 import { Modules } from '../structures/Modules';
@@ -54,16 +55,44 @@ export class FriendsModule extends Module {
                 `Missing permissions: ${missingPermissions.join(', ')}`,
             );
 
-            await this.container.database.system_messages.create({
-                data: {
-                    id: user.id,
-                    timestamp: Date.now(),
-                    name_key: 'modulesFriendsMissingPermissionName',
-                    value_key: 'modulesFriendsMissingPermissionValue',
-                    value_variables: [
+            await this.container.database.$transaction([
+                this.container.database.modules.update({
+                    data: {
+                        friends: {
+                            set: false,
+                        },
+                    },
+                    where: {
+                        id: user.id,
+                    },
+                }),
+                this.container.database.system_messages.create({
+                    data: {
+                        id: user.id,
+                        timestamp: Date.now(),
+                        name_key: 'modulesFriendsMissingPermissionName',
+                        value_key: 'modulesFriendsMissingPermissionValue',
+                        value_variables: [missingPermissions.join(', ')],
+                    },
+                }),
+            ]);
+
+            const missingPermissionEmbed = new BetterEmbed()
+                .setColor(Options.colorsWarning)
+                .setTitle(i18n.getMessage('modulesFriendsMissingPermissionName'))
+                .setDescription(
+                    i18n.getMessage('modulesFriendsMissingPermissionValue', [
                         missingPermissions.join(', '),
-                    ],
-                },
+                    ]),
+                )
+                .setFooter({
+                    text: i18n.getMessage(this.localizationFooter),
+                });
+
+            const discordUser = await this.container.client.users.fetch(user.id);
+
+            await discordUser.send({
+                embeds: [missingPermissionEmbed],
             });
 
             return;

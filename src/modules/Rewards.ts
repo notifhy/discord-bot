@@ -48,16 +48,16 @@ export class RewardsModule extends Module {
         const now = Date.now();
         const lastResetTime = this.lastResetTime(now);
 
-        const surpassedInterval = config.lastNotified < lastResetTime
+        const surpassedInterval = config.lastNotification < lastResetTime
             // Time.Minute is for a bit of tolerance between notifications
-            || config.lastNotified + config.interval - Time.Minute < now;
+            || config.lastNotification + config.interval - Time.Minute < now;
 
         this.container.logger.debug(
             this,
             Logger.moduleContext(user),
             `Reset Time: ${lastResetTime}`,
             `Now: ${now} ${new Date(now).toLocaleString()}`,
-            `Last Notified: ${config.lastNotified}`,
+            `Last Notified: ${config.lastNotification}`,
         );
 
         // If the user has not been notified yet, or the interval has passed
@@ -102,7 +102,7 @@ export class RewardsModule extends Module {
                     }),
                 ]);
 
-                // Send dm
+                // Send DM
                 const missedNotificationsLimitEmbed = new BetterEmbed()
                     .setColor(Options.colorsWarning)
                     .setTitle(i18n.getMessage('modulesRewardsMissedNotificationsLimitName'))
@@ -133,7 +133,7 @@ export class RewardsModule extends Module {
                 });
 
             // Send initial notification
-            if (config.lastNotified < lastResetTime) {
+            if (config.lastNotification < lastResetTime) {
                 const discordUser = await this.container.client.users.fetch(user.id);
                 const customId = CustomId.create({
                     module: this.name,
@@ -154,7 +154,7 @@ export class RewardsModule extends Module {
 
                 await this.container.database.rewards.update({
                     data: {
-                        lastNotified: now,
+                        lastNotification: now,
                     },
                     where: {
                         id: user.id,
@@ -203,7 +203,7 @@ export class RewardsModule extends Module {
 
                 await this.container.database.rewards.update({
                     data: {
-                        lastNotified: Date.now(),
+                        lastNotification: Date.now(),
                     },
                     where: {
                         id: user.id,

@@ -53,17 +53,29 @@ export class PlaytimeModule extends Module {
                     `Missing permissions: ${missingPermissions.join(', ')}`,
                 );
 
-                await this.container.database.system_messages.create({
-                    data: {
-                        id: user.id,
-                        timestamp: Date.now(),
-                        name_key: 'modulesPlaytimeMissingPermissionName',
-                        value_key: 'modulesPlaytimeMissingPermissionValue',
-                        value_variables: [
-                            missingPermissions.join(', '),
-                        ],
-                    },
-                });
+                await this.container.database.$transaction([
+                    this.container.database.modules.update({
+                        data: {
+                            playtime: {
+                                set: false,
+                            },
+                        },
+                        where: {
+                            id: user.id,
+                        },
+                    }),
+                    this.container.database.system_messages.create({
+                        data: {
+                            id: user.id,
+                            timestamp: Date.now(),
+                            name_key: 'modulesPlaytimeMissingPermissionName',
+                            value_key: 'modulesPlaytimeMissingPermissionValue',
+                            value_variables: [
+                                missingPermissions.join(', '),
+                            ],
+                        },
+                    }),
+                ]);
 
                 const i18n = new Internationalization(user.locale);
 

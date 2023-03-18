@@ -5,6 +5,7 @@ import { BaseErrorHandler } from './BaseErrorHandler';
 import { ErrorHandler } from './ErrorHandler';
 import type { Module } from '../structures/Module';
 import { BetterEmbed } from '../structures/BetterEmbed';
+import { Options } from '../utility/Options';
 
 export class ModuleErrorHandler<E> extends BaseErrorHandler<E> {
     private readonly module: Module;
@@ -59,6 +60,7 @@ export class ModuleErrorHandler<E> extends BaseErrorHandler<E> {
                     const user = await this.container.client.users.fetch(this.user.id);
 
                     const alertEmbed = new BetterEmbed()
+                        .setColor(Options.colorsWarning)
                         .setTitle(this.i18n.getMessage('errorsModuleDiscordAPIErrorTitle'))
                         .setDescription(
                             this.i18n.getMessage(`errorsModuleDiscordAPIError${error.code}`),
@@ -110,6 +112,7 @@ export class ModuleErrorHandler<E> extends BaseErrorHandler<E> {
             const description = 'errorsModuleGenericDescription';
 
             const alertEmbed = new BetterEmbed()
+                .setColor(Options.colorsError)
                 .setTitle(this.i18n.getMessage(title))
                 .setDescription(this.i18n.getMessage(description))
                 .setFooter({ text: this.i18n.getMessage(this.module.localizationFooter) });
