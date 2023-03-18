@@ -575,6 +575,12 @@
     "modulesRewardsNotClaimedNotificationTitle": {
         "message": "Daily Reward Not Claimed"
     },
+    "modulesRewardsMissedNotificationsLimitName": {
+        "message": "Missed Notifications Limit"
+    },
+    "modulesRewardsMissedNotificationsLimitValue": {
+        "message": "We've noticed that you haven't claimed any daily rewards recently. To protect our system, the Rewards module has been disabled. If you want to use the Rewards module again, simply enable it in the **/modules** menu."
+    },
     "modulesRewardsReminderDescription": {
         "list": [
             "This is your reminder to claim your daily reward!",

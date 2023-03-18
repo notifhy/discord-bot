@@ -6,6 +6,7 @@ import { Modules } from '../structures/Modules';
 import { Options } from '../utility/Options';
 import { cleanLength, timestamp } from '../utility/utility';
 import { Logger } from '../structures/Logger';
+import { BetterEmbed } from '../structures/BetterEmbed';
 
 export class PlaytimeModule extends Module {
     public constructor(context: Module.Context, options: Module.Options) {
@@ -46,7 +47,7 @@ export class PlaytimeModule extends Module {
                 ]);
 
             if (missingPermissions.length !== 0) {
-                this.container.logger.debug(
+                this.container.logger.info(
                     this,
                     Logger.moduleContext(user),
                     `Missing permissions: ${missingPermissions.join(', ')}`,
@@ -62,6 +63,24 @@ export class PlaytimeModule extends Module {
                             missingPermissions.join(', '),
                         ],
                     },
+                });
+
+                const i18n = new Internationalization(user.locale);
+
+                const missingPermissionEmbed = new BetterEmbed()
+                    .setColor(Options.colorsWarning)
+                    .setTitle(i18n.getMessage('modulesPlaytimeMissingPermissionName'))
+                    .setDescription(i18n.getMessage('modulesPlaytimeMissingPermissionValue', [
+                        missingPermissions.join(', '),
+                    ]))
+                    .setFooter({
+                        text: i18n.getMessage(this.localizationFooter),
+                    });
+
+                const discordUser = await this.container.client.users.fetch(user.id);
+
+                await discordUser.send({
+                    embeds: [missingPermissionEmbed],
                 });
 
                 return;

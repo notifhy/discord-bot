@@ -68,13 +68,14 @@ model playtime {
 }
 
 model rewards {
-  id                String  @id @db.VarChar(20)
-  delay             Int     @default(0)
-  interval          Int     @default(1800000)
-  lastClaimedReward Float   @default(0)
-  lastNotified      Float   @default(0)
-  milestones        Boolean @default(true)
-  users             users?
+  id                  String  @id @db.VarChar(20)
+  delay               Int     @default(0)
+  interval            Int     @default(1800000)
+  lastClaimedReward   Float   @default(0)
+  lastNotified        Float   @default(0)
+  milestones          Boolean @default(true)
+  missedNotifications Int     @default(0)
+  users               users?
 }
 
 model system_messages {

@@ -60,7 +60,66 @@ export class RewardsModule extends Module {
             `Last Notified: ${config.lastNotified}`,
         );
 
+        // If the user has not been notified yet, or the interval has passed
         if (lastResetTime + config.delay <= now) {
+            // Check missed notification count
+            if (config.missedNotifications >= Options.modulesRewardsMissedNotificationsMax) {
+                this.container.logger.info(
+                    this,
+                    Logger.moduleContext(user),
+                    `Missed notification limit of ${Options.modulesRewardsMissedNotificationsMax} reached.`,
+                );
+
+                await this.container.database.$transaction([
+                    // Reset missed notifications count
+                    this.container.database.rewards.update({
+                        data: {
+                            missedNotifications: 0,
+                        },
+                        where: {
+                            id: user.id,
+                        },
+                    }),
+                    // Disable module
+                    this.container.database.modules.update({
+                        data: {
+                            rewards: {
+                                set: false,
+                            },
+                        },
+                        where: {
+                            id: user.id,
+                        },
+                    }),
+                    // Create system message
+                    this.container.database.system_messages.create({
+                        data: {
+                            id: user.id,
+                            timestamp: Date.now(),
+                            name_key: 'modulesRewardsMissedNotificationsLimitName',
+                            value_key: 'modulesRewardsMissedNotificationsLimitValue',
+                        },
+                    }),
+                ]);
+
+                // Send dm
+                const missedNotificationsLimitEmbed = new BetterEmbed()
+                    .setColor(Options.colorsWarning)
+                    .setTitle(i18n.getMessage('modulesRewardsMissedNotificationsLimitName'))
+                    .setDescription(i18n.getMessage('modulesRewardsMissedNotificationsLimitValue'))
+                    .setFooter({
+                        text: i18n.getMessage(this.localizationFooter),
+                    });
+
+                const discordUser = await this.container.client.users.fetch(user.id);
+
+                await discordUser.send({
+                    embeds: [missedNotificationsLimitEmbed],
+                });
+
+                return;
+            }
+
             const descriptionArray = i18n.getList('modulesRewardsReminderDescription');
             const random = Math.floor(Math.random() * descriptionArray.length);
             const description = descriptionArray[random]!;
@@ -73,6 +132,7 @@ export class RewardsModule extends Module {
                     text: i18n.getMessage(this.localizationFooter),
                 });
 
+            // Send initial notification
             if (config.lastNotified < lastResetTime) {
                 const discordUser = await this.container.client.users.fetch(user.id);
                 const customId = CustomId.create({
@@ -108,11 +168,13 @@ export class RewardsModule extends Module {
                 const disabledRows = disableComponents(message.components);
                 const endBoundary = now - lastResetTime + Time.Day;
 
+                // Disable button after a day
                 setTimeout(async () => {
                     try {
                         const updatedMessage = await message.fetch(true);
                         const button = updatedMessage.components[0]?.components[0];
 
+                        // Check if button is still enabled
                         if (button && button.disabled === false) {
                             await message.edit({
                                 components: disabledRows,
@@ -130,8 +192,11 @@ export class RewardsModule extends Module {
                         new ErrorHandler(error).init();
                     }
                 }, endBoundary);
+
+                // Send follow up notification
             } else if (surpassedInterval && config.lastClaimedReward < lastResetTime) {
                 const discordUser = await this.container.client.users.fetch(user.id);
+
                 await discordUser.send({
                     embeds: [rewardNotification],
                 });
@@ -163,6 +228,15 @@ export class RewardsModule extends Module {
     }
 
     public override async interaction(user: User, interaction: ButtonInteraction) {
+        await this.container.database.rewards.update({
+            data: {
+                missedNotifications: 0,
+            },
+            where: {
+                id: user.id,
+            },
+        });
+
         const player = (await Modules.fetch(user)).data;
         const config = await this.container.database.rewards.findUniqueOrThrow({
             where: {

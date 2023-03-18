@@ -60,6 +60,10 @@ export class Options extends Base {
         7, 30, 60, 90, 100, 150, 200, 250, 300, 365, 500, 750, 1000,
     ];
 
+    // static readonly modulesRewardsMissedNotificationsMax = 250;
+    // TEMPORARY!!!!!!
+    static readonly modulesRewardsMissedNotificationsMax = 1;
+
     static readonly performanceInterval = Time.Hour / 2;
 
     static readonly performanceMaxDataPoints = 100;
