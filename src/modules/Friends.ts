@@ -49,7 +49,7 @@ export class FriendsModule extends Module {
         const i18n = new Internationalization(user.locale);
 
         if (missingPermissions.length !== 0) {
-            this.container.logger.debug(
+            this.container.logger.warn(
                 this,
                 Logger.moduleContext(user),
                 `Missing permissions: ${missingPermissions.join(', ')}`,
@@ -113,10 +113,7 @@ export class FriendsModule extends Module {
                         timestamp(lastLogin!, 'R')!,
                         timestamp(lastLogin!, 'T')!,
                     ]),
-                )
-                .setFooter({
-                    text: i18n.getMessage(this.localizationFooter),
-                });
+                );
         } else {
             embed
                 .setColor(Options.colorsOff)
@@ -126,10 +123,7 @@ export class FriendsModule extends Module {
                         timestamp(lastLogout!, 'R')!,
                         timestamp(lastLogout!, 'T')!,
                     ]),
-                )
-                .setFooter({
-                    text: i18n.getMessage(this.localizationFooter),
-                });
+                );
         }
 
         await channel.send({

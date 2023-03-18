@@ -89,7 +89,7 @@ export class ModuleErrorHandler<E> extends BaseErrorHandler<E> {
                         },
                     });
 
-                    this.log('New modules:', modules, 'Handled Discord API error:', error.code);
+                    this.log('Handled Discord API error:', error.code, 'New modules:', modules);
                 } catch (error2) {
                     new ErrorHandler(
                         error2,

@@ -47,7 +47,7 @@ export class PlaytimeModule extends Module {
                 ]);
 
             if (missingPermissions.length !== 0) {
-                this.container.logger.info(
+                this.container.logger.warn(
                     this,
                     Logger.moduleContext(user),
                     `Missing permissions: ${missingPermissions.join(', ')}`,
@@ -101,7 +101,7 @@ export class PlaytimeModule extends Module {
 
         const data = await Modules.fetch(user);
 
-        if (data.data.lastLogin! > data.data.lastLogout!) {
+        if (data.data.lastLogout! > data.data.lastLogin!) {
             const i18n = new Internationalization(user.locale);
 
             const embed = new EmbedBuilder()
@@ -111,12 +111,11 @@ export class PlaytimeModule extends Module {
                         timestamp(data.data.lastLogout!, 'T')!,
                         cleanLength(data.data.lastLogout! - data.data.lastLogin!)!,
                     ]),
-                )
-                .setFooter({
-                    text: i18n.getMessage(this.localizationFooter),
-                });
+                );
 
             await sendable.send({ embeds: [embed] });
+        } else {
+            this.container.logger.warn(this, Logger.moduleContext(user), 'User is unexpectedly online');
         }
     }
 }
