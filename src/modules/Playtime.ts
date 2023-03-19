@@ -7,6 +7,7 @@ import { Options } from '../utility/Options';
 import { cleanLength, timestamp } from '../utility/utility';
 import { BetterEmbed } from '../structures/BetterEmbed';
 import { Logger } from '../structures/Logger';
+import type { PlaytimeEventPayload } from '../@types/EventPayload';
 
 export class PlaytimeModule extends Module {
     public constructor(context: Module.Context, options: Module.Options) {
@@ -24,7 +25,12 @@ export class PlaytimeModule extends Module {
      * - Will operate on the upcoming mod
      */
 
-    public override async event(user: User) {
+    public override async event(user: User, payload: PlaytimeEventPayload) {
+        if (!payload.joined) {
+            this.container.logger.debug(this, Logger.moduleContext(user), 'Joined is false.');
+            return;
+        }
+
         const config = await this.container.database.playtime.findUniqueOrThrow({
             where: {
                 id: user.id,
