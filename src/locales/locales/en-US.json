@@ -543,7 +543,7 @@
         "message": "Playtime"
     },
     "modulesPlaytimePlaytimeDescription": {
-        "message": "Your last session started at $1 and lasted $."
+        "message": "Your last session started at $1 and lasted $2."
     },
     "modulesPlaytimePlaytimeTitle": {
         "message": "Playtime"

@@ -1,12 +1,12 @@
 import type { users as User } from '@prisma/client';
-import { EmbedBuilder, PermissionsBitField, TextChannel } from 'discord.js';
+import { PermissionsBitField, TextChannel } from 'discord.js';
 import { Module } from '../structures/Module';
 import { i18n as Internationalization } from '../locales/i18n';
 import { Modules } from '../structures/Modules';
 import { Options } from '../utility/Options';
 import { cleanLength, timestamp } from '../utility/utility';
-import { Logger } from '../structures/Logger';
 import { BetterEmbed } from '../structures/BetterEmbed';
+import { Logger } from '../structures/Logger';
 
 export class PlaytimeModule extends Module {
     public constructor(context: Module.Context, options: Module.Options) {
@@ -104,14 +104,17 @@ export class PlaytimeModule extends Module {
         if (data.data.lastLogout! > data.data.lastLogin!) {
             const i18n = new Internationalization(user.locale);
 
-            const embed = new EmbedBuilder()
-                .setColor(Options.colorsOff)
+            const embed = new BetterEmbed()
+                .setColor(Options.colorsNormal)
                 .setDescription(
                     i18n.getMessage('modulesPlaytimePlaytimeDescription', [
                         timestamp(data.data.lastLogout!, 'T')!,
                         cleanLength(data.data.lastLogout! - data.data.lastLogin!)!,
                     ]),
-                );
+                )
+                .setFooter({
+                    text: i18n.getMessage(this.localizationFooter),
+                });
 
             await sendable.send({ embeds: [embed] });
         } else {
