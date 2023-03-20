@@ -7,6 +7,7 @@ node_modules
 .eslintrc.json
 .gitignore
 .prettierrc.json
+database.db
 LICENSE
 README.md
 sample.env
