@@ -1,9 +1,10 @@
+.git
 .vscode
 assets
 dist
 node_modules
 .env
-.eslintrc
+.eslintrc.json
 .gitignore
 .prettierrc.json
 LICENSE
