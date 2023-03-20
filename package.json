@@ -20,7 +20,7 @@
         "@sentry/integrations": "^7.13.0",
         "@sentry/node": "^7.13.0",
         "@sentry/tracing": "^7.13.0",
-        "better-sqlite3-multiple-ciphers": "^7.6.2",
+        "better-sqlite3-multiple-ciphers": "^8.2.0",
         "discord-api-types": "^0.37.10",
         "discord.js": "^14.5.0",
         "dotenv": "^16.0.2",
