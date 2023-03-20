@@ -1,8 +1,11 @@
+.vscode
+assets
+dist
 node_modules
-sample.env
+.env
 .eslintrc
 .gitignore
 .prettierrc.json
 LICENSE
-.vscode
-**.js
+README.md
+sample.env
