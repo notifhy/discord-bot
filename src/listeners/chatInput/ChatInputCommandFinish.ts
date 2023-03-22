@@ -72,7 +72,10 @@ export class ChatInputCommandFinishListener extends Listener {
                         value: value,
                     };
                 }),
-            );
+            )
+            .setFooter({
+                text: i18n.getMessage('systemMessagesFooter'),
+            });
 
         let sentDM = false;
 

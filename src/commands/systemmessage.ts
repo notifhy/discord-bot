@@ -41,13 +41,13 @@ export class SystemMessageCommand extends Command {
                     options: [
                         {
                             name: 'name',
-                            type: 3,
+                            type: ApplicationCommandOptionType.String,
                             description: 'The title of the message',
                             required: true,
                         },
                         {
                             name: 'value',
-                            type: 3,
+                            type: ApplicationCommandOptionType.String,
                             description: 'The content of the message',
                             required: true,
                         },
@@ -60,19 +60,19 @@ export class SystemMessageCommand extends Command {
                     options: [
                         {
                             name: 'id',
-                            type: 3,
+                            type: ApplicationCommandOptionType.User,
                             description: 'The Id of the user',
                             required: true,
                         },
                         {
                             name: 'name',
-                            type: 3,
+                            type: ApplicationCommandOptionType.String,
                             description: 'The title of the message',
                             required: true,
                         },
                         {
                             name: 'value',
-                            type: 3,
+                            type: ApplicationCommandOptionType.String,
                             description: 'The content of the message',
                             required: true,
                         },
@@ -128,20 +128,20 @@ export class SystemMessageCommand extends Command {
     private async single(interaction: ChatInputCommandInteraction) {
         const { i18n } = interaction;
 
-        const id = interaction.options.getString('id', true);
+        const user = interaction.options.getUser('id', true);
 
-        const user = await this.container.database.users.findUnique({
+        const dbUser = await this.container.database.users.findUnique({
             where: {
-                id: interaction.user.id,
+                id: user.id,
             },
         });
 
-        if (user === null) {
+        if (dbUser === null) {
             const invalidUserEmbed = new BetterEmbed(interaction)
                 .setColor(Options.colorsNormal)
                 .setTitle(i18n.getMessage('commandsSystemMessageSingleInvalidUserTitle'))
                 .setDescription(
-                    i18n.getMessage('commandsSystemMessageSingleInvalidUserDescription', [id]),
+                    i18n.getMessage('commandsSystemMessageSingleInvalidUserDescription', [user.id]),
                 );
 
             await interaction.editReply({
@@ -151,7 +151,7 @@ export class SystemMessageCommand extends Command {
             return;
         }
 
-        await this.create(interaction, [id]);
+        await this.create(interaction, [dbUser.id]);
     }
 
     private async create(interaction: ChatInputCommandInteraction, ids: string[]) {

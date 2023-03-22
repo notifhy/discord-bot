@@ -102,7 +102,9 @@ export class FriendsModule extends Module {
         const lastLogin = data.data.lastLogin ?? Date.now();
         const lastLogout = data.data.lastLogout ?? Date.now();
 
-        const embed = new BetterEmbed();
+        const embed = new BetterEmbed().setFooter({
+            text: i18n.getMessage(this.localizationFooter),
+        });
 
         if (payload.joined === true) {
             embed
@@ -113,10 +115,7 @@ export class FriendsModule extends Module {
                         timestamp(lastLogin!, 'R')!,
                         timestamp(lastLogin!, 'T')!,
                     ]),
-                )
-                .setFooter({
-                    text: i18n.getMessage(this.localizationFooter),
-                });
+                );
         } else {
             embed
                 .setColor(Options.colorsOff)
@@ -126,10 +125,7 @@ export class FriendsModule extends Module {
                         timestamp(lastLogout!, 'R')!,
                         timestamp(lastLogout!, 'T')!,
                     ]),
-                )
-                .setFooter({
-                    text: i18n.getMessage(this.localizationFooter),
-                });
+                );
         }
 
         await channel.send({

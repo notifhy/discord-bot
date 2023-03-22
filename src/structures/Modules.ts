@@ -40,7 +40,8 @@ export class Modules extends Base {
                         .setTitle(i18n.getMessage('modulesHypixelDataMissingOnlineStatusAPITitle'))
                         .setDescription(
                             i18n.getMessage('modulesHypixelDataMissingOnlineStatusAPIDescription'),
-                        ),
+                        )
+                        .setFooter({ text: i18n.getMessage('modulesHypixelDataFooter') }),
                 );
 
                 this.container.logger.info(
@@ -57,7 +58,8 @@ export class Modules extends Base {
                         .setTitle(i18n.getMessage('modulesHypixelDataReceivedOnlineStatusAPITitle'))
                         .setDescription(
                             i18n.getMessage('modulesHypixelDataReceivedOnlineStatusAPIDescription'),
-                        ),
+                        )
+                        .setFooter({ text: i18n.getMessage('modulesHypixelDataFooter') }),
                 );
 
                 this.container.logger.info(
