@@ -31,7 +31,7 @@ export async function awaitComponent<T extends MessageComponentType>(
     } catch (error) {
         if (
             error instanceof Error
-            && (error as Error & { code: string })?.code === 'INTERACTION_COLLECTOR_ERROR'
+            && (error as Error & { code: string })?.code === 'InteractionCollectorError'
         ) {
             return null;
         }
@@ -102,7 +102,7 @@ export function chatInputResolver(interaction: ChatInputCommandInteraction) {
 
 export function cleanDate(ms: number | Date): string | null {
     const newDate = new Date(ms);
-    if (ms < 0 || !isDate(newDate)) {
+    if (Number(ms) < 0 || !isDate(newDate)) {
         return null;
     }
 
@@ -232,7 +232,7 @@ export function formattedUnix({
     utc: boolean;
 }): string | null {
     const newDate = new Date(ms);
-    if (ms < 0 || !isDate(newDate)) {
+    if (Number(ms) < 0 || !isDate(newDate)) {
         return null;
     }
 

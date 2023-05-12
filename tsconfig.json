@@ -1,6 +1,7 @@
 {
-    "extends": "@tsconfig/node18-strictest/tsconfig.json",
+    "extends": ["@tsconfig/strictest/tsconfig.json", "@tsconfig/node-lts/tsconfig.json"],
     "compilerOptions": {
+        "checkJs": false,
         "exactOptionalPropertyTypes": false,
         "noPropertyAccessFromIndexSignature": false,
         "outDir": "dist",
