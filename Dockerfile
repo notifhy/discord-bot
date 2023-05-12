@@ -1,4 +1,4 @@
-FROM node:latest
+FROM node:lts
 
 EXPOSE 3000
 
