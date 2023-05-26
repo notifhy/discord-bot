@@ -8,22 +8,19 @@ import { Module } from '../structures/Module';
 import { Modules } from '../structures/Modules';
 import { Options } from '../utility/Options';
 import { timestamp } from '../utility/utility';
+import { Event } from '../enums/Event';
 
 export class FriendsModule extends Module {
     public constructor(context: Module.Context, options: Module.Options) {
         super(context, {
             ...options,
             name: 'friends',
+            allowedEvents: [Event.Connected, Event.Disconnected],
             localizationFooter: 'modulesFriendsFooter',
             localizationName: 'modulesFriendsName',
             requireOnlineStatusAPI: false,
         });
     }
-
-    /**
-     * Friends module will:
-     * - Will operate on the upcoming mod
-     */
 
     public override async event(user: User, payload: FriendsEventPayload) {
         const config = await this.container.database.friends.findUniqueOrThrow({
@@ -106,7 +103,7 @@ export class FriendsModule extends Module {
             text: i18n.getMessage(this.localizationFooter),
         });
 
-        if (payload.joined === true) {
+        if (payload.event.type === Event.Connected) {
             embed
                 .setColor(Options.colorsOn)
                 .setDescription(

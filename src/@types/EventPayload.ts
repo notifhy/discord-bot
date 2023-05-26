@@ -1,12 +1,29 @@
 export interface EventPayload {
-    host: string;
-    joined?: boolean;
+    version: number;
+    event: Event;
+}
+
+export interface Event {
+    type: number;
+    data: object;
+}
+
+export interface FriendsEvent extends Event {
+    data: {
+        host: string;
+    };
 }
 
 export interface FriendsEventPayload extends EventPayload {
-    joined: boolean;
+    event: FriendsEvent;
+}
+
+export interface PlaytimeEvent extends Event {
+    data: {
+        host: string;
+    };
 }
 
 export interface PlaytimeEventPayload extends EventPayload {
-    joined: boolean;
+    event: FriendsEvent;
 }

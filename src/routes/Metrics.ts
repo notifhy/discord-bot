@@ -17,6 +17,7 @@ export class EventRoute extends Route {
         fastify.get(
             this.route,
             {
+                onRequest: fastify.basicAuth,
                 schema: {
                     response: {
                         '2xx': {

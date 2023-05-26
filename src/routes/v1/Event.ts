@@ -28,10 +28,13 @@ export class EventRoute extends Route {
                     body: {
                         type: 'object',
                         properties: {
-                            host: { type: 'string' },
-                            joined: { type: 'boolean' },
+                            version: { type: 'number' },
+                            event: {
+                                type: 'object',
+                                properties: { data: { type: 'object' } },
+                            },
                         },
-                        required: ['host'],
+                        required: ['version', 'event'],
                     },
                     response: {
                         '2xx': {
@@ -43,21 +46,31 @@ export class EventRoute extends Route {
                     },
                 },
             },
-            (request, reply) => this.postMethod(request as FastifyRequest<{
-                Body: IBodyPost;
-            }>, reply),
+            (request, reply) =>
+                this.postMethod(
+                    request as FastifyRequest<{
+                        Body: IBodyPost;
+                    }>,
+                    reply,
+                ),
         );
     }
 
-    protected override async postMethod(request: FastifyRequest<{
-        Body: IBodyPost;
-    }>, reply: FastifyReply) {
-        if (request.body.host.endsWith('hypixel.net') === false) {
+    protected override async postMethod(
+        request: FastifyRequest<{
+            Body: IBodyPost;
+        }>,
+        reply: FastifyReply,
+    ) {
+        if ('host' in request.body.event.data && request.body.event.data.host !== 'mc.hypixel.net') {
             this.container.logger.debug(
                 this,
-                `Host is not Hypixel: ${request.body.host}`,
+                Logger.moduleContext(request.user!),
+                `Host is not Hypixel: ${request.body.event.data.host}`,
             );
-        }
+            
+            return reply.code(204).send();
+        } 
 
         const user = request.user!;
         const moduleStore = this.container.stores.get('modules');
@@ -81,6 +94,15 @@ export class EventRoute extends Route {
             // eslint-disable-next-line no-restricted-syntax
             for (const module of activeModules.values()) {
                 try {
+                    if (module.allowedEvents.includes(request.body.event.type) === false) {
+                        this.container.logger.debug(
+                            this,
+                            Logger.moduleContext(user),
+                            `Module ${module.name} does not support module ${module.name}.`,
+                        );
+                        continue;
+                    }
+
                     await module.event!(user, request.body);
 
                     this.container.logger.debug(

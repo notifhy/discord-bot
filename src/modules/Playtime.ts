@@ -8,28 +8,29 @@ import { cleanLength, timestamp } from '../utility/utility';
 import { BetterEmbed } from '../structures/BetterEmbed';
 import { Logger } from '../structures/Logger';
 import type { PlaytimeEventPayload } from '../@types/EventPayload';
+import { Event } from '../enums/Event';
+import { setTimeout } from 'node:timers/promises';
 
 export class PlaytimeModule extends Module {
     public constructor(context: Module.Context, options: Module.Options) {
         super(context, {
             ...options,
             name: 'playtime',
+            allowedEvents: [Event.Connected, Event.Disconnected],
             localizationFooter: 'modulesPlaytimeFooter',
             localizationName: 'modulesPlaytimeName',
             requireOnlineStatusAPI: true,
         });
     }
 
-    /**
-     * Friends module will:
-     * - Will operate on the upcoming mod
-     */
-
     public override async event(user: User, payload: PlaytimeEventPayload) {
-        if (!payload.joined) {
-            this.container.logger.debug(this, Logger.moduleContext(user), 'Joined is false.');
+        if (payload.event.type === Event.Connected) {
+            this.container.logger.debug(this, Logger.moduleContext(user), 'Event type is not disconnect.');
             return;
         }
+
+        // fix race condition with hypixel api :)
+        setTimeout(5000);
 
         const config = await this.container.database.playtime.findUniqueOrThrow({
             where: {
@@ -38,7 +39,7 @@ export class PlaytimeModule extends Module {
         });
 
         const sendable = config.channel
-            ? (await this.container.client.channels.fetch(config.channel!)) as TextChannel
+            ? ((await this.container.client.channels.fetch(config.channel!)) as TextChannel)
             : await this.container.client.users.fetch(user.id);
 
         if (sendable instanceof TextChannel) {
@@ -76,9 +77,7 @@ export class PlaytimeModule extends Module {
                             timestamp: Date.now(),
                             name_key: 'modulesPlaytimeMissingPermissionName',
                             value_key: 'modulesPlaytimeMissingPermissionValue',
-                            value_variables: [
-                                missingPermissions.join(', '),
-                            ],
+                            value_variables: [missingPermissions.join(', ')],
                         },
                     }),
                 ]);
@@ -88,9 +87,11 @@ export class PlaytimeModule extends Module {
                 const missingPermissionEmbed = new BetterEmbed()
                     .setColor(Options.colorsWarning)
                     .setTitle(i18n.getMessage('modulesPlaytimeMissingPermissionName'))
-                    .setDescription(i18n.getMessage('modulesPlaytimeMissingPermissionValue', [
-                        missingPermissions.join(', '),
-                    ]))
+                    .setDescription(
+                        i18n.getMessage('modulesPlaytimeMissingPermissionValue', [
+                            missingPermissions.join(', '),
+                        ]),
+                    )
                     .setFooter({
                         text: i18n.getMessage(this.localizationFooter),
                     });
@@ -124,7 +125,11 @@ export class PlaytimeModule extends Module {
 
             await sendable.send({ embeds: [embed] });
         } else {
-            this.container.logger.warn(this, Logger.moduleContext(user), 'User is unexpectedly online');
+            this.container.logger.warn(
+                this,
+                Logger.moduleContext(user),
+                'User is unexpectedly online',
+            );
         }
     }
 }

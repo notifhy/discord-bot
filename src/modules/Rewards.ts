@@ -29,14 +29,6 @@ export class RewardsModule extends Module {
         });
     }
 
-    /**
-     * - Cron
-     * - Continues alerting until user presses the button
-     * - Button validates whether a user has actually claim their reward or not
-     * - TODO: Add "missedNotifications" to prevent inactive users from killing this system
-     * - TODO: Button cooldown?
-     */
-
     public override async cron(user: User) {
         const config = await this.container.database.rewards.findUniqueOrThrow({
             where: {

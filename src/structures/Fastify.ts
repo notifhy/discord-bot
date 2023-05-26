@@ -38,43 +38,55 @@ export class Fastify extends Base {
             // @ts-ignore return paths
             // eslint-disable-next-line consistent-return
             validate: async (username, password, request) => {
-                if (Options.regexUUID.test(username) === false) {
-                    this.container.logger.warn(
-                        this,
-                        `Invalid username: ${username}`,
-                    );
-
-                    return new Error('Invalid username or password');
+                if (request.url === '/metrics') {
+                    // while kind of stupid, i'll have you know i had a much worse idea in mind
+                    if (password !== process.env.PROMETHEUS_METRICS_PASSWORD) {
+                        this.container.logger.warn(
+                            this,
+                            `Invalid password for username: ${username}, ${password}`,
+                        );
+    
+                        return new Error('Invalid username or password');
+                    }
+                } else {
+                    if (Options.regexUUID.test(username) === false) {
+                        this.container.logger.warn(
+                            this,
+                            `Invalid username: ${username}`,
+                        );
+    
+                        return new Error('Invalid username or password');
+                    }
+    
+                    const user = await this.container.database.users.findUnique({
+                        include: {
+                            authentication: true,
+                        },
+                        where: {
+                            uuid: username,
+                        },
+                    });
+    
+                    if (user === null) {
+                        this.container.logger.warn(
+                            this,
+                            `Invalid user: ${username}`,
+                        );
+    
+                        return new Error('Invalid username or password');
+                    }
+    
+                    if (generateHash(password, user.authentication.salt) !== user.authentication.hash) {
+                        this.container.logger.warn(
+                            this,
+                            `Invalid password for username: ${username}, ${password}`,
+                        );
+    
+                        return new Error('Invalid username or password');
+                    }
+    
+                    request.user = user;
                 }
-
-                const user = await this.container.database.users.findUnique({
-                    include: {
-                        authentication: true,
-                    },
-                    where: {
-                        uuid: username,
-                    },
-                });
-
-                if (user === null) {
-                    this.container.logger.warn(
-                        this,
-                        `Invalid user: ${username}`,
-                    );
-
-                    return new Error('Invalid username or password');
-                }
-
-                if (generateHash(password, user.authentication.salt) !== user.authentication.hash) {
-                    this.container.logger.warn(
-                        this,
-                        `Invalid password for username: ${username}, ${password}`,
-                    );
-
-                    return new Error('Invalid username or password');
-                }
-
-                request.user = user;
             },
         });
 

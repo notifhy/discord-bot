@@ -1,3 +1,6 @@
+## Note
+This version (v2? v3? idk anymore) will probably never ship. I have plans to migrate to a serverless solution as seen by the rough notes below, where I intend to try it make it slightly less bad.
+
 ## Under Construction
 ### TODO
 Monolith structure for now ("temporary")
