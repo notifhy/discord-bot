@@ -10,6 +10,7 @@ import { Logger } from '../structures/Logger';
 import type { PlaytimeEventPayload } from '../@types/EventPayload';
 import { Event } from '../enums/Event';
 import { setTimeout } from 'node:timers/promises';
+import { Time } from '../enums/Time';
 
 export class PlaytimeModule extends Module {
     public constructor(context: Module.Context, options: Module.Options) {
@@ -30,7 +31,7 @@ export class PlaytimeModule extends Module {
         }
 
         // fix race condition with hypixel api :)
-        setTimeout(5000);
+        setTimeout(Time.Second * 15);
 
         const config = await this.container.database.playtime.findUniqueOrThrow({
             where: {

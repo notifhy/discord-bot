@@ -9,6 +9,8 @@ import { Modules } from '../structures/Modules';
 import { Options } from '../utility/Options';
 import { timestamp } from '../utility/utility';
 import { Event } from '../enums/Event';
+import { Time } from '../enums/Time';
+import { setTimeout } from 'timers/promises';
 
 export class FriendsModule extends Module {
     public constructor(context: Module.Context, options: Module.Options) {
@@ -23,6 +25,9 @@ export class FriendsModule extends Module {
     }
 
     public override async event(user: User, payload: FriendsEventPayload) {
+        // fix race condition with hypixel api :)
+        setTimeout(Time.Second * 10);
+
         const config = await this.container.database.friends.findUniqueOrThrow({
             where: {
                 id: user.id,
@@ -96,8 +101,17 @@ export class FriendsModule extends Module {
         }
 
         const data = await Modules.fetch(user);
-        const lastLogin = data.data.lastLogin ?? Date.now();
-        const lastLogout = data.data.lastLogout ?? Date.now();
+        let lastLogin = data.data.lastLogin ?? Date.now();
+        let lastLogout = data.data.lastLogout ?? Date.now();
+
+        // hypixel api may have old data, use current time if so
+        if ((Date.now() - Time.Minute) > lastLogin) {
+            lastLogin = Date.now();
+        }
+
+        if ((Date.now() - Time.Minute) > lastLogout) {
+            lastLogout = Date.now();
+        }
 
         const embed = new BetterEmbed().setFooter({
             text: i18n.getMessage(this.localizationFooter),
