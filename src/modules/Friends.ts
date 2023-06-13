@@ -26,7 +26,7 @@ export class FriendsModule extends Module {
 
     public override async event(user: User, payload: FriendsEventPayload) {
         // fix race condition with hypixel api :)
-        await setTimeout(Time.Second * 10);
+        await setTimeout(Time.Second * 5);
 
         const config = await this.container.database.friends.findUniqueOrThrow({
             where: {

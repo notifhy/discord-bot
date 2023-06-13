@@ -31,7 +31,7 @@ export class PlaytimeModule extends Module {
         }
 
         // fix race condition with hypixel api :)
-        await setTimeout(Time.Second * 15);
+        await setTimeout(Time.Second * 5);
 
         const config = await this.container.database.playtime.findUniqueOrThrow({
             where: {
