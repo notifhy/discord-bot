@@ -116,7 +116,7 @@ export class PlaytimeModule extends Module {
                 .setColor(Options.colorsNormal)
                 .setDescription(
                     i18n.getMessage('modulesPlaytimePlaytimeDescription', [
-                        timestamp(data.data.lastLogout!, 'T')!,
+                        timestamp(data.data.lastLogin!, 'T')!,
                         cleanLength(data.data.lastLogout! - data.data.lastLogin!)!,
                     ]),
                 )
